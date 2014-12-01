@@ -3,14 +3,12 @@ package com.ives.relative;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.ives.relative.input.InputManager;
 import com.ives.relative.screens.GameScreen;
 
 public class Relative extends Game {
 	SpriteBatch batch;
-	Texture img;
 	OrthographicCamera camera;
 
 	public GameScreen gameScreen;
@@ -19,8 +17,6 @@ public class Relative extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-
 		Gdx.graphics.setDisplayMode(1280, 720, false);
 
 		inputManager = new InputManager(this);
