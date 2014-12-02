@@ -1,23 +1,29 @@
 package com.ives.relative.world;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.ives.relative.tiles.Tile;
+import com.ives.relative.entities.tiles.Tile;
+import com.ives.relative.entities.tiles.TileManager;
+import com.ives.relative.entities.tiles.TilePos;
+
+import java.util.HashMap;
 
 /**
  * Created by Ives on 12/1/2014.
  */
-public interface Planet {
+public abstract class Planet {
     int gravity = 0;
+    public TileManager tileManager = null;
+    public HashMap<TilePos, Tile> worldTiles = null;
 
     World world = null;
 
-    public void generatePlanet();
+    public abstract void generatePlanet();
 
-    public void placeTile(int x, int y);
+    public abstract Tile getTile(int x, int y);
 
-    public Tile getTile(int x, int y);
+    public abstract World getWorld();
 
-    public World getWorld();
+    public abstract TileManager getTileManager();
 
-    public void timeStep(float timeStep, int velocityIterations, int positionIterations);
+    public abstract void timeStep(float timeStep, int velocityIterations, int positionIterations);
 }
