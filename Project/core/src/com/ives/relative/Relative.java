@@ -10,7 +10,10 @@ public class Relative extends Game {
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
 
-	public GameManager gameManager;
+	public GameManager clientGameManager;
+	public GameManager serverGameManager;
+
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -24,7 +27,10 @@ public class Relative extends Game {
 		camera = new OrthographicCamera();
 		Gdx.graphics.setDisplayMode(1280, 720, false);
 
-		gameManager = new GameManager(this);
+
+		//Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.
+		serverGameManager = new GameManager(this, true);
+		clientGameManager = new GameManager(this, false);
 	}
 
 	@Override
@@ -32,7 +38,10 @@ public class Relative extends Game {
 		super.render();
 
 		//TODO is this the way to do it?
-		if(gameManager != null)
-			gameManager.render(Gdx.graphics.getDeltaTime());
+		if(clientGameManager != null)
+			clientGameManager.render(Gdx.graphics.getDeltaTime());
+
+		if(serverGameManager != null)
+			serverGameManager.render(Gdx.graphics.getDeltaTime());
 	}
 }

@@ -1,4 +1,4 @@
-package com.ives.relative.core.screens;
+package com.ives.relative.core.client.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -6,10 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.ives.relative.planet.PlanetFactory;
-import com.ives.relative.planet.TerrainGenerator;
 
 /**
  * Created by Ives on 12/1/2014.
@@ -20,19 +16,12 @@ public class GameScreen implements Screen {
     BitmapFont fpsFont;
 
     SpriteBatch batch;
-    PlanetFactory planetFactory;
-    TerrainGenerator terrainGenerator;
 
     public GameScreen(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
 
         fpsFont = new BitmapFont();
-
-        terrainGenerator = new TerrainGenerator();
-        planetFactory = new PlanetFactory(terrainGenerator);
-
-        planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
     }
 
     @Override

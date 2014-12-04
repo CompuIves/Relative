@@ -3,7 +3,6 @@ package com.ives.relative.planet.tiles;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.entities.components.*;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
@@ -15,9 +14,11 @@ import java.util.HashMap;
  */
 public class TileManager {
     public HashMap<String, SolidTile> solidTiles;
+    GameManager game;
 
-    public TileManager() {
+    public TileManager(GameManager game) {
         solidTiles = new HashMap<String, SolidTile>();
+        this.game = game;
 
         //This is TEMPORARY
         solidTiles.put("dirt", new SolidTile().setDurability(1).setId("dirt").setTexture(new Texture("dirt.png")).setAffectGravity(true));
@@ -69,7 +70,7 @@ public class TileManager {
         shape.dispose();
         e.add(new BodyComponent(body));
 
-        GameManager.engine.addEntity(e);
+        game.engine.addEntity(e);
 
         return e;
     }

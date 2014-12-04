@@ -13,9 +13,11 @@ import com.ives.relative.entities.components.WorldComponent;
  */
 public class PlanetFactory {
     TerrainGenerator terrainGenerator;
+    GameManager game;
 
-    public PlanetFactory(TerrainGenerator terrainGenerator) {
-        this.terrainGenerator = terrainGenerator;
+    public PlanetFactory(GameManager game) {
+        this.game = game;
+        this.terrainGenerator = new TerrainGenerator(game);
     }
 
     public Entity createPlanet(String id, String name, Vector2 gravity, int velocityIterations, int positionIterations) {
@@ -26,7 +28,7 @@ public class PlanetFactory {
 
         terrainGenerator.generateTerrain(e);
 
-        GameManager.engine.addEntity(e);
+        game.engine.addEntity(e);
         return e;
     }
 
