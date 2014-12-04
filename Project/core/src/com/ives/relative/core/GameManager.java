@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.signals.Signal;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.SnapshotArray;
@@ -17,6 +18,7 @@ import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.NameComponent;
 import com.ives.relative.entities.components.WorldComponent;
 import com.ives.relative.entities.systems.WorldSystem;
+import com.ives.relative.planet.PlanetFactory;
 import com.ives.relative.planet.tiles.TileManager;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class GameManager {
     Proxy proxy;
 
     public Relative relative;
+
+    PlanetFactory planetFactory;
 
     public static float PHYSICS_ITERATIONS = 1/45f;
 
@@ -56,6 +60,9 @@ public class GameManager {
             proxy = new ClientProxy(this, relative.camera, relative.batch);
 
         registerSystems();
+
+        planetFactory = new PlanetFactory(this);
+        planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
     }
 
     public void registerSystems() {
