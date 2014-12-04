@@ -1,4 +1,4 @@
-package com.ives.relative.entities.tiles.tilesorts;
+package com.ives.relative.planet.tiles.tilesorts;
 
 import com.badlogic.gdx.graphics.Texture;
 
@@ -11,7 +11,9 @@ public class SolidTile {
     int durability;
     float movementMultiplier;
 
-    public int width = 1, height = 1;
+    boolean affectGravity = false;
+
+    float width = 1, height = 1;
 
     boolean isConnectable;
 
@@ -30,17 +32,25 @@ public class SolidTile {
         return this;
     }
 
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
     public SolidTile setMovementMultiplier(float movementMultiplier) {
         this.movementMultiplier = movementMultiplier;
         return this;
     }
 
-    public SolidTile setWidth(int width) {
+    public SolidTile setWidth(float width) {
         this.width = width;
         return this;
     }
 
-    public SolidTile setHeight(int height) {
+    public SolidTile setHeight(float height) {
         this.height = height;
         return this;
     }
@@ -56,5 +66,14 @@ public class SolidTile {
 
     public Texture getTexture() {
         return texture;
+    }
+
+    public boolean isAffectGravity() {
+        return affectGravity;
+    }
+
+    public SolidTile setAffectGravity(boolean affectGravity) {
+        this.affectGravity = affectGravity;
+        return this;
     }
 }

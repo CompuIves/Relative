@@ -7,4 +7,8 @@ import com.badlogic.ashley.core.Component;
  */
 public class HealthComponent extends Component {
     int health = 100;
+
+    public HealthComponent(int health) {
+        this.health = health;
+    }
 }
