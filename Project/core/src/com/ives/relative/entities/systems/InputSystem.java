@@ -7,42 +7,56 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.InputProcessor;
-import com.ives.relative.entities.commands.Command;
-import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.InputComponent;
-import com.ives.relative.entities.components.VisualComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ives on 5/12/2014.
  */
 public class InputSystem extends EntitySystem implements InputProcessor {
+    private List<Integer> keysPressed;
+
+    Family family;
+
     private ImmutableArray<Entity> entities;
+
+    public InputSystem(Family family) {
+        this.family = family;
+        keysPressed = new ArrayList<Integer>();
+    }
 
     @Override
     public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(Family.all(InputComponent.class).get());
+        entities = engine.getEntitiesFor(family);
     }
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
+        for(Entity entity : entities) {
+            for (int key : keysPressed) {
+                InputComponent inputComponent = Mappers.input.get(entity);
+                inputComponent.commandKeys.get(key).execute(entity);
+            }
+        }
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        for(Entity entity : entities) {
-            InputComponent inputComponent = Mappers.input.get(entity);
-            inputComponent.commandKeys.get(keycode).execute(entity);
-        }
+        keysPressed.add(keycode);
         return true;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        return false;
+        keysPressed.remove(Integer.valueOf(keycode));
+        for(Entity entity : entities) {
+            InputComponent inputComponent = Mappers.input.get(entity);
+            inputComponent.commandKeys.get(keycode).antiExecute(entity);
+        }
+        return true;
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class SolidTile {
     String id;
+    String publicName = "";
     Texture texture;
     int durability;
     float movementMultiplier;
@@ -75,5 +76,13 @@ public class SolidTile {
     public SolidTile setAffectGravity(boolean affectGravity) {
         this.affectGravity = affectGravity;
         return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getPublicName() {
+        return publicName;
     }
 }

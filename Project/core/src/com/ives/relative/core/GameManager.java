@@ -3,14 +3,16 @@ package com.ives.relative.core;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.packets.EntityPacket;
+import com.ives.relative.core.packets.PlayerPacket;
 import com.ives.relative.core.server.ServerProxy;
+import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.PositionComponent;
-import com.ives.relative.entities.components.VelocityComponent;
 import com.ives.relative.entities.components.WorldComponent;
 import com.ives.relative.entities.systems.MovementSystem;
 import com.ives.relative.entities.systems.WorldSystem;
@@ -47,22 +49,22 @@ public class GameManager {
         tileManager = new TileManager(this);
         engine = new Engine();
 
-        if(isServer)
-            proxy = new ServerProxy(this);
-        else
-            proxy = new ClientProxy(this, relative.camera, relative.batch);
-
         registerSystems();
 
         Entity planet = PlanetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
         engine.addEntity(planet);
         terrainGenerator = new TerrainGenerator(this);
         terrainGenerator.generateTerrain(planet);
+
+        if(isServer)
+            proxy = new ServerProxy(this);
+        else
+            proxy = new ClientProxy(this, relative.camera, relative.batch);
     }
 
     public void registerSystems() {
         engine.addSystem(new WorldSystem(Family.all(WorldComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
-        engine.addSystem(new MovementSystem(Family.all(PositionComponent.class, VelocityComponent.class).get()));
+        engine.addSystem(new MovementSystem(Family.all(PositionComponent.class, BodyComponent.class).get()));
     }
 
     /**

@@ -6,12 +6,14 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ives.relative.entities.components.BodyComponent;
+import com.ives.relative.entities.components.TileComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.components.VisualComponent;
 
@@ -50,13 +52,17 @@ public class RenderSystem extends EntitySystem {
             if(body.getPosition().x > startX && body.getPosition().x < endX
                     && body.getPosition().y > startY && body.getPosition().y < endY) {
                 VisualComponent visual = Mappers.visual.get(entity);
-                batch.draw(new TextureRegion(visual.texture),
-                        body.getPosition().x - visual.width / 2,
-                        body.getPosition().y - visual.height / 2,
-                        visual.width / 2, visual.height / 2,
-                        visual.width, visual.height,
-                        1, 1,
-                        body.getTransform().getRotation() * MathUtils.radiansToDegrees);
+                if(Mappers.tile.get(entity) != null) {
+                    batch.draw(new TextureRegion(visual.texture),
+                            body.getPosition().x - visual.width / 2,
+                            body.getPosition().y - visual.height / 2,
+                            visual.width / 2, visual.height / 2,
+                            visual.width, visual.height,
+                            1, 1,
+                            body.getTransform().getRotation() * MathUtils.radiansToDegrees);
+                } else {
+                    batch.draw(visual.texture, body.getPosition().x -visual.height / 2, body.getPosition().y - visual.height / 2, visual.width, visual.height);
+                }
             }
         }
         batch.end();

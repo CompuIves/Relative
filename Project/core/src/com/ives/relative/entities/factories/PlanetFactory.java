@@ -19,6 +19,4 @@ public class PlanetFactory {
         return e;
     }
 
-
-
 }
