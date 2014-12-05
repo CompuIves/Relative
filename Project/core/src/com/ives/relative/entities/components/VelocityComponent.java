@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
  * Created by Ives on 2/12/2014.
  */
 public class VelocityComponent extends Component {
-    Vector2 velocity;
+    public Vector2 velocity;
 
     public VelocityComponent() {
         velocity = new Vector2();

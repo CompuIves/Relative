@@ -9,6 +9,7 @@ import com.ives.relative.core.Network;
 import com.ives.relative.core.Proxy;
 import com.ives.relative.core.client.screens.GameScreen;
 import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.entities.systems.InputSystem;
 import com.ives.relative.entities.systems.RenderSystem;
 import com.ives.relative.entities.systems.WorldSystem;
 
@@ -39,6 +40,7 @@ public class ClientProxy extends Proxy {
     @Override
     public void registerSystems() {
         game.engine.addSystem(new RenderSystem(batch, camera));
+        game.engine.addSystem(new InputSystem());
     }
 
     public void update(float delta) {

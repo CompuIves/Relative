@@ -1,5 +1,6 @@
 package com.ives.relative.entities.components.mappers;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.ives.relative.entities.components.*;
 
@@ -13,6 +14,7 @@ public class Mappers {
     public static final ComponentMapper<VisualComponent> visual = ComponentMapper.getFor(VisualComponent.class);
     public static final ComponentMapper<BodyComponent> body = ComponentMapper.getFor(BodyComponent.class);
     public static final ComponentMapper<WorldComponent> world = ComponentMapper.getFor(WorldComponent.class);
-
+    public static final ComponentMapper<MovementSpeedComponent> mvSpeed = ComponentMapper.getFor(MovementSpeedComponent.class);
+    public static final ComponentMapper<InputComponent> input = ComponentMapper.getFor(InputComponent.class);
 
 }

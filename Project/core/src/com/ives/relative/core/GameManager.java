@@ -1,28 +1,22 @@
 package com.ives.relative.core;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.signals.Signal;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.LongMap;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Registration;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.packets.EntityPacket;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.NameComponent;
+import com.ives.relative.entities.components.PositionComponent;
+import com.ives.relative.entities.components.VelocityComponent;
 import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.entities.systems.MovementSystem;
 import com.ives.relative.entities.systems.WorldSystem;
-import com.ives.relative.planet.PlanetFactory;
+import com.ives.relative.entities.factories.PlanetFactory;
+import com.ives.relative.planet.TerrainGenerator;
 import com.ives.relative.planet.tiles.TileManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -36,8 +30,7 @@ public class GameManager {
     Proxy proxy;
 
     public Relative relative;
-
-    PlanetFactory planetFactory;
+    TerrainGenerator terrainGenerator;
 
     public static float PHYSICS_ITERATIONS = 1/45f;
 
@@ -61,18 +54,30 @@ public class GameManager {
 
         registerSystems();
 
-        planetFactory = new PlanetFactory(this);
-        planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
+        Entity planet = PlanetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
+        engine.addEntity(planet);
+        terrainGenerator = new TerrainGenerator(this);
+        terrainGenerator.generateTerrain(planet);
     }
 
     public void registerSystems() {
         engine.addSystem(new WorldSystem(Family.all(WorldComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
+        engine.addSystem(new MovementSystem(Family.all(PositionComponent.class, VelocityComponent.class).get()));
     }
 
+    /**
+     * The central place for server and client to register the classes used by Kryo.
+     * @param kryo the kryo of the server or the kryo of the client.
+     */
     public void registerKryoClasses(Kryo kryo) {
         kryo.register(EntityPacket.class);
     }
 
+    /**
+     * Common update (gets called each time)
+     * This methods passes the update to the engine (common) and the proxy (also not common)
+     * @param delta delta time
+     */
     public void render(float delta) {
         engine.update(delta);
         proxy.update(delta);

@@ -43,7 +43,7 @@ public class ServerNetwork extends Network {
         server.bind(54555, 54777);
     }
 
-    public void sendEntityToAll(EntityPacket e) {
+    public void sendEntityPacketTCP(EntityPacket e) {
         System.out.println("Sent entity with id " + e.message);
         server.sendToAllTCP(e);
     }
@@ -57,7 +57,7 @@ public class ServerNetwork extends Network {
     public void connected(Connection connection) {
         ImmutableArray<Entity> entityList = game.engine.getEntitiesFor(Family.all(WorldComponent.class).get());
         for(Entity entity : entityList) {
-            sendEntityToAll(PacketFactory.createEntityPacket(entity));
+            sendEntityPacketTCP(PacketFactory.createEntityPacket(entity));
         }
     }
 }
