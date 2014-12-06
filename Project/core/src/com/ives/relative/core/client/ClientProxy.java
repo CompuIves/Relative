@@ -19,11 +19,11 @@ import com.ives.relative.entities.systems.RenderSystem;
  * Created by Ives on 4/12/2014.
  */
 public class ClientProxy extends Proxy {
-    GameManager game;
-    SpriteBatch batch;
-    OrthographicCamera camera;
+    private GameManager game;
+    private SpriteBatch batch;
+    private OrthographicCamera camera;
 
-    public GameScreen gameScreen;
+    private GameScreen gameScreen;
 
     public ClientProxy(GameManager game, OrthographicCamera camera, SpriteBatch batch) {
         this.game = game;

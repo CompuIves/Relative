@@ -1,9 +1,7 @@
 package com.ives.relative.entities.components;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
 
 /**
  * Created by Ives on 2/12/2014.

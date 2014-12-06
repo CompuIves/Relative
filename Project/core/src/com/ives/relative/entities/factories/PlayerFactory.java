@@ -14,12 +14,12 @@ public class PlayerFactory {
 
     /**
      * Creates a player
-     * @param internalName
-     * @param realName
-     * @param world
-     * @param position
-     * @param z
-     * @return
+     * @param internalName local name
+     * @param realName name visible to other players
+     * @param world the world the player is in
+     * @param position position
+     * @param z depth
+     * @return a new entity (player)
      */
     public static Entity createPlayer(String internalName, String realName, World world, Vector2 position, int z) {
         Entity e = new Entity();

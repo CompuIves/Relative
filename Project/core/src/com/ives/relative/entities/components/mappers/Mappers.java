@@ -1,6 +1,5 @@
 package com.ives.relative.entities.components.mappers;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.ives.relative.entities.components.*;
 

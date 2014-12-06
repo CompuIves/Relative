@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.*;
 import com.ives.relative.entities.factories.TileFactory;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 

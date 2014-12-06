@@ -5,12 +5,14 @@ import com.badlogic.ashley.core.Component;
 /**
  * Created by Ives on 5/12/2014.
  */
-public class BodyNetworkComponent extends Component{
-    public float x, y;
-    public int z;
+class BodyNetworkComponent extends Component{
+    private float x;
+    private float y;
+    private int z;
 
-    public float vX, vY;
-    public String world;
+    private float vX;
+    private float vY;
+    private String world;
 
     public BodyNetworkComponent(float x, float y, int z, float vX, float vY, String world) {
         this.x = x;

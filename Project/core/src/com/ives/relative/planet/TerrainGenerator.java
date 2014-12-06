@@ -1,15 +1,9 @@
 package com.ives.relative.planet;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.InputComponent;
-import com.ives.relative.entities.components.MovementSpeedComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
-import com.ives.relative.entities.factories.PlanetFactory;
-import com.ives.relative.entities.factories.PlayerFactory;
-import com.ives.relative.entities.factories.TileFactory;
 
 /**
  * Created by Ives on 4/12/2014.

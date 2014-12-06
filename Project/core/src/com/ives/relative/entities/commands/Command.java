@@ -10,7 +10,7 @@ public class Command {
 
     /**
      * Do the opposite of execute! For example when the key is released.
-     * @param entity
+     * @param entity the entity which should be acted upon
      */
     public void antiExecute(Entity entity) {}
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
  * Created by Ives on 5/12/2014.
  */
 public class CommandsMap<K, V> extends HashMap<K, V> {
-    protected V defaultCommand;
+    private V defaultCommand;
     public CommandsMap(V defaultCommand) {
         this.defaultCommand = defaultCommand;
     }
