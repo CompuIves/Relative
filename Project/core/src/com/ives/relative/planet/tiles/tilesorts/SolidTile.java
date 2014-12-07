@@ -1,30 +1,51 @@
 package com.ives.relative.planet.tiles.tilesorts;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import java.io.IOException;
 
 /**
  * Created by Ives on 2/12/2014.
  */
 public class SolidTile {
     String id;
-    String publicName = "";
-    Texture texture;
-    int durability;
-    float movementMultiplier;
-
-    boolean affectGravity = false;
-
+    String name;
+    String texture;
+    TextureRegion textureRegion;
+    int durability = 10;
+    float movementMultiplier = 1f;
+    boolean gravity = false;
     float width = 1, height = 1;
+    boolean isConnectable = false;
 
-    boolean isConnectable;
+
+    public SolidTile() {
+    }
+
+    public String getTexture() {
+        return texture;
+    }
+
+    public SolidTile(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public SolidTile setId(String id) {
         this.id = id;
         return this;
     }
 
-    public SolidTile setTexture(Texture texture) {
-        this.texture = texture;
+    public SolidTile setTextureRegion(TextureRegion textureRegion) {
+        this.textureRegion = textureRegion;
+        return this;
+    }
+
+    public SolidTile setTextureRegion(Texture texture) {
+        this.textureRegion = new TextureRegion(texture);
         return this;
     }
 
@@ -65,16 +86,16 @@ public class SolidTile {
         return durability;
     }
 
-    public Texture getTexture() {
-        return texture;
+    public TextureRegion getTextureRegion() {
+        return textureRegion;
     }
 
-    public boolean isAffectGravity() {
-        return affectGravity;
+    public boolean isGravity() {
+        return gravity;
     }
 
-    public SolidTile setAffectGravity(boolean affectGravity) {
-        this.affectGravity = affectGravity;
+    public SolidTile setGravity(boolean gravity) {
+        this.gravity = gravity;
         return this;
     }
 
@@ -82,7 +103,31 @@ public class SolidTile {
         return id;
     }
 
-    public String getPublicName() {
-        return publicName;
+    public String getName() {
+        return name;
+    }
+
+    public boolean processTexture(String root) {
+        if(texture == null) {
+            texture = "tiles/" + id + ".png";
+        }
+        try {
+            setTextureRegion(new Texture(Gdx.files.local(root + texture)));
+            return true;
+        } catch (Exception e) {
+            Gdx.app.error("TextureLoading", "Couldn't load the texture for: " + getId() + ", ignoring block.");
+            return false;
+        }
+    }
+
+    public SolidTile setTexture(String texture) {
+        this.texture = texture;
+        return this;
+    }
+
+    public void processID(FileHandle fileHandle) {
+        if(id == null || id.equals("")) {
+            id = fileHandle.nameWithoutExtension();
+        }
     }
 }

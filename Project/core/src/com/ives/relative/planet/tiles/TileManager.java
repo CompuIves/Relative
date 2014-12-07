@@ -1,7 +1,9 @@
 package com.ives.relative.planet.tiles;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.entities.factories.TileFactory;
@@ -19,10 +21,6 @@ public class TileManager {
     public TileManager(GameManager game) {
         solidTiles = new HashMap<String, SolidTile>();
         this.game = game;
-
-        //This is TEMPORARY
-        solidTiles.put("dirt", new SolidTile().setDurability(1).setId("dirt").setTexture(new Texture("dirt.png")).setAffectGravity(true));
-        solidTiles.put("bedrock", new SolidTile().setDurability(123).setId("bedrock").setTexture(new Texture("bedrock.png")));
     }
 
     public static PolygonShape getCube(float width, float height) {
@@ -32,9 +30,18 @@ public class TileManager {
     }
 
     public Entity createTile(World world, float x, float y, int z, String tileID, boolean gravity) {
-        Entity e = TileFactory.createTile(world, x, y, z, solidTiles.get(tileID), gravity);
-        game.engine.addEntity(e);
-        return e;
+        if(solidTiles.get(tileID) != null) {
+            Entity e = TileFactory.createTile(world, x, y, z, solidTiles.get(tileID), gravity);
+            game.engine.addEntity(e);
+            return e;
+        } else {
+            Gdx.app.error("WorldBuilding " + (game.isServer() ? "Server" : "Client"), "Couldn't load block with id: " + tileID +
+                    " with position " + x + ", " + y + ", " + z + ", ignoring the block for now.");
+            return null;
+        }
     }
 
+    public void addTile(String id, SolidTile tile) {
+        solidTiles.put(id, tile);
+    }
 }

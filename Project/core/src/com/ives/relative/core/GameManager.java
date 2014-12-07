@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
-import com.ives.relative.core.packets.EntityPacket;
 import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.PositionComponent;
@@ -30,7 +29,7 @@ public class GameManager {
     Proxy proxy;
 
     public Relative relative;
-    TerrainGenerator terrainGenerator;
+    public TerrainGenerator terrainGenerator;
 
     public static float PHYSICS_ITERATIONS = 1/45f;
 
@@ -52,7 +51,6 @@ public class GameManager {
         Entity planet = PlanetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
         engine.addEntity(planet);
         terrainGenerator = new TerrainGenerator(this);
-        terrainGenerator.generateTerrain(planet);
 
         if(isServer)
             proxy = new ServerProxy(this);
@@ -70,7 +68,10 @@ public class GameManager {
      * @param kryo the kryo of the server or the kryo of the client.
      */
     public void registerKryoClasses(Kryo kryo) {
-        kryo.register(EntityPacket.class);
+    }
+
+    public boolean isServer() {
+        return isServer;
     }
 
     /**
@@ -81,5 +82,6 @@ public class GameManager {
     public void render(float delta) {
         engine.update(delta);
         proxy.update(delta);
+
     }
 }

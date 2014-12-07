@@ -23,13 +23,13 @@ public class TileFactory {
     public static Entity createTile(World world, float x, float y, int z, SolidTile tile, boolean gravity) {
         Entity e = new Entity();
         e.add(new PositionComponent(world, x, y, z));
-        e.add(new NameComponent(tile.getId(), tile.getPublicName()));
+        e.add(new NameComponent(tile.getId(), tile.getName()));
         e.add(new TileComponent(tile));
         e.add(new DurabilityComponent(tile.getDurability()));
-        e.add(new VisualComponent(tile.getTexture(), tile.getWidth(), tile.getHeight()));
+        e.add(new VisualComponent(tile.getTextureRegion(), tile.getWidth(), tile.getHeight()));
 
         BodyDef bodyDef = new BodyDef();
-        if(tile.isAffectGravity() && gravity)
+        if(tile.isGravity() && gravity)
             bodyDef.type = BodyDef.BodyType.DynamicBody;
         else
             bodyDef.type = BodyDef.BodyType.StaticBody;

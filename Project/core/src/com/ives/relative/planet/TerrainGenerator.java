@@ -21,7 +21,6 @@ public class TerrainGenerator {
             for(int x = 0; x < 200; x++)
                 game.tileManager.createTile(world, x, y, 0, "dirt", false);
         }
-
         for(int y = 0; y < 1; y++) {
             for(int x = 0; x < 200; x++) {
                 game.tileManager.createTile(world, x, y, 0, "bedrock", false);

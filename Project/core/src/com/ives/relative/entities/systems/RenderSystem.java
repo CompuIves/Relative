@@ -26,7 +26,6 @@ public class RenderSystem extends EntitySystem {
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
         this.batch = batch;
         this.camera = camera;
-        Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     }
 
     @Override
@@ -51,7 +50,7 @@ public class RenderSystem extends EntitySystem {
                     && body.getPosition().y > startY && body.getPosition().y < endY) {
                 VisualComponent visual = Mappers.visual.get(entity);
                 if(Mappers.tile.get(entity) != null) {
-                    batch.draw(new TextureRegion(visual.texture),
+                    batch.draw(visual.texture,
                             body.getPosition().x - visual.width / 2,
                             body.getPosition().y - visual.height / 2,
                             visual.width / 2, visual.height / 2,

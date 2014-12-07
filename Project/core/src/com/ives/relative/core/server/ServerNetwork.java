@@ -8,8 +8,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.EntityPacket;
-import com.ives.relative.core.packets.PacketFactory;
 import com.ives.relative.entities.components.WorldComponent;
 
 import java.io.IOException;
@@ -51,16 +49,13 @@ public class ServerNetwork extends Network {
 
     @Override
     public void received(Connection connection, final Object object) {
-        if(object instanceof EntityPacket) {
-
-        }
     }
 
     @Override
     public void connected(Connection connection) {
         ImmutableArray<Entity> entityList = game.engine.getEntitiesFor(Family.all(WorldComponent.class).get());
         for(Entity entity : entityList) {
-            sendObjectTCP(PacketFactory.createFullEntityPacket(entity, "requestPlayer"));
+            //sendObjectTCP(PacketFactory.createFullEntityPacket(entity, "requestPlayer"));
         }
     }
 }
