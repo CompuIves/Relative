@@ -1,0 +1,7 @@
+{
+	"id": "bedrock",
+	"name": "Bedrock",
+	"durability": 150,
+	"gravity": false,
+	"texture": "tiles/assets/bedrock.png"
+}

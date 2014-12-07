@@ -1,0 +1,7 @@
+{
+	"id": "dirt",
+	"name": "Dirt",
+	"durability": 3,
+	"gravity": true,
+	"texture": "tiles/assets/dirt.png"
+}
