@@ -3,20 +3,8 @@ package com.ives.relative.core;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Registration;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
-import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.packets.Packet;
@@ -84,7 +72,6 @@ public class GameManager {
      * @param kryo the Kryo of the server or the Kryo of the client.
      */
     public void registerKryoClasses(Kryo kryo) {
-        kryo.register(Packet.class);
         kryo.register(SolidTile.class);
         kryo.register(PlayerPacket.class);
         kryo.register(TilePacket.class);

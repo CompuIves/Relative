@@ -11,19 +11,8 @@ import com.ives.relative.entities.components.WorldComponent;
  * Created by Ives on 7/12/2014.
  */
 public class TilePacket implements Packet {
-    String cookie;
-
-    public TilePacket() {
-    }
-
-    public TilePacket(String cookie) {
-        this.cookie = cookie;
-    }
-
     @Override
     public void handle(final GameManager game) {
-
-
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

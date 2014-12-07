@@ -1,16 +1,13 @@
 package com.ives.relative.core.server;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
+import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.PlayerPacket;
 import com.ives.relative.core.packets.TilePacket;
-import com.ives.relative.entities.components.WorldComponent;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.io.IOException;
@@ -27,26 +24,26 @@ public class ServerNetwork extends Network {
     public ServerNetwork(GameManager game) {
         this.game = game;
 
+        this.server = new Server();
+        kryo = server.getKryo();
+        game.registerKryoClasses(kryo);
+
         try {
             startServer();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        kryo = server.getKryo();
-        game.registerKryoClasses(kryo);
-
         server.addListener(this);
     }
 
     private void startServer() throws IOException{
-        this.server = new Server();
         server.start();
         server.bind(54555, 54777);
     }
 
     @Override
-    public void sendObjectTCP(Object o) {
+    public void sendObjectTCP(Packet o) {
         System.out.println("Sent an object!");
         server.sendToAllTCP(o);
     }

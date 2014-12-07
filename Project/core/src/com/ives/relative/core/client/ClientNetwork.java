@@ -19,6 +19,10 @@ public class ClientNetwork extends Network {
 
     public ClientNetwork(GameManager game) {
         this.game = game;
+        client = new Client();
+
+        kryo = client.getKryo();
+        game.registerKryoClasses(kryo);
 
         try {
             startClient();
@@ -26,15 +30,10 @@ public class ClientNetwork extends Network {
             e.printStackTrace();
         }
 
-        kryo = client.getKryo();
-        game.registerKryoClasses(kryo);
-
-
         client.addListener(this);
     }
 
     private void startClient() throws IOException {
-        client = new Client();
         client.start();
         client.connect(5000, "127.0.0.1", 54555, 54777);
     }
@@ -52,7 +51,7 @@ public class ClientNetwork extends Network {
     }
 
     @Override
-    public void sendObjectTCP(Object o) {
+    public void sendObjectTCP(Packet o) {
         client.sendTCP(o);
     }
 }
