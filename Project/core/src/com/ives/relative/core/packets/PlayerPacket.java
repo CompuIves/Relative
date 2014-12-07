@@ -1,21 +1,20 @@
 package com.ives.relative.core.packets;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.WorldComponent;
-import com.ives.relative.entities.components.mappers.Mappers;
+import com.ives.relative.entities.components.InputComponent;
 import com.ives.relative.entities.factories.PlayerFactory;
+import com.ives.relative.entities.systems.WorldSystem;
 
 /**
  * Created by Ives on 7/12/2014.
+ * Server sends a packet to the client with a player, this gets called when the client connects and when a new client connects
+ * connectionID for knowing which client sent it (to take control over the player)
  */
 public class PlayerPacket implements Packet {
+    int connectionID;
     String internalName;
     String realName;
     String worldID;
@@ -25,29 +24,26 @@ public class PlayerPacket implements Packet {
     public PlayerPacket() {
     }
 
-    public PlayerPacket(String internalName, String realName, String worldID, float x, float y, int z) {
+    public PlayerPacket(String internalName, String realName, String worldID, float x, float y, int z, int connectionID) {
         this.internalName = internalName;
         this.realName = realName;
         this.worldID = worldID;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.connectionID = connectionID;
     }
 
     @Override
     public void handle(final GameManager game) {
-        System.out.println("IT FRICKING WORKS");
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                World world = null;
-                ImmutableArray<Entity> entities = game.engine.getEntitiesFor(Family.all(WorldComponent.class, NameComponent.class).get());
-                for(Entity e : entities) {
-                    if(Mappers.name.get(e).internalName.equals(worldID)) {
-                        world = Mappers.world.get(e).world;
-                    }
-                }
-                game.engine.addEntity(PlayerFactory.createPlayer(internalName, realName, world, new Vector2(x, y), z));
+                Entity entity = PlayerFactory.createPlayer(internalName, realName, game.engine.getSystem(WorldSystem.class).getPlanet(worldID), new Vector2(x, y), z);
+                //Add a inputcomponent for handling inputs to the player!
+                if(game.proxy.network.connectionID == connectionID)
+                    entity.add(new InputComponent());
+                game.engine.addEntity(entity);
             }
         });
     }

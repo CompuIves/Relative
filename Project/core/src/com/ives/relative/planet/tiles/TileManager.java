@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.factories.TileFactory;
+import com.ives.relative.entities.systems.WorldSystem;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.util.HashMap;
@@ -29,9 +31,10 @@ public class TileManager {
         return polygonShape;
     }
 
-    public Entity createTile(World world, float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(String worldID, float x, float y, int z, String tileID, boolean gravity) {
         if(solidTiles.get(tileID) != null) {
-            Entity e = TileFactory.createTile(world, x, y, z, solidTiles.get(tileID), gravity);
+            Entity world = game.engine.getSystem(WorldSystem.class).getPlanet(worldID);
+            Entity e = TileFactory.createTile(worldID, Mappers.world.get(world).world, x, y, z, solidTiles.get(tileID), gravity);
             game.engine.addEntity(e);
             return e;
         } else {

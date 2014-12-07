@@ -42,7 +42,7 @@ public class ClientProxy extends Proxy {
         InputProcessor inputProcessor = new InputSystem(Family.all(InputComponent.class).get());
         Gdx.input.setInputProcessor(inputProcessor);
 
-        game.engine.addSystem(new RenderSystem(batch, camera));
+        game.engine.addSystem(new RenderSystem(batch, camera, game.engine));
         game.engine.addSystem((EntitySystem) inputProcessor);
         game.engine.addSystem(new Box2DDebugRendererSystem(Family.all(WorldComponent.class).get(), camera));
     }

@@ -1,4 +1,4 @@
-package com.ives.relative.assets.json;
+package com.ives.relative.assets.modules.json;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

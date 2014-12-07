@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.ives.relative.core.GameManager;
 import com.ives.relative.entities.components.BodyComponent;
+import com.ives.relative.entities.components.InputComponent;
+import com.ives.relative.entities.components.PositionComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.components.VisualComponent;
 
@@ -22,10 +25,12 @@ public class RenderSystem extends EntitySystem {
     private ImmutableArray<Entity> entities;
     private SpriteBatch batch;
     private OrthographicCamera camera;
+    private Engine engine;
 
-    public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
+    public RenderSystem(SpriteBatch batch, OrthographicCamera camera, Engine engine) {
         this.batch = batch;
         this.camera = camera;
+        this.engine = engine;
     }
 
     @Override
@@ -35,6 +40,13 @@ public class RenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
+        ImmutableArray<Entity> playerEntities = engine.getEntitiesFor(Family.all(InputComponent.class, PositionComponent.class).get());
+        if(playerEntities.size() != 0) {
+            Entity player = playerEntities.first();
+            Body playerBody = Mappers.body.get(player).body;
+            camera.position.x = playerBody.getPosition().x;
+            camera.position.y = playerBody.getPosition().y + 4;
+        }
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 

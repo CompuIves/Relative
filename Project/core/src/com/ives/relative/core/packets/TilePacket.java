@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
 public class TilePacket implements Packet {
     SolidTile tile;
     byte[] textureBytes;
+    int width, height;
+    int format;
 
     public TilePacket(SolidTile tile) {
         this.tile = tile;
@@ -22,7 +24,11 @@ public class TilePacket implements Packet {
         Pixmap pixmap = tile.textureRegion.getTexture().getTextureData().consumePixmap();
         ByteBuffer pixels = pixmap.getPixels();
         textureBytes = new byte[pixels.limit()];
-        pixels.get(textureBytes);
+        pixels.get(textureBytes, 0, textureBytes.length);
+
+        format = pixmap.getFormat().ordinal();
+        width = pixmap.getWidth();
+        height = pixmap.getHeight();
     }
 
     public TilePacket() {}
@@ -32,7 +38,11 @@ public class TilePacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Pixmap pixmap = new Pixmap(textureBytes, 0, textureBytes.length);
+                Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.values()[format]);
+                ByteBuffer pixels = pixmap.getPixels();
+                pixels.clear();
+                pixels.put(textureBytes);
+                pixels.position(0);
                 Texture texture = new Texture(pixmap);
                 TextureRegion textureRegion = new TextureRegion(texture);
                 tile.textureRegion = textureRegion;

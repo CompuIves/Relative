@@ -13,15 +13,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class GameScreen implements Screen {
     OrthographicCamera camera;
 
-    BitmapFont fpsFont;
-
     SpriteBatch batch;
 
     public GameScreen(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
-
-        fpsFont = new BitmapFont();
     }
 
     @Override

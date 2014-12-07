@@ -1,10 +1,12 @@
 package com.ives.relative.core.server;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
+import com.ives.relative.core.packets.CreatePlanetPacket;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.PlayerPacket;
 import com.ives.relative.core.packets.TilePacket;
@@ -43,9 +45,9 @@ public class ServerNetwork extends Network {
     }
 
     @Override
-    public void sendObjectTCP(Packet o) {
+    public void sendObjectTCP(int connectionID, Packet o) {
         System.out.println("Sent a packet named: " + o.getClass().getSimpleName());
-        server.sendToAllTCP(o);
+        server.sendToTCP(connectionID, o);
     }
 
     @Override
@@ -54,12 +56,24 @@ public class ServerNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        sendObjectTCP(new PlayerPacket("test", "Test", "earth", 10, 10, 0));
+        super.connected(connection);
+        loginClient(connection);
+    }
 
+    @Override
+    public void sendObjectToAllTCP(Packet o) {
+        server.sendToAllTCP(o);
+    }
+
+    private void loginClient(Connection connection) {
+        sendObjectToAllTCP(new PlayerPacket("player" + MathUtils.random(0, 32), "Player", "earth", 10, 10, 0, connection.getID()));
 
         for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
             SolidTile tile = (SolidTile) entry.getValue();
-            sendObjectTCP(new TilePacket(tile));
+            sendObjectTCP(connection.getID(), new TilePacket(tile));
         }
+        sendObjectTCP(connection.getID(), new CreatePlanetPacket());
     }
+
+
 }

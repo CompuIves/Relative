@@ -20,9 +20,9 @@ public class TileFactory {
      * @param tile the tile
      * @return the new entity created
      */
-    public static Entity createTile(World world, float x, float y, int z, SolidTile tile, boolean gravity) {
+    public static Entity createTile(String worldID, World world, float x, float y, int z, SolidTile tile, boolean gravity) {
         Entity e = new Entity();
-        e.add(new PositionComponent(world, x, y, z));
+        e.add(new PositionComponent(x, y, z, worldID));
         e.add(new NameComponent(tile.id, tile.name));
         e.add(new TileComponent(tile));
         e.add(new DurabilityComponent(tile.durability));

@@ -3,15 +3,19 @@ package com.ives.relative.core;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
+import com.ives.relative.core.packets.CreatePlanetPacket;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.PlayerPacket;
 import com.ives.relative.core.packets.TilePacket;
 import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.BodyComponent;
+import com.ives.relative.entities.components.NameComponent;
 import com.ives.relative.entities.components.PositionComponent;
 import com.ives.relative.entities.components.WorldComponent;
 import com.ives.relative.entities.systems.MovementSystem;
@@ -30,7 +34,7 @@ public class GameManager {
     public Engine engine;
     public TileManager tileManager;
 
-    Proxy proxy;
+    public Proxy proxy;
 
     public Relative relative;
     public TerrainGenerator terrainGenerator;
@@ -63,7 +67,7 @@ public class GameManager {
     }
 
     public void registerSystems() {
-        engine.addSystem(new WorldSystem(Family.all(WorldComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
+        engine.addSystem(new WorldSystem(Family.all(WorldComponent.class, NameComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
         engine.addSystem(new MovementSystem(Family.all(PositionComponent.class, BodyComponent.class).get()));
     }
 
@@ -77,6 +81,7 @@ public class GameManager {
         kryo.register(PlayerPacket.class);
         kryo.register(TilePacket.class);
         kryo.register(byte[].class);
+        kryo.register(CreatePlanetPacket.class);
     }
 
     public boolean isServer() {

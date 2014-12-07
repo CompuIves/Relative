@@ -3,7 +3,7 @@ package com.ives.relative.core.server;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.ives.relative.assets.json.JSONIndexer;
+import com.ives.relative.assets.modules.ModuleIndexer;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Proxy;
 import com.ives.relative.entities.components.WorldComponent;
@@ -13,12 +13,13 @@ import com.ives.relative.entities.components.WorldComponent;
  */
 public class ServerProxy extends Proxy {
     GameManager game;
-    JSONIndexer jsonIndexer;
+    ModuleIndexer moduleIndexer;
 
     public ServerProxy(GameManager game) {
         this.game = game;
-        jsonIndexer = new JSONIndexer(game.tileManager);
-        jsonIndexer.getModules();
+        moduleIndexer = new ModuleIndexer(game.tileManager);
+        moduleIndexer.indexModules(false);
+        moduleIndexer.loadModules();
         generateTerrain();
         registerSystems();
 

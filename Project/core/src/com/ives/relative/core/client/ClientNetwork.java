@@ -46,12 +46,13 @@ public class ClientNetwork extends Network {
     @Override
     public void received(Connection connection, Object object) {
         if(object instanceof Packet) {
+            System.out.println("Received packet with type: " + object.getClass().getSimpleName());
             ((Packet) object).handle(game);
         }
     }
 
     @Override
-    public void sendObjectTCP(Packet o) {
+    public void sendObjectTCP(int connectionID, Packet o) {
         client.sendTCP(o);
     }
 }
