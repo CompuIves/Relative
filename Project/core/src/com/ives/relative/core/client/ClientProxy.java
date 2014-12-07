@@ -30,11 +30,11 @@ public class ClientProxy extends Proxy {
         this.batch = batch;
         this.camera = camera;
 
-        network  = new ClientNetwork(game);
-
         registerSystems();
         gameScreen = new GameScreen(camera, batch);
         game.relative.setScreen(gameScreen);
+
+        network  = new ClientNetwork(game);
     }
 
     @Override

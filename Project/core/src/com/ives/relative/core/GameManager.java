@@ -3,10 +3,25 @@ package com.ives.relative.core;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Registration;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
+import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.packets.PlayerPacket;
+import com.ives.relative.core.packets.TilePacket;
 import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.PositionComponent;
@@ -16,6 +31,7 @@ import com.ives.relative.entities.systems.WorldSystem;
 import com.ives.relative.entities.factories.PlanetFactory;
 import com.ives.relative.planet.TerrainGenerator;
 import com.ives.relative.planet.tiles.TileManager;
+import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -65,9 +81,13 @@ public class GameManager {
 
     /**
      * The central place for server and client to register the classes used by Kryo.
-     * @param kryo the kryo of the server or the kryo of the client.
+     * @param kryo the Kryo of the server or the Kryo of the client.
      */
     public void registerKryoClasses(Kryo kryo) {
+        kryo.register(Packet.class);
+        kryo.register(SolidTile.class);
+        kryo.register(PlayerPacket.class);
+        kryo.register(TilePacket.class);
     }
 
     public boolean isServer() {
@@ -82,6 +102,5 @@ public class GameManager {
     public void render(float delta) {
         engine.update(delta);
         proxy.update(delta);
-
     }
 }

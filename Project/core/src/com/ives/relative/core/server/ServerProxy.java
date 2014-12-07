@@ -17,11 +17,12 @@ public class ServerProxy extends Proxy {
 
     public ServerProxy(GameManager game) {
         this.game = game;
-        network = new ServerNetwork(game);
         jsonIndexer = new JSONIndexer(game.tileManager);
         jsonIndexer.getModules();
         generateTerrain();
         registerSystems();
+
+        network = new ServerNetwork(game);
     }
 
     public void registerSystems() {

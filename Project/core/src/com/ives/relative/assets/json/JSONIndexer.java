@@ -52,7 +52,7 @@ public class JSONIndexer {
         for(FileHandle fileHandle : fileHandles) {
             SolidTile tile = TileReader.readFile(fileHandle);
             if(tile != null)
-                this.tileManager.addTile(tile.getId(), tile);
+                this.tileManager.addTile(tile.id, tile);
         }
     }
 }

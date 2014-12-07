@@ -8,9 +8,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
+import com.ives.relative.core.packets.PlayerPacket;
+import com.ives.relative.core.packets.TilePacket;
 import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -53,9 +57,14 @@ public class ServerNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        ImmutableArray<Entity> entityList = game.engine.getEntitiesFor(Family.all(WorldComponent.class).get());
-        for(Entity entity : entityList) {
-            //sendObjectTCP(PacketFactory.createFullEntityPacket(entity, "requestPlayer"));
+        sendObjectTCP(new PlayerPacket("test", "Test", "earth", 10, 10, 0));
+
+
+        for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
+            SolidTile tile = (SolidTile) entry.getValue();
+            sendObjectTCP(tile);
         }
+
+        sendObjectTCP(new TilePacket());
     }
 }

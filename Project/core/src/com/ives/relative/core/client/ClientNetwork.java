@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
+import com.ives.relative.core.packets.Packet;
 
 import java.io.IOException;
 
@@ -28,6 +29,7 @@ public class ClientNetwork extends Network {
         kryo = client.getKryo();
         game.registerKryoClasses(kryo);
 
+
         client.addListener(this);
     }
 
@@ -44,7 +46,9 @@ public class ClientNetwork extends Network {
 
     @Override
     public void received(Connection connection, Object object) {
-
+        if(object instanceof Packet) {
+            ((Packet) object).handle(game);
+        }
     }
 
     @Override
