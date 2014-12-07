@@ -44,7 +44,7 @@ public class ServerNetwork extends Network {
 
     @Override
     public void sendObjectTCP(Packet o) {
-        System.out.println("Sent an object!");
+        System.out.println("Sent a packet named: " + o.getClass().getSimpleName());
         server.sendToAllTCP(o);
     }
 
@@ -59,9 +59,7 @@ public class ServerNetwork extends Network {
 
         for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
             SolidTile tile = (SolidTile) entry.getValue();
-            sendObjectTCP(tile);
+            sendObjectTCP(new TilePacket(tile));
         }
-
-        sendObjectTCP(new TilePacket());
     }
 }

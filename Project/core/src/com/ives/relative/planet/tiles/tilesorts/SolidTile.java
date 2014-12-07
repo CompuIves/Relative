@@ -1,14 +1,11 @@
 package com.ives.relative.planet.tiles.tilesorts;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ives.relative.core.GameManager;
-import com.ives.relative.core.packets.Packet;
 
 /**
  * Created by Ives on 2/12/2014.
  */
-public class SolidTile implements Packet {
+public class SolidTile {
     public String id;
     public String name;
     public String texture;
@@ -21,16 +18,5 @@ public class SolidTile implements Packet {
 
 
     public SolidTile() {
-    }
-
-    @Override
-    public void handle(final GameManager game) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                game.tileManager.addTile(id, SolidTile.this);
-            }
-        });
-
     }
 }

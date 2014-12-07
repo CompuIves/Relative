@@ -1,32 +1,43 @@
 package com.ives.relative.core.packets;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.planet.tiles.tilesorts.SolidTile;
+
+import java.nio.ByteBuffer;
 
 /**
  * Created by Ives on 7/12/2014.
  */
 public class TilePacket implements Packet {
+    SolidTile tile;
+    byte[] textureBytes;
+
+    public TilePacket(SolidTile tile) {
+        this.tile = tile;
+        tile.textureRegion.getTexture().getTextureData().prepare();
+        Pixmap pixmap = tile.textureRegion.getTexture().getTextureData().consumePixmap();
+        ByteBuffer pixels = pixmap.getPixels();
+        textureBytes = new byte[pixels.limit()];
+        pixels.get(textureBytes);
+    }
+
+    public TilePacket() {}
+
     @Override
     public void handle(final GameManager game) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                ImmutableArray<Entity> entities = game.engine.getEntitiesFor(Family.all(WorldComponent.class).get());
-                for(Entity entity : entities) {
-                    //game.terrainGenerator.generateTerrain(entity);
-                    uniqueMaker();
-                }
+                Pixmap pixmap = new Pixmap(textureBytes, 0, textureBytes.length);
+                Texture texture = new Texture(pixmap);
+                TextureRegion textureRegion = new TextureRegion(texture);
+                tile.textureRegion = textureRegion;
+                game.tileManager.addTile(tile.id, tile);
             }
         });
-
-    }
-
-    public void uniqueMaker() {
-        System.out.println("COOKIE");
     }
 }

@@ -72,9 +72,11 @@ public class GameManager {
      * @param kryo the Kryo of the server or the Kryo of the client.
      */
     public void registerKryoClasses(Kryo kryo) {
+        kryo.register(Packet.class);
         kryo.register(SolidTile.class);
         kryo.register(PlayerPacket.class);
         kryo.register(TilePacket.class);
+        kryo.register(byte[].class);
     }
 
     public boolean isServer() {
