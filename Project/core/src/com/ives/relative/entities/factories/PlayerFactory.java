@@ -1,5 +1,6 @@
 package com.ives.relative.entities.factories;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,12 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.*;
 import com.ives.relative.entities.components.mappers.Mappers;
-import com.ives.relative.planet.tiles.TileManager;
+import com.ives.relative.entities.systems.WorldSystem;
 
 /**
  * Created by Ives on 5/12/2014.
  */
-public class PlayerFactory {
+public class PlayerFactory extends Factory {
 
     /**
      * Creates a player
@@ -23,26 +24,34 @@ public class PlayerFactory {
      * @param z depth
      * @return a new entity (player)
      */
-    public static Entity createPlayer(String internalName, String realName, Entity worldEntity, Vector2 position, int z) {
+    public Entity createPlayer(String internalName, String realName, Entity worldEntity, Vector2 position, int z) {
         String worldID = Mappers.name.get(worldEntity).internalName;
-        World world = Mappers.world.get(worldEntity).world;
-
         Entity e = new Entity();
         e.add(new NameComponent(internalName, realName));
         e.add(new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
         e.add(new HealthComponent(100));
-        e.add(new PositionComponent(position, z, worldID));
         e.add(new MovementSpeedComponent(3.5f));
+        Body body = createBody(e, position.x, position.y, 0, 0, worldEntity);
+        e.add(new BodyComponent(body, z, worldID));
 
+        return e;
+    }
+
+    @Override
+    public Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x, position.y);
+        bodyDef.position.set(x, y);
+
+        World world = Mappers.world.get(planet).world;
 
         Body body = world.createBody(bodyDef);
         body.setFixedRotation(true);
-        Shape shape = TileManager.getCube(1.0f, 1.0f);
         FixtureDef fixtureDef = new FixtureDef();
+        Shape shape = new CircleShape();
         fixtureDef.shape = shape;
+        shape.setRadius(0.5f);
+
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 10.0f;
         fixtureDef.friction = 0.8f;
@@ -56,8 +65,11 @@ public class PlayerFactory {
         fixture.setUserData(e);
         body.setUserData(e);
         shape.dispose();
-        e.add(new BodyComponent(body));
+        return body;
+    }
 
-        return e;
+    @Override
+    public VisualComponent createVisual() {
+        return (new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
     }
 }

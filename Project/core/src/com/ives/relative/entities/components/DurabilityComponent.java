@@ -11,4 +11,7 @@ public class DurabilityComponent extends Component {
     public DurabilityComponent(int durability) {
         this.durability = durability;
     }
+
+    public DurabilityComponent() {
+    }
 }

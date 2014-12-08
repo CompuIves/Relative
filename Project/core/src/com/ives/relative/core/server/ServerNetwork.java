@@ -1,5 +1,6 @@
 package com.ives.relative.core.server;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -20,14 +21,13 @@ import java.util.Map;
  */
 public class ServerNetwork extends Network {
     GameManager game;
-    Server server;
-    Kryo kryo;
+    public Server server;
 
-    public ServerNetwork(GameManager game) {
+    public ServerNetwork(GameManager game, Server server) {
+        super(server);
         this.game = game;
-
-        this.server = new Server();
-        kryo = server.getKryo();
+        this.server = server;
+        super.kryo = server.getKryo();
         game.registerKryoClasses(kryo);
 
         try {
@@ -52,12 +52,24 @@ public class ServerNetwork extends Network {
 
     @Override
     public void received(Connection connection, final Object object) {
+        if(object instanceof Packet) {
+            ((Packet) object).handle(game);
+        }
     }
 
     @Override
     public void connected(Connection connection) {
         super.connected(connection);
-        loginClient(connection);
+    }
+
+    public void closeRemoteConnection(int connection, String message) {
+
+    }
+
+    @Override
+    public void closeConnection(int connection, final String message) {
+        Gdx.app.log("ServerConnection", message);
+        server.getConnections()[connection].close();
     }
 
     @Override
@@ -65,15 +77,13 @@ public class ServerNetwork extends Network {
         server.sendToAllTCP(o);
     }
 
-    private void loginClient(Connection connection) {
-        sendObjectToAllTCP(new PlayerPacket("player" + MathUtils.random(0, 32), "Player", "earth", 10, 10, 0, connection.getID()));
-
-        for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
-            SolidTile tile = (SolidTile) entry.getValue();
-            sendObjectTCP(connection.getID(), new TilePacket(tile));
-        }
-        sendObjectTCP(connection.getID(), new CreatePlanetPacket());
+    @Override
+    public void sendObjectUDP(int connectionID, Packet o) {
+        server.sendToUDP(connectionID, o);
     }
 
-
+    @Override
+    public void sendObjectToAllUDP(Packet o) {
+        server.sendToAllUDP(o);
+    }
 }

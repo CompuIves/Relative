@@ -125,7 +125,10 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+        compile "org.reflections:reflections:0.9.9"
     }
+
+
 }
 
 tasks.eclipse.doLast {

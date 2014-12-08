@@ -11,4 +11,7 @@ public class HealthComponent extends Component {
     public HealthComponent(int health) {
         this.health = health;
     }
+
+    public HealthComponent() {
+    }
 }

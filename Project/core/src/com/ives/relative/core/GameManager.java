@@ -1,29 +1,31 @@
 package com.ives.relative.core;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.ives.relative.Relative;
 import com.ives.relative.core.client.ClientProxy;
-import com.ives.relative.core.packets.CreatePlanetPacket;
-import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.PlayerPacket;
-import com.ives.relative.core.packets.TilePacket;
+import com.ives.relative.core.packets.*;
+import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.PositionComponent;
 import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.entities.factories.PlayerFactory;
+import com.ives.relative.entities.factories.TileFactory;
 import com.ives.relative.entities.systems.MovementSystem;
 import com.ives.relative.entities.systems.WorldSystem;
 import com.ives.relative.entities.factories.PlanetFactory;
 import com.ives.relative.planet.TerrainGenerator;
 import com.ives.relative.planet.tiles.TileManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
+import org.reflections.Reflections;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -39,7 +41,14 @@ public class GameManager {
     public Relative relative;
     public TerrainGenerator terrainGenerator;
 
+    public static PlanetFactory planetFactory;
+    public static PlayerFactory playerFactory;
+    public static TileFactory tileFactory;
+
     public static float PHYSICS_ITERATIONS = 1/45f;
+
+    Set<Class <?extends Packet>> packets;
+    Set<Class <?extends Component>> components;
 
     /**
      * This GameManager can be a server AND a client. This way it will be handled
@@ -56,7 +65,19 @@ public class GameManager {
 
         registerSystems();
 
-        Entity planet = PlanetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
+
+        //Get all the components and add it to the kryo
+        Reflections componentReflections = new Reflections("com.ives.relative.entities.components");
+        components = componentReflections.getSubTypesOf(Component.class);
+
+        Reflections packetReflections = new Reflections("com.ives.relative.core.packets");
+        packets = packetReflections.getSubTypesOf(Packet.class);
+
+        planetFactory = new PlanetFactory();
+        playerFactory = new PlayerFactory();
+        tileFactory = new TileFactory();
+
+        Entity planet = planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
         engine.addEntity(planet);
         terrainGenerator = new TerrainGenerator(this);
 
@@ -68,7 +89,7 @@ public class GameManager {
 
     public void registerSystems() {
         engine.addSystem(new WorldSystem(Family.all(WorldComponent.class, NameComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
-        engine.addSystem(new MovementSystem(Family.all(PositionComponent.class, BodyComponent.class).get()));
+        engine.addSystem(new MovementSystem(Family.all(BodyComponent.class).get()));
     }
 
     /**
@@ -76,12 +97,18 @@ public class GameManager {
      * @param kryo the Kryo of the server or the Kryo of the client.
      */
     public void registerKryoClasses(Kryo kryo) {
-        kryo.register(Packet.class);
         kryo.register(SolidTile.class);
-        kryo.register(PlayerPacket.class);
-        kryo.register(TilePacket.class);
         kryo.register(byte[].class);
-        kryo.register(CreatePlanetPacket.class);
+        kryo.register(NetworkEntity.class);
+        kryo.register(ArrayList.class);
+
+        for(Class component : components) {
+            kryo.register(component);
+        }
+
+        for(Class packet : packets) {
+            kryo.register(packet);
+        }
     }
 
     public boolean isServer() {

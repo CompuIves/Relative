@@ -11,4 +11,7 @@ public class MovementSpeedComponent extends Component {
     public MovementSpeedComponent(float movementSpeed) {
         this.movementSpeed = movementSpeed;
     }
+
+    public MovementSpeedComponent() {
+    }
 }

@@ -13,4 +13,7 @@ public class NameComponent extends Component {
         this.internalName = internalName;
         this.publicName = publicName;
     }
+
+    public NameComponent() {
+    }
 }

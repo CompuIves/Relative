@@ -9,7 +9,7 @@ import com.ives.relative.entities.commands.*;
  * Created by Ives on 5/12/2014.
  */
 public class InputComponent extends Component {
-    public CommandsMap<Integer, Command> commandKeys;
+    public transient CommandsMap<Integer, Command> commandKeys;
 
     public InputComponent() {
         commandKeys = new CommandsMap<Integer, Command>(new Command());

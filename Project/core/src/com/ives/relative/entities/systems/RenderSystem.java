@@ -7,14 +7,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.ives.relative.core.GameManager;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.InputComponent;
-import com.ives.relative.entities.components.PositionComponent;
+
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.components.VisualComponent;
 
@@ -40,7 +37,7 @@ public class RenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        ImmutableArray<Entity> playerEntities = engine.getEntitiesFor(Family.all(InputComponent.class, PositionComponent.class).get());
+        ImmutableArray<Entity> playerEntities = engine.getEntitiesFor(Family.all(InputComponent.class, BodyComponent.class).get());
         if(playerEntities.size() != 0) {
             Entity player = playerEntities.first();
             Body playerBody = Mappers.body.get(player).body;

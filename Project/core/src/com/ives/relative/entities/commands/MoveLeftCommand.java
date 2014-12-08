@@ -19,7 +19,7 @@ public class MoveLeftCommand extends Command {
         Body body = Mappers.body.get(e).body;
         float movementSpeed = Mappers.mvSpeed.get(e).movementSpeed;
         if(-body.getLinearVelocity().x < movementSpeed) {
-            body.setLinearVelocity(new Vector2(x, body.getLinearVelocity().y));
+            body.applyLinearImpulse(new Vector2(x, 0), new Vector2(body.getPosition().x, body.getPosition().y), true);
         }
     }
 }

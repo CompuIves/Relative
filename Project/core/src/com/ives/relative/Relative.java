@@ -13,6 +13,8 @@ public class Relative extends Game {
 	public GameManager clientGameManager;
 	public GameManager serverGameManager;
 
+	public static String VERSION = "1.0";
+
 
 
 	@Override

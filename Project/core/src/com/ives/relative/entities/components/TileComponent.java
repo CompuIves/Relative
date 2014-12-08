@@ -7,7 +7,10 @@ import com.ives.relative.planet.tiles.tilesorts.SolidTile;
  * Created by Ives on 3/12/2014.
  */
 public class TileComponent extends Component {
-    SolidTile tile;
+    transient SolidTile tile;
+
+    public TileComponent() {
+    }
 
     public TileComponent(SolidTile tile) {
         this.tile = tile;

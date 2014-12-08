@@ -31,10 +31,9 @@ public class TileManager {
         return polygonShape;
     }
 
-    public Entity createTile(String worldID, float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(Entity planet, float x, float y, int z, String tileID, boolean gravity) {
         if(solidTiles.get(tileID) != null) {
-            Entity world = game.engine.getSystem(WorldSystem.class).getPlanet(worldID);
-            Entity e = TileFactory.createTile(worldID, Mappers.world.get(world).world, x, y, z, solidTiles.get(tileID), gravity);
+            Entity e = game.tileFactory.createTile(planet, x, y, z, solidTiles.get(tileID), gravity);
             game.engine.addEntity(e);
             return e;
         } else {
