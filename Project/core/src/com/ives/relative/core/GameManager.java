@@ -2,18 +2,16 @@ package com.ives.relative.core;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
+import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.client.ClientProxy;
+import com.ives.relative.core.network.KryoComparator;
 import com.ives.relative.core.packets.*;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.BodyComponent;
-import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.entities.components.*;
 import com.ives.relative.entities.factories.PlayerFactory;
 import com.ives.relative.entities.factories.TileFactory;
 import com.ives.relative.entities.systems.MovementSystem;
@@ -24,8 +22,7 @@ import com.ives.relative.planet.tiles.TileManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -41,14 +38,15 @@ public class GameManager {
     public Relative relative;
     public TerrainGenerator terrainGenerator;
 
+    public ModuleManager moduleManager;
+
     public static PlanetFactory planetFactory;
     public static PlayerFactory playerFactory;
     public static TileFactory tileFactory;
 
     public static float PHYSICS_ITERATIONS = 1/45f;
 
-    Set<Class <?extends Packet>> packets;
-    Set<Class <?extends Component>> components;
+    ArrayList<Class<? extends Object>> kryoList;
 
     /**
      * This GameManager can be a server AND a client. This way it will be handled
@@ -64,21 +62,15 @@ public class GameManager {
         engine = new Engine();
 
         registerSystems();
+        addKryoClasses();
 
-
-        //Get all the components and add it to the kryo
-        Reflections componentReflections = new Reflections("com.ives.relative.entities.components");
-        components = componentReflections.getSubTypesOf(Component.class);
-
-        Reflections packetReflections = new Reflections("com.ives.relative.core.packets");
-        packets = packetReflections.getSubTypesOf(Packet.class);
+        moduleManager = new ModuleManager(this);
+        moduleManager.indexModules();
 
         planetFactory = new PlanetFactory();
         playerFactory = new PlayerFactory();
         tileFactory = new TileFactory();
 
-        Entity planet = planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
-        engine.addEntity(planet);
         terrainGenerator = new TerrainGenerator(this);
 
         if(isServer)
@@ -93,6 +85,27 @@ public class GameManager {
     }
 
     /**
+     * This class adds al the specified kryo classes from the packages, after this it sorts them and adds them to the
+     * arraylist. Another method will register every class to Kryo.
+     * I sort every class because the classes may be added in a different order between instances, this is caused by
+     * reflection. If the classes are out of order Kryo will not be able to understand the packets sent/received.
+     */
+    private void addKryoClasses() {
+        //Get all the components and add it to the kryo
+        Reflections componentReflections = new Reflections("com.ives.relative.entities.components");
+        Set<Class<? extends Component>> components = componentReflections.getSubTypesOf(Component.class);
+
+        Reflections packetReflections = new Reflections("com.ives.relative.core.packets");
+        Set<Class<? extends Packet>> packets = packetReflections.getSubTypesOf(Packet.class);
+
+        kryoList = new ArrayList<Class<?>>();
+        kryoList.addAll(components);
+        kryoList.addAll(packets);
+
+        kryoList.sort(new KryoComparator());
+    }
+
+    /**
      * The central place for server and client to register the classes used by Kryo.
      * @param kryo the Kryo of the server or the Kryo of the client.
      */
@@ -102,6 +115,35 @@ public class GameManager {
         kryo.register(NetworkEntity.class);
         kryo.register(ArrayList.class);
 
+        /*
+        kryo.register(BodyComponent.class);
+        kryo.register(DurabilityComponent.class);
+        kryo.register(HealthComponent.class);
+        kryo.register(MovementSpeedComponent.class);
+        kryo.register(NameComponent.class);
+        kryo.register(TileComponent.class);
+        kryo.register(WorldComponent.class);
+
+        kryo.register(NetworkBodyComponent.class);
+        kryo.register(NetworkVisualComponent.class);
+
+        kryo.register(ConnectPacket.class);
+        kryo.register(CreatePlanetPacket.class);
+        kryo.register(DisconnectPacket.class);
+        kryo.register(PacketFactory.class);
+        kryo.register(PlayerPacket.class);
+        kryo.register(PositionPacket.class);
+        kryo.register(TilePacket.class);
+        kryo.register(ToServerPositionPacket.class);
+        kryo.register(RequestTilePacket.class);
+        kryo.register(NetworkEntity.class);
+        */
+
+        for(Class<?> c : kryoList) {
+            kryo.register(c);
+        }
+
+        /*
         for(Class component : components) {
             kryo.register(component);
         }
@@ -109,6 +151,7 @@ public class GameManager {
         for(Class packet : packets) {
             kryo.register(packet);
         }
+        */
     }
 
     public boolean isServer() {

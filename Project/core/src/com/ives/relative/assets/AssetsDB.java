@@ -5,4 +5,5 @@ package com.ives.relative.assets;
  */
 public class AssetsDB {
     public static String MODULES = "modules/";
+    public static String CACHEMODULES = "cache/modules/";
 }

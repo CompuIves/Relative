@@ -7,7 +7,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.ConnectPacket;
+import com.ives.relative.core.packets.handshake.ConnectPacket;
 import com.ives.relative.core.packets.Packet;
 
 import java.io.IOException;

@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.factories.Factory;
 import com.ives.relative.entities.systems.WorldSystem;

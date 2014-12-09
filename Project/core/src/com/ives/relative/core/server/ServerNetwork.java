@@ -1,7 +1,9 @@
 package com.ives.relative.core.server;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
@@ -45,12 +47,6 @@ public class ServerNetwork extends Network {
     }
 
     @Override
-    public void sendObjectTCP(int connectionID, Packet o) {
-        System.out.println("Sent a packet named: " + o.getClass().getSimpleName());
-        server.sendToTCP(connectionID, o);
-    }
-
-    @Override
     public void received(Connection connection, final Object object) {
         if(object instanceof Packet) {
             ((Packet) object).handle(game);
@@ -62,14 +58,16 @@ public class ServerNetwork extends Network {
         super.connected(connection);
     }
 
-    public void closeRemoteConnection(int connection, String message) {
-
-    }
-
     @Override
     public void closeConnection(int connection, final String message) {
         Gdx.app.log("ServerConnection", message);
         server.getConnections()[connection].close();
+    }
+
+    @Override
+    public void sendObjectTCP(int connectionID, Packet o) {
+        System.out.println("Sent a packet named: " + o.getClass().getSimpleName());
+        server.sendToTCP(connectionID, o);
     }
 
     @Override

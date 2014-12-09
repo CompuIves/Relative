@@ -37,15 +37,7 @@ public class RenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        ImmutableArray<Entity> playerEntities = engine.getEntitiesFor(Family.all(InputComponent.class, BodyComponent.class).get());
-        if(playerEntities.size() != 0) {
-            Entity player = playerEntities.first();
-            Body playerBody = Mappers.body.get(player).body;
-            camera.position.x = playerBody.getPosition().x;
-            camera.position.y = playerBody.getPosition().y + 4;
-        }
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
+        positionCamera();
 
         float startX = camera.position.x - camera.viewportWidth / 2 - 2;
         float endX = camera.position.x + camera.viewportWidth / 2 + 2;
@@ -72,5 +64,17 @@ public class RenderSystem extends EntitySystem {
             }
         }
         batch.end();
+    }
+
+    private void positionCamera() {
+        ImmutableArray<Entity> playerEntities = engine.getEntitiesFor(Family.all(InputComponent.class, BodyComponent.class).get());
+        if(playerEntities.size() != 0) {
+            Entity player = playerEntities.first();
+            Body playerBody = Mappers.body.get(player).body;
+            camera.position.x = playerBody.getPosition().x;
+            camera.position.y = playerBody.getPosition().y + 4;
+        }
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
     }
 }

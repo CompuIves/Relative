@@ -23,7 +23,7 @@ public class PlayerPacket implements Packet {
 
     public PlayerPacket(int connection, Entity player) {
         this.connection = connection;
-        this.player = new NetworkEntity(player);
+        this.player = new NetworkEntity(player, "player.png");
     }
 
     @Override

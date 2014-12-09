@@ -1,15 +1,14 @@
-package com.ives.relative.core.packets;
+package com.ives.relative.core.packets.handshake;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.networkentity.NetworkEntity;
+import com.ives.relative.core.packets.*;
 import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.HealthComponent;
 import com.ives.relative.entities.components.NameComponent;
@@ -25,7 +24,7 @@ import java.util.Map;
  * It contains the version of the game and the player id, if the version mismatches disconnect, if the player is already
  * in game, disconnect.
  *
- * Handled from: server
+ * Handled from: SERVER
  */
 public class ConnectPacket implements Packet {
     String version;
@@ -51,7 +50,7 @@ public class ConnectPacket implements Packet {
                 String name = Mappers.name.get(entity).internalName;
                 if (name.equals(playerID)) {
                     System.out.println("Kicking client, player already connected.");
-                    this.connectionDenied(game.proxy.network, "Player already in the server");
+                    connectionDenied(game.proxy.network, "Player already in the server");
                     break;
                 }
             }
@@ -61,7 +60,7 @@ public class ConnectPacket implements Packet {
 
         } else {
             System.out.println("Kicking client, version mismatch.");
-            this.connectionDenied(game.proxy.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
+            connectionDenied(game.proxy.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
         }
     }
 
@@ -72,11 +71,13 @@ public class ConnectPacket implements Packet {
 
     public void connectionAccepted(final Network network, final GameManager game) {
         System.out.println("Connection accepted!");
-        System.out.println("Sending player with ID: " + playerID);
+        System.out.println("Sending acceptedPacket with Player with ID: " + playerID);
 
+        /*
         ImmutableArray<Entity> entities = game.engine.getEntitiesFor(Family.all(BodyComponent.class, HealthComponent.class).get());
         for(Entity entity : entities)
             network.sendObjectTCP(connection, new PlayerPacket(8, entity));
+        */
 
         Gdx.app.postRunnable(new Runnable() {
             @Override

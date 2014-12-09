@@ -48,7 +48,7 @@ public class ClientProxy extends Proxy {
         game.engine.addSystem(new RenderSystem(batch, camera, game.engine));
         game.engine.addSystem((EntitySystem) inputProcessor);
         game.engine.addSystem(new Box2DDebugRendererSystem(Family.all(WorldComponent.class).get(), camera));
-        game.engine.addSystem(new ClientSystem(1/20f, network));
+        //game.engine.addSystem(new ClientSystem(1/20f, network));
     }
 
     public void update(float delta) {

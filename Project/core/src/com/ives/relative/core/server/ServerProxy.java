@@ -3,8 +3,9 @@ package com.ives.relative.core.server;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Server;
-import com.ives.relative.assets.modules.ModuleIndexer;
+import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Proxy;
 import com.ives.relative.entities.components.WorldComponent;
@@ -14,13 +15,12 @@ import com.ives.relative.entities.components.WorldComponent;
  */
 public class ServerProxy extends Proxy {
     public static GameManager game;
-    ModuleIndexer moduleIndexer;
 
     public ServerProxy(GameManager game) {
         this.game = game;
-        moduleIndexer = new ModuleIndexer(game.tileManager);
-        moduleIndexer.indexModules(false);
-        moduleIndexer.loadModules();
+        game.moduleManager.loadModules();
+
+        createPlanet();
         generateTerrain();
         registerSystems();
 
@@ -34,6 +34,15 @@ public class ServerProxy extends Proxy {
 
     public void update(float delta) {
         //System.out.println("Server is ticking!");
+    }
+
+    /**
+     * Temporary until custom planets are added
+     */
+    private void createPlanet() {
+        //Already make a planet entity, this will be removed when there are custom planets
+        Entity planet = GameManager.planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3);
+        game.engine.addEntity(planet);
     }
 
     private void generateTerrain() {
