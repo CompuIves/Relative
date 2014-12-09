@@ -6,7 +6,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.PositionPacket;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -23,6 +22,9 @@ public abstract class Network extends Listener {
     }
 
     public abstract void sendObjectTCP(int connectionID, Packet o);
+
+    public void sendObjectTCPToServer(Packet o) {
+    }
 
     //Only for server if client send just to server
     public void sendObjectToAllTCP(Packet o) {}

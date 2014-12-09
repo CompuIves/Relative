@@ -7,8 +7,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.handshake.ConnectPacket;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.packets.handshake.ConnectPacket;
 
 import java.io.IOException;
 
@@ -16,10 +16,9 @@ import java.io.IOException;
  * Created by Ives on 4/12/2014.
  */
 public class ClientNetwork extends Network {
+    public Entity tempPlayer;
     private GameManager game;
     private Client client;
-
-    public Entity tempPlayer;
 
     public ClientNetwork(GameManager game, Client client) {
         super(client);
@@ -72,6 +71,11 @@ public class ClientNetwork extends Network {
     @Override
     public void sendObjectTCP(int connectionID, Packet o) {
         client.sendTCP(o);
+    }
+
+    @Override
+    public void sendObjectTCPToServer(Packet o) {
+        sendObjectTCP(connectionID, o);
     }
 
     @Override

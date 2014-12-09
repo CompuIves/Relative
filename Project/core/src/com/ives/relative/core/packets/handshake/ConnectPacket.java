@@ -2,21 +2,15 @@ package com.ives.relative.core.packets.handshake;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.*;
-import com.ives.relative.entities.components.BodyComponent;
-import com.ives.relative.entities.components.HealthComponent;
+import com.ives.relative.core.packets.Packet;
 import com.ives.relative.entities.components.NameComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.systems.WorldSystem;
-import com.ives.relative.planet.tiles.tilesorts.SolidTile;
-
-import java.util.Map;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -73,29 +67,15 @@ public class ConnectPacket implements Packet {
         System.out.println("Connection accepted!");
         System.out.println("Sending acceptedPacket with Player with ID: " + playerID);
 
-        /*
-        ImmutableArray<Entity> entities = game.engine.getEntitiesFor(Family.all(BodyComponent.class, HealthComponent.class).get());
-        for(Entity entity : entities)
-            network.sendObjectTCP(connection, new PlayerPacket(8, entity));
-        */
-
+        //Already add the player to the engine, don't send it to the user yet (modules need to be synchronized first)
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
                 Entity player = GameManager.playerFactory.createPlayer(playerID, "Player", game.engine.getSystem(WorldSystem.class).getPlanet("earth"),
                         new Vector2(10, 10), 0);
                 game.engine.addEntity(player);
-                network.sendObjectToAllTCP(new PlayerPacket(connection, player));
-
             }
         });
-
-        //TODO Look at how this works, is it synchronous, stable, does it create crashes?
-        System.out.println("Also sending modules and the world");
-        for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
-            SolidTile tile = (SolidTile) entry.getValue();
-            network.sendObjectTCP(connection, new TilePacket(tile));
-        }
-        network.sendObjectTCP(connection, new CreatePlanetPacket("earth"));
+        network.sendObjectTCP(connection, new GetNeededModules());
     }
 }

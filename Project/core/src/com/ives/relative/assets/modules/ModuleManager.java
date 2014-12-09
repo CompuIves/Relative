@@ -5,10 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.ives.relative.assets.AssetsDB;
-import com.ives.relative.assets.modules.Module;
 import com.ives.relative.assets.modules.json.TileReader;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.planet.tiles.TileManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ import java.util.List;
  */
 public class ModuleManager {
     GameManager game;
+
     ArrayList<Module> modules;
 
     boolean isServer;
@@ -33,25 +32,44 @@ public class ModuleManager {
      * Get the modules in the module folder
      */
     public void indexModules() {
-        FileHandle[] moduleFolders = indexFiles(isServer ? AssetsDB.MODULES : AssetsDB.CACHEMODULES);
+        FileHandle[] moduleFolders = indexFiles(AssetsDB.MODULES);
+        indexModules(moduleFolders);
+    }
+
+    public void indexModules(FileHandle[] moduleFolders) {
         if(moduleFolders != null) {
             for(FileHandle moduleFileHandler : moduleFolders) {
                 //If the folder is a directory it is a module, if the folder is named Server just ignore (server is the cache folder for the server mods)
                 if(moduleFileHandler.isDirectory()) {
-                    //Add the module to the module list of the server
-                    addModule(moduleFileHandler);
-                } else {
+                    //If the folder name is cache and the endpoint is a client then index the cacheModules too
+                    if (moduleFileHandler.name().equals("cache") && !isServer) {
+                        indexModules(indexFiles(moduleFileHandler.path()));
+                    }
+                    //Add the module to the module list
                     addModule(moduleFileHandler);
                 }
             }
         }
     }
 
+    /**
+     * Compares local module list with the given module list.
+     *
+     * @param remoteModules The remote module list
+     * @return The modules which the local object doesn't have or are outdated
+     */
     public List<Module> compareModuleLists(List<Module> remoteModules) {
+        List<Module> deltaModules = new ArrayList<Module>(remoteModules);
         for(Module remoteModule : remoteModules) {
-
+            for (Module module : modules) {
+                if (module.name.equals(remoteModule.name)) {
+                    if (module.version.equals(remoteModule.version)) {
+                        deltaModules.remove(remoteModule);
+                    }
+                }
+            }
         }
-        return null;
+        return deltaModules;
     }
 
     public FileHandle[] indexFiles(String location) {
@@ -68,19 +86,31 @@ public class ModuleManager {
     public void addModule(FileHandle fileHandle) {
         String name = fileHandle.name();
         JsonReader reader = new JsonReader();
-        JsonValue jsonValue = reader.parse(new FileHandle(fileHandle.path() + "/" + fileHandle.name() + ".json"));
-        String version = jsonValue.get("version").asString();
-        modules.add(new Module(name, version, fileHandle));
+        FileHandle moduleJSON = new FileHandle(fileHandle.path() + "/" + fileHandle.name() + ".json");
+        if (moduleJSON.exists()) {
+            JsonValue jsonValue = reader.parse(moduleJSON);
+            String version = jsonValue.get("version").asString();
+            modules.add(new Module(name, version, fileHandle));
+        }
     }
 
     public void loadModules() {
         for(Module module : modules) {
             //Get all the mod folders in it, for example tiles
-            moduleCategories(indexFiles(module.location.path()));
+            loadModule(module);
         }
     }
 
-    private void moduleCategories(FileHandle[] fileHandles) {
+    public void loadModules(List<Module> loadModules) {
+        for (Module module : loadModules) {
+            if (modules.contains(module)) {
+                loadModule(module);
+            }
+        }
+    }
+
+    private void loadModule(Module module) {
+        FileHandle[] fileHandles = indexFiles(module.location.path());
         for(FileHandle fileHandle : fileHandles) {
             if(fileHandle.name().equalsIgnoreCase("tiles")) {
                 readTiles(fileHandle.list(".json"));
@@ -97,5 +127,7 @@ public class ModuleManager {
         }
     }
 
-
+    public ArrayList<Module> getModules() {
+        return modules;
+    }
 }

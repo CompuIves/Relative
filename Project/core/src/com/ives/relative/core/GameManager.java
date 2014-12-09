@@ -5,47 +5,46 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Family;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
+import com.ives.relative.assets.modules.Module;
 import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.network.KryoComparator;
-import com.ives.relative.core.packets.*;
+import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.*;
+import com.ives.relative.entities.components.BodyComponent;
+import com.ives.relative.entities.components.NameComponent;
+import com.ives.relative.entities.components.WorldComponent;
+import com.ives.relative.entities.factories.PlanetFactory;
 import com.ives.relative.entities.factories.PlayerFactory;
 import com.ives.relative.entities.factories.TileFactory;
 import com.ives.relative.entities.systems.MovementSystem;
 import com.ives.relative.entities.systems.WorldSystem;
-import com.ives.relative.entities.factories.PlanetFactory;
 import com.ives.relative.planet.TerrainGenerator;
 import com.ives.relative.planet.tiles.TileManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Ives on 4/12/2014.
+ * The core of this game, it is both used by the server and the client.
+ * There are two instances of this manager on a local computer, the server instance and the client instance.
  */
 public class GameManager {
-    public boolean isServer;
-
-    public Engine engine;
-    public TileManager tileManager;
-
-    public Proxy proxy;
-
-    public Relative relative;
-    public TerrainGenerator terrainGenerator;
-
-    public ModuleManager moduleManager;
-
     public static PlanetFactory planetFactory;
     public static PlayerFactory playerFactory;
     public static TileFactory tileFactory;
-
     public static float PHYSICS_ITERATIONS = 1/45f;
-
+    public boolean isServer;
+    public Engine engine;
+    public TileManager tileManager;
+    public Proxy proxy;
+    public Relative relative;
+    public TerrainGenerator terrainGenerator;
+    public ModuleManager moduleManager;
     ArrayList<Class<? extends Object>> kryoList;
 
     /**
@@ -73,10 +72,16 @@ public class GameManager {
 
         terrainGenerator = new TerrainGenerator(this);
 
-        if(isServer)
+        if (isServer) {
             proxy = new ServerProxy(this);
-        else
+        } else {
             proxy = new ClientProxy(this, relative.camera, relative.batch);
+        }
+
+    }
+
+    public Proxy getProxy() {
+        return proxy;
     }
 
     public void registerSystems() {
@@ -114,6 +119,7 @@ public class GameManager {
         kryo.register(byte[].class);
         kryo.register(NetworkEntity.class);
         kryo.register(ArrayList.class);
+        kryo.register(Module.class);
 
         /*
         kryo.register(BodyComponent.class);
