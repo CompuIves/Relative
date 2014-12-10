@@ -33,6 +33,9 @@ public abstract class Network extends Listener {
 
     public void sendObjectUDPtoServer(Packet o) {}
 
+    public void sendObjectToAllUDP(Packet packet) {
+    }
+
     @Override
     public void connected(Connection connection) {
         connectionID = connection.getID();
@@ -45,6 +48,6 @@ public abstract class Network extends Listener {
         endPoint.close();
     }
 
-    public void sendObjectToAllUDP(Packet packet) {
+    public void getConnection() {
     }
 }

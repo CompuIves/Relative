@@ -8,6 +8,8 @@ import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.packets.handshake.modules.GetNeededModulesPacket;
+import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.NameComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.systems.WorldSystem;
@@ -82,8 +84,9 @@ public class ConnectPacket implements Packet {
                 Entity player = GameManager.playerFactory.createPlayer(playerID, "Player", game.engine.getSystem(WorldSystem.class).getPlanet("earth"),
                         new Vector2(10, 10), 0);
                 game.engine.addEntity(player);
+                ServerProxy.addPlayer(connection, player);
             }
         });
-        network.sendObjectTCP(connection, new GetNeededModules());
+        network.sendObjectTCP(connection, new GetNeededModulesPacket());
     }
 }

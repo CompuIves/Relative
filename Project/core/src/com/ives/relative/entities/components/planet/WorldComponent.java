@@ -1,4 +1,4 @@
-package com.ives.relative.entities.components;
+package com.ives.relative.entities.components.planet;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.physics.box2d.World;

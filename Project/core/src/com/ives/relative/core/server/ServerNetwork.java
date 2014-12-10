@@ -13,13 +13,13 @@ import java.io.IOException;
  * Created by Ives on 4/12/2014.
  */
 public class ServerNetwork extends Network {
-    public Server server;
+    public static Server server;
     GameManager game;
 
     public ServerNetwork(GameManager game, Server server, ServerProxy proxy) {
         super(server);
         this.game = game;
-        this.server = server;
+        ServerNetwork.server = server;
         super.kryo = server.getKryo();
         game.registerKryoClasses(kryo);
 
@@ -30,6 +30,15 @@ public class ServerNetwork extends Network {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Connection getConnection(int id) {
+        for (Connection connection : server.getConnections()) {
+            if (connection.getID() == id) {
+                return connection;
+            }
+        }
+        return null;
     }
 
     private void startServer() throws IOException{

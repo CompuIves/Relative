@@ -1,4 +1,4 @@
-package com.ives.relative.core.packets.handshake;
+package com.ives.relative.core.packets.handshake.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
@@ -6,9 +6,10 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.handshake.notice.CompleteFileNotice;
-import com.ives.relative.core.packets.handshake.notice.FinishFileTransferNotice;
-import com.ives.relative.core.packets.handshake.notice.StartFileNotice;
+import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotice;
+import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
+import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
+import com.ives.relative.core.packets.handshake.planet.RequestPlanetPacket;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class SetupFileTransferPacket implements Packet {
 
         game.proxy.network.endPoint.addListener(new Listener() {
             @Override
-            public void received(Connection connection, final Object object) {
+            public void received(final Connection connection, final Object object) {
                 if (object instanceof StartFileNotice) {
                     startFileTransfer((StartFileNotice) object);
                 } else if (object instanceof byte[]) {
@@ -43,8 +44,12 @@ public class SetupFileTransferPacket implements Packet {
                         public void run() {
                             game.moduleManager.indexModules();
                             game.moduleManager.loadModules(((FinishFileTransferNotice) object).moduleList);
+                            //Ask for the world now that the modules are loaded.
                         }
                     });
+
+                    //Ask for the planet
+                    connection.sendTCP(new RequestPlanetPacket(connection.getID()));
                     game.proxy.network.endPoint.removeListener(this);
                 }
 
@@ -53,7 +58,8 @@ public class SetupFileTransferPacket implements Packet {
                     System.out.println("Total bytes transferred: " + length);
                     position = 0;
                     try {
-                        ModuleManager.bytesToModule(bytes, moduleName, moduleVersion);
+                        if (bytes != null)
+                            ModuleManager.bytesToModule(bytes, moduleName, moduleVersion);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

@@ -1,4 +1,4 @@
-package com.ives.relative.core.packets.handshake;
+package com.ives.relative.core.packets.handshake.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.assets.modules.Module;
@@ -13,10 +13,10 @@ import java.util.List;
  * Connection is accepted. Now the server needs the list of the modules the client has.
  * HANDLED BY CLIENT
  */
-public class GetNeededModules implements Packet {
+public class GetNeededModulesPacket implements Packet {
     List<Module> modules;
 
-    public GetNeededModules() {
+    public GetNeededModulesPacket() {
     }
 
     @Override
@@ -27,7 +27,7 @@ public class GetNeededModules implements Packet {
             @Override
             public void run() {
                 modules = game.moduleManager.getModules();
-                game.proxy.network.sendObjectTCPToServer(new RequestModules(modules, game.proxy.network.connectionID));
+                game.proxy.network.sendObjectTCPToServer(new RequestModulesPacket(modules, game.proxy.network.connectionID));
             }
         });
     }

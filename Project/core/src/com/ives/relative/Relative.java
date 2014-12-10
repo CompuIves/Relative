@@ -7,15 +7,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.ives.relative.core.GameManager;
 
 public class Relative extends Game {
+	public static String VERSION = "1.0";
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
-
 	public GameManager clientGameManager;
 	public GameManager serverGameManager;
-
-	public static String VERSION = "1.0";
-
-
 
 	@Override
 	public void resize(int width, int height) {
@@ -30,6 +26,7 @@ public class Relative extends Game {
 		Gdx.graphics.setDisplayMode(1280, 720, false);
 
 
+		//Creates two instances, an internal server and a client which connects to the server.
 		//Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.
 		serverGameManager = new GameManager(this, true);
 		clientGameManager = new GameManager(this, false);

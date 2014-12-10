@@ -1,4 +1,4 @@
-package com.ives.relative.core.packets.handshake.notice;
+package com.ives.relative.core.packets.handshake.modules.notice;
 
 import com.ives.relative.assets.modules.Module;
 
