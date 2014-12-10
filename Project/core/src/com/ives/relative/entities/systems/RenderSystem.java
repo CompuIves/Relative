@@ -9,11 +9,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.InputComponent;
-
-import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.entities.components.VisualComponent;
+import com.ives.relative.entities.components.body.BodyComponent;
+import com.ives.relative.entities.components.mappers.Mappers;
 
 /**
  * Created by Ives on 3/12/2014.

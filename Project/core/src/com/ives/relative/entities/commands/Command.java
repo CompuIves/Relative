@@ -12,12 +12,6 @@ public class Command implements Packet {
     String entityID;
     public void execute(Entity entity) {this.entityID = Mappers.name.get(entity).internalName;}
 
-    /**
-     * Do the opposite of execute! For example when the key is released.
-     * @param entity the entity which should be acted upon
-     */
-    public void antiExecute(Entity entity) {}
-
     @Override
     public void response(GameManager game) {
 

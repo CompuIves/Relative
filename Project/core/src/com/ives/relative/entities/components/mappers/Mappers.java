@@ -2,6 +2,7 @@ package com.ives.relative.entities.components.mappers;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.ives.relative.entities.components.*;
+import com.ives.relative.entities.components.body.BodyComponent;
 import com.ives.relative.entities.components.planet.GravityComponent;
 import com.ives.relative.entities.components.planet.SeedComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;

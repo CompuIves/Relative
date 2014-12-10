@@ -15,8 +15,8 @@ import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransfe
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.BodyComponent;
 import com.ives.relative.entities.components.NameComponent;
+import com.ives.relative.entities.components.body.DynamicBodyComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
 import com.ives.relative.entities.factories.PlanetFactory;
 import com.ives.relative.entities.factories.PlayerFactory;
@@ -62,7 +62,6 @@ public class GameManager {
         this.relative = relative;
         tileManager = new TileManager(this);
         engine = new Engine();
-
         registerSystems();
         addKryoClasses();
 
@@ -90,7 +89,7 @@ public class GameManager {
 
     public void registerSystems() {
         engine.addSystem(new WorldSystem(Family.all(WorldComponent.class, NameComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
-        engine.addSystem(new MovementSystem(Family.all(BodyComponent.class).get()));
+        engine.addSystem(new MovementSystem(Family.all(DynamicBodyComponent.class).get(), engine));
     }
 
     /**

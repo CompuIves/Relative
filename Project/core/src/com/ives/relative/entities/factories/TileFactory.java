@@ -1,9 +1,12 @@
 package com.ives.relative.entities.factories;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.*;
+import com.ives.relative.entities.components.DurabilityComponent;
+import com.ives.relative.entities.components.NameComponent;
+import com.ives.relative.entities.components.TileComponent;
+import com.ives.relative.entities.components.VisualComponent;
+import com.ives.relative.entities.components.body.BodyComponent;
 import com.ives.relative.entities.components.mappers.Mappers;
 import com.ives.relative.planet.tiles.TileManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
