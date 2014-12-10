@@ -16,10 +16,8 @@ import java.util.List;
  * Created by Ives on 5/12/2014.
  */
 public class InputSystem extends EntitySystem implements InputProcessor {
-    private List<Integer> keysPressed;
-
     Family family;
-
+    private List<Integer> keysPressed;
     private ImmutableArray<Entity> entities;
 
     public InputSystem(Family family) {
@@ -51,10 +49,6 @@ public class InputSystem extends EntitySystem implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         keysPressed.remove(Integer.valueOf(keycode));
-        for(Entity entity : entities) {
-            InputComponent inputComponent = Mappers.input.get(entity);
-            inputComponent.commandKeys.get(keycode).antiExecute(entity);
-        }
         return true;
     }
 
