@@ -5,10 +5,11 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.util.InputStreamSender;
 import com.ives.relative.assets.modules.Module;
+import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.notice.CompleteFileNotice;
-import com.ives.relative.core.packets.handshake.notice.FinishFileNotice;
+import com.ives.relative.core.packets.handshake.notice.FinishFileTransferNotice;
 import com.ives.relative.core.packets.handshake.notice.StartFileNotice;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +26,8 @@ import java.util.List;
 public class RequestModules implements Packet {
     List<Module> modules;
     int connectionID;
-    int modulePosition;
+
+    transient List<Module> deltaModules;
 
     transient ModuleInputStreamSender sender;
 
@@ -39,7 +41,7 @@ public class RequestModules implements Packet {
 
     @Override
     public void response(final GameManager game) {
-        final List<Module> deltaModules = game.moduleManager.compareModuleLists(modules);
+        deltaModules = game.moduleManager.compareModuleLists(modules);
         final Server server = (Server) game.proxy.network.endPoint;
         Connection connection = null;
         for (Connection connection1 : server.getConnections()) {
@@ -48,59 +50,57 @@ public class RequestModules implements Packet {
             }
         }
         if (connection != null) {
-            if (modulePosition < deltaModules.size()) {
-                try {
-                    setupTransfer(connection, game.moduleManager.moduleToBytes(deltaModules.get(modulePosition)));
+            if (deltaModules.size() > 0) {
+                setupTransfer(connection);
 
-                    connection.addListener(new Listener() {
-                        @Override
-                        public void received(Connection connection, Object object) {
-                            if (object instanceof CompleteFileNotice) {
+                connection.addListener(new Listener() {
+                    @Override
+                    public void received(Connection connection, Object object) {
+                        if (object instanceof CompleteFileNotice) {
+                            connection.removeListener(sender);
+                            if (deltaModules.size() > 0) {
+                                startTransferModule(connection);
+                            } else {
+                                connection.sendTCP(new FinishFileTransferNotice(game.moduleManager.getModules()));
                                 connection.removeListener(sender);
-                                if (modulePosition < deltaModules.size()) {
-                                    try {
-                                        startTransfer(connection, game.moduleManager.moduleToBytes(deltaModules.get(modulePosition)));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    connection.sendTCP(new FinishFileNotice(game.moduleManager.getModules()));
-                                    connection.removeListener(sender);
-                                    connection.removeListener(this);
-                                }
+                                connection.removeListener(this);
                             }
                         }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
         }
     }
 
-    private void setupTransfer(Connection connection, byte[] bytes) {
+    private void setupTransfer(Connection connection) {
         connection.sendTCP(new SetupFileTransferPacket());
-        connection.sendTCP(new StartFileNotice(bytes.length));
-
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        connection.addListener(sender = new ModuleInputStreamSender(in, 512, bytes.length, connection));
-        modulePosition++;
+        startTransferModule(connection);
     }
 
-    private void startTransfer(Connection connection, byte[] bytes) {
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        connection.addListener(sender = new ModuleInputStreamSender(in, 512, bytes.length, connection));
+    private void startTransferModule(Connection connection) {
+        Module module = deltaModules.get(0);
+        try {
+            byte[] bytes = ModuleManager.moduleToBytes(module);
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            connection.sendTCP(new StartFileNotice(bytes.length, module.name, module.version));
+            connection.addListener(sender = new ModuleInputStreamSender(in, 512, bytes.length, connection, module));
+            deltaModules.remove(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
 class ModuleInputStreamSender extends InputStreamSender {
     int length;
     transient Connection connection;
+    transient Module module;
 
-    public ModuleInputStreamSender(InputStream input, int chunkSize, int length, Connection connection) {
+    public ModuleInputStreamSender(InputStream input, int chunkSize, int length, Connection connection, Module module) {
         super(input, chunkSize);
         this.length = length;
         this.connection = connection;
+        this.module = module;
     }
 
     @Override
@@ -111,6 +111,5 @@ class ModuleInputStreamSender extends InputStreamSender {
     @Override
     protected void start() {
         super.start();
-        connection.sendTCP(new StartFileNotice(length));
     }
 }

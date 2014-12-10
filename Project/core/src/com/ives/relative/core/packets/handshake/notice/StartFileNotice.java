@@ -5,11 +5,15 @@ package com.ives.relative.core.packets.handshake.notice;
  */
 public class StartFileNotice {
     public int length;
+    public String moduleVersion;
+    public String moduleName;
 
     public StartFileNotice() {
     }
 
-    public StartFileNotice(int length) {
+    public StartFileNotice(int length, String moduleName, String moduleVersion) {
         this.length = length;
+        this.moduleName = moduleName;
+        this.moduleVersion = moduleVersion;
     }
 }

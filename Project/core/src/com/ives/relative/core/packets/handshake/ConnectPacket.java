@@ -64,6 +64,13 @@ public class ConnectPacket implements Packet {
     }
 
 
+    /**
+     * If the connection is accepted it will add the entity to the client (it will be broadcasted by the networkengine automatically).
+     * It will also send a packet asking for the list of modules the client has.
+     *
+     * @param network
+     * @param game
+     */
     public void connectionAccepted(final Network network, final GameManager game) {
         System.out.println("Connection accepted!");
         System.out.println("Sending acceptedPacket with Player with ID: " + playerID);

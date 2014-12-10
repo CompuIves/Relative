@@ -17,14 +17,14 @@ public class ServerProxy extends Proxy {
 
     public ServerProxy(GameManager game) {
         ServerProxy.game = game;
-        game.moduleManager.loadModules();
-        game.moduleManager.zipAllModules();
 
         Server server = new Server();
         network = new ServerNetwork(game, server, this);
     }
 
     public void serverAccepted() {
+        game.moduleManager.loadModules();
+        game.moduleManager.zipAllModules();
         createPlanet();
         generateTerrain();
         registerSystems();

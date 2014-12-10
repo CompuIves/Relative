@@ -10,7 +10,11 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.io.*;
-import java.nio.file.*;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +24,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Created by Ives on 6/12/2014.
+ * The manager of all the modules, this class has a list of installed modules and loaded modules
  */
 public class ModuleManager {
     GameManager game;
@@ -53,6 +58,34 @@ public class ModuleManager {
         }
     }
 
+    //Gets only called by server, for converting zip to bytes
+    public static byte[] moduleToBytes(Module module) throws IOException {
+        Path zip = Paths.get(Gdx.files.local(AssetsDB.MODULES).path() + File.separator + module.name + "-" + module.version + ".zip");
+
+        //This line will prevent NPE's (NullPointerExceptions).
+        byte[] bytes = new byte[0];
+        if (zip != null) {
+            bytes = Files.readAllBytes(zip);
+            return bytes;
+        }
+        return bytes;
+    }
+
+    /**
+     * Converts bytearrays back to modules
+     *
+     * @param bytes   the bytes
+     * @param name    the module name
+     * @param version the module version
+     * @throws IOException can throw an exception
+     */
+    public static void bytesToModule(byte[] bytes, String name, String version) throws IOException {
+        URI location = Gdx.files.local(AssetsDB.MODULES + "cache" + File.separator + name + "-" + version + ".zip").file().toURI();
+        File file = new File(location);
+        file.getParentFile().mkdirs();
+        Files.write(Paths.get(location), bytes, StandardOpenOption.CREATE);
+    }
+
     /**
      * Get the modules in the module folder
      */
@@ -71,7 +104,7 @@ public class ModuleManager {
                         //If the zip is following name conventions
                         if (moduleInfo.length > 1) {
                             Module module = new Module(moduleInfo[0], moduleInfo[1], moduleZip.pathWithoutExtension());
-                            if (!isModuleAdded(module)) {
+                            if (getLocalModule(module) == null) {
                                 //If unzipping doesn't go wrong
                                 if (unZipModule(moduleInfo[0], moduleInfo[1], moduleZip.pathWithoutExtension().split("-")[0])) {
                                     //Add a new module with the name, but split off the version.
@@ -80,6 +113,9 @@ public class ModuleManager {
                             }
                         }
                     }
+                    //If it finds a folder named cache and this isn't a server
+                } else if (moduleZip.name().equals("cache") && !isServer) {
+                    indexModuleZips(indexFiles(moduleZip.path()));
                 }
             }
         }
@@ -109,34 +145,34 @@ public class ModuleManager {
      */
     public List<Module> compareModuleLists(List<Module> remoteModules) {
         List<Module> deltaModules = new ArrayList<Module>(modules);
-        return deltaModules;
-        //This is a debugging thing
-        /*
-        for (Module module : modules) {
-            for (Module remoteModule : remoteModules) {
-                if (module.name.equals(remoteModule.name)) {
-                    if (module.version.equals(remoteModule.version)) {
-                        deltaModules.remove(module);
-                    }
-                }
+        for (Module module : remoteModules) {
+            Module module1 = getLocalModule(module);
+            if (module1 != null) {
+                deltaModules.remove(module1);
             }
-            return deltaModules;
-            */
+        }
+        return deltaModules;
     }
 
-    public boolean isModuleAdded(Module module) {
+    /**
+     * Returns the module from the local module list
+     *
+     * @param module remote module to be searched for
+     * @return the module from the local module list or null
+     */
+    public Module getLocalModule(Module module) {
         //Check if the module is already in the folder
         for (Module localModule : modules) {
             if (localModule.name.equals(module.name)) {
                 if (localModule.version.equals(module.version)) {
                     //Using a label to continue the nested loop
-                    return true;
+                    return localModule;
                 } else {
                     System.out.println("CONFLICTING VERSIONS, BEWARE");
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public FileHandle[] indexFiles(String location) {
@@ -158,7 +194,7 @@ public class ModuleManager {
             JsonValue jsonValue = reader.parse(moduleJSON);
             String version = jsonValue.get("version").asString();
             Module module = new Module(name, version, fileHandle.path());
-            if (!isModuleAdded(module))
+            if (getLocalModule(module) == null)
                 modules.add(module);
         }
     }
@@ -176,46 +212,28 @@ public class ModuleManager {
 
     public void loadModules(List<Module> loadModules) {
         for (Module module : loadModules) {
-            if (modules.contains(module)) {
-                loadModule(module);
-            }
+            Module localModule = getLocalModule(module);
+            if (localModule != null)
+                loadModule(localModule);
         }
     }
 
     private void loadModule(Module module) {
         FileHandle[] fileHandles = indexFiles(module.location);
         for(FileHandle fileHandle : fileHandles) {
-            if(fileHandle.name().equalsIgnoreCase("tiles")) {
-                readTiles(fileHandle.list(".json"));
+            if (fileHandle.name().equalsIgnoreCase("tiles")) {
+                readTiles(fileHandle.list(".json"), module);
             }
         }
     }
 
-    private void readTiles(FileHandle[] fileHandles) {
-        for(FileHandle fileHandle : fileHandles) {
-            SolidTile tile = TileReader.readFile(fileHandle);
-            if(tile != null) {
+    private void readTiles(FileHandle[] fileHandles, Module module) {
+        for (FileHandle fileHandle : fileHandles) {
+            SolidTile tile = TileReader.readFile(fileHandle, module.location);
+            if (tile != null) {
                 game.tileManager.addTile(tile.id, tile);
             }
         }
-    }
-
-    //Gets only called by server, for converting zip to bytes
-    public byte[] moduleToBytes(Module module) throws IOException {
-        Path zip = Paths.get(Gdx.files.local(AssetsDB.MODULES).path() + File.separator + module.name + "-" + module.version + ".zip");
-
-        //This line will prevent NPE's (NullPointerExceptions).
-        byte[] bytes = new byte[0];
-        if (zip != null) {
-            bytes = Files.readAllBytes(zip);
-            return bytes;
-        }
-        return bytes;
-    }
-
-    public void bytesToModule(byte[] bytes, String name, String version) throws IOException {
-        Files.write(Paths.get(AssetsDB.MODULES + "cache" + File.separator + name + "-" + version + ".zip"), bytes, new OpenOption[StandardOpenOption.CREATE.ordinal()]);
-
     }
 
     /**
@@ -270,8 +288,17 @@ public class ModuleManager {
 
     }
 
+    /**
+     * Unzips the module
+     * @param name Name of the module
+     * @param version Version of the module
+     * @param directory Extract to this directory
+     * @return If the unzipping was successful
+     */
     public boolean unZipModule(String name, String version, String directory) {
-        FileHandle fileHandle = Gdx.files.local(AssetsDB.MODULES + name + "-" + version + ".zip");
+        //Directory is the directory it has to be extracted to, just add a -version.zip to it and you
+        //have the filename, quite easy
+        FileHandle fileHandle = Gdx.files.local(directory + "-" + version + ".zip");
         if (!fileHandle.exists())
             return false;
 
@@ -304,6 +331,12 @@ public class ModuleManager {
         return false;
     }
 
+    /**
+     * Extract one file
+     * @param zipIn
+     * @param filePath
+     * @throws IOException
+     */
     private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
         new File(filePath).getParentFile().mkdirs();
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
