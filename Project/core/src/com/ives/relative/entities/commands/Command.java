@@ -19,7 +19,7 @@ public class Command implements Packet {
     public void antiExecute(Entity entity) {}
 
     @Override
-    public void handle(GameManager game) {
+    public void response(GameManager game) {
 
     }
 }

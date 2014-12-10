@@ -34,7 +34,7 @@ public class PositionPacket implements Packet {
 
     @Override
 
-    public void handle(final GameManager game) {
+    public void response(final GameManager game) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.InputComponent;
-import com.ives.relative.entities.factories.PlayerFactory;
 
 /**
  * Created by Ives on 7/12/2014.
@@ -27,7 +26,7 @@ public class PlayerPacket implements Packet {
     }
 
     @Override
-    public void handle(final GameManager game) {
+    public void response(final GameManager game) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

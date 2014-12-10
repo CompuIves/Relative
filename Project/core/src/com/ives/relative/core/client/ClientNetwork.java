@@ -1,6 +1,5 @@
 package com.ives.relative.core.client;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -16,7 +15,6 @@ import java.io.IOException;
  * Created by Ives on 4/12/2014.
  */
 public class ClientNetwork extends Network {
-    public Entity tempPlayer;
     private GameManager game;
     private Client client;
 
@@ -47,7 +45,6 @@ public class ClientNetwork extends Network {
         super.connected(connection);
         //Send a connect packet with player name + version number + connection id
         sendObjectTCP(connection.getID(), new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32), connection.getID()));
-
         //Send a packet requesting the modules
         //sendObjectTCP(connection.getID(), new RequestTilePacket(connection.getID()));
 
@@ -64,7 +61,7 @@ public class ClientNetwork extends Network {
     public void received(Connection connection, Object object) {
         if(object instanceof Packet) {
             System.out.println("Received packet with type: " + object.getClass().getSimpleName());
-            ((Packet) object).handle(game);
+            ((Packet) object).response(game);
         }
     }
 

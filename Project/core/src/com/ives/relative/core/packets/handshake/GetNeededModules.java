@@ -20,12 +20,14 @@ public class GetNeededModules implements Packet {
     }
 
     @Override
-    public void handle(final GameManager game) {
+    public void response(final GameManager game) {
+
+        //Otherwise the proxy = null
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
                 modules = game.moduleManager.getModules();
-                game.proxy.network.sendObjectTCPToServer(new RequestModules(modules));
+                game.proxy.network.sendObjectTCPToServer(new RequestModules(modules, game.proxy.network.connectionID));
             }
         });
     }

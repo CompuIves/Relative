@@ -1,31 +1,22 @@
 package com.ives.relative.core.server;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.CreatePlanetPacket;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.PlayerPacket;
-import com.ives.relative.core.packets.TilePacket;
-import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Created by Ives on 4/12/2014.
  */
 public class ServerNetwork extends Network {
-    GameManager game;
     public Server server;
+    GameManager game;
 
-    public ServerNetwork(GameManager game, Server server) {
+    public ServerNetwork(GameManager game, Server server, ServerProxy proxy) {
         super(server);
         this.game = game;
         this.server = server;
@@ -34,11 +25,11 @@ public class ServerNetwork extends Network {
 
         try {
             startServer();
+            proxy.serverAccepted();
+            server.addListener(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        server.addListener(this);
     }
 
     private void startServer() throws IOException{
@@ -49,7 +40,7 @@ public class ServerNetwork extends Network {
     @Override
     public void received(Connection connection, final Object object) {
         if(object instanceof Packet) {
-            ((Packet) object).handle(game);
+            ((Packet) object).response(game);
         }
     }
 

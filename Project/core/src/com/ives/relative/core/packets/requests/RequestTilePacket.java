@@ -5,7 +5,6 @@ import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.TilePacket;
 import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 
-import java.security.KeyStore;
 import java.util.Map;
 
 /**
@@ -22,7 +21,7 @@ public class RequestTilePacket implements Packet {
     }
 
     @Override
-    public void handle(GameManager game) {
+    public void response(GameManager game) {
         for(Map.Entry entry : game.tileManager.solidTiles.entrySet()) {
             SolidTile tile = (SolidTile) entry.getValue();
             game.proxy.network.sendObjectTCP(connection, new TilePacket(tile));

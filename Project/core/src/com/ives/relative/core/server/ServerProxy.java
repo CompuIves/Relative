@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Server;
-import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Proxy;
 import com.ives.relative.entities.components.WorldComponent;
@@ -17,15 +16,18 @@ public class ServerProxy extends Proxy {
     public static GameManager game;
 
     public ServerProxy(GameManager game) {
-        this.game = game;
+        ServerProxy.game = game;
         game.moduleManager.loadModules();
+        game.moduleManager.zipAllModules();
 
+        Server server = new Server();
+        network = new ServerNetwork(game, server, this);
+    }
+
+    public void serverAccepted() {
         createPlanet();
         generateTerrain();
         registerSystems();
-
-        Server server = new Server();
-        network = new ServerNetwork(game, server);
     }
 
     public void registerSystems() {

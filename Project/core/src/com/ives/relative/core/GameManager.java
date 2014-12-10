@@ -10,6 +10,9 @@ import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.network.KryoComparator;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.packets.handshake.notice.CompleteFileNotice;
+import com.ives.relative.core.packets.handshake.notice.FinishFileNotice;
+import com.ives.relative.core.packets.handshake.notice.StartFileNotice;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
 import com.ives.relative.entities.components.BodyComponent;
@@ -120,6 +123,9 @@ public class GameManager {
         kryo.register(NetworkEntity.class);
         kryo.register(ArrayList.class);
         kryo.register(Module.class);
+        kryo.register(CompleteFileNotice.class);
+        kryo.register(StartFileNotice.class);
+        kryo.register(FinishFileNotice.class);
 
         /*
         kryo.register(BodyComponent.class);

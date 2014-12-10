@@ -18,6 +18,7 @@ import com.ives.relative.entities.systems.WorldSystem;
  * It contains the version of the game and the player id, if the version mismatches disconnect, if the player is already
  * in game, disconnect.
  *
+ * On AcceptConnection send a request requesting the Modules
  * Handled from: SERVER
  */
 public class ConnectPacket implements Packet {
@@ -35,7 +36,7 @@ public class ConnectPacket implements Packet {
     }
 
     @Override
-    public void handle(GameManager game) {
+    public void response(GameManager game) {
         System.out.println("Got a connectpacket, checking for version and player...");
 
         if(Relative.VERSION.equals(version)) {

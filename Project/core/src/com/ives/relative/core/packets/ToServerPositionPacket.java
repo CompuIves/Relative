@@ -24,7 +24,7 @@ public class ToServerPositionPacket implements Packet {
     }
 
     @Override
-    public void handle(GameManager game) {
+    public void response(GameManager game) {
         game.proxy.network.sendObjectToAllUDP(new PositionPacket(x, y, vx, vy, internalName));
     }
 }
