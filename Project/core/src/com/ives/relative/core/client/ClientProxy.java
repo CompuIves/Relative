@@ -1,9 +1,7 @@
 package com.ives.relative.core.client;
 
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
@@ -18,6 +16,7 @@ import com.ives.relative.entities.systems.RenderSystem;
 
 /**
  * Created by Ives on 4/12/2014.
+ * The client will only use this, so the client side systems will be activated here
  */
 public class ClientProxy extends Proxy {
     public static GameManager game;
@@ -41,11 +40,13 @@ public class ClientProxy extends Proxy {
 
     @Override
     public void registerSystems() {
-        InputProcessor inputProcessor = new InputSystem(Family.all(InputComponent.class).get());
-        Gdx.input.setInputProcessor(inputProcessor);
 
         game.engine.addSystem(new RenderSystem(batch, camera, game.engine));
-        game.engine.addSystem((EntitySystem) inputProcessor);
+
+        InputSystem inputSystem = new InputSystem(Family.all(InputComponent.class).get());
+        Gdx.input.setInputProcessor(inputSystem);
+        game.engine.addSystem(inputSystem);
+
         game.engine.addSystem(new Box2DDebugRendererSystem(Family.all(WorldComponent.class).get(), camera));
         //game.engine.addSystem(new ClientSystem(1/20f, network));
     }

@@ -11,8 +11,8 @@ import com.ives.relative.entities.components.mappers.Mappers;
 public class MoveRightCommand extends Command {
     @Override
     public void execute(Entity e) {
-        super.execute(e);
-        moveEntity(e, Mappers.mvSpeed.get(e).movementSpeed);
+        float x = Mappers.mvSpeed.get(e).movementSpeed;
+        moveEntity(e, x);
     }
 
     private void moveEntity(Entity e, float x) {

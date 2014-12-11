@@ -36,6 +36,7 @@ public class InputSystem extends EntitySystem implements InputProcessor {
             for (int key : keysPressed) {
                 InputComponent inputComponent = Mappers.input.get(entity);
                 inputComponent.commandKeys.get(key).execute(entity);
+
             }
         }
     }

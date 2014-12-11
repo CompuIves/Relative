@@ -45,11 +45,6 @@ public class ClientNetwork extends Network {
         super.connected(connection);
         //Send a connect packet with player name + version number + connection id
         sendObjectTCP(connection.getID(), new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32), connection.getID()));
-        //Send a packet requesting the modules
-        //sendObjectTCP(connection.getID(), new RequestTilePacket(connection.getID()));
-
-        //Send a packet requesting the planet
-        //sendObjectTCP(connection.getID(), new RequestPlanetPacket(connection.getID()));
     }
 
     @Override
