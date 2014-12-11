@@ -12,7 +12,7 @@ public class JumpCommand extends Command {
     @Override
     public void execute(Entity entity) {
         Body body = Mappers.body.get(entity).body;
-        if(body.getLinearVelocity().y == 0) {
+        if (body.getLinearVelocity().y == 0) {
             body.applyLinearImpulse(new Vector2(0, 40), body.getPosition(), true);
         }
     }

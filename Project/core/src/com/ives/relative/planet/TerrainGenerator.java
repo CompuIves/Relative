@@ -1,9 +1,7 @@
 package com.ives.relative.planet;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.mappers.Mappers;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -31,5 +29,6 @@ public class TerrainGenerator {
         game.tileManager.createTile(planet, 23, 20, 0, "dirt", true);
         game.tileManager.createTile(planet, 30, 13, 0, "dirt", true);
         game.tileManager.createTile(planet, 30, 18, 0, "dirt", true);
+        game.tileManager.createTile(planet, 30, 30, 0, "dirt", true);
     }
 }

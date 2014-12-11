@@ -11,7 +11,7 @@ import com.ives.relative.entities.components.planet.WorldComponent;
 /**
  * Created by Ives on 12/1/2014.
  */
-public class PlanetFactory extends Factory{
+public class PlanetFactory extends Factory {
 
     public Entity createPlanet(String id, String name, Vector2 gravity, int velocityIterations, int positionIterations, String seed) {
         Entity e = new Entity();

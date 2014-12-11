@@ -40,7 +40,6 @@ public class ConnectPacket implements Packet {
     @Override
     public void response(GameManager game) {
         System.out.println("Got a connectpacket, checking for version and player...");
-
         if(Relative.VERSION.equals(version)) {
             //Check for players on the server
             for(Entity entity : game.engine.getEntitiesFor(Family.all(NameComponent.class).get())) {
@@ -81,7 +80,7 @@ public class ConnectPacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Entity player = GameManager.playerFactory.createPlayer(playerID, "Player", game.engine.getSystem(WorldSystem.class).getPlanet("earth"),
+                Entity player = game.playerFactory.createPlayer(playerID, "Player", game.engine.getSystem(WorldSystem.class).getPlanet("earth"),
                         new Vector2(10, 10), 0);
                 game.engine.addEntity(player);
                 ServerProxy.addPlayer(connection, player);

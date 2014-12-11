@@ -21,8 +21,7 @@ public class GetNeededModulesPacket implements Packet {
 
     @Override
     public void response(final GameManager game) {
-
-        //Otherwise the proxy = null
+        //Use runnable otherwise the proxy = null
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

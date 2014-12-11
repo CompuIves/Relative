@@ -50,11 +50,12 @@ public class RenderSystem extends EntitySystem {
                     && body.getPosition().y > startY && body.getPosition().y < endY) {
                 VisualComponent visual = Mappers.visual.get(entity);
                 if(Mappers.tile.get(entity) != null) {
+                    //TODO upped texture width and height against gaps, way to do it?
                     batch.draw(visual.texture,
-                            body.getPosition().x - visual.width / 2,
-                            body.getPosition().y - visual.height / 2,
-                            visual.width / 2, visual.height / 2,
-                            visual.width, visual.height,
+                            body.getPosition().x - visual.width / 2f,
+                            body.getPosition().y - visual.height / 2f,
+                            visual.width / 2f, visual.height / 2f,
+                            visual.width + 0.01f, visual.height + 0.01f,
                             1, 1,
                             body.getTransform().getRotation() * MathUtils.radiansToDegrees);
                 } else {

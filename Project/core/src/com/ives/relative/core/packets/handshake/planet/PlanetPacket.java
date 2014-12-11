@@ -33,7 +33,7 @@ public class PlanetPacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Entity e = planet.createEntity(GameManager.planetFactory, game.engine);
+                Entity e = planet.createEntity(game.planetFactory, game.engine);
                 WorldComponent worldComponent = Mappers.world.get(e);
                 GravityComponent gravityComponent = Mappers.gravity.get(e);
                 worldComponent.world = new World(new Vector2(gravityComponent.gravityX, gravityComponent.gravityY), true);

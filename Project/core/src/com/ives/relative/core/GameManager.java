@@ -37,16 +37,17 @@ import java.util.Set;
  * There are two instances of this manager on a local computer, the server instance and the client instance.
  */
 public class GameManager {
-    public static PlanetFactory planetFactory;
-    public static PlayerFactory playerFactory;
-    public static TileFactory tileFactory;
     public static float PHYSICS_ITERATIONS = 1/45f;
+    public PlanetFactory planetFactory;
+    public PlayerFactory playerFactory;
+    public TileFactory tileFactory;
     public boolean isServer;
     public Engine engine;
     public TileManager tileManager;
     public Proxy proxy;
     public Relative relative;
     public TerrainGenerator terrainGenerator;
+
     public ModuleManager moduleManager;
     ArrayList<Class<? extends Object>> kryoList;
 

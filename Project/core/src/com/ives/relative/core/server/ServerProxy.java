@@ -15,7 +15,6 @@ import java.util.HashMap;
  * Created by Ives on 4/12/2014.
  */
 public class ServerProxy extends Proxy {
-    public static GameManager game;
     public static HashMap<Integer, Entity> players;
 
     public ServerProxy(GameManager game) {
@@ -50,7 +49,7 @@ public class ServerProxy extends Proxy {
      */
     private void createPlanet() {
         //Already make a planet entity, this will be removed when there are custom planets
-        Entity planet = GameManager.planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3, "ivesiscool");
+        Entity planet = game.planetFactory.createPlanet("earth", "Earth", new Vector2(0, -10), 8, 3, "ivesiscool");
         game.engine.addEntity(planet);
     }
 

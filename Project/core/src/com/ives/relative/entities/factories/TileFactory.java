@@ -46,7 +46,7 @@ public class TileFactory extends Factory {
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.6f;
+        fixtureDef.friction = 0.7f;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(e);
         body.setUserData(e);

@@ -8,6 +8,7 @@ import com.ives.relative.entities.components.body.BodyComponent;
 import com.ives.relative.entities.components.network.NetworkBodyComponent;
 import com.ives.relative.entities.components.network.NetworkVisualComponent;
 import com.ives.relative.entities.factories.Factory;
+import com.ives.relative.entities.observer.EntityChangeSubject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  * entity only has components.
  * It also converts incompatible components to networkcomponents and back.
  */
-public class NetworkEntity {
+public class NetworkEntity extends EntityChangeSubject {
     public List<Component> componentList;
 
     /**

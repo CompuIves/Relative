@@ -8,6 +8,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.ives.relative.core.Network;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.InputComponent;
+import com.ives.relative.entities.observer.EntityChangeObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Created by Ives on 8/12/2014.
  */
-public class ClientNetworkSystem extends IntervalSystem {
+public class ClientNetworkSystem extends IntervalSystem implements EntityChangeObserver {
     Network network;
     ImmutableArray<Entity> entities;
 
@@ -39,7 +40,8 @@ public class ClientNetworkSystem extends IntervalSystem {
 
     }
 
-    public void addCommandPacket(Command command, float delta) {
-        commandList.add(command);
+    @Override
+    public void onEntityChange(Entity entity, Event event) {
+        System.out.println("RECEIVED AN OBJECT!");
     }
 }

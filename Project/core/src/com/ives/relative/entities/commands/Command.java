@@ -7,6 +7,5 @@ import com.badlogic.ashley.core.Entity;
  */
 public class Command {
     public void execute(Entity entity) {
-
     }
 }

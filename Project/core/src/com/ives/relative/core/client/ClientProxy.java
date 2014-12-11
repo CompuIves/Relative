@@ -19,7 +19,6 @@ import com.ives.relative.entities.systems.RenderSystem;
  * The client will only use this, so the client side systems will be activated here
  */
 public class ClientProxy extends Proxy {
-    public static GameManager game;
     private SpriteBatch batch;
     private OrthographicCamera camera;
 

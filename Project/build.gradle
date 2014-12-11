@@ -126,6 +126,9 @@ project(":core") {
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
         compile "org.reflections:reflections:0.9.9"
+
+        // Support for artemis-odb
+        compile "net.onedaybeard.artemis:artemis-odb:0.8.0"
     }
 
 
