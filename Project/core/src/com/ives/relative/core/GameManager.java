@@ -1,8 +1,7 @@
 package com.ives.relative.core;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Family;
+import com.artemis.Component;
+import com.artemis.World;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
 import com.ives.relative.assets.modules.Module;
@@ -15,17 +14,12 @@ import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransfe
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.body.DynamicBodyComponent;
-import com.ives.relative.entities.components.planet.WorldComponent;
-import com.ives.relative.entities.factories.PlanetFactory;
-import com.ives.relative.entities.factories.PlayerFactory;
-import com.ives.relative.entities.factories.TileFactory;
+import com.ives.relative.entities.managers.PlanetManager;
+import com.ives.relative.entities.managers.RPlayerManager;
+import com.ives.relative.entities.managers.SolidTile;
+import com.ives.relative.entities.managers.TileManager;
 import com.ives.relative.entities.systems.MovementSystem;
 import com.ives.relative.entities.systems.WorldSystem;
-import com.ives.relative.planet.TerrainGenerator;
-import com.ives.relative.planet.tiles.TileManager;
-import com.ives.relative.planet.tiles.tilesorts.SolidTile;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -38,17 +32,12 @@ import java.util.Set;
  */
 public class GameManager {
     public static float PHYSICS_ITERATIONS = 1/45f;
-    public PlanetFactory planetFactory;
-    public PlayerFactory playerFactory;
-    public TileFactory tileFactory;
     public boolean isServer;
-    public Engine engine;
-    public TileManager tileManager;
     public Proxy proxy;
     public Relative relative;
-    public TerrainGenerator terrainGenerator;
 
     public ModuleManager moduleManager;
+    public World entityWorld;
     ArrayList<Class<? extends Object>> kryoList;
 
     /**
@@ -61,20 +50,14 @@ public class GameManager {
     public GameManager(Relative relative, boolean isServer) {
         this.isServer = isServer;
         this.relative = relative;
-        tileManager = new TileManager(this);
-        engine = new Engine();
+        entityWorld = new World();
+        entityWorld.initialize();
         registerSystems();
+        registerManagers();
         addKryoClasses();
-
 
         moduleManager = new ModuleManager(this);
         moduleManager.indexModules();
-
-        planetFactory = new PlanetFactory();
-        playerFactory = new PlayerFactory();
-        tileFactory = new TileFactory();
-
-        terrainGenerator = new TerrainGenerator(this);
 
         if (isServer) {
             proxy = new ServerProxy(this);
@@ -89,8 +72,15 @@ public class GameManager {
     }
 
     public void registerSystems() {
-        engine.addSystem(new WorldSystem(Family.all(WorldComponent.class, NameComponent.class).get(), GameManager.PHYSICS_ITERATIONS));
-        engine.addSystem(new MovementSystem(Family.all(DynamicBodyComponent.class).get(), engine));
+        entityWorld.setSystem(new WorldSystem(PHYSICS_ITERATIONS));
+        entityWorld.setSystem(new MovementSystem());
+
+    }
+
+    public void registerManagers() {
+        entityWorld.setManager(new PlanetManager());
+        entityWorld.setManager(new RPlayerManager());
+        entityWorld.setManager(new TileManager());
     }
 
     /**
@@ -177,7 +167,8 @@ public class GameManager {
      * @param delta delta time
      */
     public void render(float delta) {
-        engine.update(delta);
+        entityWorld.setDelta(delta);
+        entityWorld.process();
         proxy.update(delta);
     }
 }

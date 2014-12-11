@@ -1,25 +1,29 @@
 package com.ives.relative.entities.systems;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
-import com.ives.relative.entities.components.mappers.Mappers;
+import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.annotations.Wire;
+import com.artemis.systems.EntityProcessingSystem;
+import com.ives.relative.entities.components.body.PhysicsPosition;
 
 /**
  * Created by Ives on 5/12/2014.
  */
-public class MovementSystem extends IteratingSystem {
-    Engine engine;
+@Wire()
+public class MovementSystem extends EntityProcessingSystem {
+    protected ComponentMapper<PhysicsPosition> mBodyComponent;
 
-    public MovementSystem(Family family, Engine engine) {
-        super(family);
-        this.engine = engine;
+    /**
+     * Creates a new EntityProcessingSystem.
+     */
+    public MovementSystem() {
+        super(Aspect.getAspectForAll(PhysicsPosition.class));
     }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        if (!Mappers.body.get(entity).body.getLinearVelocity().isZero()) {
+    protected void process(Entity e) {
+        if (!mBodyComponent.get(e).body.getLinearVelocity().isZero()) {
 
         }
     }

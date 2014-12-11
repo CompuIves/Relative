@@ -1,6 +1,6 @@
 package com.ives.relative.entities.components.planet;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
 
 /**
  * Created by Ives on 10/12/2014.

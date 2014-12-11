@@ -1,51 +1,52 @@
-package com.ives.relative.entities.factories;
+package com.ives.relative.entities.managers;
 
-import com.badlogic.ashley.core.Entity;
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.annotations.Wire;
+import com.artemis.managers.PlayerManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.HealthComponent;
-import com.ives.relative.entities.components.MovementSpeedComponent;
-import com.ives.relative.entities.components.NameComponent;
 import com.ives.relative.entities.components.VisualComponent;
-import com.ives.relative.entities.components.body.BodyComponent;
-import com.ives.relative.entities.components.mappers.Mappers;
+import com.ives.relative.entities.components.body.PhysicsPosition;
+import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.factories.Player;
 
 /**
- * Created by Ives on 5/12/2014.
+ * Created by Ives on 11/12/2014.
  */
-public class PlayerFactory extends Factory {
+@Wire
+public class RPlayerManager extends PlayerManager {
+    protected ComponentMapper<WorldComponent> mWorldComponent;
+    private Player player;
 
     /**
      * Creates a player
+     *
      * @param internalName local name
-     * @param realName name visible to other players
-     * @param planet the entity of the world the player is in
-     * @param position position
-     * @param z depth
+     * @param realName     name visible to other players
+     * @param planet       the entity of the world the player is in
+     * @param position     position
+     * @param z            depth
      * @return a new entity (player)
      */
     public Entity createPlayer(String internalName, String realName, Entity planet, Vector2 position, int z) {
-        String worldID = Mappers.name.get(planet).internalName;
-        Entity e = new Entity();
-        e.add(new NameComponent(internalName, realName));
-        e.add(new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
-        e.add(new HealthComponent(100));
-        e.add(new MovementSpeedComponent(3.5f));
+        String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
+        Entity e = player.health(100).mvSpeed(3.5f).name(internalName, realName).create();
+        e.edit().add(new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
         Body body = createBody(e, position.x, position.y, 0, 0, planet);
-        e.add(new BodyComponent(body, z, worldID));
-
+        e.edit().add(new PhysicsPosition(body, z, worldID));
+        setPlayer(e, internalName);
         return e;
     }
 
-    @Override
     public Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
 
-        World world = Mappers.world.get(planet).world;
+        World world = mWorldComponent.get(planet).world;
 
         Body body = world.createBody(bodyDef);
         body.setFixedRotation(true);
@@ -68,10 +69,5 @@ public class PlayerFactory extends Factory {
         body.setUserData(e);
         shape.dispose();
         return body;
-    }
-
-    @Override
-    public VisualComponent createVisual() {
-        return (new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
     }
 }

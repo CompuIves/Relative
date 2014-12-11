@@ -1,6 +1,6 @@
 package com.ives.relative.entities.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
 import com.badlogic.gdx.Input;
 import com.ives.relative.entities.commands.*;
 

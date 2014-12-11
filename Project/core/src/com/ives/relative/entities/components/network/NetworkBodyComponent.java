@@ -1,12 +1,9 @@
 package com.ives.relative.entities.components.network;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Component;
+import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.body.BodyComponent;
-import com.ives.relative.entities.factories.Factory;
-import com.ives.relative.entities.systems.WorldSystem;
+import com.ives.relative.entities.components.body.PhysicsPosition;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -20,18 +17,18 @@ public class NetworkBodyComponent extends Component {
     public NetworkBodyComponent() {
     }
 
-    public NetworkBodyComponent(BodyComponent bodyComponent) {
-        Body b = bodyComponent.body;
+    public NetworkBodyComponent(PhysicsPosition physicsPosition) {
+        Body b = physicsPosition.body;
         this.x = b.getPosition().x;
         this.y = b.getPosition().y;
-        this.z = bodyComponent.z;
+        this.z = physicsPosition.z;
         this.vx = b.getLinearVelocity().x;
         this.vy = b.getLinearVelocity().y;
-        this.worldID = bodyComponent.worldID;
+        this.worldID = physicsPosition.worldID;
     }
 
-    public BodyComponent getComponent(Factory factory, Entity entity, Engine engine) {
-        Body body = factory.createBody(entity, x, y, vx, vy, engine.getSystem(WorldSystem.class).getPlanet(worldID));
-        return new BodyComponent(body, z, worldID);
+    public PhysicsPosition getComponent(Entity e) {
+        //TODO GETCOMPONENT
+        return null;
     }
 }

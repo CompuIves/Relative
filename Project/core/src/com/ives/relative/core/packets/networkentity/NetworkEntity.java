@@ -1,17 +1,14 @@
 package com.ives.relative.core.packets.networkentity;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
+
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.utils.Bag;
 import com.ives.relative.entities.components.VisualComponent;
-import com.ives.relative.entities.components.body.BodyComponent;
+import com.ives.relative.entities.components.body.PhysicsPosition;
 import com.ives.relative.entities.components.network.NetworkBodyComponent;
 import com.ives.relative.entities.components.network.NetworkVisualComponent;
-import com.ives.relative.entities.factories.Factory;
-import com.ives.relative.entities.observer.EntityChangeSubject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -19,8 +16,8 @@ import java.util.List;
  * entity only has components.
  * It also converts incompatible components to networkcomponents and back.
  */
-public class NetworkEntity extends EntityChangeSubject {
-    public List<Component> componentList;
+public class NetworkEntity {
+    public Bag<Component> componentsBag;
 
     /**
      * If the texture is on the other side this string will be set to the location.
@@ -55,9 +52,9 @@ public class NetworkEntity extends EntityChangeSubject {
      * @param entity The entity with the components
      */
     private void handleComponents(Entity entity) {
-        componentList = new ArrayList<Component>();
+        componentsBag = new Bag<Component>();
 
-        for(Component component : entity.getComponents()) {
+        for (Component component : entity.getComponents(componentsBag)) {
             addComponent(component);
         }
     }
@@ -68,20 +65,20 @@ public class NetworkEntity extends EntityChangeSubject {
      * @param component The component which needs to be added or converted.
      */
     private void addComponent(Component component) {
-        if(component instanceof BodyComponent) {
-            componentList.add(new NetworkBodyComponent((BodyComponent) component));
+        if (component instanceof PhysicsPosition) {
+            componentsBag.add(new NetworkBodyComponent((PhysicsPosition) component));
         } else if(component instanceof VisualComponent) {
             //Checks if there is a texture assigned.
             if(textureFile != null) {
                 if (!textureFile.equals("")) {
-                    componentList.add(new NetworkVisualComponent(textureFile, ((VisualComponent) component).width, ((VisualComponent) component).height));
+                    componentsBag.add(new NetworkVisualComponent(textureFile, ((VisualComponent) component).width, ((VisualComponent) component).height));
                     return;
                 }
             }
 
-            componentList.add(new NetworkVisualComponent((VisualComponent) component));
+            componentsBag.add(new NetworkVisualComponent((VisualComponent) component));
         } else {
-            componentList.add(component);
+            componentsBag.add(component);
         }
     }
 
@@ -95,13 +92,13 @@ public class NetworkEntity extends EntityChangeSubject {
      * @param entity The entity which will be used.
      * @param engine The engine (is needed for creating the body).
      */
-    private void addComponentToEntity(Factory factory, Component component, Entity entity, Engine engine) {
+    private void addComponentToEntity(Component component, Entity entity) {
         if(component instanceof NetworkBodyComponent) {
-            entity.add(((NetworkBodyComponent) component).getComponent(factory, entity, engine));
+            //entity.add(((NetworkBodyComponent) component).getComponent(factory, entity, engine));
         } else if(component instanceof NetworkVisualComponent) {
-            entity.add(((NetworkVisualComponent) component).getComponent());
+            entity.edit().add(((NetworkVisualComponent) component).getComponent());
         } else {
-            entity.add(component);
+            entity.edit().add(component);
         }
     }
 
@@ -109,10 +106,10 @@ public class NetworkEntity extends EntityChangeSubject {
      * This adds all the components in the entity
      * @return The entity created
      */
-    public Entity createEntity(Factory factory, Engine engine) {
-        Entity entity = new Entity();
-        for(Component component : componentList) {
-            addComponentToEntity(factory, component, entity, engine);
+    public Entity createEntity(World world) {
+        Entity entity = world.createEntity();
+        for (Component component : componentsBag) {
+            addComponentToEntity(component, entity);
         }
         //entity.add(factory.createVisual());
         return entity;

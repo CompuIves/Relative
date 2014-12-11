@@ -1,7 +1,5 @@
 package com.ives.relative.core.packets.handshake;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.Relative;
@@ -9,10 +7,8 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.GetNeededModulesPacket;
-import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.mappers.Mappers;
-import com.ives.relative.entities.systems.WorldSystem;
+import com.ives.relative.entities.managers.PlanetManager;
+import com.ives.relative.entities.managers.RPlayerManager;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -42,18 +38,15 @@ public class ConnectPacket implements Packet {
         System.out.println("Got a connectpacket, checking for version and player...");
         if(Relative.VERSION.equals(version)) {
             //Check for players on the server
-            for(Entity entity : game.engine.getEntitiesFor(Family.all(NameComponent.class).get())) {
-                String name = Mappers.name.get(entity).internalName;
-                if (name.equals(playerID)) {
-                    System.out.println("Kicking client, player already connected.");
-                    connectionDenied(game.proxy.network, "Player already in the server");
-                    break;
-                }
+            //TODO watch for get(0)
+            if (game.entityWorld.getManager(RPlayerManager.class).getEntitiesOfPlayer(playerID).get(0) != null) {
+                System.out.println("Kicking client, player already connected.");
+                connectionDenied(game.proxy.network, "Player already in the server");
             }
+
 
             //ACCEPTED SEND PLAYER
             this.connectionAccepted(game.proxy.network, game);
-
         } else {
             System.out.println("Kicking client, version mismatch.");
             connectionDenied(game.proxy.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
@@ -80,10 +73,9 @@ public class ConnectPacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Entity player = game.playerFactory.createPlayer(playerID, "Player", game.engine.getSystem(WorldSystem.class).getPlanet("earth"),
+                RPlayerManager rPlayerManager = game.entityWorld.getManager(RPlayerManager.class);
+                rPlayerManager.createPlayer(playerID, "Player", game.entityWorld.getManager(PlanetManager.class).getPlanet("earth"),
                         new Vector2(10, 10), 0);
-                game.engine.addEntity(player);
-                ServerProxy.addPlayer(connection, player);
             }
         });
         network.sendObjectTCP(connection, new GetNeededModulesPacket());

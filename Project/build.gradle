@@ -123,12 +123,13 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
         compile "org.reflections:reflections:0.9.9"
 
         // Support for artemis-odb
-        compile "net.onedaybeard.artemis:artemis-odb:0.8.0"
+        compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
+        compile "net.onedaybeard.artemis:artemis-odb-gwt:0.8.1:sources"
+        compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
     }
 
 

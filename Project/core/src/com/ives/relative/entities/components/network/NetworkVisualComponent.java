@@ -1,6 +1,6 @@
 package com.ives.relative.entities.components.network;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 /**
  * Created by Ives on 8/12/2014.
  */
-public class NetworkVisualComponent extends Component{
+public class NetworkVisualComponent extends Component {
     public byte[] textureBytes;
     public int iWidth, iHeight;
     public float eWidth, eHeight;

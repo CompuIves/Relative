@@ -1,5 +1,6 @@
 package com.ives.relative.assets.modules;
 
+import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
@@ -7,7 +8,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.ives.relative.assets.AssetsDB;
 import com.ives.relative.assets.modules.json.TileReader;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.planet.tiles.tilesorts.SolidTile;
+import com.ives.relative.entities.managers.SolidTile;
+import com.ives.relative.entities.managers.TileManager;
 
 import java.io.*;
 import java.net.URI;
@@ -26,10 +28,13 @@ import java.util.zip.ZipOutputStream;
  * Created by Ives on 6/12/2014.
  * The manager of all the modules, this class has a list of installed modules and loaded modules
  */
+@Wire
 public class ModuleManager {
     GameManager game;
 
     ArrayList<Module> modules;
+
+    TileManager tileManager;
 
     boolean isServer;
 
@@ -231,7 +236,8 @@ public class ModuleManager {
         for (FileHandle fileHandle : fileHandles) {
             SolidTile tile = TileReader.readFile(fileHandle, module.location);
             if (tile != null) {
-                game.tileManager.addTile(tile.id, tile);
+                //TODO Check if wired is possible
+                game.entityWorld.getManager(TileManager.class).addTile(tile.id, tile);
             }
         }
     }

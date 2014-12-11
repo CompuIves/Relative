@@ -1,9 +1,12 @@
 package com.ives.relative.entities.commands;
 
-import com.badlogic.ashley.core.Entity;
+
+import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.mappers.Mappers;
+import com.ives.relative.entities.components.MovementSpeedComponent;
+import com.ives.relative.entities.components.body.PhysicsPosition;
+
 
 /**
  * Created by Ives on 5/12/2014.
@@ -11,14 +14,13 @@ import com.ives.relative.entities.components.mappers.Mappers;
 public class MoveRightCommand extends Command {
     @Override
     public void execute(Entity e) {
-        float x = Mappers.mvSpeed.get(e).movementSpeed;
+        float x = e.getWorld().getMapper(MovementSpeedComponent.class).get(e).movementSpeed;
         moveEntity(e, x);
     }
 
     private void moveEntity(Entity e, float x) {
-        Body body = Mappers.body.get(e).body;
-        float movementSpeed = Mappers.mvSpeed.get(e).movementSpeed;
-        if(body.getLinearVelocity().x < movementSpeed) {
+        Body body = e.getWorld().getMapper(PhysicsPosition.class).get(e).body;
+        if (-body.getLinearVelocity().x < x) {
             body.applyLinearImpulse(new Vector2(x, 0), new Vector2(body.getPosition().x, body.getPosition().y), true);
         }
     }

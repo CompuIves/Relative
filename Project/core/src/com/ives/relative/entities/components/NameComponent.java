@@ -1,6 +1,7 @@
 package com.ives.relative.entities.components;
 
-import com.badlogic.ashley.core.Component;
+
+import com.artemis.Component;
 
 /**
  * Created by Ives on 4/12/2014.

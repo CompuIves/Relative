@@ -1,7 +1,7 @@
 package com.ives.relative.entities.components;
 
-import com.badlogic.ashley.core.Component;
-import com.ives.relative.planet.tiles.tilesorts.SolidTile;
+import com.artemis.Component;
+import com.ives.relative.entities.managers.SolidTile;
 
 /**
  * Created by Ives on 3/12/2014.

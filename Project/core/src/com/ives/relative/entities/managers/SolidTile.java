@@ -1,4 +1,4 @@
-package com.ives.relative.planet.tiles.tilesorts;
+package com.ives.relative.entities.managers;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
