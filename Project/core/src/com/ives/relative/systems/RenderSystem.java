@@ -55,7 +55,7 @@ public class RenderSystem extends EntityProcessingSystem {
                     position.x - visual.width / 2f,
                     position.y - visual.height / 2f,
                     visual.width / 2f, visual.height / 2f,
-                    visual.width + 0.01f, visual.height + 0.01f,
+                    visual.width + 0.02f, visual.height + 0.02f,
                     1, 1,
                     position.rotation * MathUtils.radiansToDegrees);
         }

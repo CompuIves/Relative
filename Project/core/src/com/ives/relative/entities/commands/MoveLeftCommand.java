@@ -17,7 +17,7 @@ public class MoveLeftCommand extends Command {
 
     private void moveEntity(Entity e, float x) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        if (-body.getLinearVelocity().x < x) {
+        if (body.getLinearVelocity().x > x) {
             body.applyLinearImpulse(new Vector2(x, 0), new Vector2(body.getPosition().x, body.getPosition().y), true);
         }
     }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.InputSystem;
 import com.ives.relative.systems.RenderSystem;
 
@@ -48,7 +47,7 @@ public class ClientManager extends GameManager implements Screen {
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
 
-        world.setSystem(new Box2DDebugRendererSystem(camera));
+        //world.setSystem(new Box2DDebugRendererSystem(camera));
         //game.engine.addSystem(new ClientSystem(1/20f, network));
     }
 

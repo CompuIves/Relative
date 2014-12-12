@@ -36,15 +36,12 @@ public class MovementSystem extends EntityProcessingSystem {
         Velocity velocity = mVelocity.get(e);
 
         Body entityBody = physics.body;
-        entityBody.applyLinearImpulse(velocity.vx, velocity.vy, entityBody.getWorldCenter().x, entityBody.getWorldCenter().y, true);
-
-        velocity.vx = 0;
-        velocity.vy = 0;
-
         Vector2 bodyPosition = physics.body.getPosition();
 
         position.x = bodyPosition.x;
         position.y = bodyPosition.y;
         position.rotation = physics.body.getTransform().getRotation();
+        velocity.vx = entityBody.getLinearVelocity().x;
+        velocity.vy = entityBody.getLinearVelocity().y;
     }
 }
