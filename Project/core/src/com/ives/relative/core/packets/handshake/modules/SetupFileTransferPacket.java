@@ -3,18 +3,21 @@ package com.ives.relative.core.packets.handshake.modules;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.packets.handshake.planet.RequestPlanetPacket;
+import com.ives.relative.managers.assets.modules.ModuleManager;
 
 import java.io.IOException;
 
 /**
  * Created by Ives on 9/12/2014.
+ *
+ * The foundation of the file transfer
+ * HANDLED BY CLIENT
  */
 public class SetupFileTransferPacket implements Packet {
     int position;

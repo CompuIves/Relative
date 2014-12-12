@@ -9,7 +9,7 @@ import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.planet.GravityComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
-import com.ives.relative.entities.managers.PlanetManager;
+import com.ives.relative.managers.PlanetManager;
 
 /**
  * Created by Ives on 10/12/2014.

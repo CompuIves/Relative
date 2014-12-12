@@ -1,4 +1,4 @@
-package com.ives.relative.entities.systems;
+package com.ives.relative.systems;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.InputProcessor;
-import com.ives.relative.entities.components.InputComponent;
+import com.ives.relative.entities.components.client.InputComponent;
 
 import java.util.ArrayList;
 import java.util.List;

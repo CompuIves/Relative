@@ -3,14 +3,14 @@ package com.ives.relative.core.packets.handshake.modules;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.util.InputStreamSender;
-import com.ives.relative.assets.modules.Module;
-import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.managers.assets.modules.Module;
+import com.ives.relative.managers.assets.modules.ModuleManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

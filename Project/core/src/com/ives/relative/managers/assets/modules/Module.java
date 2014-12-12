@@ -1,4 +1,4 @@
-package com.ives.relative.assets.modules;
+package com.ives.relative.managers.assets.modules;
 
 /**
  * Created by Ives on 7/12/2014.

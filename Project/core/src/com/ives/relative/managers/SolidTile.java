@@ -1,4 +1,4 @@
-package com.ives.relative.entities.managers;
+package com.ives.relative.managers;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 

@@ -4,8 +4,6 @@ import com.artemis.Component;
 import com.artemis.World;
 import com.esotericsoftware.kryo.Kryo;
 import com.ives.relative.Relative;
-import com.ives.relative.assets.modules.Module;
-import com.ives.relative.assets.modules.ModuleManager;
 import com.ives.relative.core.client.ClientProxy;
 import com.ives.relative.core.network.KryoComparator;
 import com.ives.relative.core.packets.Packet;
@@ -14,12 +12,13 @@ import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransfe
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.core.server.ServerProxy;
-import com.ives.relative.entities.managers.PlanetManager;
-import com.ives.relative.entities.managers.RPlayerManager;
-import com.ives.relative.entities.managers.SolidTile;
-import com.ives.relative.entities.managers.TileManager;
-import com.ives.relative.entities.systems.MovementSystem;
-import com.ives.relative.entities.systems.WorldSystem;
+import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.SolidTile;
+import com.ives.relative.managers.TileManager;
+import com.ives.relative.managers.assets.modules.Module;
+import com.ives.relative.managers.assets.modules.ModuleManager;
+import com.ives.relative.systems.MovementSystem;
+import com.ives.relative.systems.WorldSystem;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -51,18 +50,12 @@ public class GameManager {
         this.isServer = isServer;
         this.relative = relative;
         entityWorld = new World();
-        entityWorld.initialize();
-        registerSystems();
-        registerManagers();
         addKryoClasses();
 
-        moduleManager = new ModuleManager(this);
-        moduleManager.indexModules();
-
         if (isServer) {
-            proxy = new ServerProxy(this);
+            proxy = new ServerProxy(this, entityWorld);
         } else {
-            proxy = new ClientProxy(this, relative.camera, relative.batch);
+            proxy = new ClientProxy(this, relative.camera, relative.batch, entityWorld);
         }
 
     }
@@ -71,16 +64,17 @@ public class GameManager {
         return proxy;
     }
 
-    public void registerSystems() {
-        entityWorld.setSystem(new WorldSystem(PHYSICS_ITERATIONS));
-        entityWorld.setSystem(new MovementSystem());
-
+    public void registerCommonSystems(World world) {
+        world.setSystem(new WorldSystem(PHYSICS_ITERATIONS));
+        world.setSystem(new MovementSystem());
     }
 
-    public void registerManagers() {
-        entityWorld.setManager(new PlanetManager());
-        entityWorld.setManager(new RPlayerManager());
-        entityWorld.setManager(new TileManager());
+    public void registerCommonManagers(World world) {
+        world.setManager(new PlanetManager());
+        world.setManager(new TileManager());
+        moduleManager = new ModuleManager();
+        world.setManager(moduleManager);
+        moduleManager.indexModules();
     }
 
     /**

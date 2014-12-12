@@ -1,15 +1,15 @@
-package com.ives.relative.assets.modules;
+package com.ives.relative.managers.assets.modules;
 
+import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.ives.relative.assets.AssetsDB;
-import com.ives.relative.assets.modules.json.TileReader;
-import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.managers.SolidTile;
-import com.ives.relative.entities.managers.TileManager;
+import com.ives.relative.managers.SolidTile;
+import com.ives.relative.managers.TileManager;
+import com.ives.relative.managers.assets.AssetsDB;
+import com.ives.relative.managers.assets.modules.json.TileReader;
 
 import java.io.*;
 import java.net.URI;
@@ -29,8 +29,7 @@ import java.util.zip.ZipOutputStream;
  * The manager of all the modules, this class has a list of installed modules and loaded modules
  */
 @Wire
-public class ModuleManager {
-    GameManager game;
+public class ModuleManager extends Manager {
 
     ArrayList<Module> modules;
 
@@ -38,9 +37,7 @@ public class ModuleManager {
 
     boolean isServer;
 
-    public ModuleManager(GameManager game) {
-        this.game = game;
-        this.isServer = game.isServer();
+    public ModuleManager() {
         modules = new ArrayList<Module>();
     }
 
@@ -237,7 +234,7 @@ public class ModuleManager {
             SolidTile tile = TileReader.readFile(fileHandle, module.location);
             if (tile != null) {
                 //TODO Check if wired is possible
-                game.entityWorld.getManager(TileManager.class).addTile(tile.id, tile);
+                world.getManager(TileManager.class).addTile(tile.id, tile);
             }
         }
     }

@@ -1,9 +1,9 @@
 package com.ives.relative.core.packets.handshake.modules;
 
 import com.badlogic.gdx.Gdx;
-import com.ives.relative.assets.modules.Module;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.managers.assets.modules.Module;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import java.util.List;
  * Connection is accepted. Now the server needs the list of the modules the client has.
  * HANDLED BY CLIENT
  */
-public class GetNeededModulesPacket implements Packet {
+public class GetNeededModules implements Packet {
     List<Module> modules;
 
-    public GetNeededModulesPacket() {
+    public GetNeededModules() {
     }
 
     @Override

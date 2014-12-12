@@ -1,4 +1,4 @@
-package com.ives.relative.entities.managers;
+package com.ives.relative.managers;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -8,18 +8,28 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.VisualComponent;
 import com.ives.relative.entities.components.body.PhysicsPosition;
+import com.ives.relative.entities.components.client.VisualComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
 import com.ives.relative.entities.factories.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ives on 11/12/2014.
  */
 @Wire
-public class RPlayerManager extends PlayerManager {
+public class ServerPlayerManager extends PlayerManager {
     protected ComponentMapper<WorldComponent> mWorldComponent;
+    //For the server
+    private Map<Integer, Entity> playersByConnection;
     private Player player;
+
+    public ServerPlayerManager() {
+        super();
+        playersByConnection = new HashMap<Integer, Entity>();
+    }
 
     /**
      * Creates a player
@@ -31,13 +41,14 @@ public class RPlayerManager extends PlayerManager {
      * @param z            depth
      * @return a new entity (player)
      */
-    public Entity createPlayer(String internalName, String realName, Entity planet, Vector2 position, int z) {
+    public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = player.health(100).mvSpeed(3.5f).name(internalName, realName).create();
         e.edit().add(new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
         Body body = createBody(e, position.x, position.y, 0, 0, planet);
         e.edit().add(new PhysicsPosition(body, z, worldID));
         setPlayer(e, internalName);
+        addConnection(connection, e);
         return e;
     }
 
@@ -69,5 +80,25 @@ public class RPlayerManager extends PlayerManager {
         body.setUserData(e);
         shape.dispose();
         return body;
+    }
+
+    /**
+     * Save a player by connection, used only by Server
+     *
+     * @param connection
+     * @param player
+     */
+    public void addConnection(int connection, Entity player) {
+        this.playersByConnection.put(connection, player);
+    }
+
+    /**
+     * Get a player by connection, used only by Server
+     *
+     * @param connection
+     * @return
+     */
+    public Entity getPlayerByConnection(int connection) {
+        return this.playersByConnection.get(connection);
     }
 }

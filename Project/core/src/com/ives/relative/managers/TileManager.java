@@ -1,4 +1,4 @@
-package com.ives.relative.entities.managers;
+package com.ives.relative.managers;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -7,8 +7,8 @@ import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.TileComponent;
-import com.ives.relative.entities.components.VisualComponent;
 import com.ives.relative.entities.components.body.PhysicsPosition;
+import com.ives.relative.entities.components.client.VisualComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
 import com.ives.relative.entities.factories.Tile;
 

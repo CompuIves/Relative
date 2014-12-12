@@ -1,6 +1,6 @@
 package com.ives.relative.core.packets.handshake.modules.notice;
 
-import com.ives.relative.assets.modules.Module;
+import com.ives.relative.managers.assets.modules.Module;
 
 import java.util.List;
 

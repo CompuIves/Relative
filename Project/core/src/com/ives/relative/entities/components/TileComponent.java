@@ -1,7 +1,7 @@
 package com.ives.relative.entities.components;
 
 import com.artemis.Component;
-import com.ives.relative.entities.managers.SolidTile;
+import com.ives.relative.managers.SolidTile;
 
 /**
  * Created by Ives on 3/12/2014.

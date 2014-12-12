@@ -1,4 +1,4 @@
-package com.ives.relative.entities.managers;
+package com.ives.relative.managers;
 
 import com.artemis.Entity;
 import com.artemis.Manager;
@@ -6,6 +6,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.NameComponent;
+import com.ives.relative.entities.components.planet.GravityComponent;
 import com.ives.relative.entities.components.planet.SeedComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
 import com.ives.relative.entities.factories.Planet;
@@ -44,7 +45,7 @@ public class PlanetManager extends Manager {
     }
 
     public Entity createNewPlanet(String id, String name, String seed, World physicsWorld, int velocityIterations, int positionIterations) {
-        Entity e = new EntityBuilder(world).with(new NameComponent(id, name), new SeedComponent(seed)).build();
+        Entity e = new EntityBuilder(world).with(new NameComponent(id, name), new SeedComponent(seed), new GravityComponent(0, -10)).build();
 
         //TODO NOT THE WAY TO DO IT
         e.edit().add(new WorldComponent(physicsWorld, velocityIterations, positionIterations));

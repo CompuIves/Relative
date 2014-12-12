@@ -1,7 +1,12 @@
 package com.ives.relative.core.packets.handshake.planet;
 
+import com.artemis.Entity;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.entities.components.body.PhysicsPosition;
+import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.ServerPlayerManager;
 
 /**
  * Created by Ives on 10/12/2014.
@@ -22,8 +27,9 @@ public class RequestPlanetPacket implements Packet {
 
     @Override
     public void response(GameManager game) {
-        //Entity player = ServerProxy.players.get(connection);
-        //Entity planet = game.engine.getSystem(WorldSystem.class).getPlanet(Mappers.body.get(player).worldID);
-        //ServerNetwork.getConnection(connection).sendTCP(new PlanetPacket(planet));
+        //TODO watch for several players
+        Entity player = game.entityWorld.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
+        Entity planet = game.entityWorld.getManager(PlanetManager.class).getPlanet(game.entityWorld.getMapper(PhysicsPosition.class).get(player).worldID);
+        ServerNetwork.getConnection(connection).sendTCP(new PlanetPacket(planet));
     }
 }

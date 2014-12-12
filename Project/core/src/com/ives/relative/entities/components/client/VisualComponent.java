@@ -1,4 +1,4 @@
-package com.ives.relative.entities.components;
+package com.ives.relative.entities.components.client;
 
 import com.artemis.Component;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

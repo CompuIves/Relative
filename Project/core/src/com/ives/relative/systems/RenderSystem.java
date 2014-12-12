@@ -1,4 +1,4 @@
-package com.ives.relative.entities.systems;
+package com.ives.relative.systems;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.VisualComponent;
 import com.ives.relative.entities.components.body.PhysicsPosition;
+import com.ives.relative.entities.components.client.VisualComponent;
 
 /**
  * Created by Ives on 3/12/2014.

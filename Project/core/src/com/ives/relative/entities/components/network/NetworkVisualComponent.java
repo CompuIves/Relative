@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ives.relative.entities.components.VisualComponent;
+import com.ives.relative.entities.components.client.VisualComponent;
 
 import java.nio.ByteBuffer;
 
