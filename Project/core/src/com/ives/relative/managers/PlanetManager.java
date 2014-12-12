@@ -8,13 +8,13 @@ import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.entities.factories.Planet;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Ives on 11/12/2014.
+ * Manager of the planets! Sort of an Interstellar Manager.
  */
 @Wire
 public class PlanetManager extends Manager {
@@ -23,7 +23,6 @@ public class PlanetManager extends Manager {
      */
     private final Map<String, Entity> entitiesByPlanet;
     private final Map<Entity, String> planetsByEntity;
-    private Planet planet;
 
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, Entity>();

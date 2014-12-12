@@ -18,20 +18,19 @@ import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.entities.factories.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Ives on 11/12/2014.
+ * This is the player manager of the server, only the server uses this.
  */
 @Wire
 public class ServerPlayerManager extends PlayerManager {
     protected ComponentMapper<WorldC> mWorldComponent;
     //For the server
     private Map<Integer, Entity> playersByConnection;
-    private Player player;
 
     public ServerPlayerManager() {
         super();
@@ -54,7 +53,7 @@ public class ServerPlayerManager extends PlayerManager {
                 new MovementSpeed(3.5f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 1, 1),
-                new Position(position.x, position.y, z, worldID),
+                new Position(position.x, position.y, z, 0, worldID),
                 new Velocity(0, 0)).
                 group("player").
                 build();
@@ -71,6 +70,7 @@ public class ServerPlayerManager extends PlayerManager {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
+        bodyDef.linearVelocity.set(vx, vy);
 
         World world = mWorldComponent.get(planet).world;
 
@@ -100,8 +100,8 @@ public class ServerPlayerManager extends PlayerManager {
     /**
      * Save a player by connection, used only by Server
      *
-     * @param connection
-     * @param player
+     * @param connection connection id
+     * @param player player
      */
     public void addConnection(int connection, Entity player) {
         this.playersByConnection.put(connection, player);
@@ -110,8 +110,8 @@ public class ServerPlayerManager extends PlayerManager {
     /**
      * Get a player by connection, used only by Server
      *
-     * @param connection
-     * @return
+     * @param connection connection id
+     * @return player
      */
     public Entity getPlayerByConnection(int connection) {
         return this.playersByConnection.get(connection);

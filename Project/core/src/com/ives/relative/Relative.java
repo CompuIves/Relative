@@ -9,6 +9,9 @@ public class Relative extends Game {
 	public static String VERSION = "1.0";
 	public static Relative relative;
 
+	private ServerManager serverManager;
+	private ClientManager clientManager;
+
 	@Override
 	public void create () {
 		relative = this;
@@ -17,9 +20,19 @@ public class Relative extends Game {
 
 		//Creates two instances, an internal server and a client which connects to the server.
 		//Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.
-		ServerManager serverManager = new ServerManager();
+		serverManager = new ServerManager();
 
-		ClientManager clientManager = new ClientManager();
+		clientManager = new ClientManager();
 		setScreen(clientManager);
+	}
+
+	@Override
+	public void render() {
+		super.render();
+		if (clientManager != null)
+			clientManager.render(Gdx.graphics.getDeltaTime());
+
+		if (serverManager != null)
+			serverManager.render(Gdx.graphics.getDeltaTime());
 	}
 }

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 /**
  * Created by Ives on 12/12/2014.
+ * The official manager of the client
  */
 public class ClientManager extends GameManager implements Screen {
     SpriteBatch batch;
@@ -35,8 +36,6 @@ public class ClientManager extends GameManager implements Screen {
             this.network = new ClientNetwork(this, new Client());
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-
         }
     }
 
@@ -60,11 +59,10 @@ public class ClientManager extends GameManager implements Screen {
 
     @Override
     public void render(float delta) {
-        super.render(delta);
-
         Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(camera.combined);
+        super.render(delta);
     }
 
     @Override

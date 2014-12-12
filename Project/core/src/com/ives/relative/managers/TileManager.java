@@ -11,21 +11,21 @@ import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.TileC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.entities.factories.Tile;
 
 import java.util.HashMap;
 
 /**
  * Created by Ives on 11/12/2014.
+ * The manager of all tiles
  */
 @Wire
 public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
     protected ComponentMapper<WorldC> mWorldComponent;
     protected ComponentMapper<Name> mName;
-    private Tile tile;
 
     public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
@@ -44,7 +44,7 @@ public class TileManager extends Manager {
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
-                    new Position(x, y, z, mName.get(planet).internalName)).group("tile").build();
+                    new Position(x, y, z, 0, mName.get(planet).internalName)).group("tile").build();
             Body body = createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planet).world);
             e.edit().add(new Physics(body));
 
@@ -58,10 +58,12 @@ public class TileManager extends Manager {
 
     public Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
-        if (tile.gravity && gravity)
+        if (tile.gravity && gravity) {
+            e.edit().add(new Velocity(0, 0));
             bodyDef.type = BodyDef.BodyType.DynamicBody;
-        else
+        } else {
             bodyDef.type = BodyDef.BodyType.StaticBody;
+        }
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
         PolygonShape shape = getCube(tile.width, tile.height);
@@ -69,7 +71,7 @@ public class TileManager extends Manager {
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.7f;
+        fixtureDef.friction = 0.9f;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(e);
         body.setUserData(e);

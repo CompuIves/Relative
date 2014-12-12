@@ -127,8 +127,8 @@ project(":core") {
         compile "org.reflections:reflections:0.9.9"
 
         // Support for artemis-odb
-        compile "net.onedaybeard.artemis:artemis-odb:0.8.0"
-        compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.0"
+        compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
+        compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
     }
 
 
