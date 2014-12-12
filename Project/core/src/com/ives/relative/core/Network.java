@@ -7,47 +7,33 @@ import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.packets.Packet;
 
+import java.io.IOException;
+
 /**
  * Created by Ives on 4/12/2014.
  */
 public abstract class Network extends Listener {
-    //Only for client
-    public int connectionID;
-
     public EndPoint endPoint;
     public Kryo kryo;
 
-    public Network(EndPoint endPoint) {
+    public Network(EndPoint endPoint, GameManager gameManager) throws IOException {
         this.endPoint = endPoint;
+        kryo = endPoint.getKryo();
+        gameManager.addKryoClasses();
+        gameManager.registerKryoClasses(kryo);
     }
 
     public abstract void sendObjectTCP(int connectionID, Packet o);
 
-    public void sendObjectTCPToServer(Packet o) {
-    }
-
-    //Only for server if client send just to server
-    public void sendObjectToAllTCP(Packet o) {}
-
     public abstract void sendObjectUDP(int connectionID, Packet o);
 
-    public void sendObjectUDPtoServer(Packet o) {}
-
-    public void sendObjectToAllUDP(Packet packet) {
-    }
-
     @Override
-    public void connected(Connection connection) {
-        connectionID = connection.getID();
-    }
+    public abstract void connected(Connection connection);
 
     public abstract void closeConnection(int connection, String message);
 
     public void closeCurrentConnection(String message) {
         Gdx.app.log("Connection", message);
         endPoint.close();
-    }
-
-    public void getConnection() {
     }
 }

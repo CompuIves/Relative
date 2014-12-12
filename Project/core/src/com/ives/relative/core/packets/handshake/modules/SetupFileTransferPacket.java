@@ -34,7 +34,7 @@ public class SetupFileTransferPacket implements Packet {
     public void response(final GameManager game) {
         position = 0;
 
-        game.proxy.network.endPoint.addListener(new Listener() {
+        game.network.endPoint.addListener(new Listener() {
             @Override
             public void received(final Connection connection, final Object object) {
                 if (object instanceof StartFileNotice) {
@@ -45,15 +45,15 @@ public class SetupFileTransferPacket implements Packet {
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            game.moduleManager.indexModules();
-                            game.moduleManager.loadModules(((FinishFileTransferNotice) object).moduleList);
+                            game.world.getManager(ModuleManager.class).indexModules();
+                            game.world.getManager(ModuleManager.class).loadModules(((FinishFileTransferNotice) object).moduleList);
                             //Ask for the world now that the modules are loaded.
                         }
                     });
 
                     //Ask for the planet
                     connection.sendTCP(new RequestPlanetPacket(connection.getID()));
-                    game.proxy.network.endPoint.removeListener(this);
+                    game.network.endPoint.removeListener(this);
                 }
 
                 if (position == length) {

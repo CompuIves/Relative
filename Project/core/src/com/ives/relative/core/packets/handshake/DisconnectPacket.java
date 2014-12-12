@@ -21,6 +21,6 @@ public class DisconnectPacket implements Packet {
 
     @Override
     public void response(GameManager game) {
-        game.proxy.network.closeConnection(connection, message);
+        game.network.closeConnection(connection, message);
     }
 }

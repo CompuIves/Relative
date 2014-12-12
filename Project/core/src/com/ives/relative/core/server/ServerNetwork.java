@@ -3,7 +3,6 @@ package com.ives.relative.core.server;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
-import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 
@@ -14,22 +13,17 @@ import java.io.IOException;
  */
 public class ServerNetwork extends Network {
     public static Server server;
-    GameManager game;
+    ServerManager game;
 
-    public ServerNetwork(GameManager game, Server server, ServerProxy proxy) {
-        super(server);
+    public ServerNetwork(ServerManager game, Server server) throws IOException {
+        super(server, game);
         this.game = game;
         ServerNetwork.server = server;
         super.kryo = server.getKryo();
         game.registerKryoClasses(kryo);
 
-        try {
-            startServer();
-            proxy.serverAccepted();
-            server.addListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        startServer();
+        server.addListener(this);
     }
 
     public static Connection getConnection(int id) {
@@ -55,7 +49,7 @@ public class ServerNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        super.connected(connection);
+
     }
 
     @Override
@@ -71,16 +65,14 @@ public class ServerNetwork extends Network {
     }
 
     @Override
-    public void sendObjectToAllTCP(Packet o) {
-        server.sendToAllTCP(o);
-    }
-
-    @Override
     public void sendObjectUDP(int connectionID, Packet o) {
         server.sendToUDP(connectionID, o);
     }
 
-    @Override
+    public void sendObjectToAllTCP(Packet o) {
+        server.sendToAllTCP(o);
+    }
+
     public void sendObjectToAllUDP(Packet o) {
         server.sendToAllUDP(o);
     }

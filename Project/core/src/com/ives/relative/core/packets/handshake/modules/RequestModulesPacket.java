@@ -48,7 +48,7 @@ public class RequestModulesPacket implements Packet {
 
     @Override
     public void response(final GameManager game) {
-        deltaModules = game.moduleManager.compareModuleLists(modules);
+        deltaModules = game.world.getManager(ModuleManager.class).compareModuleLists(modules);
         Connection connection = ServerNetwork.getConnection(connectionID);
         if (connection != null) {
             //Set up a transfer in all cases, otherwise the planet can't be requested (will be sent next packet)
@@ -63,7 +63,7 @@ public class RequestModulesPacket implements Packet {
                         if (deltaModules.size() > 0) {
                             startTransferModule(connection);
                         } else {
-                            connection.sendTCP(new FinishFileTransferNotice(game.moduleManager.getModules()));
+                            connection.sendTCP(new FinishFileTransferNotice(game.world.getManager(ModuleManager.class).getModules()));
                             connection.removeListener(this);
                         }
                     }

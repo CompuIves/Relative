@@ -15,23 +15,16 @@ import java.io.IOException;
  * Created by Ives on 4/12/2014.
  */
 public class ClientNetwork extends Network {
+    public static int CONNECTIONID;
     private GameManager game;
     private Client client;
 
-    public ClientNetwork(GameManager game, Client client) {
-        super(client);
+    public ClientNetwork(ClientManager game, Client client) throws IOException {
+        super(client, game);
         this.game = game;
         this.client = client;
 
-        super.kryo = client.getKryo();
-        game.registerKryoClasses(kryo);
-
-        try {
-            startClient();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        startClient();
         client.addListener(this);
     }
 
@@ -42,7 +35,7 @@ public class ClientNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        super.connected(connection);
+        CONNECTIONID = connection.getID();
         //Send a connect packet with player name + version number + connection id
         sendObjectTCP(connection.getID(), new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32), connection.getID()));
     }
@@ -66,22 +59,7 @@ public class ClientNetwork extends Network {
     }
 
     @Override
-    public void sendObjectTCPToServer(Packet o) {
-        sendObjectTCP(connectionID, o);
-    }
-
-    @Override
-    public void sendObjectUDPtoServer(Packet o) {
-        client.sendUDP(o);
-    }
-
-    @Override
-    public void sendObjectToAllTCP(Packet o) {
-        client.sendTCP(o);
-    }
-
-    @Override
     public void sendObjectUDP(int connectionID, Packet o) {
-
+        client.sendTCP(o);
     }
 }

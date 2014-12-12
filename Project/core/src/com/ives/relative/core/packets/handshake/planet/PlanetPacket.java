@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.planet.GravityComponent;
 import com.ives.relative.entities.components.planet.WorldComponent;
 import com.ives.relative.managers.PlanetManager;
@@ -18,13 +17,13 @@ import com.ives.relative.managers.PlanetManager;
  * HANDLED BY CLIENT
  */
 public class PlanetPacket implements Packet {
-    NetworkEntity planet;
+    Entity planet;
 
     public PlanetPacket() {
     }
 
     public PlanetPacket(Entity planet) {
-        this.planet = new NetworkEntity(planet);
+        this.planet = planet;
     }
 
     @Override
@@ -33,13 +32,13 @@ public class PlanetPacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Entity e = planet.createEntity(game.entityWorld);
-                WorldComponent worldComponent = game.entityWorld.getMapper(WorldComponent.class).get(e);
-                GravityComponent gravityComponent = game.entityWorld.getMapper(GravityComponent.class).get(e);
+                game.world.getEntityManager().added(planet);
+                WorldComponent worldComponent = game.world.getMapper(WorldComponent.class).get(planet);
+                GravityComponent gravityComponent = game.world.getMapper(GravityComponent.class).get(planet);
                 worldComponent.world = new World(new Vector2(gravityComponent.gravityX, gravityComponent.gravityY), true);
 
-                PlanetManager planetManager = game.entityWorld.getManager(PlanetManager.class);
-                planetManager.generateTerrain(e);
+                PlanetManager planetManager = game.world.getManager(PlanetManager.class);
+                planetManager.generateTerrain(planet);
             }
         });
 

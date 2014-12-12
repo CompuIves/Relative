@@ -13,20 +13,19 @@ import com.ives.relative.entities.components.planet.WorldComponent;
  */
 @Wire
 public class WorldSystem extends IntervalEntitySystem {
-    float interval;
+    public static float PHYSICS_ITERATIONS = 1 / 45f;
 
     ComponentMapper<WorldComponent> worldMapper;
 
     public WorldSystem(float interval) {
         super(Aspect.getAspectForAll(WorldComponent.class), interval);
-        this.interval = interval;
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         for (Entity entity : entities) {
             WorldComponent worldComponent = worldMapper.get(entity);
-            worldComponent.world.step(interval, worldComponent.velocityIterations, worldComponent.positionIterations);
+            worldComponent.world.step(PHYSICS_ITERATIONS, worldComponent.velocityIterations, worldComponent.positionIterations);
         }
     }
 }

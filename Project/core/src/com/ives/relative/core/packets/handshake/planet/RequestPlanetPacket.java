@@ -28,8 +28,8 @@ public class RequestPlanetPacket implements Packet {
     @Override
     public void response(GameManager game) {
         //TODO watch for several players
-        Entity player = game.entityWorld.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
-        Entity planet = game.entityWorld.getManager(PlanetManager.class).getPlanet(game.entityWorld.getMapper(PhysicsPosition.class).get(player).worldID);
+        Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
+        Entity planet = game.world.getManager(PlanetManager.class).getPlanet(game.world.getMapper(PhysicsPosition.class).get(player).worldID);
         ServerNetwork.getConnection(connection).sendTCP(new PlanetPacket(planet));
     }
 }

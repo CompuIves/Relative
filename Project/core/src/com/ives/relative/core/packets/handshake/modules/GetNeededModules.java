@@ -2,8 +2,10 @@ package com.ives.relative.core.packets.handshake.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.managers.assets.modules.Module;
+import com.ives.relative.managers.assets.modules.ModuleManager;
 
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class GetNeededModules implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                modules = game.moduleManager.getModules();
-                game.proxy.network.sendObjectTCPToServer(new RequestModulesPacket(modules, game.proxy.network.connectionID));
+                modules = game.world.getManager(ModuleManager.class).getModules();
+                game.network.sendObjectTCP(0, new RequestModulesPacket(modules, ClientNetwork.CONNECTIONID));
             }
         });
     }

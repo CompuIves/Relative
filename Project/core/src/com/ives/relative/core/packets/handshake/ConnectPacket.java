@@ -39,17 +39,17 @@ public class ConnectPacket implements Packet {
         if(Relative.VERSION.equals(version)) {
             //Check for players on the server
             //TODO watch for get(0)
-            if (game.entityWorld.getManager(ServerPlayerManager.class).getEntitiesOfPlayer(playerID).get(0) != null) {
+            if (game.world.getManager(ServerPlayerManager.class).getEntitiesOfPlayer(playerID).get(0) != null) {
                 System.out.println("Kicking client, player already connected.");
-                connectionDenied(game.proxy.network, "Player already in the server");
+                connectionDenied(game.network, "Player already in the server");
             }
 
 
             //ACCEPTED SEND PLAYER
-            this.connectionAccepted(game.proxy.network, game);
+            this.connectionAccepted(game.network, game);
         } else {
             System.out.println("Kicking client, version mismatch.");
-            connectionDenied(game.proxy.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
+            connectionDenied(game.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
         }
     }
 
@@ -73,8 +73,8 @@ public class ConnectPacket implements Packet {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                ServerPlayerManager serverPlayerManager = game.entityWorld.getManager(ServerPlayerManager.class);
-                serverPlayerManager.createPlayer(connection, playerID, "Player", game.entityWorld.getManager(PlanetManager.class).getPlanet("earth"),
+                ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
+                serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
                         new Vector2(10, 10), 0);
             }
         });
