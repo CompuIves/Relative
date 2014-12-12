@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.InputProcessor;
-import com.ives.relative.entities.components.client.InputComponent;
+import com.ives.relative.entities.components.client.InputC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Wire
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
-    protected ComponentMapper<InputComponent> mInputComponent;
+    protected ComponentMapper<InputC> mInputComponent;
     private List<Integer> keysPressed;
 
     /**
@@ -24,15 +24,15 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
      * against entities.
      */
     public InputSystem() {
-        super(Aspect.getAspectForAll(InputComponent.class));
+        super(Aspect.getAspectForAll(InputC.class));
         keysPressed = new ArrayList<Integer>();
     }
 
     @Override
     protected void process(Entity e) {
         for (int key : keysPressed) {
-            InputComponent inputComponent = mInputComponent.get(e);
-            inputComponent.commandKeys.get(key).execute(e);
+            InputC inputC = mInputComponent.get(e);
+            inputC.commandKeys.get(key).execute(e);
         }
     }
 

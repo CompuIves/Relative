@@ -4,12 +4,15 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.TileComponent;
-import com.ives.relative.entities.components.body.PhysicsPosition;
-import com.ives.relative.entities.components.client.VisualComponent;
-import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.TileC;
+import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.factories.Tile;
 
 import java.util.HashMap;
@@ -20,7 +23,8 @@ import java.util.HashMap;
 @Wire
 public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
-    protected ComponentMapper<WorldComponent> mWorldComponent;
+    protected ComponentMapper<WorldC> mWorldComponent;
+    protected ComponentMapper<Name> mName;
     private Tile tile;
 
     public TileManager() {
@@ -38,10 +42,11 @@ public class TileManager extends Manager {
         if (solidTiles.get(tileID) != null) {
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
-            Entity e = world.createEntity();
-            e.edit().add(new TileComponent(solidTile)).add(new VisualComponent(solidTile.textureRegion, solidTile.width, solidTile.height));
-            Body body = createBody(e, solidTile, x, y, z, gravity, mWorldComponent.get(planet).world);
-            e.edit().add(new PhysicsPosition(body, z, world.getManager(PlanetManager.class).getPlanetID(planet)));
+            Entity e = new EntityBuilder(world).with(new TileC(solidTile),
+                    new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
+                    new Position(x, y, z, mName.get(planet).internalName)).group("tile").build();
+            Body body = createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planet).world);
+            e.edit().add(new Physics(body));
 
             return e;
         } else {
@@ -51,7 +56,7 @@ public class TileManager extends Manager {
         }
     }
 
-    public Body createBody(Entity e, SolidTile tile, float x, float y, int z, boolean gravity, World physicsWorld) {
+    public Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
         if (tile.gravity && gravity)
             bodyDef.type = BodyDef.BodyType.DynamicBody;

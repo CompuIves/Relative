@@ -20,7 +20,7 @@ public class ClientNetwork extends Network {
     private Client client;
 
     public ClientNetwork(ClientManager game, Client client) throws IOException {
-        super(client, game);
+        super(client);
         this.game = game;
         this.client = client;
 

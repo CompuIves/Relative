@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
-import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.components.planet.WorldC;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -15,17 +15,17 @@ import com.ives.relative.entities.components.planet.WorldComponent;
 public class WorldSystem extends IntervalEntitySystem {
     public static float PHYSICS_ITERATIONS = 1 / 45f;
 
-    ComponentMapper<WorldComponent> worldMapper;
+    ComponentMapper<WorldC> worldMapper;
 
     public WorldSystem(float interval) {
-        super(Aspect.getAspectForAll(WorldComponent.class), interval);
+        super(Aspect.getAspectForAll(WorldC.class), interval);
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         for (Entity entity : entities) {
-            WorldComponent worldComponent = worldMapper.get(entity);
-            worldComponent.world.step(PHYSICS_ITERATIONS, worldComponent.velocityIterations, worldComponent.positionIterations);
+            WorldC worldC = worldMapper.get(entity);
+            worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
         }
     }
 }

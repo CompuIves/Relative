@@ -6,13 +6,13 @@ import com.artemis.Component;
 /**
  * Created by Ives on 5/12/2014.
  */
-public class MovementSpeedComponent extends Component {
+public class MovementSpeed extends Component {
     public float movementSpeed = 1f;
 
-    public MovementSpeedComponent(float movementSpeed) {
+    public MovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
     }
 
-    public MovementSpeedComponent() {
+    public MovementSpeed() {
     }
 }

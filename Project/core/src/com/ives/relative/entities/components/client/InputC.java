@@ -8,10 +8,10 @@ import com.ives.relative.entities.commands.*;
 /**
  * Created by Ives on 5/12/2014.
  */
-public class InputComponent extends Component {
+public class InputC extends Component {
     public transient CommandsMap<Integer, Command> commandKeys;
 
-    public InputComponent() {
+    public InputC() {
         commandKeys = new CommandsMap<Integer, Command>(new Command());
         commandKeys.put(Input.Keys.LEFT, new MoveLeftCommand());
         commandKeys.put(Input.Keys.RIGHT, new MoveRightCommand());

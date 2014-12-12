@@ -4,13 +4,20 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.PlayerManager;
+import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.body.PhysicsPosition;
-import com.ives.relative.entities.components.client.VisualComponent;
-import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.components.Health;
+import com.ives.relative.entities.components.MovementSpeed;
+import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Transform;
+import com.ives.relative.entities.components.body.Velocity;
+import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.factories.Player;
 
 import java.util.HashMap;
@@ -21,7 +28,7 @@ import java.util.Map;
  */
 @Wire
 public class ServerPlayerManager extends PlayerManager {
-    protected ComponentMapper<WorldComponent> mWorldComponent;
+    protected ComponentMapper<WorldC> mWorldComponent;
     //For the server
     private Map<Integer, Entity> playersByConnection;
     private Player player;
@@ -43,10 +50,18 @@ public class ServerPlayerManager extends PlayerManager {
      */
     public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
-        Entity e = player.health(100).mvSpeed(3.5f).name(internalName, realName).create();
-        e.edit().add(new VisualComponent(new TextureRegion(new Texture("player.png")), 1, 1));
+        Entity e = new EntityBuilder(world).with(new Health(100),
+                new MovementSpeed(3.5f),
+                new Name(internalName, realName),
+                new Visual(new TextureRegion(new Texture("player.png")), 1, 1),
+                new Position(position.x, position.y, z, worldID),
+                new Velocity(0, 0)).
+                group("player").
+                build();
+
         Body body = createBody(e, position.x, position.y, 0, 0, planet);
-        e.edit().add(new PhysicsPosition(body, z, worldID));
+        e.edit().add(new Physics(body)).add(new Transform(1, 1, body.getFixtureList()));
+
         setPlayer(e, internalName);
         addConnection(connection, e);
         return e;

@@ -6,13 +6,13 @@ import com.ives.relative.managers.SolidTile;
 /**
  * Created by Ives on 3/12/2014.
  */
-public class TileComponent extends Component {
+public class TileC extends Component {
     transient SolidTile tile;
 
-    public TileComponent() {
+    public TileC() {
     }
 
-    public TileComponent(SolidTile tile) {
+    public TileC(SolidTile tile) {
         this.tile = tile;
     }
 }

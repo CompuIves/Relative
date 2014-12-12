@@ -6,17 +6,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 /**
  * Created by Ives on 2/12/2014.
  */
-public class PhysicsPosition extends Component {
-    public String worldID;
-    public int z;
+public class Physics extends Component {
     public transient Body body = null;
 
-    public PhysicsPosition() {
+    public Physics() {
     }
 
-    public PhysicsPosition(Body body, int z, String worldID) {
+    public Physics(Body body) {
         this.body = body;
-        this.z = z;
-        this.worldID = worldID;
     }
 }

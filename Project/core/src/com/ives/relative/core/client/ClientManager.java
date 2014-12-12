@@ -31,7 +31,6 @@ public class ClientManager extends GameManager implements Screen {
         registerManagers();
         world.setManager(this);
         world.initialize();
-
         try {
             this.network = new ClientNetwork(this, new Client());
         } catch (IOException e) {

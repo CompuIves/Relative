@@ -6,13 +6,13 @@ import com.artemis.Component;
 /**
  * Created by Ives on 5/12/2014.
  */
-public class DurabilityComponent extends Component {
+public class Durability extends Component {
     public int durability = 10;
 
-    public DurabilityComponent(int durability) {
+    public Durability(int durability) {
         this.durability = durability;
     }
 
-    public DurabilityComponent() {
+    public Durability() {
     }
 }

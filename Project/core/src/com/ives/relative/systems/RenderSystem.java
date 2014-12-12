@@ -10,21 +10,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.body.PhysicsPosition;
-import com.ives.relative.entities.components.client.VisualComponent;
+import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.components.client.Visual;
 
 /**
  * Created by Ives on 3/12/2014.
  */
 @Wire
 public class RenderSystem extends EntitySystem {
-    ComponentMapper<PhysicsPosition> bodyMapper;
-    ComponentMapper<VisualComponent> visualMapper;
+    ComponentMapper<Physics> bodyMapper;
+    ComponentMapper<Visual> visualMapper;
     private SpriteBatch batch;
     private OrthographicCamera camera;
 
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(VisualComponent.class, PhysicsPosition.class));
+        super(Aspect.getAspectForAll(Visual.class, Physics.class));
         this.batch = batch;
         this.camera = camera;
     }
@@ -43,7 +43,7 @@ public class RenderSystem extends EntitySystem {
             Body body = bodyMapper.get(entity).body;
             if(body.getPosition().x > startX && body.getPosition().x < endX
                     && body.getPosition().y > startY && body.getPosition().y < endY) {
-                VisualComponent visual = visualMapper.get(entity);
+                Visual visual = visualMapper.get(entity);
 
                 //TODO upped texture width and height against gaps, way to do it?
                 batch.draw(visual.texture,

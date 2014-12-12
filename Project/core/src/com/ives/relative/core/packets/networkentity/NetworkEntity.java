@@ -5,13 +5,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.utils.Bag;
-import com.ives.relative.entities.components.body.PhysicsPosition;
-import com.ives.relative.entities.components.client.VisualComponent;
-import com.ives.relative.entities.components.network.NetworkBodyComponent;
-import com.ives.relative.entities.components.network.NetworkVisualComponent;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -20,7 +14,7 @@ import java.util.List;
  * It also converts incompatible components to networkcomponents and back.
  */
 public class NetworkEntity {
-    public List<Component> components;
+    public Array<Component> components;
 
     /**
      * If the texture is on the other side this string will be set to the location.
@@ -54,8 +48,8 @@ public class NetworkEntity {
      * Creates a componentlist and calls a method to add them
      * @param entity The entity with the components
      */
-    private void handleComponents(Entity entity) {
-        components = new ArrayList<Component>();
+    private void handleComponents(final Entity entity) {
+        components = new Array<Component>();
         Bag<Component> tempComponents = new Bag<Component>();
         entity.getComponents(tempComponents);
         for (Component component : tempComponents) {
@@ -70,29 +64,6 @@ public class NetworkEntity {
     }
 
     /**
-     * Add the component to the list, filters out special components which cannot be sent over the network and creates
-     * a networkComponent for it.
-     * @param component The component which needs to be added or converted.
-     */
-    private void addComponent(Component component) {
-        if (component instanceof PhysicsPosition) {
-            components.add(new NetworkBodyComponent((PhysicsPosition) component));
-        } else if(component instanceof VisualComponent) {
-            //Checks if there is a texture assigned.
-            if(textureFile != null) {
-                if (!textureFile.equals("")) {
-                    components.add(new NetworkVisualComponent(textureFile, ((VisualComponent) component).width, ((VisualComponent) component).height));
-                    return;
-                }
-            }
-
-            components.add(new NetworkVisualComponent((VisualComponent) component));
-        } else {
-            components.add(component);
-        }
-    }
-
-    /**
      * This adds all the components in the entity
      * @return The entity created
      */
@@ -101,6 +72,7 @@ public class NetworkEntity {
         for (Component component : components) {
             entity.edit().add(component);
         }
+        world.getEntityManager().added(entity);
         //entity.add(factory.createVisual());
         return entity;
     }

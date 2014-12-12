@@ -3,12 +3,11 @@ package com.ives.relative.managers;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.physics.box2d.World;
-import com.ives.relative.entities.components.NameComponent;
-import com.ives.relative.entities.components.planet.GravityComponent;
-import com.ives.relative.entities.components.planet.SeedComponent;
-import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.planet.Gravity;
+import com.ives.relative.entities.components.planet.Seed;
+import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.factories.Planet;
 
 import java.util.HashMap;
@@ -45,10 +44,17 @@ public class PlanetManager extends Manager {
     }
 
     public Entity createNewPlanet(String id, String name, String seed, World physicsWorld, int velocityIterations, int positionIterations) {
-        Entity e = new EntityBuilder(world).with(new NameComponent(id, name), new SeedComponent(seed), new GravityComponent(0, -10)).build();
+        /*
+        Entity e = new EntityBuilder(world).with(new Name(id, name),
+                new Seed(seed),
+                new Gravity(0, -10),
+                new WorldC(physicsWorld, velocityIterations, positionIterations)).
+                group("planets").
+                build();
+        */
 
-        //TODO NOT THE WAY TO DO IT
-        e.edit().add(new WorldComponent(physicsWorld, velocityIterations, positionIterations));
+        Entity e = world.createEntity();
+        e.edit().add(new Name(id, name)).add(new Seed(seed)).add(new Gravity(0, -10)).add(new WorldC(physicsWorld, velocityIterations, positionIterations));
         addPlanet(id, e);
         return e;
     }

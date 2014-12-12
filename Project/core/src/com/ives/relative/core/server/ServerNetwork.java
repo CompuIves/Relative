@@ -12,16 +12,13 @@ import java.io.IOException;
  * Created by Ives on 4/12/2014.
  */
 public class ServerNetwork extends Network {
-    public static Server server;
+    private static Server server;
     ServerManager game;
 
     public ServerNetwork(ServerManager game, Server server) throws IOException {
-        super(server, game);
+        super(server);
         this.game = game;
         ServerNetwork.server = server;
-        super.kryo = server.getKryo();
-        game.registerKryoClasses(kryo);
-
         startServer();
         server.addListener(this);
     }

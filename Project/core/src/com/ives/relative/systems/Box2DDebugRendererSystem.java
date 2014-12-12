@@ -8,19 +8,19 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.ives.relative.entities.components.planet.WorldComponent;
+import com.ives.relative.entities.components.planet.WorldC;
 
 /**
  * Created by Ives on 5/12/2014.
  */
 @Wire
 public class Box2DDebugRendererSystem extends EntityProcessingSystem {
-    protected ComponentMapper<WorldComponent> mWorldComponent;
+    protected ComponentMapper<WorldC> mWorldComponent;
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthographicCamera camera;
 
     public Box2DDebugRendererSystem(OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(WorldComponent.class));
+        super(Aspect.getAspectForAll(WorldC.class));
         box2DDebugRenderer = new Box2DDebugRenderer();
         this.camera = camera;
     }

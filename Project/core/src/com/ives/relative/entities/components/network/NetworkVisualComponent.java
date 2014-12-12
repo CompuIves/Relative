@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ives.relative.entities.components.client.VisualComponent;
+import com.ives.relative.entities.components.client.Visual;
 
 import java.nio.ByteBuffer;
 
@@ -25,11 +25,11 @@ public class NetworkVisualComponent extends Component {
 
     /**
      * Converts VisualComponent to a NetworkComponent
-     * @param visualComponent The VisualComponent which needs to be converted
+     * @param visual The VisualComponent which needs to be converted
      */
-    public NetworkVisualComponent(VisualComponent visualComponent) {
-        visualComponent.texture.getTexture().getTextureData().prepare();
-        Pixmap pixmap = visualComponent.texture.getTexture().getTextureData().consumePixmap();
+    public NetworkVisualComponent(Visual visual) {
+        visual.texture.getTexture().getTextureData().prepare();
+        Pixmap pixmap = visual.texture.getTexture().getTextureData().consumePixmap();
         ByteBuffer pixels = pixmap.getPixels();
         textureBytes = new byte[pixels.limit()];
         pixels.get(textureBytes, 0, textureBytes.length);
@@ -37,8 +37,8 @@ public class NetworkVisualComponent extends Component {
         format = pixmap.getFormat().ordinal();
         iWidth = pixmap.getWidth();
         iHeight = pixmap.getHeight();
-        eWidth = visualComponent.width;
-        eHeight = visualComponent.height;
+        eWidth = visual.width;
+        eHeight = visual.height;
     }
 
     /**
@@ -59,7 +59,7 @@ public class NetworkVisualComponent extends Component {
      * instead of using the bytes)
      * @return the VisualComponent created
      */
-    public VisualComponent getComponent() {
+    public Visual getComponent() {
         if(file == null || file.equals("")) {
             Pixmap pixmap = new Pixmap(iWidth, iHeight, Pixmap.Format.values()[format]);
             ByteBuffer pixels = pixmap.getPixels();
@@ -68,9 +68,9 @@ public class NetworkVisualComponent extends Component {
             pixels.position(0);
             Texture texture = new Texture(pixmap);
             TextureRegion textureRegion = new TextureRegion(texture);
-            return new VisualComponent(textureRegion, eWidth, eHeight);
+            return new Visual(textureRegion, eWidth, eHeight);
         } else {
-            return new VisualComponent(new TextureRegion(new Texture(Gdx.files.local(file))), eWidth, eHeight);
+            return new Visual(new TextureRegion(new Texture(Gdx.files.local(file))), eWidth, eHeight);
         }
     }
 }
