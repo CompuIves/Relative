@@ -1,10 +1,12 @@
 package com.ives.relative.core.server;
 
+import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.managers.ServerPlayerManager;
 
 import java.io.IOException;
 
@@ -40,6 +42,7 @@ public class ServerNetwork extends Network {
     @Override
     public void received(Connection connection, final Object object) {
         if(object instanceof Packet) {
+            System.out.println("SERVER: Received Packet: " + object.getClass().getSimpleName());
             ((Packet) object).response(game);
         }
     }
@@ -57,7 +60,7 @@ public class ServerNetwork extends Network {
 
     @Override
     public void sendObjectTCP(int connectionID, Packet o) {
-        System.out.println("Sent a packet named: " + o.getClass().getSimpleName());
+        System.out.println("SERVER: Sent a packet named: " + o.getClass().getSimpleName());
         server.sendToTCP(connectionID, o);
     }
 
@@ -66,11 +69,19 @@ public class ServerNetwork extends Network {
         server.sendToUDP(connectionID, o);
     }
 
-    public void sendObjectToAllTCP(Packet o) {
+    public void sendObjectTCPToAll(Packet o) {
         server.sendToAllTCP(o);
     }
 
-    public void sendObjectToAllUDP(Packet o) {
-        server.sendToAllUDP(o);
+    public void sendObjectUDPToAll(Packet o) {
+        for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
+            server.sendToTCP(connection, o);
+        }
+    }
+
+    @Override
+    public void disconnected(Connection connection) {
+        Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection.getID());
+        //game.world.getManager(NetworkManager.class).removeNetworkedEntity(player);
     }
 }

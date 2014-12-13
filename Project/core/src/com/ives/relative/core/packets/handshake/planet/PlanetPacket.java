@@ -6,12 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.handshake.RequestWorldSnapshot;
-import com.ives.relative.core.packets.networkentity.NetworkEntity;
+import com.ives.relative.core.packets.handshake.ConnectionSuccessful;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 
 /**
@@ -26,8 +27,8 @@ public class PlanetPacket extends Packet {
     public PlanetPacket() {
     }
 
-    public PlanetPacket(Entity planet) {
-        this.networkPlanet = new NetworkEntity(planet);
+    public PlanetPacket(Entity planet, long id) {
+        this.networkPlanet = new NetworkEntity(planet, id);
     }
 
     @Override
@@ -44,7 +45,9 @@ public class PlanetPacket extends Packet {
                 planetManager.addPlanet(game.world.getMapper(Name.class).get(planet).internalName, planet);
                 planetManager.generateTerrain(planet);
 
-                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+                game.world.getManager(NetworkManager.class).updateEntity(networkPlanet.id, planet);
+                //game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new ConnectionSuccessful());
             }
         });
     }

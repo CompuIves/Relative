@@ -13,12 +13,12 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.network.KryoComparator;
+import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.core.network.serializers.box2d.FixtureDefSerializer;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
-import com.ives.relative.core.packets.networkentity.NetworkEntity;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.managers.SolidTile;
 import com.ives.relative.managers.assets.modules.Module;
@@ -109,6 +109,7 @@ public abstract class Network extends Listener {
         kryo.register(Body.class);
         kryo.register(NetworkEntity.Type.class);
         kryo.register(Command[].class);
+        kryo.register(Command.class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

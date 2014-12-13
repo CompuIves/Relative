@@ -8,8 +8,14 @@ import com.artemis.Component;
  */
 public class Position extends Component {
     public float x, y;
+    public float px, py;
+
     public int z;
+    public int pz;
+
     public float rotation;
+    public float protation;
+
     public String worldID;
 
     public Position() {

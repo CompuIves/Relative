@@ -1,13 +1,12 @@
 package com.ives.relative.core.packets.handshake;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.Relative;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.GetNeededModules;
-import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.ServerPlayerManager;
 
 /**
@@ -44,7 +43,7 @@ public class ConnectPacket extends Packet {
 
 
             //ACCEPTED SEND PLAYER
-            this.connectionAccepted(game.network, game);
+            this.connectionAccepted((ServerNetwork) game.network, game);
         } else {
             System.out.println("Kicking client, version mismatch.");
             connectionDenied(game.network, "Version mismatch (local: " + version + " remote: " + Relative.VERSION + ").");
@@ -63,7 +62,7 @@ public class ConnectPacket extends Packet {
      * @param network
      * @param game
      */
-    public void connectionAccepted(final Network network, final GameManager game) {
+    public void connectionAccepted(final ServerNetwork network, final GameManager game) {
         System.out.println("Connection accepted!");
         System.out.println("Sending acceptedPacket and asking for ModulesNeeded");
 
@@ -72,10 +71,9 @@ public class ConnectPacket extends Packet {
             @Override
             public void run() {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
-                serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
-                        new Vector2(10, 10), 0);
+                serverPlayerManager.addPlayerLoggingIn(connection, playerID);
+                network.sendObjectTCP(connection, new GetNeededModules());
             }
         });
-        network.sendObjectTCP(connection, new GetNeededModules());
     }
 }

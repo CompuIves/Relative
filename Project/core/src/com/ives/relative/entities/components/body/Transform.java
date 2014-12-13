@@ -1,7 +1,7 @@
 package com.ives.relative.entities.components.body;
 
 import com.artemis.Component;
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -9,12 +9,12 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Transform extends Component {
     public float width, height;
-    public transient Array<Fixture> fixtures;
+    public Array<FixtureDef> fixtures;
 
     public Transform() {
     }
 
-    public Transform(float width, float height, Array<Fixture> fixtures) {
+    public Transform(float width, float height, Array<FixtureDef> fixtures) {
         this.width = width;
         this.height = height;
         this.fixtures = fixtures;

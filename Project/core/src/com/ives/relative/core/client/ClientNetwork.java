@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.Relative;
-import com.ives.relative.core.GameManager;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.ConnectPacket;
@@ -16,7 +15,7 @@ import java.io.IOException;
  */
 public class ClientNetwork extends Network {
     public static int CONNECTIONID;
-    private GameManager game;
+    private ClientManager game;
     private Client client;
 
     public ClientNetwork(ClientManager game, Client client) throws IOException {
@@ -37,7 +36,9 @@ public class ClientNetwork extends Network {
     public void connected(Connection connection) {
         CONNECTIONID = connection.getID();
         //Send a connect packet with player name + version number + connection id
-        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32)));
+        game.playerID = "Player" + MathUtils.random(0, 32);
+        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, game.playerID));
+
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ClientNetwork extends Network {
     @Override
     public void received(Connection connection, Object object) {
         if(object instanceof Packet) {
-            System.out.println("Received packet with type: " + object.getClass().getSimpleName());
+            System.out.println("CLIENT: Received packet with type: " + object.getClass().getSimpleName());
             ((Packet) object).response(game);
         }
     }

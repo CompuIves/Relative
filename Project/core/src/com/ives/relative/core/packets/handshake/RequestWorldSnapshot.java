@@ -7,6 +7,7 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.updates.WorldSnapshotPacket;
 import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.ServerPlayerManager;
 
 /**
@@ -23,7 +24,10 @@ public class RequestWorldSnapshot extends Packet {
     public void response(GameManager game) {
         Connection connection1 = ServerNetwork.getConnection(connection);
         Array<Entity> players = game.world.getManager(ServerPlayerManager.class).getPlayers();
-        Entity localPlayer = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
-        connection1.sendTCP(new WorldSnapshotPacket(players, localPlayer.getId()));
+        Array<Long> ids = new Array<Long>();
+        for (Entity player : players) {
+            ids.add(game.world.getManager(NetworkManager.class).getNetworkID(player));
+        }
+        connection1.sendTCP(new WorldSnapshotPacket(players, ids));
     }
 }

@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.ServerPlayerManager;
+import com.ives.relative.managers.TileManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.systems.network.ServerNetworkSystem;
 
@@ -37,7 +38,7 @@ public class ServerManager extends GameManager {
     @Override
     public void registerSystems() {
         super.registerSystems();
-        world.setSystem(new ServerNetworkSystem());
+        world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
     }
 
     @Override
@@ -54,5 +55,13 @@ public class ServerManager extends GameManager {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
         Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new World(new Vector2(0, -10), true), 10, 10);
         planetManager.generateTerrain(planet);
+
+        TileManager tileManager = world.getManager(TileManager.class);
+        tileManager.createTile(planet, 20, 15, 0, "dirt", true);
+        tileManager.createTile(planet, 25, 15, 0, "dirt", true);
+        tileManager.createTile(planet, 23, 20, 0, "dirt", true);
+        tileManager.createTile(planet, 30, 13, 0, "dirt", true);
+        tileManager.createTile(planet, 30, 18, 0, "dirt", true);
+        tileManager.createTile(planet, 30, 30, 0, "dirt", true);
     }
 }

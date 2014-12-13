@@ -25,6 +25,8 @@ public class PlanetManager extends Manager {
     private final Map<String, Entity> entitiesByPlanet;
     private final Map<Entity, String> planetsByEntity;
 
+    protected NetworkManager networkManager;
+
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, Entity>();
         planetsByEntity = new HashMap<Entity, String>();
@@ -57,6 +59,7 @@ public class PlanetManager extends Manager {
                 new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
                 new WorldC(physicsWorld, velocityIterations, positionIterations))
                 .group("planets").build();
+
         addPlanet(id, e);
         return e;
     }
@@ -76,12 +79,5 @@ public class PlanetManager extends Manager {
                 tileManager.createTile(planet, x, y, 0, "bedrock", false);
             }
         }
-
-        tileManager.createTile(planet, 20, 15, 0, "dirt", true);
-        tileManager.createTile(planet, 25, 15, 0, "dirt", true);
-        tileManager.createTile(planet, 23, 20, 0, "dirt", true);
-        tileManager.createTile(planet, 30, 13, 0, "dirt", true);
-        tileManager.createTile(planet, 30, 18, 0, "dirt", true);
-        tileManager.createTile(planet, 30, 30, 0, "dirt", true);
     }
 }

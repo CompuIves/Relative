@@ -11,6 +11,7 @@ import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.core.packets.updates.CommandPacket;
 import com.ives.relative.entities.commands.Command;
+import com.ives.relative.entities.components.network.NetworkC;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -25,7 +26,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     int sequence;
 
     public ClientNetworkSystem() {
-        super(Aspect.getEmpty(), CLIENT_NETWORK_INTERVAL);
+        super(Aspect.getAspectForAll(NetworkC.class), CLIENT_NETWORK_INTERVAL);
         commandList = new Array<Command>();
         deltaTimeList = new Array<Float>();
     }
