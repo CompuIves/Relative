@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.core.packets.requests.RequestEntity;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
@@ -51,7 +53,7 @@ public class PositionPacket extends UpdatePacket {
                         body.getLinearVelocity().set(velocity.vx, velocity.vy);
                     }
                 } else {
-                    //game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(entityID));
+                    game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(entityID));
                 }
             }
         });

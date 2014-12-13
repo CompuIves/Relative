@@ -11,7 +11,6 @@ import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.managers.ServerPlayerManager;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -34,14 +33,11 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         for (Entity entity : entities) {
-            int connection = world.getManager(ServerPlayerManager.class).getConnectionByPlayer(entity);
-            if (connection != -1) {
                 Position position = mPosition.get(entity);
                 long id = mNetworkC.get(entity).id;
-                if (position.py != position.y || position.px != position.x) {
+            //if (position.py != position.y || position.px != position.x) {
                     network.sendObjectUDPToAll(new PositionPacket(entity, 0, id));
-                }
-            }
+            //}
         }
     }
 }

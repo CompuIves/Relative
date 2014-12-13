@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.updates.WorldSnapshotPacket;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.ServerPlayerManager;
 
@@ -29,8 +27,7 @@ public class ConnectionSuccessful extends Packet {
                         new Vector2(10, 10), 0);
                 serverPlayerManager.addConnection(connection, player);
 
-                NetworkManager networkManager = game.world.getManager(NetworkManager.class);
-                game.network.sendObjectTCP(connection, new WorldSnapshotPacket(networkManager.getNetworkEntities(), networkManager.getNetworkIDs()));
+
             }
         });
     }

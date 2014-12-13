@@ -2,8 +2,8 @@ package com.ives.relative.managers;
 
 import com.artemis.Entity;
 import com.artemis.Manager;
-import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.network.networkentity.NetworkEntity;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.network.NetworkC;
 
 import java.util.HashMap;
@@ -58,24 +58,13 @@ public class NetworkManager extends Manager {
 
     public void removeNetworkedEntity(long id) {
         Entity e = networkEntities.get(id);
+        Physics physics = e.getWorld().getMapper(Physics.class).get(e);
+        if (physics != null) {
+            physics.body.getWorld().destroyBody(physics.body);
+        }
+
         networkEntities.remove(id);
         networkIDs.remove(e);
         e.deleteFromWorld();
-    }
-
-    public Array<Entity> getNetworkEntities() {
-        Array<Entity> entities = new Array<Entity>();
-        for (Map.Entry entry : networkEntities.entrySet()) {
-            entities.add((Entity) entry.getValue());
-        }
-        return entities;
-    }
-
-    public Array<Long> getNetworkIDs() {
-        Array<Long> ids = new Array<Long>();
-        for (Map.Entry entry : networkEntities.entrySet()) {
-            ids.add((Long) entry.getKey());
-        }
-        return ids;
     }
 }

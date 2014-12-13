@@ -5,6 +5,7 @@ import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.physics.box2d.World;
+import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
@@ -59,8 +60,9 @@ public class PlanetManager extends Manager {
                 new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
                 new WorldC(physicsWorld, velocityIterations, positionIterations))
                 .group("planets").build();
-
         addPlanet(id, e);
+
+        networkManager.setNetworkEntity(e, NetworkEntity.Type.PLANET);
         return e;
     }
 
