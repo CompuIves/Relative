@@ -5,8 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.core.packets.Packet;
+import com.ives.relative.core.packets.handshake.RequestWorldSnapshot;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
+import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.PlanetManager;
@@ -17,7 +20,7 @@ import com.ives.relative.managers.PlanetManager;
  * <p/>
  * HANDLED BY CLIENT
  */
-public class PlanetPacket implements Packet {
+public class PlanetPacket extends Packet {
     NetworkEntity networkPlanet;
 
     public PlanetPacket() {
@@ -38,7 +41,10 @@ public class PlanetPacket implements Packet {
                 worldC.world = new World(new Vector2(gravity.x, gravity.y), true);
 
                 PlanetManager planetManager = game.world.getManager(PlanetManager.class);
+                planetManager.addPlanet(game.world.getMapper(Name.class).get(planet).internalName, planet);
                 planetManager.generateTerrain(planet);
+
+                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
             }
         });
     }

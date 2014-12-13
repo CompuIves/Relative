@@ -7,6 +7,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
@@ -43,5 +44,14 @@ public class MovementSystem extends EntityProcessingSystem {
         position.rotation = physics.body.getTransform().getRotation();
         velocity.vx = entityBody.getLinearVelocity().x;
         velocity.vy = entityBody.getLinearVelocity().y;
+
+        boolean client = false;
+        if (e.getWorld().getManager(ClientManager.class) != null) {
+            client = true;
+        }
+        if (e.getId() == 1407) {
+            String clientt = client ? "Client: " : "Server: ";
+            System.out.println(clientt + "Entity " + e.getId() + " is at position x: " + position.x + " y: " + position.y);
+        }
     }
 }

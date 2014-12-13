@@ -14,6 +14,7 @@ import com.ives.relative.entities.components.body.Physics;
 public class MoveRightCommand extends Command {
     @Override
     public void execute(Entity e) {
+        super.execute(e);
         float x = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
         moveEntity(e, x);
     }

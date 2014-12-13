@@ -19,7 +19,7 @@ import java.io.IOException;
  * The foundation of the file transfer
  * HANDLED BY CLIENT
  */
-public class SetupFileTransferPacket implements Packet {
+public class SetupFileTransferPacket extends Packet {
     int position;
     int length;
     byte[] bytes;
@@ -52,7 +52,7 @@ public class SetupFileTransferPacket implements Packet {
                     });
 
                     //Ask for the planet
-                    connection.sendTCP(new RequestPlanetPacket(connection.getID()));
+                    game.network.sendObjectTCP(connection.getID(), new RequestPlanetPacket());
                     game.network.endPoint.removeListener(this);
                 }
 

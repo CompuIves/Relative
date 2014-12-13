@@ -14,15 +14,9 @@ import com.ives.relative.managers.ServerPlayerManager;
  * <p/>
  * HANDLED BY SERVER
  */
-public class RequestPlanetPacket implements Packet {
-    int connection;
+public class RequestPlanetPacket extends Packet {
 
     public RequestPlanetPacket() {
-
-    }
-
-    public RequestPlanetPacket(int connection) {
-        this.connection = connection;
     }
 
     @Override

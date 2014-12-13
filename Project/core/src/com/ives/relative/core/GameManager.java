@@ -27,7 +27,6 @@ public class GameManager extends Manager {
      */
     public GameManager(boolean isServer) {
         this.isServer = isServer;
-        world = new World();
     }
 
     public void registerSystems() {
@@ -54,7 +53,9 @@ public class GameManager extends Manager {
      * @param delta delta time
      */
     public void render(float delta) {
-        world.setDelta(delta);
-        world.process();
+        if (world != null) {
+            world.setDelta(delta);
+            world.process();
+        }
     }
 }

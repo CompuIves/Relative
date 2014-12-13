@@ -8,6 +8,7 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.ServerPlayerManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
+import com.ives.relative.systems.network.ServerNetworkSystem;
 
 import java.io.IOException;
 
@@ -22,6 +23,7 @@ public class ServerManager extends GameManager {
         super(true);
         try {
             network = new ServerNetwork(this, new Server());
+            super.world = new com.artemis.World();
             registerSystems();
             registerManagers();
             world.setManager(this);
@@ -35,6 +37,7 @@ public class ServerManager extends GameManager {
     @Override
     public void registerSystems() {
         super.registerSystems();
+        world.setSystem(new ServerNetworkSystem());
     }
 
     @Override
@@ -49,7 +52,7 @@ public class ServerManager extends GameManager {
 
     private void createPlanet() {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
-        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new World(new Vector2(0, -10), true), 8, 10);
+        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new World(new Vector2(0, -10), true), 10, 10);
         planetManager.generateTerrain(planet);
     }
 }

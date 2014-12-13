@@ -8,7 +8,8 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Health;
 import com.ives.relative.entities.components.MovementSpeed;
 import com.ives.relative.entities.components.Name;
@@ -18,6 +19,7 @@ import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.entities.factories.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +33,12 @@ public class ServerPlayerManager extends PlayerManager {
     protected ComponentMapper<WorldC> mWorldComponent;
     //For the server
     private Map<Integer, Entity> playersByConnection;
+    private Map<Entity, Integer> connectionsByPlayers;
 
     public ServerPlayerManager() {
         super();
         playersByConnection = new HashMap<Integer, Entity>();
+        connectionsByPlayers = new HashMap<Entity, Integer>();
     }
 
     /**
@@ -50,7 +54,7 @@ public class ServerPlayerManager extends PlayerManager {
     public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = new EntityBuilder(world).with(new Health(100),
-                new MovementSpeed(3.5f),
+                new MovementSpeed(2f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 1, 1),
                 new Position(position.x, position.y, z, 0, worldID),
@@ -58,43 +62,12 @@ public class ServerPlayerManager extends PlayerManager {
                 group("player").
                 build();
 
-        Body body = createBody(e, position.x, position.y, 0, 0, planet);
+        Body body = Player.createBody(e, position.x, position.y, 0, 0, planet);
         e.edit().add(new Physics(body)).add(new Transform(1, 1, body.getFixtureList()));
 
         setPlayer(e, internalName);
         addConnection(connection, e);
         return e;
-    }
-
-    public Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x, y);
-        bodyDef.linearVelocity.set(vx, vy);
-
-        World world = mWorldComponent.get(planet).world;
-
-        Body body = world.createBody(bodyDef);
-        body.setFixedRotation(true);
-        FixtureDef fixtureDef = new FixtureDef();
-        Shape shape = new CircleShape();
-        fixtureDef.shape = shape;
-        shape.setRadius(0.5f);
-
-        fixtureDef.restitution = 0.0f;
-        fixtureDef.density = 10.0f;
-        fixtureDef.friction = 0.8f;
-        Fixture fixture = body.createFixture(fixtureDef);
-/*
-        shape = new CircleShape();
-        shape.setRadius(0.5f);
-        fixtureDef.density = 1.0f;
-        body.createFixture(fixtureDef);
-*/
-        fixture.setUserData(e);
-        body.setUserData(e);
-        shape.dispose();
-        return body;
     }
 
     /**
@@ -105,6 +78,7 @@ public class ServerPlayerManager extends PlayerManager {
      */
     public void addConnection(int connection, Entity player) {
         this.playersByConnection.put(connection, player);
+        this.connectionsByPlayers.put(player, connection);
     }
 
     /**
@@ -115,5 +89,21 @@ public class ServerPlayerManager extends PlayerManager {
      */
     public Entity getPlayerByConnection(int connection) {
         return this.playersByConnection.get(connection);
+    }
+
+    public int getConnectionByPlayer(Entity e) {
+        if (connectionsByPlayers.containsKey(e)) {
+            return connectionsByPlayers.get(e);
+        } else {
+            return -1;
+        }
+    }
+
+    public Array<Entity> getPlayers() {
+        Array<Entity> entities = new Array<Entity>();
+        for (Map.Entry entry : playersByConnection.entrySet()) {
+            entities.add((Entity) entry.getValue());
+        }
+        return entities;
     }
 }

@@ -3,6 +3,7 @@ package com.ives.relative.managers;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
@@ -51,9 +52,11 @@ public class PlanetManager extends Manager {
                 group("planets").
                 build();
         */
-
-        Entity e = world.createEntity();
-        e.edit().add(new Name(id, name)).add(new Seed(seed)).add(new Gravity(0, -10)).add(new WorldC(physicsWorld, velocityIterations, positionIterations));
+        Entity e = new EntityBuilder(world).with(new Name(id, name),
+                new Seed(seed),
+                new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
+                new WorldC(physicsWorld, velocityIterations, positionIterations))
+                .group("planets").build();
         addPlanet(id, e);
         return e;
     }

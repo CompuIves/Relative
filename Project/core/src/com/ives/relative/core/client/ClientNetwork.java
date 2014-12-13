@@ -37,7 +37,7 @@ public class ClientNetwork extends Network {
     public void connected(Connection connection) {
         CONNECTIONID = connection.getID();
         //Send a connect packet with player name + version number + connection id
-        sendObjectTCP(connection.getID(), new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32), connection.getID()));
+        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, "Player" + MathUtils.random(0, 32)));
     }
 
     @Override
@@ -55,6 +55,7 @@ public class ClientNetwork extends Network {
 
     @Override
     public void sendObjectTCP(int connectionID, Packet o) {
+        o.connection = connectionID;
         client.sendTCP(o);
     }
 

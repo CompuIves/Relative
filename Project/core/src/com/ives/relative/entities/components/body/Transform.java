@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Transform extends Component {
     public float width, height;
-    public Array<Fixture> fixtures;
+    public transient Array<Fixture> fixtures;
 
     public Transform() {
     }

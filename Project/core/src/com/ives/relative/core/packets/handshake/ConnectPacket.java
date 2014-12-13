@@ -19,18 +19,16 @@ import com.ives.relative.managers.ServerPlayerManager;
  * On AcceptConnection send a request requesting the Modules
  * Handled from: SERVER
  */
-public class ConnectPacket implements Packet {
+public class ConnectPacket extends Packet {
     String version;
     String playerID;
-    int connection;
 
     public ConnectPacket() {
     }
 
-    public ConnectPacket(String version, String playerID, int connection) {
+    public ConnectPacket(String version, String playerID) {
         this.version = version;
         this.playerID = playerID;
-        this.connection = connection;
     }
 
     @Override
@@ -54,7 +52,7 @@ public class ConnectPacket implements Packet {
     }
 
     public void connectionDenied(Network network, final String message) {
-        network.sendObjectTCP(connection, new DisconnectPacket("DISCONNECTING: " + message, connection));
+        network.sendObjectTCP(connection, new DisconnectPacket("DISCONNECTING: " + message));
     }
 
 

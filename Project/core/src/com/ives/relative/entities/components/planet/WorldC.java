@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class WorldC extends Component {
     public transient World world = null;
     public int velocityIterations = 8;
-    public int positionIterations = 3;
+    public int positionIterations = 8;
 
     public WorldC() {
     }

@@ -11,6 +11,7 @@ import com.ives.relative.entities.components.body.Physics;
 public class JumpCommand extends Command {
     @Override
     public void execute(Entity entity) {
+        super.execute(entity);
         Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
         if (body.getLinearVelocity().y == 0) {
             body.applyLinearImpulse(new Vector2(0, 10), body.getPosition(), true);

@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.util.InputStreamSender;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
@@ -30,9 +31,8 @@ import java.util.List;
  * <p/>
  * HANDLED FROM SERVER
  */
-public class RequestModulesPacket implements Packet {
+public class RequestModulesPacket extends Packet {
     List<Module> modules;
-    int connectionID;
 
     transient List<Module> deltaModules;
 
@@ -41,18 +41,17 @@ public class RequestModulesPacket implements Packet {
     public RequestModulesPacket() {
     }
 
-    public RequestModulesPacket(List<Module> modules, int connectionID) {
+    public RequestModulesPacket(List<Module> modules) {
         this.modules = modules;
-        this.connectionID = connectionID;
     }
 
     @Override
     public void response(final GameManager game) {
         deltaModules = game.world.getManager(ModuleManager.class).compareModuleLists(modules);
-        Connection connection = ServerNetwork.getConnection(connectionID);
+        Connection connection = ServerNetwork.getConnection(this.connection);
         if (connection != null) {
             //Set up a transfer in all cases, otherwise the planet can't be requested (will be sent next packet)
-            setupTransfer(connection);
+            setupTransfer(connection, game.network);
 
             connection.addListener(new Listener() {
                 @Override
@@ -72,8 +71,8 @@ public class RequestModulesPacket implements Packet {
         }
     }
 
-    private void setupTransfer(Connection connection) {
-        connection.sendTCP(new SetupFileTransferPacket());
+    private void setupTransfer(Connection connection, Network network) {
+        network.sendObjectTCP(connection.getID(), new SetupFileTransferPacket());
 
         //If there never was a module to be sent it will be completed instantly
         if (deltaModules.size() == 0) {
@@ -90,27 +89,21 @@ public class RequestModulesPacket implements Packet {
                 byte[] bytes = ModuleManager.moduleToBytes(module);
                 ByteArrayInputStream in = new ByteArrayInputStream(bytes);
                 connection.sendTCP(new StartFileNotice(bytes.length, module.name, module.version));
-                connection.addListener(sender = new ModuleInputStreamSender(in, 512, bytes.length, connection, module));
+                connection.addListener(sender = new ModuleInputStreamSender(in, 512, bytes.length));
                 deltaModules.remove(0);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-
         }
     }
 }
 
 class ModuleInputStreamSender extends InputStreamSender {
     int length;
-    transient Connection connection;
-    transient Module module;
 
-    public ModuleInputStreamSender(InputStream input, int chunkSize, int length, Connection connection, Module module) {
+    public ModuleInputStreamSender(InputStream input, int chunkSize, int length) {
         super(input, chunkSize);
         this.length = length;
-        this.connection = connection;
-        this.module = module;
     }
 
     @Override

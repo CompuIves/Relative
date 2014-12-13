@@ -1,5 +1,7 @@
 package com.ives.relative.core.client;
 
+import com.artemis.World;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +11,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.systems.InputSystem;
 import com.ives.relative.systems.RenderSystem;
+import com.ives.relative.systems.network.ClientNetworkSystem;
 
 import java.io.IOException;
 
@@ -27,6 +30,7 @@ public class ClientManager extends GameManager implements Screen {
         super(false);
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
+        super.world = new World();
         registerSystems();
         registerManagers();
         world.setManager(this);
@@ -48,12 +52,13 @@ public class ClientManager extends GameManager implements Screen {
         world.setSystem(inputSystem);
 
         //world.setSystem(new Box2DDebugRendererSystem(camera));
-        //game.engine.addSystem(new ClientSystem(1/20f, network));
+        world.setSystem(new ClientNetworkSystem());
     }
 
     @Override
     public void registerManagers() {
         super.registerManagers();
+        world.setManager(new TagManager());
     }
 
     @Override

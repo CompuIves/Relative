@@ -3,7 +3,9 @@ package com.ives.relative.core;
 import com.artemis.Component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryo.Kryo;
@@ -17,6 +19,7 @@ import com.ives.relative.core.packets.handshake.modules.notice.CompleteFileNotic
 import com.ives.relative.core.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.core.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.core.packets.networkentity.NetworkEntity;
+import com.ives.relative.entities.commands.Command;
 import com.ives.relative.managers.SolidTile;
 import com.ives.relative.managers.assets.modules.Module;
 import org.reflections.Reflections;
@@ -74,9 +77,14 @@ public abstract class Network extends Listener {
         Reflections packetReflections = new Reflections("com.ives.relative.core.packets");
         Set<Class<? extends Packet>> packets = packetReflections.getSubTypesOf(Packet.class);
 
+        Reflections commandReflections = new Reflections("com.ives.relative.entities.commands");
+        Set<Class<? extends Command>> commands = commandReflections.getSubTypesOf(Command.class);
+
+
         kryoList = new ArrayList<Class<?>>();
         kryoList.addAll(components);
         kryoList.addAll(packets);
+        kryoList.addAll(commands);
 
         kryoList.sort(new KryoComparator());
     }
@@ -95,6 +103,12 @@ public abstract class Network extends Listener {
         kryo.register(BodyDef.class);
         kryo.register(Array.class);
         kryo.register(Object[].class);
+        kryo.register(float[].class);
+        kryo.register(NetworkEntity[].class);
+        kryo.register(Fixture.class);
+        kryo.register(Body.class);
+        kryo.register(NetworkEntity.Type.class);
+        kryo.register(Command[].class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);
