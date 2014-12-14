@@ -17,6 +17,7 @@ import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
@@ -35,32 +36,28 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public static float CLIENT_NETWORK_INTERVAL = 1 / 20f;
     public long playerNetworkId;
     protected ClientManager clientManager;
+    protected CommandManager commandManager;
+
     /**
      * This contains every byte of the command, this will be sent to the server
      */
     Array<Byte> commandNetworkList;
-    /**
-     * This contains the commands itself, it will be handled as the same by this network, since I don't want to
-     * make CommandManager universal since InputC is independent.
-     */
-    Array<Command> commandList;
 
-    Map<Integer, Array<Command>> sentCommands;
+    Map<Integer, byte[]> sentCommands;
     int sequence;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
         commandNetworkList = new Array<Byte>();
-        commandList = new Array<Command>();
 
-        sentCommands = new HashMap<Integer, Array<Command>>();
+
+        sentCommands = new HashMap<Integer, byte[]>();
         processRequests(network);
 
     }
 
     public void addCommand(Command command) {
-        commandList.add(command);
-        commandNetworkList.add(command.getID());
+        commandNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
     }
 
     public void registerPlayer(long playerNetworkId) {
@@ -72,9 +69,9 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     }
 
     /**
-     * Entitylist is empty because I gave no aspect, we don't need an entitylist
-     *
-     * @param entities empty
+     * Sends the input of the player to the server, also puts it in a local variable to know how to apply Server
+     * Reconciliation.
+     * @param entities
      */
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
@@ -83,8 +80,12 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             long entityID = this.playerNetworkId;
             CommandPacket commandPacket = new CommandPacket(sequence, commandNetworkList, entityID);
             clientManager.network.sendObjectUDP(connectionID, commandPacket);
-            sentCommands.put(sequence, commandList);
-            commandList.clear();
+
+            byte[] bytes = new byte[commandNetworkList.size];
+            for (int i = 0; i < bytes.length; i++) {
+                bytes[i] = commandNetworkList.get(i);
+            }
+            sentCommands.put(sequence, bytes);
             commandNetworkList.clear();
 
             sequence++;
@@ -132,9 +133,9 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             localPosition.x = x;
             localPosition.y = y;
 
-            body.setLinearVelocity(vx, vy);
-            localVelocity.vx = vx;
-            localVelocity.vy = vy;
+            //body.setLinearVelocity(vx, vy);
+            //localVelocity.vx = vx;
+            //localVelocity.vy = vy;
 
             return true;
         } else {
@@ -151,18 +152,34 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         //Server Reconciliation
         if (packet.entityID == playerNetworkId) {
             sentCommands.remove(packet.sequence);
-            for (Map.Entry entry : sentCommands.entrySet()) {
-                int localSequence = (Integer) entry.getKey();
-                Array<Command> commands = (Array<Command>) entry.getValue();
+            System.out.println("Removed packet: " + packet.sequence);
 
+            /*
+            Collection<byte[]> bytes = sentCommands.values();
+            Collection<Integer> sequences = sentCommands.keySet();
+            for(int i = 0; i < sentCommands.size(); i++) {
+                int localSequence = (Integer) sequences.toArray()[i];
+                byte[] commands = (byte[]) bytes.toArray()[i];
                 if (packet.sequence < localSequence) {
-                    for (Command command : commands) {
-                        command.execute(world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
+                    for (Byte command : commands) {
+                        commandManager.executeCommand(command, world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
                     }
                 } else {
                     sentCommands.remove(localSequence);
                 }
             }
+            */
+
+            for (Map.Entry entry : sentCommands.entrySet()) {
+                Integer localSequence = (Integer) entry.getKey();
+                byte[] commands = (byte[]) entry.getValue();
+
+                System.out.println("Executed extra command with sequence: " + localSequence + " while receiving: " + packet.sequence);
+                for (Byte command : commands) {
+                    commandManager.executeCommand(command, world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
+                }
+            }
+
         }
     }
 }

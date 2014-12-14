@@ -8,13 +8,8 @@ import com.artemis.Entity;
 public class DoNothingCommand extends Command {
 
 
-    public DoNothingCommand(byte commandID, boolean simulate) {
-        super(commandID, simulate);
-    }
-
-    @Override
-    public byte getID() {
-        return commandID;
+    public DoNothingCommand(boolean simulate) {
+        super(simulate);
     }
 
     @Override

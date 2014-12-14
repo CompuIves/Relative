@@ -12,13 +12,8 @@ import com.ives.relative.entities.components.body.Physics;
 public class MoveLeftCommand extends Command {
 
 
-    public MoveLeftCommand(byte commandID, boolean simulate) {
-        super(commandID, simulate);
-    }
-
-    @Override
-    public byte getID() {
-        return commandID;
+    public MoveLeftCommand(boolean simulate) {
+        super(simulate);
     }
 
     @Override

@@ -9,21 +9,17 @@ import com.ives.relative.systems.network.ClientNetworkSystem;
  * Created by Ives on 5/12/2014.
  */
 public abstract class Command {
-    byte commandID;
     boolean simulate;
 
     public Command() {
     }
 
-    public Command(byte commandID, boolean simulate) {
-        this.commandID = commandID;
+    public Command(boolean simulate) {
         this.simulate = simulate;
     }
 
-    public abstract byte getID();
-
-    public void handle(final Entity entity) {
-        if (entity.getWorld().getSystem(ClientNetworkSystem.class) != null) {
+    public void handle(final Entity entity, boolean send) {
+        if (send) {
             entity.getWorld().getSystem(ClientNetworkSystem.class).addCommand(this);
 
             if (simulate) {

@@ -24,6 +24,7 @@ public class ClientNetwork extends Network {
         this.game = game;
         this.client = client;
 
+
         startClient();
         client.addListener(this);
     }
@@ -63,6 +64,7 @@ public class ClientNetwork extends Network {
 
     @Override
     public void sendObjectUDP(int connectionID, BasePacket o) {
-        client.sendTCP(o);
+        o.connection = connectionID;
+        client.sendUDP(o);
     }
 }

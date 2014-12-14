@@ -32,7 +32,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     protected void process(Entity e) {
         for (int key : keysPressed) {
             InputC inputC = mInputComponent.get(e);
-            inputC.commandKeys.get(key).handle(e);
+            inputC.commandKeys.get(key).handle(e, true);
         }
     }
 

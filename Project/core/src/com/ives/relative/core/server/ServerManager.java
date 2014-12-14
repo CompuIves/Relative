@@ -11,7 +11,6 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.TileManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
-import com.ives.relative.managers.server.ServerCommandManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.network.ServerNetworkSystem;
@@ -30,7 +29,7 @@ public class ServerManager extends GameManager {
         super(true);
         try {
             camera = new OrthographicCamera(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-            network = new ServerNetwork(this, new Server());
+            network = new ServerNetwork(this, new Server(16384, 4096));
             super.world = new com.artemis.World();
             registerSystems();
             registerManagers();
@@ -57,8 +56,6 @@ public class ServerManager extends GameManager {
         ModuleManager moduleManager = world.getManager(ModuleManager.class);
         moduleManager.loadModules();
         moduleManager.zipAllModules();
-
-        world.setManager(new ServerCommandManager());
     }
 
     private void createPlanet() {

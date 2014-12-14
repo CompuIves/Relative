@@ -11,9 +11,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.server.ServerCommandManager;
-import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
@@ -41,18 +40,18 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         lastInputsReceived = new HashMap<Long, Integer>();
         this.network = network;
 
-        processRequests(network);
+        processRequests();
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         for (Entity entity : entities) {
-            if (mPosition.get(entity) != null)
-                sendPositions(entity);
+            //if (mPosition.get(entity) != null)
+            //sendPositions(entity);
         }
     }
 
-    public void processRequests(Network network) {
+    public void processRequests() {
         network.endPoint.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
@@ -70,15 +69,23 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
         for (byte command : packet.commandList) {
-            world.getManager(ServerCommandManager.class).executeCommand(command, entity);
+            world.getManager(CommandManager.class).executeCommand(command, entity);
         }
+
+        network.sendObjectUDPToAll(new PositionPacket(entity, lastInputsReceived.get(packet.entityID), packet.entityID));
     }
+
 
     public void sendPositions(Entity entity) {
         Position position = mPosition.get(entity);
         if (position.py != position.y || position.px != position.x) {
             long id = mNetworkC.get(entity).id;
-            network.sendObjectUDPToAll(new PositionPacket(entity, 0, id));
+            int sequence = -1;
+            if (lastInputsReceived.containsKey(id)) {
+                sequence = lastInputsReceived.get(id);
+            }
+            network.sendObjectUDPToAll(new PositionPacket(entity, sequence, id));
         }
     }
+
 }

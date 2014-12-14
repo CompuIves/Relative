@@ -13,14 +13,10 @@ public class CreateBodyCommand extends Command {
 
     }
 
-    public CreateBodyCommand(byte commandID, boolean simulate) {
-        super(commandID, simulate);
+    public CreateBodyCommand(boolean simulate) {
+        super(simulate);
     }
 
-    @Override
-    public byte getID() {
-        return commandID;
-    }
 
     @Override
     public void execute(final Entity entity) {

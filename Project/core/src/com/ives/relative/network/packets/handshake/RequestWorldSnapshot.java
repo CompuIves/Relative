@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
@@ -20,14 +21,17 @@ public class RequestWorldSnapshot extends ResponsePacket {
     }
 
     @Override
-    public void response(GameManager game) {
+    public void response(final GameManager game) {
         ImmutableBag<Entity> networkEntities = game.world.getSystem(ServerNetworkSystem.class).getActives();
         Array<Entity> entities = new Array<Entity>();
         Array<Long> ids = new Array<Long>();
-        for (Entity player : networkEntities) {
-            ids.add(game.world.getManager(NetworkManager.class).getNetworkID(player));
-            entities.add(player);
-            game.network.sendObjectTCP(connection, new CreateEntityPacket(player, game.world.getManager(NetworkManager.class).getNetworkID(player)));
+        for (Entity entity : networkEntities) {
+            //Filter planets out
+            if (entity.getComponent(WorldC.class) == null) {
+                ids.add(game.world.getManager(NetworkManager.class).getNetworkID(entity));
+                entities.add(entity);
+                game.network.sendObjectTCP(connection, new CreateEntityPacket(entity, game.world.getManager(NetworkManager.class).getNetworkID(entity)));
+            }
         }
         //game.network.sendObjectTCP(connection, new WorldSnapshotPacket(entities, ids));
     }

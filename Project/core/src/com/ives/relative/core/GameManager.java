@@ -3,6 +3,7 @@ package com.ives.relative.core;
 import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
+import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.TileManager;
@@ -44,7 +45,7 @@ public class GameManager extends Manager {
         world.setManager(moduleManager);
         moduleManager.indexModules();
         world.setManager(new GroupManager());
-
+        world.setManager(new CommandManager());
         world.setManager(new NetworkManager());
     }
 

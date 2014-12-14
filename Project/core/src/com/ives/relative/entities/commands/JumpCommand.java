@@ -11,14 +11,10 @@ import com.ives.relative.entities.components.body.Physics;
 public class JumpCommand extends Command {
 
 
-    public JumpCommand(byte commandID, boolean simulate) {
-        super(commandID, simulate);
+    public JumpCommand(boolean simulate) {
+        super(simulate);
     }
 
-    @Override
-    public byte getID() {
-        return commandID;
-    }
 
     @Override
     public void execute(Entity entity) {

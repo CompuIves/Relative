@@ -1,6 +1,7 @@
 package com.ives.relative.network.packets.handshake;
 
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.network.ClientNetworkSystem;
 
@@ -23,6 +24,6 @@ public class AssignPlayer extends ResponsePacket {
     @Override
     public void response(GameManager game) {
         game.world.getSystem(ClientNetworkSystem.class).registerPlayer(id);
-        game.network.sendObjectTCP(connection, new RequestWorldSnapshot());
+        game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
     }
 }
