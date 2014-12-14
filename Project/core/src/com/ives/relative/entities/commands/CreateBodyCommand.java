@@ -9,8 +9,8 @@ import com.ives.relative.managers.TileManager;
  */
 public class CreateBodyCommand extends Command {
 
-    public CreateBodyCommand(byte commandID) {
-        super(commandID);
+    public CreateBodyCommand(byte commandID, boolean simulate) {
+        super(commandID, simulate);
     }
 
     @Override
@@ -20,14 +20,7 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void execute(Entity entity) {
-        super.execute(entity);
-        System.out.println("Executed bodycommand");
         entity.getWorld().getManager(TileManager.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
                 20, 20, 0, "dirt", true);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

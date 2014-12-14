@@ -11,8 +11,9 @@ import com.ives.relative.entities.components.body.Physics;
  */
 public class MoveLeftCommand extends Command {
 
-    public MoveLeftCommand(byte commandID) {
-        super(commandID);
+
+    public MoveLeftCommand(byte commandID, boolean simulate) {
+        super(commandID, simulate);
     }
 
     @Override
@@ -22,7 +23,6 @@ public class MoveLeftCommand extends Command {
 
     @Override
     public void execute(Entity e) {
-        super.execute(e);
         moveEntity(e, -e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed);
     }
 

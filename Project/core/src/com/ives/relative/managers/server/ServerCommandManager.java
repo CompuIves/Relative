@@ -17,14 +17,14 @@ public class ServerCommandManager extends Manager {
     Map<Integer, Command> commandMap;
 
     public ServerCommandManager() {
-        commandMap = new CommandsMap<Integer, Command>(new DoNothingCommand((byte) 0));
-        commandMap.put(1, new MoveLeftCommand((byte) 1));
-        commandMap.put(2, new MoveRightCommand((byte) 2));
-        commandMap.put(3, new JumpCommand((byte) 3));
-        commandMap.put(4, new CreateBodyCommand((byte) 4));
+        commandMap = new CommandsMap<Integer, Command>(new DoNothingCommand((byte) 0, false));
+        commandMap.put(1, new MoveLeftCommand((byte) 1, true));
+        commandMap.put(2, new MoveRightCommand((byte) 2, true));
+        commandMap.put(3, new JumpCommand((byte) 3, true));
+        commandMap.put(4, new CreateBodyCommand((byte) 4, false));
     }
 
     public void executeCommand(int commandID, Entity e) {
-        commandMap.get(commandID).execute(e);
+        commandMap.get(commandID).handle(e);
     }
 }

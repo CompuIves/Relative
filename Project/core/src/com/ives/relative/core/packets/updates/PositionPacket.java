@@ -29,13 +29,12 @@ public class PositionPacket extends UpdatePacket {
         super(sequence);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
         Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
-        Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
-        this.x = body.getTransform().getPosition().x;
-        this.y = body.getTransform().getPosition().y;
-        this.rotation = body.getTransform().getRotation();
+        this.x = position.x;
+        this.y = position.y;
+        this.rotation = position.rotation;
 
-        this.vx = body.getLinearVelocity().x;
-        this.vy = body.getLinearVelocity().y;
+        this.vx = velocity.vx;
+        this.vy = velocity.vy;
 
         this.entityID = entityID;
     }
@@ -52,13 +51,13 @@ public class PositionPacket extends UpdatePacket {
                     Physics physics = entity.getWorld().getMapper(Physics.class).get(entity);
                     Body body = physics.body;
                     body.setTransform(x, y, rotation);
-                    //body.setLinearVelocity(vx, vy);
+                    body.setLinearVelocity(vx, vy);
                     Position localPosition = entity.getWorld().getMapper(Position.class).get(entity);
                     Velocity localVelocity = entity.getWorld().getMapper(Velocity.class).get(entity);
                     localPosition.x = x;
                     localPosition.y = y;
-                    //localVelocity.vx = vx;
-                    //localVelocity.vy = vy;
+                    localVelocity.vx = vx;
+                    localVelocity.vy = vy;
                 } else {
                     game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(entityID));
                 }
