@@ -1,4 +1,4 @@
-package com.ives.relative.managers;
+package com.ives.relative.managers.server;
 
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
@@ -19,6 +19,8 @@ import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.factories.Player;
+import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.PlanetManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +58,7 @@ public class ServerPlayerManager extends PlayerManager {
     public Entity createPlayer(String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = new EntityBuilder(world).with(new Health(100),
-                new MovementSpeed(2f),
+                new MovementSpeed(3.5f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 1, 1),
                 new Position(position.x, position.y, z, 0, worldID),
@@ -77,7 +79,7 @@ public class ServerPlayerManager extends PlayerManager {
      * Save a player by connection, used only by Server
      *
      * @param connection connection id
-     * @param player player
+     * @param player     player
      */
     public void addConnection(int connection, Entity player) {
         this.playersByConnection.put(connection, player);

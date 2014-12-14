@@ -6,6 +6,8 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.packets.updates.PositionPacket;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
@@ -28,16 +30,23 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public ServerNetworkSystem(ServerNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class, Velocity.class), SERVER_NETWORK_INTERVAL);
         this.network = network;
+
+        network.endPoint.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                super.received(connection, object);
+            }
+        });
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         for (Entity entity : entities) {
-                Position position = mPosition.get(entity);
-                long id = mNetworkC.get(entity).id;
-            //if (position.py != position.y || position.px != position.x) {
-                    network.sendObjectUDPToAll(new PositionPacket(entity, 0, id));
-            //}
+            Position position = mPosition.get(entity);
+            long id = mNetworkC.get(entity).id;
+            if (position.py != position.y || position.px != position.x) {
+                network.sendObjectTCPToAll(new PositionPacket(entity, 0, id));
+            }
         }
     }
 }

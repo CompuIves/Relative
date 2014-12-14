@@ -8,6 +8,7 @@ import com.artemis.utils.Bag;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.TileC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
@@ -38,6 +39,7 @@ public class NetworkEntity {
 
     /**
      * If the other endpoint already has the needed texture this will be used
+     *
      * @param entity The entity
      */
     public NetworkEntity(Entity entity, long id) {
@@ -47,6 +49,7 @@ public class NetworkEntity {
 
     /**
      * Creates a componentlist and calls a method to add them
+     *
      * @param entity The entity with the components
      */
     private void handleComponents(Entity entity) {
@@ -87,11 +90,8 @@ public class NetworkEntity {
                 visual.texture = tile.textureRegion;
                 break;
             case PLANET:
-                /*
-                Gravity gravity = entity.getWorld().getMapper(Gravity.class).get(entity);
-                WorldC worldC = entity.getWorld().getMapper(WorldC.class).get(entity);
-                worldC.world = new com.badlogic.gdx.physics.box2d.World(new Vector2(gravity.x, gravity.y), false);
-                */
+                Name name = entity.getWorld().getMapper(Name.class).get(entity);
+                entity.getWorld().getManager(PlanetManager.class).addPlanet(name.internalName, entity);
                 break;
             case OTHER:
                 break;
@@ -102,6 +102,7 @@ public class NetworkEntity {
 
     /**
      * This adds all the components in the entity
+     *
      * @return The created entity
      */
     public Entity createEntity(World world) {

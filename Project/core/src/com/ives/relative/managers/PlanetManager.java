@@ -1,9 +1,12 @@
 package com.ives.relative.managers;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.GroupManager;
 import com.artemis.utils.EntityBuilder;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.Name;
@@ -28,14 +31,31 @@ public class PlanetManager extends Manager {
 
     protected NetworkManager networkManager;
 
+    protected ComponentMapper<WorldC> mWorldC;
+    protected ComponentMapper<Gravity> mGravity;
+
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, Entity>();
         planetsByEntity = new HashMap<Entity, String>();
     }
 
     public void addPlanet(String name, Entity e) {
-        entitiesByPlanet.put(name, e);
-        planetsByEntity.put(e, name);
+        if (!planetsByEntity.containsKey(e)) {
+            if (entitiesByPlanet.containsKey(name)) {
+                Entity old = entitiesByPlanet.remove(name);
+                planetsByEntity.remove(old);
+            }
+
+            entitiesByPlanet.put(name, e);
+            planetsByEntity.put(e, name);
+
+            if (mWorldC.get(e).world == null) {
+                Gravity gravity = mGravity.get(e);
+                mWorldC.get(e).world = new World(new Vector2(gravity.x, gravity.y), false);
+            }
+
+            world.getManager(GroupManager.class).add(e, "planets");
+        }
     }
 
     public Entity getPlanet(String name) {

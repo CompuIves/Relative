@@ -15,7 +15,7 @@ import java.io.IOException;
 
 /**
  * Created by Ives on 9/12/2014.
- *
+ * <p/>
  * The foundation of the file transfer
  * HANDLED BY CLIENT
  */

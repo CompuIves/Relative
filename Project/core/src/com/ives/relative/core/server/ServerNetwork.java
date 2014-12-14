@@ -6,7 +6,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.managers.ServerPlayerManager;
+import com.ives.relative.managers.server.ServerPlayerManager;
 
 import java.io.IOException;
 
@@ -34,14 +34,14 @@ public class ServerNetwork extends Network {
         return null;
     }
 
-    private void startServer() throws IOException{
+    private void startServer() throws IOException {
         server.start();
         server.bind(54555, 54777);
     }
 
     @Override
     public void received(Connection connection, final Object object) {
-        if(object instanceof Packet) {
+        if (object instanceof Packet) {
             System.out.println("SERVER: Received Packet: " + object.getClass().getSimpleName());
             ((Packet) object).response(game);
         }
@@ -70,12 +70,14 @@ public class ServerNetwork extends Network {
     }
 
     public void sendObjectTCPToAll(Packet o) {
-        server.sendToAllTCP(o);
+        for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
+            server.sendToTCP(connection, o);
+        }
     }
 
     public void sendObjectUDPToAll(Packet o) {
         for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
-            server.sendToTCP(connection, o);
+            server.sendToUDP(connection, o);
         }
     }
 

@@ -12,7 +12,7 @@ import com.ives.relative.managers.NetworkManager;
  * Created by Ives on 10/12/2014.
  * This packet provides every location of every walking networkEntity on the world, this will be sent when the
  * player joins and when there are discrepancies between the information on the client and the server.
- *
+ * <p/>
  * HANDLED BY CLIENT
  */
 public class WorldSnapshotPacket extends Packet {

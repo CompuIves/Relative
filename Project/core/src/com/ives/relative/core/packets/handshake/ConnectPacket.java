@@ -7,14 +7,14 @@ import com.ives.relative.core.Network;
 import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.packets.handshake.modules.GetNeededModules;
 import com.ives.relative.core.server.ServerNetwork;
-import com.ives.relative.managers.ServerPlayerManager;
+import com.ives.relative.managers.server.ServerPlayerManager;
 
 /**
  * Created by Ives on 8/12/2014.
  * This packet will be sent by the client when it connects to the server
  * It contains the version of the game and the player id, if the version mismatches disconnect, if the player is already
  * in game, disconnect.
- *
+ * <p/>
  * On AcceptConnection send a request requesting the Modules
  * Handled from: SERVER
  */
@@ -33,7 +33,7 @@ public class ConnectPacket extends Packet {
     @Override
     public void response(GameManager game) {
         System.out.println("Got a connectpacket, checking for version and player...");
-        if(Relative.VERSION.equals(version)) {
+        if (Relative.VERSION.equals(version)) {
             //Check for players on the server
             //TODO watch for get(0)
             if (game.world.getManager(ServerPlayerManager.class).getEntitiesOfPlayer(playerID).get(0) != null) {

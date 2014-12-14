@@ -1,14 +1,13 @@
 package com.ives.relative.core.packets.handshake;
 
 import com.artemis.Entity;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.updates.WorldSnapshotPacket;
-import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.core.packets.updates.EntityAdd;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.ServerPlayerManager;
+import com.ives.relative.systems.network.ServerNetworkSystem;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -22,12 +21,14 @@ public class RequestWorldSnapshot extends Packet {
 
     @Override
     public void response(GameManager game) {
-        Connection connection1 = ServerNetwork.getConnection(connection);
-        Array<Entity> players = game.world.getManager(ServerPlayerManager.class).getPlayers();
+        ImmutableBag<Entity> networkEntities = game.world.getSystem(ServerNetworkSystem.class).getActives();
+        Array<Entity> entities = new Array<Entity>();
         Array<Long> ids = new Array<Long>();
-        for (Entity player : players) {
+        for (Entity player : networkEntities) {
             ids.add(game.world.getManager(NetworkManager.class).getNetworkID(player));
+            entities.add(player);
+            game.network.sendObjectTCP(connection, new EntityAdd(player, 0, game.world.getManager(NetworkManager.class).getNetworkID(player)));
         }
-        connection1.sendTCP(new WorldSnapshotPacket(players, ids));
+        //game.network.sendObjectTCP(connection, new WorldSnapshotPacket(entities, ids));
     }
 }

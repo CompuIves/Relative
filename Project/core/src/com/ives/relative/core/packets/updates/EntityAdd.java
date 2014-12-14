@@ -3,7 +3,9 @@ package com.ives.relative.core.packets.updates;
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.network.networkentity.NetworkEntity;
+import com.ives.relative.entities.components.client.InputC;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -26,8 +28,11 @@ public class EntityAdd extends UpdatePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                networkEntity.createEntity(game.world);
-                //game.world.getManager(NetworkManager.class).updateEntity(networkEntity.id, e);
+                Entity e = networkEntity.createEntity(game.world);
+                ClientManager clientManager = (ClientManager) game;
+                if (networkEntity.id == clientManager.playerNetworkID) {
+                    e.edit().add(new InputC());
+                }
             }
         });
     }

@@ -25,7 +25,7 @@ public class TileReader {
     }
 
     public static boolean processTexture(String root, FileHandle file, SolidTile tile) {
-        if(tile.texture == null) {
+        if (tile.texture == null) {
             tile.texture = file.parent().path() + File.separator + tile.id + ".png";
         } else {
             tile.texture = root + tile.texture;
@@ -41,7 +41,7 @@ public class TileReader {
     }
 
     public static void processID(FileHandle fileHandle, SolidTile tile) {
-        if(tile.id == null || tile.id.equals("")) {
+        if (tile.id == null || tile.id.equals("")) {
             tile.id = fileHandle.nameWithoutExtension();
         }
     }

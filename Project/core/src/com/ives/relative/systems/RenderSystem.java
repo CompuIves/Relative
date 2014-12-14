@@ -6,6 +6,8 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -33,6 +35,10 @@ public class RenderSystem extends EntityProcessingSystem {
     @Override
     protected void begin() {
         super.begin();
+        Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.setProjectionMatrix(camera.combined);
+
         positionCamera();
 
         batch.begin();
@@ -69,7 +75,7 @@ public class RenderSystem extends EntityProcessingSystem {
 
     private void positionCamera() {
         ImmutableBag<Entity> playerEntities = world.getSystem(InputSystem.class).getActives();
-        if(playerEntities.size() != 0) {
+        if (playerEntities.size() != 0) {
             Entity player = playerEntities.get(0);
             Position playerPosition = mPosition.get(player);
             camera.position.x = playerPosition.x;

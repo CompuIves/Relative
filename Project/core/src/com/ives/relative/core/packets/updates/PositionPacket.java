@@ -1,8 +1,8 @@
 package com.ives.relative.core.packets.updates;
 
 import com.artemis.Entity;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.client.ClientNetwork;
@@ -14,12 +14,12 @@ import com.ives.relative.managers.NetworkManager;
 
 /**
  * Created by Ives on 13/12/2014.
- *
+ * <p/>
  * HANDLED BY CLIENT
  */
 public class PositionPacket extends UpdatePacket {
-    Position position;
-    Velocity velocity;
+    float x, y, rotation;
+    float vx, vy;
     long entityID;
 
     public PositionPacket() {
@@ -27,13 +27,22 @@ public class PositionPacket extends UpdatePacket {
 
     public PositionPacket(Entity entity, int sequence, long entityID) {
         super(sequence);
-        this.position = entity.getWorld().getMapper(Position.class).get(entity);
-        this.velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
+        Position position = entity.getWorld().getMapper(Position.class).get(entity);
+        Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
+        Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
+        this.x = body.getTransform().getPosition().x;
+        this.y = body.getTransform().getPosition().y;
+        this.rotation = body.getTransform().getRotation();
+
+        this.vx = body.getLinearVelocity().x;
+        this.vy = body.getLinearVelocity().y;
+
         this.entityID = entityID;
     }
 
     @Override
     public void response(final GameManager game) {
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -41,17 +50,15 @@ public class PositionPacket extends UpdatePacket {
                 //networkEntity.edit().add(position).add(velocity);
                 if (entity != null) {
                     Physics physics = entity.getWorld().getMapper(Physics.class).get(entity);
-                    if (physics != null) {
-                        Position localPosition = entity.getWorld().getMapper(Position.class).get(entity);
-                        Velocity localVelocity = entity.getWorld().getMapper(Velocity.class).get(entity);
-                        localPosition.x = position.x;
-                        localPosition.y = position.y;
-                        localVelocity.vx = velocity.vx;
-                        localVelocity.vy = velocity.vy;
-                        Body body = physics.body;
-                        body.getTransform().setPosition(new Vector2(position.x, position.y));
-                        body.getLinearVelocity().set(velocity.vx, velocity.vy);
-                    }
+                    Body body = physics.body;
+                    body.setTransform(x, y, rotation);
+                    //body.setLinearVelocity(vx, vy);
+                    Position localPosition = entity.getWorld().getMapper(Position.class).get(entity);
+                    Velocity localVelocity = entity.getWorld().getMapper(Velocity.class).get(entity);
+                    localPosition.x = x;
+                    localPosition.y = y;
+                    //localVelocity.vx = vx;
+                    //localVelocity.vy = vy;
                 } else {
                     game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(entityID));
                 }

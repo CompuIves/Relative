@@ -12,6 +12,16 @@ import com.ives.relative.entities.components.body.Physics;
  * Created by Ives on 5/12/2014.
  */
 public class MoveRightCommand extends Command {
+
+    public MoveRightCommand(byte commandID) {
+        super(commandID);
+    }
+
+    @Override
+    public byte getID() {
+        return commandID;
+    }
+
     @Override
     public void execute(Entity e) {
         super.execute(e);

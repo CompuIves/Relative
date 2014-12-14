@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Created by Ives on 9/12/2014.
- *
+ * <p/>
  * Connection is accepted. Now the server needs the list of the modules the client has.
  * HANDLED BY CLIENT
  */

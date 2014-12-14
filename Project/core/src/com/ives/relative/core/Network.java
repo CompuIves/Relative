@@ -43,7 +43,6 @@ public abstract class Network extends Listener {
         kryo = endPoint.getKryo();
         kryo.addDefaultSerializer(FixtureDef.class, new FixtureDefSerializer());
 
-
         addKryoClasses();
         registerKryoClasses();
     }

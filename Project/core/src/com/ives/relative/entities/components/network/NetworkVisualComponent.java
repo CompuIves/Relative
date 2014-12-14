@@ -25,6 +25,7 @@ public class NetworkVisualComponent extends Component {
 
     /**
      * Converts VisualComponent to a NetworkComponent
+     *
      * @param visual The VisualComponent which needs to be converted
      */
     public NetworkVisualComponent(Visual visual) {
@@ -44,8 +45,9 @@ public class NetworkVisualComponent extends Component {
     /**
      * Creates a component without any information except the file name of the visual, when this will be converted back
      * it will just load the file from the system.
-     * @param file File name of the visual
-     * @param eWidth the width of the entity carrying this visual
+     *
+     * @param file    File name of the visual
+     * @param eWidth  the width of the entity carrying this visual
      * @param eHeight the height of the entity carrying this visual.
      */
     public NetworkVisualComponent(String file, float eWidth, float eHeight) {
@@ -57,10 +59,11 @@ public class NetworkVisualComponent extends Component {
     /**
      * Converts this component to a VisualComponent (if file isn't null it will just load the file from the local systen
      * instead of using the bytes)
+     *
      * @return the VisualComponent created
      */
     public Visual getComponent() {
-        if(file == null || file.equals("")) {
+        if (file == null || file.equals("")) {
             Pixmap pixmap = new Pixmap(iWidth, iHeight, Pixmap.Format.values()[format]);
             ByteBuffer pixels = pixmap.getPixels();
             pixels.clear();

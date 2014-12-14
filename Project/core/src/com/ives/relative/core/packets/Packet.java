@@ -10,6 +10,7 @@ public abstract class Packet {
 
     /**
      * This is handled by the other side. If a client sends this packet the server will execute this and in reverse too.
+     *
      * @param game The gamemanager is given because almost every packet needs it
      */
     public abstract void response(GameManager game);

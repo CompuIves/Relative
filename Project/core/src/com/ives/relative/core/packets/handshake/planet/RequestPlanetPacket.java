@@ -7,7 +7,7 @@ import com.ives.relative.core.packets.Packet;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
-import com.ives.relative.managers.ServerPlayerManager;
+import com.ives.relative.managers.server.ServerPlayerManager;
 
 /**
  * Created by Ives on 10/12/2014.

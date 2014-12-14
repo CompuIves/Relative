@@ -4,11 +4,11 @@ import com.artemis.World;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.InputSystem;
 import com.ives.relative.systems.RenderSystem;
 import com.ives.relative.systems.network.ClientNetworkSystem;
@@ -33,15 +33,15 @@ public class ClientManager extends GameManager implements Screen {
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
         super.world = new World();
-        registerSystems();
-        registerManagers();
-        world.setManager(this);
-        world.initialize();
         try {
             this.network = new ClientNetwork(this, new Client());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        registerSystems();
+        registerManagers();
+        world.setManager(this);
+        world.initialize();
     }
 
     @Override
@@ -53,8 +53,8 @@ public class ClientManager extends GameManager implements Screen {
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
 
-        //world.setSystem(new Box2DDebugRendererSystem(camera));
-        world.setSystem(new ClientNetworkSystem());
+        world.setSystem(new Box2DDebugRendererSystem(camera));
+        world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
     }
 
     @Override
@@ -65,9 +65,6 @@ public class ClientManager extends GameManager implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(camera.combined);
         super.render(delta);
     }
 

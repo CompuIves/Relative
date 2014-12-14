@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * Created by Ives on 9/12/2014.
  */
-public class KryoComparator implements Comparator<Class<?extends Object>> {
+public class KryoComparator implements Comparator<Class<? extends Object>> {
 
     @Override
     public int compare(Class<? extends Object> o1, Class<? extends Object> o2) {

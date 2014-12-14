@@ -1,7 +1,9 @@
 package com.ives.relative.managers;
 
+import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.Manager;
+import com.artemis.utils.Bag;
 import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.network.NetworkC;
@@ -48,12 +50,22 @@ public class NetworkManager extends Manager {
      * @param e  the new entity
      */
     public void updateEntity(long id, Entity e) {
+        /*
+        if (networkEntities.containsKey(id)) {
+            //removeNetworkedEntity(id);
+            mergeEntity(networkEntities.get(id), e);
+        } else {
+            setNetworkEntity(id, e);
+            world.getEntityManager().added(e);
+        }*/
+
         if (networkEntities.containsKey(id)) {
             removeNetworkedEntity(id);
         }
-
-        world.getEntityManager().added(e);
         setNetworkEntity(id, e);
+        world.getEntityManager().added(e);
+        //world.getEntityManager().added(e);
+        //setNetworkEntity(id, e);
     }
 
     public void removeNetworkedEntity(long id) {
@@ -66,5 +78,14 @@ public class NetworkManager extends Manager {
         networkEntities.remove(id);
         networkIDs.remove(e);
         e.deleteFromWorld();
+    }
+
+    public void mergeEntity(Entity e1, Entity e2) {
+        Bag<Component> componentse1 = new Bag<Component>();
+        e1.getComponents(componentse1);
+        Bag<Component> componentse2 = new Bag<Component>();
+        e2.getComponents(componentse2);
+
+        componentse1 = componentse2;
     }
 }

@@ -11,6 +11,7 @@ public class WorldC extends Component {
     public transient World world = null;
     public int velocityIterations = 8;
     public int positionIterations = 8;
+    public float acc = 0;
 
     public WorldC() {
     }

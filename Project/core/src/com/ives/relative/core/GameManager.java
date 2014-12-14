@@ -24,6 +24,7 @@ public class GameManager extends Manager {
      * This GameManager can be a server AND a client. This way it will be handled
      * as the same in the code. The only difference is the initialization (so the client
      * processes get added to the engine and the server processes as well).
+     *
      * @param isServer the boolean which says if the GameManager is an instance of a server or client.
      */
     public GameManager(boolean isServer) {
@@ -31,7 +32,7 @@ public class GameManager extends Manager {
     }
 
     public void registerSystems() {
-        world.setSystem(new WorldSystem(WorldSystem.PHYSICS_ITERATIONS));
+        world.setSystem(new WorldSystem());
         world.setSystem(new MovementSystem());
     }
 
@@ -53,6 +54,7 @@ public class GameManager extends Manager {
     /**
      * Common update (gets called each time)
      * This methods passes the update to the engine (common) and the proxy (also not common)
+     *
      * @param delta delta time
      */
     public void render(float delta) {

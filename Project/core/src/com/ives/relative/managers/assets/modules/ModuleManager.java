@@ -124,10 +124,10 @@ public class ModuleManager extends Manager {
     }
 
     public void indexModuleFolders(FileHandle[] moduleFolders) {
-        if(moduleFolders != null) {
-            for(FileHandle moduleFileHandler : moduleFolders) {
+        if (moduleFolders != null) {
+            for (FileHandle moduleFileHandler : moduleFolders) {
                 //If the folder is a directory it is a module, if the folder is named Server just ignore (server is the cache folder for the server mods)
-                if(moduleFileHandler.isDirectory()) {
+                if (moduleFileHandler.isDirectory()) {
                     //If the folder name is cache and the endpoint is a client then index the cacheModules too
                     if (moduleFileHandler.name().equals("cache") && !isServer) {
                         indexModuleFolders(indexFiles(moduleFileHandler.path()));
@@ -178,10 +178,10 @@ public class ModuleManager extends Manager {
     }
 
     public FileHandle[] indexFiles(String location) {
-        if(Gdx.files.local(location).exists()) {
+        if (Gdx.files.local(location).exists()) {
             return Gdx.files.local(location).list();
         } else {
-            if(!Gdx.files.local(location).file().mkdir()) {
+            if (!Gdx.files.local(location).file().mkdir()) {
                 Gdx.app.error("CreateDir", "Couldn't create new directory " + location);
             }
         }
@@ -204,7 +204,7 @@ public class ModuleManager extends Manager {
     public void loadModules() {
         StringBuilder builder = new StringBuilder();
         builder.append("Loaded ").append(modules.size()).append(" modules: ");
-        for(Module module : modules) {
+        for (Module module : modules) {
             //Get all the mod folders in it, for example tiles
             loadModule(module);
             builder.append('\n').append("- ").append(module.name).append("-").append(module.version);
@@ -222,7 +222,7 @@ public class ModuleManager extends Manager {
 
     private void loadModule(Module module) {
         FileHandle[] fileHandles = indexFiles(module.location);
-        for(FileHandle fileHandle : fileHandles) {
+        for (FileHandle fileHandle : fileHandles) {
             if (fileHandle.name().equalsIgnoreCase("tiles")) {
                 readTiles(fileHandle.list(".json"), module);
             }
@@ -293,8 +293,9 @@ public class ModuleManager extends Manager {
 
     /**
      * Unzips the module
-     * @param name Name of the module
-     * @param version Version of the module
+     *
+     * @param name      Name of the module
+     * @param version   Version of the module
      * @param directory Extract to this directory
      * @return If the unzipping was successful
      */
@@ -336,6 +337,7 @@ public class ModuleManager extends Manager {
 
     /**
      * Extract one file
+     *
      * @param zipIn
      * @param filePath
      * @throws IOException

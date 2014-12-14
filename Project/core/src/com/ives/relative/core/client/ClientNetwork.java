@@ -48,7 +48,7 @@ public class ClientNetwork extends Network {
 
     @Override
     public void received(Connection connection, Object object) {
-        if(object instanceof Packet) {
+        if (object instanceof Packet) {
             System.out.println("CLIENT: Received packet with type: " + object.getClass().getSimpleName());
             ((Packet) object).response(game);
         }
