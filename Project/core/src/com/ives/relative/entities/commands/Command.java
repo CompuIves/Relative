@@ -12,6 +12,9 @@ public abstract class Command {
     byte commandID;
     boolean simulate;
 
+    public Command() {
+    }
+
     public Command(byte commandID, boolean simulate) {
         this.commandID = commandID;
         this.simulate = simulate;
@@ -19,14 +22,20 @@ public abstract class Command {
 
     public abstract byte getID();
 
-    public void handle(Entity entity) {
+    public void handle(final Entity entity) {
         if (entity.getWorld().getSystem(ClientNetworkSystem.class) != null) {
-            entity.getWorld().getSystem(ClientNetworkSystem.class).addCommand(Gdx.graphics.getDeltaTime(), this);
+            entity.getWorld().getSystem(ClientNetworkSystem.class).addCommand(this);
 
-            if (simulate)
+            if (simulate) {
                 execute(entity);
+            }
         } else {
-            execute(entity);
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    execute(entity);
+                }
+            });
         }
     }
 

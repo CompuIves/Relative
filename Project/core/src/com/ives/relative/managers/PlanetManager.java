@@ -8,11 +8,11 @@ import com.artemis.managers.GroupManager;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 import java.util.Map;

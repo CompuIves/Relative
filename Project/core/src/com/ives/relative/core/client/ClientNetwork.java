@@ -4,9 +4,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.ives.relative.Relative;
-import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.Packet;
-import com.ives.relative.core.packets.handshake.ConnectPacket;
+import com.ives.relative.network.Network;
+import com.ives.relative.network.packets.BasePacket;
+import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.network.packets.handshake.ConnectPacket;
 
 import java.io.IOException;
 
@@ -48,20 +49,20 @@ public class ClientNetwork extends Network {
 
     @Override
     public void received(Connection connection, Object object) {
-        if (object instanceof Packet) {
+        if (object instanceof ResponsePacket) {
             System.out.println("CLIENT: Received packet with type: " + object.getClass().getSimpleName());
-            ((Packet) object).response(game);
+            ((ResponsePacket) object).response(game);
         }
     }
 
     @Override
-    public void sendObjectTCP(int connectionID, Packet o) {
+    public void sendObjectTCP(int connectionID, BasePacket o) {
         o.connection = connectionID;
         client.sendTCP(o);
     }
 
     @Override
-    public void sendObjectUDP(int connectionID, Packet o) {
+    public void sendObjectUDP(int connectionID, BasePacket o) {
         client.sendTCP(o);
     }
 }

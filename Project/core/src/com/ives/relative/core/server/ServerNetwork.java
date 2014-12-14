@@ -4,9 +4,10 @@ import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
-import com.ives.relative.core.Network;
-import com.ives.relative.core.packets.Packet;
 import com.ives.relative.managers.server.ServerPlayerManager;
+import com.ives.relative.network.Network;
+import com.ives.relative.network.packets.BasePacket;
+import com.ives.relative.network.packets.ResponsePacket;
 
 import java.io.IOException;
 
@@ -41,9 +42,9 @@ public class ServerNetwork extends Network {
 
     @Override
     public void received(Connection connection, final Object object) {
-        if (object instanceof Packet) {
+        if (object instanceof ResponsePacket) {
             System.out.println("SERVER: Received Packet: " + object.getClass().getSimpleName());
-            ((Packet) object).response(game);
+            ((ResponsePacket) object).response(game);
         }
     }
 
@@ -59,23 +60,23 @@ public class ServerNetwork extends Network {
     }
 
     @Override
-    public void sendObjectTCP(int connectionID, Packet o) {
+    public void sendObjectTCP(int connectionID, BasePacket o) {
         System.out.println("SERVER: Sent a packet named: " + o.getClass().getSimpleName());
         server.sendToTCP(connectionID, o);
     }
 
     @Override
-    public void sendObjectUDP(int connectionID, Packet o) {
+    public void sendObjectUDP(int connectionID, BasePacket o) {
         server.sendToUDP(connectionID, o);
     }
 
-    public void sendObjectTCPToAll(Packet o) {
+    public void sendObjectTCPToAll(BasePacket o) {
         for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
             server.sendToTCP(connection, o);
         }
     }
 
-    public void sendObjectUDPToAll(Packet o) {
+    public void sendObjectUDPToAll(BasePacket o) {
         for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
             server.sendToUDP(connection, o);
         }

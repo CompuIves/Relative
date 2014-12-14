@@ -7,6 +7,7 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.TileManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
+import com.ives.relative.network.Network;
 import com.ives.relative.systems.MovementSystem;
 import com.ives.relative.systems.WorldSystem;
 

@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.Health;
 import com.ives.relative.entities.components.MovementSpeed;
 import com.ives.relative.entities.components.Name;
@@ -21,6 +20,7 @@ import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.factories.Player;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 import java.util.Map;

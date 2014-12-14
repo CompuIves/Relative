@@ -8,7 +8,6 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.TileC;
 import com.ives.relative.entities.components.body.Physics;
@@ -17,6 +16,7 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.factories.Tile;
+import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 

@@ -4,9 +4,9 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.utils.Bag;
-import com.ives.relative.core.network.networkentity.NetworkEntity;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 import java.util.Map;
