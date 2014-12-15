@@ -10,6 +10,18 @@ public class Relative extends Game {
     public static String VERSION = "1.0";
     public static Relative relative;
 
+    /**
+     * Sets the mode for the game, 3 modes available:
+     * 1: CLIENT
+     * 2: SERVER
+     * ELSE: BOTH
+     */
+    public static Mode MODE;
+
+    public enum Mode {
+        Client, Server, Both
+    }
+
     private ServerManager serverManager;
     private ClientManager clientManager;
 
@@ -21,10 +33,22 @@ public class Relative extends Game {
         Log.DEBUG();
         //Creates two instances, an internal server and a client which connects to the server.
         //Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.
-        //serverManager = new ServerManager();
+        switch (MODE) {
+            case Both:
+                serverManager = new ServerManager();
 
-        clientManager = new ClientManager();
-        setScreen(clientManager);
+                clientManager = new ClientManager();
+                setScreen(clientManager);
+                break;
+            case Client:
+                clientManager = new ClientManager();
+                setScreen(clientManager);
+                break;
+            case Server:
+                serverManager = new ServerManager();
+                break;
+        }
+
     }
 
     @Override

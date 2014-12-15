@@ -1,6 +1,7 @@
 package com.ives.relative.systems.network;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
@@ -19,6 +20,7 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.network.ClientMove;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
@@ -37,13 +39,17 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public long playerNetworkId;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
+    protected NetworkManager networkManager;
+    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Velocity> mVelocity;
+    protected ComponentMapper<Physics> mPhysics;
 
     /**
      * This contains every byte of the command, this will be sent to the server
      */
     Array<Byte> commandNetworkList;
 
-    Map<Integer, byte[]> sentCommands;
+    Map<Integer, ClientMove> sentCommands;
     int sequence;
 
     public ClientNetworkSystem(ClientNetwork network) {
@@ -51,7 +57,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         commandNetworkList = new Array<Byte>();
 
 
-        sentCommands = new HashMap<Integer, byte[]>();
+        sentCommands = new HashMap<Integer, ClientMove>();
         processRequests(network);
 
     }
@@ -85,7 +91,15 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             for (int i = 0; i < bytes.length; i++) {
                 bytes[i] = commandNetworkList.get(i);
             }
-            sentCommands.put(sequence, bytes);
+
+            Entity entity = networkManager.getNetworkEntity(entityID);
+            Position position = mPosition.get(entity);
+            Velocity velocity = mVelocity.get(entity);
+            Physics physics = mPhysics.get(entity);
+            sentCommands.put(sequence, new ClientMove(physics.body.getTransform().getPosition().x,
+                    physics.body.getTransform().getPosition().y,
+                    physics.body.getLinearVelocity().x,
+                    physics.body.getLinearVelocity().y));
             commandNetworkList.clear();
 
             sequence++;
@@ -115,7 +129,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     }
 
     public boolean processPosition(PositionPacket packet) {
-        Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
+        Entity entity = networkManager.getNetworkEntity(packet.entityID);
         //networkEntity.edit().add(position).add(velocity);
         if (entity != null) {
             float x = packet.x;
@@ -133,9 +147,9 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             localPosition.x = x;
             localPosition.y = y;
 
-            //body.setLinearVelocity(vx, vy);
-            //localVelocity.vx = vx;
-            //localVelocity.vy = vy;
+            body.setLinearVelocity(vx, vy);
+            localVelocity.vx = vx;
+            localVelocity.vy = vy;
 
             return true;
         } else {
@@ -170,6 +184,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             }
             */
 
+            /*
             for (Map.Entry entry : sentCommands.entrySet()) {
                 Integer localSequence = (Integer) entry.getKey();
                 byte[] commands = (byte[]) entry.getValue();
@@ -177,6 +192,28 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                 System.out.println("Executed extra command with sequence: " + localSequence + " while receiving: " + packet.sequence);
                 for (Byte command : commands) {
                     commandManager.executeCommand(command, world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
+                }
+            }
+            */
+            for(Map.Entry entry : sentCommands.entrySet()) {
+                int localSequence = (Integer) entry.getKey();
+                if(localSequence <= sequence) {
+                    System.out.println("Applied reconciliation for: " + entry.getKey());
+                    ClientMove clientMove = (ClientMove) entry.getValue();
+                    Entity entity = networkManager.getNetworkEntity(playerNetworkId);
+                    Physics physics = mPhysics.get(entity);
+                    Position position = mPosition.get(entity);
+                    Velocity velocity = mVelocity.get(entity);
+
+                    Body body = physics.body;
+                    //body.setLinearVelocity(clientMove.vx, clientMove.vy);
+                    System.out.println("ClientMove, x: " + clientMove.x + " y: " + clientMove.y);
+                    body.setTransform(clientMove.x, clientMove.y, body.getAngle());
+
+                    position.x = clientMove.x;
+                    position.y = clientMove.y;
+                    velocity.vx = clientMove.vx;
+                    velocity.vy = clientMove.vy;
                 }
             }
 

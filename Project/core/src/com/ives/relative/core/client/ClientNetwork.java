@@ -1,5 +1,6 @@
 package com.ives.relative.core.client;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -40,12 +41,17 @@ public class ClientNetwork extends Network {
         //Send a connect packet with player name + version number + connection id
         game.playerID = "Player" + MathUtils.random(0, 32);
         sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, game.playerID));
+    }
 
+    @Override
+    public void disconnected(Connection connection) {
+        Gdx.app.exit();
     }
 
     @Override
     public void closeConnection(int connection, final String message) {
         closeCurrentConnection(message);
+        Gdx.app.exit();
     }
 
     @Override

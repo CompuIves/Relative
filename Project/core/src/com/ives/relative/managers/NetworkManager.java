@@ -4,6 +4,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.network.networkentity.NetworkEntity;
@@ -18,13 +19,18 @@ public class NetworkManager extends Manager {
     Map<Long, Entity> networkEntities;
     Map<Entity, Long> networkIDs;
 
+    long freeID;
+    Array<Long> removedIDs;
+
     public NetworkManager() {
         networkEntities = new HashMap<Long, Entity>();
         networkIDs = new HashMap<Entity, Long>();
+
+        removedIDs = new Array<Long>();
     }
 
     public void setNetworkEntity(Entity e, NetworkEntity.Type type) {
-        long id = networkEntities.size();
+        long id = getFreeID();
         e.edit().add(new NetworkC(id, type));
         setNetworkEntity(id, e);
     }
@@ -32,6 +38,15 @@ public class NetworkManager extends Manager {
     public void setNetworkEntity(long id, Entity e) {
         networkEntities.put(id, e);
         networkIDs.put(e, id);
+    }
+
+    public long getFreeID() {
+        if(removedIDs.size == 0) {
+            freeID++;
+            return freeID;
+        } else {
+            return removedIDs.first();
+        }
     }
 
     public Entity getNetworkEntity(long id) {
@@ -74,6 +89,7 @@ public class NetworkManager extends Manager {
         if (physics != null) {
             physics.body.getWorld().destroyBody(physics.body);
         }
+        removedIDs.add(id);
 
         networkEntities.remove(id);
         networkIDs.remove(e);
