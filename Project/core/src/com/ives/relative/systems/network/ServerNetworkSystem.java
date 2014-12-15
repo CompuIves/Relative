@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @Wire
 public class ServerNetworkSystem extends IntervalEntitySystem {
-    public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
+    public final static float SERVER_NETWORK_INTERVAL = 1 / 30f;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
     private ServerNetwork network;
@@ -69,7 +69,6 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
         for (byte command : packet.commandList) {
-            System.out.println("USING COMMAND");
             world.getManager(CommandManager.class).executeCommand(command, entity);
         }
 

@@ -25,6 +25,7 @@ public class MoveLeftCommand extends Command {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         if (body.getLinearVelocity().x > x) {
             body.applyLinearImpulse(new Vector2(x, 0), new Vector2(body.getPosition().x, body.getPosition().y), true);
+            System.out.println("BODYVX IS NOW " + body.getLinearVelocity().x);
         }
     }
 }

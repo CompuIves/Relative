@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Wire
 public class ClientNetworkSystem extends IntervalEntitySystem {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 20f;
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 30f;
     public long playerNetworkId;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
@@ -195,6 +195,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                 }
             }
             */
+            /*
             for(Map.Entry entry : sentCommands.entrySet()) {
                 int localSequence = (Integer) entry.getKey();
                 if(localSequence <= sequence) {
@@ -216,6 +217,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                     velocity.vy = clientMove.vy;
                 }
             }
+            */
 
         }
     }
