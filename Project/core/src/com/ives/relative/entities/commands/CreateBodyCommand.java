@@ -10,17 +10,17 @@ import com.ives.relative.managers.TileManager;
 public class CreateBodyCommand extends Command {
 
     public CreateBodyCommand() {
-
+        super(false, false);
     }
-
-    public CreateBodyCommand(boolean simulate) {
-        super(simulate);
-    }
-
 
     @Override
-    public void execute(final Entity entity) {
-        entity.getWorld().getManager(TileManager.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
+    public void executeDown(final Entity entity, float delta) {
+
+    }
+
+    @Override
+    public void executeUp(Entity e) {
+        e.getWorld().getManager(TileManager.class).createTile(e.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
                 20, 20, 0, "dirt", true);
     }
 }

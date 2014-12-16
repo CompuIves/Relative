@@ -17,7 +17,9 @@ import java.util.List;
 @Wire
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
     protected ComponentMapper<InputC> mInputComponent;
-    private List<Integer> keysPressed;
+    private List<Integer> keyDowns;
+    private List<Integer> keyUpped;
+
 
     /**
      * Creates an entity system that uses the specified aspect as a matcher
@@ -25,26 +27,33 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
      */
     public InputSystem() {
         super(Aspect.getAspectForAll(InputC.class));
-        keysPressed = new ArrayList<Integer>();
+        keyDowns = new ArrayList<Integer>();
+        keyUpped = new ArrayList<Integer>();
     }
 
     @Override
     protected void process(Entity e) {
-        for (int key : keysPressed) {
+        for (int key : keyDowns) {
             InputC inputC = mInputComponent.get(e);
-            inputC.commandKeys.get(key).handle(e, true);
+            inputC.commandKeys.get(key).keyDown(e, true, world.getDelta());
         }
+        for (int key : keyUpped) {
+            InputC inputC = mInputComponent.get(e);
+            inputC.commandKeys.get(key).keyUp(e, true);
+        }
+        keyUpped.clear();
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        keysPressed.add(keycode);
+        keyDowns.add(keycode);
         return true;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        keysPressed.remove(Integer.valueOf(keycode));
+        keyUpped.add(keycode);
+        keyDowns.remove(Integer.valueOf(keycode));
         return true;
     }
 

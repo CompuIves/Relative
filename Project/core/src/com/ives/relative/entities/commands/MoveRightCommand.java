@@ -14,20 +14,27 @@ import com.ives.relative.entities.components.body.Physics;
 public class MoveRightCommand extends Command {
 
 
-    public MoveRightCommand(boolean simulate) {
-        super(simulate);
+    public MoveRightCommand() {
+        super(true, true);
     }
 
     @Override
-    public void execute(Entity e) {
-        float x = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
-        moveEntity(e, x);
+    public void executeDown(Entity e, float delta) {
+        float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
+        float vx = mvSpeed;
+        moveEntity(e, vx, delta);
     }
 
-    private void moveEntity(Entity e, float x) {
+    @Override
+    public void executeUp(Entity e) {
+
+    }
+
+    private void moveEntity(Entity e, float vx, float delta) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        if (body.getLinearVelocity().x < x) {
-            body.applyLinearImpulse(new Vector2(x, 0), new Vector2(body.getPosition().x, body.getPosition().y), true);
-        }
+        float oldvx = body.getLinearVelocity().x;
+        float deltavx = vx - oldvx;
+        float impulse = body.getMass() * deltavx;
+        body.applyLinearImpulse(new Vector2(impulse, 0), body.getWorldCenter(), true);
     }
 }

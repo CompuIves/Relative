@@ -8,12 +8,20 @@ import com.artemis.Entity;
 public class DoNothingCommand extends Command {
 
 
-    public DoNothingCommand(boolean simulate) {
-        super(simulate);
+    /**
+     * This command literally does nothing.
+     */
+    public DoNothingCommand() {
+        super(false, false);
     }
 
     @Override
-    public void execute(Entity entity) {
+    public void executeDown(Entity entity, float delta) {
+
+    }
+
+    @Override
+    public void executeUp(Entity e) {
 
     }
 }

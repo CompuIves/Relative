@@ -14,10 +14,10 @@ public class InputC extends Component {
     public transient CommandsMap<Integer, Command> commandKeys;
 
     public InputC() {
-        commandKeys = new CommandsMap<Integer, Command>(new DoNothingCommand(false));
-        commandKeys.put(Input.Keys.LEFT, new MoveLeftCommand(true));
-        commandKeys.put(Input.Keys.RIGHT, new MoveRightCommand(true));
-        commandKeys.put(Input.Keys.SPACE, new JumpCommand(true));
-        commandKeys.put(Input.Keys.UP, new CreateBodyCommand(false));
+        commandKeys = new CommandsMap<Integer, Command>(new DoNothingCommand());
+        commandKeys.put(Input.Keys.LEFT, new MoveLeftCommand());
+        commandKeys.put(Input.Keys.RIGHT, new MoveRightCommand());
+        commandKeys.put(Input.Keys.SPACE, new JumpCommand());
+        commandKeys.put(Input.Keys.UP, new CreateBodyCommand());
     }
 }

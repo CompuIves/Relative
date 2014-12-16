@@ -14,16 +14,19 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.entities.commands.Command;
+import com.ives.relative.entities.commands.DoNothingCommand;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.managers.CommandManager;
+import com.ives.relative.managers.CommandSystem;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.ClientMove;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
+import com.ives.relative.network.packets.input.HookDownCommandPacket;
+import com.ives.relative.network.packets.input.HookUpCommandPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.PositionPacket;
 
@@ -35,26 +38,29 @@ import java.util.Map;
  */
 @Wire
 public class ClientNetworkSystem extends IntervalEntitySystem {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 30f;
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 20f;
     public long playerNetworkId;
     protected ClientManager clientManager;
-    protected CommandManager commandManager;
+    protected CommandSystem commandManager;
     protected NetworkManager networkManager;
+
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
-    protected ComponentMapper<Physics> mPhysics;
 
     /**
      * This contains every byte of the command, this will be sent to the server
      */
-    Array<Byte> commandNetworkList;
-
+    Array<Byte> commandDownNetworkList;
+    Array<Byte> commandUpNetworkList;
     Map<Integer, ClientMove> sentCommands;
     int sequence;
+    private Array<Float> deltaTimeList;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
-        commandNetworkList = new Array<Byte>();
+        commandDownNetworkList = new Array<Byte>();
+        commandUpNetworkList = new Array<Byte>();
+        deltaTimeList = new Array<Float>();
 
 
         sentCommands = new HashMap<Integer, ClientMove>();
@@ -62,8 +68,32 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
     }
 
-    public void addCommand(Command command) {
-        commandNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
+    public void sendDownCommand(Command command, float delta) {
+        if (command instanceof DoNothingCommand)
+            return;
+
+        if (command.hook) {
+            if (!command.isHooked) {
+                clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new HookDownCommandPacket(sequence, playerNetworkId, commandManager.getID(command)));
+                command.isHooked = true;
+            }
+        } else {
+            commandDownNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
+            deltaTimeList.add(delta);
+        }
+    }
+
+    public void sendUpCommand(Command command) {
+        if (command instanceof DoNothingCommand)
+            return;
+
+        if (command.hook) {
+            clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new HookUpCommandPacket(sequence, playerNetworkId, commandManager.getID(command)));
+            command.isHooked = false;
+        } else {
+            //TODO Make use of this.
+            commandUpNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
+        }
     }
 
     public void registerPlayer(long playerNetworkId) {
@@ -81,27 +111,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
      */
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-        if (commandNetworkList.size != 0) {
+        if (commandDownNetworkList.size != 0) {
             int connectionID = ClientNetwork.CONNECTIONID;
             long entityID = this.playerNetworkId;
-            CommandPacket commandPacket = new CommandPacket(sequence, commandNetworkList, entityID);
+            CommandPacket commandPacket = new CommandPacket(sequence, commandDownNetworkList, deltaTimeList, entityID);
             clientManager.network.sendObjectUDP(connectionID, commandPacket);
 
-            byte[] bytes = new byte[commandNetworkList.size];
-            for (int i = 0; i < bytes.length; i++) {
-                bytes[i] = commandNetworkList.get(i);
-            }
-
-            Entity entity = networkManager.getNetworkEntity(entityID);
-            Position position = mPosition.get(entity);
-            Velocity velocity = mVelocity.get(entity);
-            Physics physics = mPhysics.get(entity);
-            sentCommands.put(sequence, new ClientMove(physics.body.getTransform().getPosition().x,
-                    physics.body.getTransform().getPosition().y,
-                    physics.body.getLinearVelocity().x,
-                    physics.body.getLinearVelocity().y));
-            commandNetworkList.clear();
-
+            commandDownNetworkList.clear();
+            deltaTimeList.clear();
             sequence++;
         }
     }
@@ -119,7 +136,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                                 if (!processPosition(packet)) {
                                     network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
                                 }
-                                applyServerReconciliation(packet);
+                                //applyServerReconciliation(packet);
                             }
                         });
                     }
@@ -168,36 +185,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             sentCommands.remove(packet.sequence);
             System.out.println("Removed packet: " + packet.sequence);
 
-            /*
-            Collection<byte[]> bytes = sentCommands.values();
-            Collection<Integer> sequences = sentCommands.keySet();
-            for(int i = 0; i < sentCommands.size(); i++) {
-                int localSequence = (Integer) sequences.toArray()[i];
-                byte[] commands = (byte[]) bytes.toArray()[i];
-                if (packet.sequence < localSequence) {
-                    for (Byte command : commands) {
-                        commandManager.executeCommand(command, world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
-                    }
-                } else {
-                    sentCommands.remove(localSequence);
-                }
-            }
-            */
-
-            /*
-            for (Map.Entry entry : sentCommands.entrySet()) {
-                Integer localSequence = (Integer) entry.getKey();
-                byte[] commands = (byte[]) entry.getValue();
-
-                System.out.println("Executed extra command with sequence: " + localSequence + " while receiving: " + packet.sequence);
-                for (Byte command : commands) {
-                    commandManager.executeCommand(command, world.getManager(NetworkManager.class).getNetworkEntity(playerNetworkId));
-                }
-            }
-            */
-            /*
             for(Map.Entry entry : sentCommands.entrySet()) {
                 int localSequence = (Integer) entry.getKey();
+
+                /*
                 if(localSequence <= sequence) {
                     System.out.println("Applied reconciliation for: " + entry.getKey());
                     ClientMove clientMove = (ClientMove) entry.getValue();
@@ -216,8 +207,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                     velocity.vx = clientMove.vx;
                     velocity.vy = clientMove.vy;
                 }
+                */
             }
-            */
 
         }
     }

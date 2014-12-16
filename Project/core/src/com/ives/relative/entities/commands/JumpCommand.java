@@ -10,17 +10,20 @@ import com.ives.relative.entities.components.body.Physics;
  */
 public class JumpCommand extends Command {
 
-
-    public JumpCommand(boolean simulate) {
-        super(simulate);
+    public JumpCommand() {
+        super(true, false);
     }
 
-
     @Override
-    public void execute(Entity entity) {
+    public void executeDown(Entity entity, float delta) {
         Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
         if (body.getLinearVelocity().y == 0) {
             body.applyLinearImpulse(new Vector2(0, 10), body.getPosition(), true);
         }
+    }
+
+    @Override
+    public void executeUp(Entity e) {
+
     }
 }

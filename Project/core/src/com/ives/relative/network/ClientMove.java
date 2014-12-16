@@ -4,13 +4,13 @@ package com.ives.relative.network;
  * Created by Ives on 15/12/2014.
  */
 public class ClientMove {
-    public float x, y;
-    public float vx, vy;
+    public float dx, dy;
+    public float dvx, dvy;
 
-    public ClientMove(float x, float y, float vx, float vy) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
+    public ClientMove(float dx, float dy, float dvx, float dvy) {
+        this.dx = dx;
+        this.dy = dy;
+        this.dvx = dvx;
+        this.dvy = dvy;
     }
 }
