@@ -1,4 +1,4 @@
-package com.ives.relative.entities.components;
+package com.ives.relative.entities.components.tile;
 
 
 import com.artemis.Component;

@@ -4,20 +4,20 @@ package com.ives.relative.network.networkentity;
 import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.utils.Bag;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.ComponentUtils;
 import com.ives.relative.entities.components.Name;
-import com.ives.relative.entities.components.TileC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.entities.factories.Player;
-import com.ives.relative.entities.factories.Tile;
+import com.ives.relative.entities.components.tile.TileC;
+import com.ives.relative.factories.Player;
+import com.ives.relative.factories.Tile;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.SolidTile;
@@ -53,18 +53,7 @@ public class NetworkEntity {
      * @param entity The entity with the components
      */
     private void handleComponents(Entity entity) {
-        components = new Array<Component>();
-        Bag<Component> tempComponents = new Bag<Component>();
-        entity.getComponents(tempComponents);
-        for (Component component : tempComponents) {
-            components.add(component);
-        }
-        /*
-        components.ensureCapacity(components.getCapacity());
-        for (Component component : components) {
-            addComponent(component);
-        }
-        */
+        components = ComponentUtils.getComponents(entity);
     }
 
     private void finishEntity(Entity entity, Type type) {
@@ -111,23 +100,20 @@ public class NetworkEntity {
     }
 
     public Entity createEntity(World world, Entity entity) {
-        for (Component component : components) {
-            entity.edit().add(component);
-        }
+        ComponentUtils.addComponents(entity, components);
 
-        if (id != 0)
-            world.getManager(NetworkManager.class).updateEntity(id, entity);
+        world.getManager(NetworkManager.class).updateEntity(id, entity);
 
-        NetworkC networkC = world.getMapper(NetworkC.class).get(entity);
-
-        if (networkC.type == null) {
-            networkC.type = Type.OTHER;
+        NetworkC networkC = entity.getWorld().getMapper(NetworkC.class).get(entity);
+        if (networkC != null) {
+            if (networkC.type == null) {
+                networkC.type = Type.OTHER;
+            }
         }
 
         System.out.println("TRYING TO CREATE FUCKING ENTITY WITH ID: " + id);
 
         finishEntity(entity, networkC.type);
-        //entity.add(factory.createVisual());
 
         System.out.println("Created entity with ID: " + id + " and TYPE: " + networkC.type);
         return entity;

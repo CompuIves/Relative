@@ -3,57 +3,57 @@ package com.ives.relative.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.EntitySystem;
 import com.artemis.annotations.Wire;
-import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.InputProcessor;
+import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.client.InputC;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.ives.relative.managers.CommandSystem;
 
 /**
  * Created by Ives on 5/12/2014.
  */
 @Wire
-public class InputSystem extends EntityProcessingSystem implements InputProcessor {
+public class InputSystem extends EntitySystem implements InputProcessor {
     protected ComponentMapper<InputC> mInputComponent;
-    private List<Integer> keyDowns;
-    private List<Integer> keyUpped;
-
-
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
      */
     public InputSystem() {
         super(Aspect.getAspectForAll(InputC.class));
-        keyDowns = new ArrayList<Integer>();
-        keyUpped = new ArrayList<Integer>();
     }
 
     @Override
-    protected void process(Entity e) {
-        for (int key : keyDowns) {
-            InputC inputC = mInputComponent.get(e);
-            inputC.commandKeys.get(key).keyDown(e, true, world.getDelta());
-        }
-        for (int key : keyUpped) {
-            InputC inputC = mInputComponent.get(e);
-            inputC.commandKeys.get(key).keyUp(e, true);
-        }
-        keyUpped.clear();
+    protected void end() {
+    }
+
+    @Override
+    protected void processEntities(ImmutableBag<Entity> entities) {
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        keyDowns.add(keycode);
+        for (Entity e : getActives()) {
+            System.out.println("ENR " + e.getId());
+            InputC inputC = mInputComponent.get(e);
+            Command command = inputC.commandKeys.get(keycode).clone();
+            CommandSystem commandSystem = e.getWorld().getSystem(CommandSystem.class);
+            commandSystem.commandDown(command, e, true);
+        }
         return true;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        keyUpped.add(keycode);
-        keyDowns.remove(Integer.valueOf(keycode));
+        for (Entity e : getActives()) {
+            InputC inputC = mInputComponent.get(e);
+            Command command = inputC.commandKeys.get(keycode);
+            CommandSystem commandSystem = e.getWorld().getSystem(CommandSystem.class);
+            byte commandID = commandSystem.getID(command);
+            commandSystem.commandUp(commandID, e, true);
+        }
         return true;
     }
 

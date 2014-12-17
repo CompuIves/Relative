@@ -15,8 +15,7 @@ import com.ives.relative.managers.CommandSystem;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
-import com.ives.relative.network.packets.input.HookDownCommandPacket;
-import com.ives.relative.network.packets.input.HookUpCommandPacket;
+import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
 
 import java.util.HashMap;
@@ -31,18 +30,17 @@ import java.util.Map;
 @Wire
 public class ServerNetworkSystem extends IntervalEntitySystem {
     public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
+    private final ServerNetwork network;
+    private final Map<Long, Integer> lastInputsReceived;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
     protected CommandSystem commandManager;
-    private ServerNetwork network;
-
-    private Map<Long, Integer> lastInputsReceived;
 
     /**
      * Creates a new IntervalEntitySystem.
      */
     public ServerNetworkSystem(ServerNetwork network) {
-        super(Aspect.getAspectForAll(NetworkC.class), SERVER_NETWORK_INTERVAL);
+        super(Aspect.getAspectForAll(NetworkC.class, Position.class), SERVER_NETWORK_INTERVAL);
         lastInputsReceived = new HashMap<Long, Integer>();
         this.network = network;
 
@@ -66,12 +64,8 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                         CommandPacket packet = (CommandPacket) object;
                         processInput(packet);
                     }
-                    if (object instanceof HookDownCommandPacket) {
-                        HookDownCommandPacket packet = (HookDownCommandPacket) object;
-                        processInput(packet);
-                    }
-                    if (object instanceof HookUpCommandPacket) {
-                        HookUpCommandPacket packet = (HookUpCommandPacket) object;
+                    if (object instanceof CommandPressPacket) {
+                        CommandPressPacket packet = (CommandPressPacket) object;
                         processInput(packet);
                     }
                 }
@@ -81,26 +75,27 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
     public void processInput(CommandPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
+        System.out.println("Stored sequence: " + packet.sequence + " for " + packet.entityID);
         Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
-        for (int i = 0; i < packet.commandList.length; i++) {
-            byte command = packet.commandList[i];
-            float delta = packet.deltaTime[i];
-            commandManager.executeCommand(command, entity, delta);
+        for (int i = 0; i < packet.inputsPressed.length; i++) {
+            byte command = packet.inputsPressed[i];
+            commandManager.commandDown(command, entity, false);
+        }
+
+        for (int i = 0; i < packet.inputsReleased.length; i++) {
+            byte command = packet.inputsReleased[i];
+            commandManager.commandUp(command, entity, false);
         }
     }
 
-    public void processInput(HookDownCommandPacket packet) {
+    public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
-        commandManager.hookCommand(entity, packet.command);
+        if (packet.pressed)
+            commandManager.commandDown(packet.command, entity, false);
+        else
+            commandManager.commandUp(packet.command, entity, false);
     }
-
-    public void processInput(HookUpCommandPacket packet) {
-        lastInputsReceived.put(packet.entityID, packet.sequence);
-        Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
-        commandManager.unHookCommand(entity, packet.command);
-    }
-
 
     public void sendPositions(Entity entity) {
         Position position = mPosition.get(entity);

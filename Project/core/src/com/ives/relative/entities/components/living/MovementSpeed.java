@@ -1,4 +1,4 @@
-package com.ives.relative.entities.components;
+package com.ives.relative.entities.components.living;
 
 
 import com.artemis.Component;

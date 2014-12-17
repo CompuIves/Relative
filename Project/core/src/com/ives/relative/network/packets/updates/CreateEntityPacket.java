@@ -33,6 +33,7 @@ public class CreateEntityPacket extends ResponsePacket {
                 if (networkEntity.id == clientNetworkSystem.getPlayerID()) {
                     e.edit().add(new InputC());
                 }
+                System.out.println("Added entity with LOCAL ID: " + e.getId());
             }
         });
     }

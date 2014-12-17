@@ -12,16 +12,36 @@ public class DoNothingCommand extends Command {
      * This command literally does nothing.
      */
     public DoNothingCommand() {
-        super(false, false);
+        super(false);
     }
 
     @Override
-    public void executeDown(Entity entity, float delta) {
+    public void executeDown(Entity entity) {
 
     }
 
     @Override
-    public void executeUp(Entity e) {
+    public void execute(Entity e) {
 
+    }
+
+    @Override
+    public void executeUp(Entity e, float delta) {
+
+    }
+
+    @Override
+    public void applyReconciliation(Entity e) {
+
+    }
+
+    /**
+     * Don't return a new instance, DoNothingCommand is just garbage :D
+     *
+     * @return
+     */
+    @Override
+    public Command clone() {
+        return this;
     }
 }

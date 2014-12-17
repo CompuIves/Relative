@@ -11,19 +11,21 @@ import com.ives.relative.network.packets.UpdatePacket;
  * HANDLED BY SERVER
  */
 public class CommandPacket extends UpdatePacket {
-    public byte[] commandList;
-    public float[] deltaTime;
+    public byte[] inputsPressed;
+    public byte[] inputsReleased;
 
     public CommandPacket() {
     }
 
-    public CommandPacket(int sequence, Array<Byte> commandList, Array<Float> deltaTime, long entityID) {
+    public CommandPacket(int sequence, long entityID, Array<Byte> pressed, Array<Byte> released) {
         super(sequence, entityID);
-        this.commandList = new byte[commandList.size];
-        this.deltaTime = new float[deltaTime.size];
-        for (int i = 0; i < commandList.size; i++) {
-            this.commandList[i] = commandList.get(i);
-            this.deltaTime[i] = deltaTime.get(i);
+        this.inputsPressed = new byte[pressed.size];
+        this.inputsReleased = new byte[released.size];
+        for (int i = 0; i < pressed.size; i++) {
+            this.inputsPressed[i] = pressed.get(i);
+        }
+        for (int i = 0; i < released.size; i++) {
+            this.inputsReleased[i] = released.get(i);
         }
     }
 }

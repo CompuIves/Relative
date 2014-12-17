@@ -1,4 +1,4 @@
-package com.ives.relative.entities.factories;
+package com.ives.relative.factories;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;

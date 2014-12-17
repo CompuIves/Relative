@@ -11,19 +11,33 @@ import com.ives.relative.entities.components.body.Physics;
 public class JumpCommand extends Command {
 
     public JumpCommand() {
-        super(true, false);
+        super(true);
     }
 
     @Override
-    public void executeDown(Entity entity, float delta) {
-        Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
+    public void executeDown(Entity e) {
+    }
+
+    /**
+     * The jump method is in the execute part because the player maybe wants to jump multiple times with one tap.
+     *
+     * @param e The entity this will be executed on
+     */
+    @Override
+    public void execute(Entity e) {
+        Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         if (body.getLinearVelocity().y == 0) {
             body.applyLinearImpulse(new Vector2(0, 10), body.getPosition(), true);
         }
     }
 
     @Override
-    public void executeUp(Entity e) {
+    public void executeUp(Entity e, float delta) {
 
+    }
+
+    @Override
+    public Command clone() {
+        return new JumpCommand();
     }
 }

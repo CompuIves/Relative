@@ -15,9 +15,9 @@ public class InputC extends Component {
 
     public InputC() {
         commandKeys = new CommandsMap<Integer, Command>(new DoNothingCommand());
-        commandKeys.put(Input.Keys.LEFT, new MoveLeftCommand());
-        commandKeys.put(Input.Keys.RIGHT, new MoveRightCommand());
+        commandKeys.put(Input.Keys.A, new MoveLeftCommand());
+        commandKeys.put(Input.Keys.D, new MoveRightCommand());
         commandKeys.put(Input.Keys.SPACE, new JumpCommand());
-        commandKeys.put(Input.Keys.UP, new CreateBodyCommand());
+        commandKeys.put(Input.Keys.W, new CreateBodyCommand());
     }
 }
