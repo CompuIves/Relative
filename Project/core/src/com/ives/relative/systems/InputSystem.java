@@ -10,6 +10,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.CommandSystem;
+import com.ives.relative.managers.NetworkManager;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -17,6 +18,7 @@ import com.ives.relative.managers.CommandSystem;
 @Wire
 public class InputSystem extends EntitySystem implements InputProcessor {
     protected ComponentMapper<InputC> mInputComponent;
+    protected NetworkManager networkManager;
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
@@ -40,7 +42,7 @@ public class InputSystem extends EntitySystem implements InputProcessor {
             InputC inputC = mInputComponent.get(e);
             Command command = inputC.commandKeys.get(keycode).clone();
             CommandSystem commandSystem = e.getWorld().getSystem(CommandSystem.class);
-            commandSystem.commandDown(command, e, true);
+            commandSystem.commandDown(command, networkManager.getNetworkID(e), true);
         }
         return true;
     }
@@ -52,7 +54,7 @@ public class InputSystem extends EntitySystem implements InputProcessor {
             Command command = inputC.commandKeys.get(keycode);
             CommandSystem commandSystem = e.getWorld().getSystem(CommandSystem.class);
             byte commandID = commandSystem.getID(command);
-            commandSystem.commandUp(commandID, e, true);
+            commandSystem.commandUp(commandID, networkManager.getNetworkID(e), true);
         }
         return true;
     }

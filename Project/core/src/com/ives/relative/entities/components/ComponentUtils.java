@@ -36,4 +36,20 @@ public class ComponentUtils {
 
         return e;
     }
+
+    public static void transferComponents(Entity from, Entity to) {
+        Bag<Component> components = new Bag<Component>();
+        from.getComponents(components);
+
+        for (Component component : components) {
+            to.edit().add(component);
+        }
+    }
+
+    public static Entity removeAllComponents(Entity e) {
+        Bag<Component> components = new Bag<Component>();
+        e.getComponents(components);
+        components.fastClear();
+        return e;
+    }
 }

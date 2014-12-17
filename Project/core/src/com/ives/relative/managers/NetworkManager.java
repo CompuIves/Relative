@@ -36,6 +36,12 @@ public class NetworkManager extends Manager {
     }
 
     public void setNetworkEntity(long id, Entity e) {
+        if (networkEntities.containsKey(id)) {
+            removeNetworkedEntity(id);
+        }
+        if (networkIDs.containsKey(e)) {
+            removeNetworkedEntity(id);
+        }
         networkEntities.put(id, e);
         networkIDs.put(e, id);
     }
@@ -74,9 +80,20 @@ public class NetworkManager extends Manager {
             world.getEntityManager().added(e);
         }*/
 
+
         if (networkEntities.containsKey(id)) {
             removeNetworkedEntity(id);
         }
+
+        /*
+        //TODO CLEAN THIS TRANSFER
+        if(networkEntities.containsKey(id)) {
+            Entity e1 = networkEntities.get(id);
+            ComponentUtils.removeAllComponents(e1);
+            ComponentUtils.transferComponents(e, e1);
+        }
+        */
+
         setNetworkEntity(id, e);
         world.getEntityManager().added(e);
         //world.getEntityManager().added(e);

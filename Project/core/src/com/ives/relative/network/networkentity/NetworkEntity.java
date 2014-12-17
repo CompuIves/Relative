@@ -114,7 +114,6 @@ public class NetworkEntity {
         System.out.println("TRYING TO CREATE FUCKING ENTITY WITH ID: " + id);
 
         finishEntity(entity, networkC.type);
-
         System.out.println("Created entity with ID: " + id + " and TYPE: " + networkC.type);
         return entity;
     }

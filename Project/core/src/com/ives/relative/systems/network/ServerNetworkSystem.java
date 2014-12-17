@@ -12,7 +12,6 @@ import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.CommandSystem;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
@@ -76,25 +75,23 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public void processInput(CommandPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         System.out.println("Stored sequence: " + packet.sequence + " for " + packet.entityID);
-        Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
         for (int i = 0; i < packet.inputsPressed.length; i++) {
             byte command = packet.inputsPressed[i];
-            commandManager.commandDown(command, entity, false);
+            commandManager.commandDown(command, packet.entityID, false);
         }
 
         for (int i = 0; i < packet.inputsReleased.length; i++) {
             byte command = packet.inputsReleased[i];
-            commandManager.commandUp(command, entity, false);
+            commandManager.commandUp(command, packet.entityID, false);
         }
     }
 
     public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
-        Entity entity = world.getManager(NetworkManager.class).getNetworkEntity(packet.entityID);
         if (packet.pressed)
-            commandManager.commandDown(packet.command, entity, false);
+            commandManager.commandDown(packet.command, packet.entityID, false);
         else
-            commandManager.commandUp(packet.command, entity, false);
+            commandManager.commandUp(packet.command, packet.entityID, false);
     }
 
     public void sendPositions(Entity entity) {
