@@ -5,7 +5,7 @@ import com.ives.relative.network.packets.ResponsePacket;
 
 /**
  * Created by Ives on 8/12/2014.
- * This packet can go both ways, just a disconnectpacket.
+ * This packet can go both ways, just a Disconnectpacket.
  */
 public class DisconnectPacket extends ResponsePacket {
     public String message;

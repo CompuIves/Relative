@@ -12,12 +12,12 @@ import com.ives.relative.systems.network.ClientNetworkSystem;
  * HANDLED BY CLIENT
  */
 public class AssignPlayer extends ResponsePacket {
-    long id;
+    int id;
 
     public AssignPlayer() {
     }
 
-    public AssignPlayer(long id) {
+    public AssignPlayer(int id) {
         this.id = id;
     }
 

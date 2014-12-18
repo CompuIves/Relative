@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
@@ -30,17 +31,19 @@ import java.util.Map;
 public class ServerNetworkSystem extends IntervalEntitySystem {
     public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
     private final ServerNetwork network;
-    private final Map<Long, Integer> lastInputsReceived;
+    private final Map<Integer, Integer> lastInputsReceived;
+
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
     protected CommandSystem commandManager;
+    protected NetworkManager networkManager;
 
     /**
      * Creates a new IntervalEntitySystem.
      */
     public ServerNetworkSystem(ServerNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), SERVER_NETWORK_INTERVAL);
-        lastInputsReceived = new HashMap<Long, Integer>();
+        lastInputsReceived = new HashMap<Integer, Integer>();
         this.network = network;
 
         processRequests();
@@ -74,31 +77,33 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
     public void processInput(CommandPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
+        Entity e = networkManager.getEntity(packet.entityID);
         System.out.println("Stored sequence: " + packet.sequence + " for " + packet.entityID);
         for (int i = 0; i < packet.inputsPressed.length; i++) {
             byte command = packet.inputsPressed[i];
-            commandManager.commandDown(command, packet.entityID);
+            commandManager.commandDown(command, e);
         }
 
         for (int i = 0; i < packet.inputsReleased.length; i++) {
             byte command = packet.inputsReleased[i];
-            commandManager.commandUp(command, packet.entityID);
+            commandManager.commandUp(command, e);
         }
     }
 
     public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
+        Entity e = networkManager.getEntity(packet.entityID);
         if (packet.pressed)
-            commandManager.commandDown(packet.command, packet.entityID);
+            commandManager.commandDown(packet.command, e);
         else
-            commandManager.commandUp(packet.command, packet.entityID);
+            commandManager.commandUp(packet.command, e);
     }
 
     public void sendPositions(Entity entity) {
         Position position = mPosition.get(entity);
         if (position.py != position.y || position.px != position.x) {
             //If there is a change in position;
-            long id = mNetworkC.get(entity).id;
+            int id = mNetworkC.get(entity).id;
             int sequence = -1;
             if (lastInputsReceived.containsKey(id)) {
                 sequence = lastInputsReceived.get(id);

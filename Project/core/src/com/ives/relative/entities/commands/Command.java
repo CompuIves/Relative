@@ -41,7 +41,7 @@ public abstract class Command {
         }
     }
 
-    public void whilePressed(final Entity e) {
+    public void whilePressed(Entity e) {
         whileRecord(e);
         execute(e);
     }

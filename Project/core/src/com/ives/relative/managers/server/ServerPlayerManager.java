@@ -88,6 +88,12 @@ public class ServerPlayerManager extends PlayerManager {
         this.connectionsByPlayers.put(player, connection);
     }
 
+    public void removeConnection(int connection) {
+        Entity player = this.playersByConnection.get(connection);
+        this.playersByConnection.remove(connection);
+        this.connectionsByPlayers.remove(player);
+    }
+
     /**
      * Get a player by connection, used only by Server
      *

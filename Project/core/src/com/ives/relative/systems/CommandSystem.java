@@ -7,7 +7,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.managers.CommandManager;
-import com.ives.relative.managers.NetworkManager;
 
 import java.util.Collection;
 import java.util.Map;
@@ -21,11 +20,10 @@ import java.util.Map;
  */
 @Wire
 public class CommandSystem extends VoidEntitySystem {
-    protected NetworkManager networkManager;
     protected CommandManager commandManager;
 
-    Multimap<Integer, Command> hookedCommands;
-    Multimap<Byte, Integer> hookedEntities;
+    Multimap<Entity, Command> hookedCommands;
+    Multimap<Byte, Entity> hookedEntities;
 
     public CommandSystem() {
         hookedCommands = ArrayListMultimap.create();
@@ -35,41 +33,41 @@ public class CommandSystem extends VoidEntitySystem {
     @Override
     protected void processSystem() {
         for (Map.Entry entry : hookedCommands.entries()) {
-            Entity e = networkManager.getEntity((Integer) entry.getKey());
+            Entity e = (Entity) entry.getKey();
             //System.out.println("EntityID = " + e.getId());
             Command command = (Command) entry.getValue();
             command.whilePressed(e);
         }
     }
 
-    public void commandDown(byte command, long e) {
+    public void commandDown(byte command, Entity e) {
         commandDown(commandManager.getCommand(command), e);
     }
 
-    public void commandDown(Command command, long entityID) {
-        if (hookedCommands.containsKey(entityID) && hookedEntities.containsKey(commandManager.getID(command)))
+    public void commandDown(Command command, Entity e) {
+        if (hookedCommands.containsKey(e) && hookedEntities.containsKey(commandManager.getID(command)))
             return;
 
-        hookedCommands.put(entityID, command);
-        hookedEntities.put(commandManager.getID(command), entityID);
-        command.keyDown(networkManager.getEntity(entityID), false);
+        hookedCommands.put(e, command);
+        hookedEntities.put(commandManager.getID(command), e);
+        command.keyDown(e, false);
     }
 
-    public void commandUp(byte command, long entityID) {
-        if (hookedEntities.containsKey(command) && hookedCommands.containsKey(entityID)) {
-            Collection<Command> commands = hookedCommands.get(entityID);
+    public void commandUp(byte command, Entity e) {
+        if (hookedEntities.containsKey(command) && hookedCommands.containsKey(e)) {
+            Collection<Command> commands = hookedCommands.get(e);
 
             Command oldCommand = null;
             for (Command c : commands) {
                 if (commandManager.getID(c) == command) {
-                    c.keyUp(networkManager.getEntity(entityID), false);
+                    c.keyUp(e, false);
                     oldCommand = c;
                     commandManager.freeCommand(oldCommand);
                 }
             }
 
-            hookedCommands.remove(entityID, oldCommand);
-            hookedEntities.remove(command, entityID);
+            hookedCommands.remove(e, oldCommand);
+            hookedEntities.remove(command, e);
         }
     }
 }

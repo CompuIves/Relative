@@ -15,7 +15,6 @@ import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
@@ -30,8 +29,6 @@ import java.util.Map;
  */
 @Wire
 public class NetworkManager extends Manager {
-    protected ComponentMapper<WorldC> mWorldC;
-    protected ComponentMapper<Gravity> mGravity;
     protected ComponentMapper<NetworkC> mNetworkC;
     Map<Integer, Entity> networkEntities;
     Map<Entity, Integer> networkIDs;
@@ -94,11 +91,11 @@ public class NetworkManager extends Manager {
         Entity e;
         if (networkEntities.containsKey(id)) {
             e = networkEntities.get(id);
-            updateEntity(e, components, delta);
         } else {
             e = world.createEntity();
             addEntity(id, e);
         }
+        updateEntity(e, components, delta);
         return e;
     }
 
@@ -129,13 +126,13 @@ public class NetworkManager extends Manager {
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
                 SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
-                com.badlogic.gdx.physics.box2d.World world = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID)).world;
-                physics.body = Tile.createBody(entity, tile, position.x, position.y, true, world);
+                com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID)).world;
+                physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
                 visual.texture = tile.textureRegion;
                 break;
             case PLANET:
-                Name name = entity.getWorld().getMapper(Name.class).get(entity);
-                PlanetManager planetManager = entity.getWorld().getManager(PlanetManager.class);
+                Name name = world.getMapper(Name.class).get(entity);
+                PlanetManager planetManager = world.getManager(PlanetManager.class);
                 planetManager.addPlanet(name.internalName, entity);
                 planetManager.generateTerrain(entity);
                 break;

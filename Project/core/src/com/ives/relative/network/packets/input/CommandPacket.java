@@ -17,7 +17,7 @@ public class CommandPacket extends UpdatePacket {
     public CommandPacket() {
     }
 
-    public CommandPacket(int sequence, long entityID, Array<Byte> pressed, Array<Byte> released) {
+    public CommandPacket(int sequence, int entityID, Array<Byte> pressed, Array<Byte> released) {
         super(sequence, entityID);
         this.inputsPressed = new byte[pressed.size];
         this.inputsReleased = new byte[released.size];

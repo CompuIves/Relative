@@ -12,7 +12,7 @@ public class CommandPressPacket extends UpdatePacket {
     public CommandPressPacket() {
     }
 
-    public CommandPressPacket(int sequence, long entityID, byte command, boolean pressed) {
+    public CommandPressPacket(int sequence, int entityID, byte command, boolean pressed) {
         super(sequence, entityID);
 
         this.command = command;
