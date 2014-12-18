@@ -124,6 +124,11 @@ public abstract class Command {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.getClass().getSimpleName().equals(obj.getClass().getSimpleName());
+    }
+
     /**
      * If a new command needs to be made it can be done using this clone method, will return
      * a new version of the last command.

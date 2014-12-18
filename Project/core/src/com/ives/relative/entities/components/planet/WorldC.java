@@ -3,11 +3,12 @@ package com.ives.relative.entities.components.planet;
 
 import com.artemis.Component;
 import com.badlogic.gdx.physics.box2d.World;
+import com.ives.relative.entities.components.network.Networkable;
 
 /**
  * Created by Ives on 4/12/2014.
  */
-public class WorldC extends Component {
+public class WorldC extends Component implements Networkable {
     public transient World world = null;
     public int velocityIterations = 8;
     public int positionIterations = 8;

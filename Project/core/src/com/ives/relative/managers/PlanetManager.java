@@ -82,7 +82,7 @@ public class PlanetManager extends Manager {
                 .group("planets").build();
         addPlanet(id, e);
 
-        networkManager.setNetworkEntity(e, NetworkEntity.Type.PLANET);
+        networkManager.setEntity(e, NetworkEntity.Type.PLANET);
         return e;
     }
 

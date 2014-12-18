@@ -4,7 +4,6 @@ import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.networkentity.NetworkEntity;
 import com.ives.relative.network.packets.ResponsePacket;
 
@@ -35,7 +34,7 @@ public class WorldSnapshotPacket extends ResponsePacket {
             @Override
             public void run() {
                 for (NetworkEntity networkEntity : networkEntities) {
-                    game.world.getManager(NetworkManager.class).updateEntity(networkEntity.id, networkEntity.createEntity(game.world));
+                    networkEntity.createEntity(game.world);
                 }
                 // Entity player = game.world.getEntity(playerID);
                 // player.edit().add(new InputC());

@@ -23,6 +23,6 @@ public class RequestEntity extends ResponsePacket {
 
     @Override
     public void response(GameManager game) {
-        game.network.sendObjectTCP(connection, new CreateEntityPacket(game.world.getManager(NetworkManager.class).getNetworkEntity(id), id));
+        game.network.sendObjectTCP(connection, new CreateEntityPacket(game.world.getManager(NetworkManager.class).getEntity(id), id));
     }
 }

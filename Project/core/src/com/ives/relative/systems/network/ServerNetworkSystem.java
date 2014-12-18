@@ -11,11 +11,11 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.managers.CommandSystem;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
+import com.ives.relative.systems.CommandSystem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,21 +77,21 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         System.out.println("Stored sequence: " + packet.sequence + " for " + packet.entityID);
         for (int i = 0; i < packet.inputsPressed.length; i++) {
             byte command = packet.inputsPressed[i];
-            commandManager.commandDown(command, packet.entityID, false);
+            commandManager.commandDown(command, packet.entityID);
         }
 
         for (int i = 0; i < packet.inputsReleased.length; i++) {
             byte command = packet.inputsReleased[i];
-            commandManager.commandUp(command, packet.entityID, false);
+            commandManager.commandUp(command, packet.entityID);
         }
     }
 
     public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         if (packet.pressed)
-            commandManager.commandDown(packet.command, packet.entityID, false);
+            commandManager.commandDown(packet.command, packet.entityID);
         else
-            commandManager.commandUp(packet.command, packet.entityID, false);
+            commandManager.commandUp(packet.command, packet.entityID);
     }
 
     public void sendPositions(Entity entity) {

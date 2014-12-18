@@ -2,8 +2,11 @@ package com.ives.relative.entities.components;
 
 import com.artemis.Component;
 import com.artemis.Entity;
+import com.artemis.EntityEdit;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.body.Physics;
 
 /**
  * Created by Ives on 17/12/2014.
@@ -29,11 +32,11 @@ public class ComponentUtils {
     }
 
     public static Entity addComponents(Entity e, Array<Component> components) {
+        EntityEdit entityEdit = e.edit();
         for (Component component : components) {
-            e.edit().add(component);
+            entityEdit.add(component);
             System.out.println("Added: " + component.getClass().getSimpleName());
         }
-
         return e;
     }
 
@@ -47,9 +50,24 @@ public class ComponentUtils {
     }
 
     public static Entity removeAllComponents(Entity e) {
+        EntityEdit edit = e.edit();
         Bag<Component> components = new Bag<Component>();
+
+        Physics physics = e.getComponent(Physics.class);
+        if (physics != null) {
+            removePhysics(physics);
+        }
+
         e.getComponents(components);
-        components.fastClear();
+        for (Component c : components) {
+            edit.remove(c);
+        }
         return e;
+    }
+
+    private static void removePhysics(Physics physics) {
+        Body body = physics.body;
+        if (body != null)
+            physics.body.getWorld().destroyBody(body);
     }
 }

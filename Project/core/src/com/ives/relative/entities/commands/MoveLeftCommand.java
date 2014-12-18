@@ -32,13 +32,9 @@ public class MoveLeftCommand extends Command {
 
     @Override
     public void execute(Entity e) {
-        try {
-            float mvSpeed = e.getComponent(MovementSpeed.class).movementSpeed;
-            float vx = -mvSpeed;
-            moveEntity(e, vx);
-        } catch (Exception sae) {
-            System.out.println("GODVERDOMME KUTPROGRMMA");
-        }
+        float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
+        float vx = -mvSpeed;
+        moveEntity(e, vx);
     }
 
     @Override
@@ -54,7 +50,6 @@ public class MoveLeftCommand extends Command {
         y = position.y;
         vx = velocity.vx;
         vy = velocity.vy;
-
     }
 
     @Override

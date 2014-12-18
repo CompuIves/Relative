@@ -22,7 +22,7 @@ import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.managers.CommandSystem;
+import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
@@ -39,7 +39,7 @@ import java.util.Map;
 public class ClientNetworkSystem extends IntervalEntitySystem {
     public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
     protected ClientManager clientManager;
-    protected CommandSystem commandManager;
+    protected CommandManager commandManager;
     protected NetworkManager networkManager;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
@@ -91,7 +91,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     }
 
     public Entity getPlayer() {
-        return networkManager.getNetworkEntity(playerNetworkId);
+        return networkManager.getEntity(playerNetworkId);
     }
 
     public long getPlayerID() {
@@ -143,7 +143,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     }
 
     public boolean processPosition(PositionPacket packet) {
-        Entity entity = networkManager.getNetworkEntity(packet.entityID);
+        Entity entity = networkManager.getEntity(packet.entityID);
         //networkEntity.edit().add(position).add(velocity);
         if (entity != null) {
             float x = packet.x;
@@ -183,8 +183,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         if (packet.entityID == playerNetworkId) {
             Entity entity = getPlayer();
             sentCommands.removeAll(packet.sequence);
-            System.out.println("Removed packet: " + packet.sequence);
-            System.out.println("Sequence size now: " + sentCommands.size());
+            //System.out.println("Removed packet: " + packet.sequence);
+            //System.out.println("Sequence size now: " + sentCommands.size());
             for (Map.Entry entry : sentCommands.entries()) {
                 int localSequence = (Integer) entry.getKey();
                 System.out.println("Looking at packet with: " + packet.sequence + " and trying " + localSequence);

@@ -71,7 +71,7 @@ public class ServerPlayerManager extends PlayerManager {
 
         setPlayer(e, internalName);
 
-        networkManager.setNetworkEntity(e, NetworkEntity.Type.PLAYER);
+        networkManager.setEntity(e, NetworkEntity.Type.PLAYER);
         return e;
     }
 

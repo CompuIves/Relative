@@ -33,15 +33,9 @@ public class MoveRightCommand extends Command {
 
     @Override
     public void execute(Entity e) {
-        try {
-            float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
-            float vx = mvSpeed;
-            moveEntity(e, vx);
-        } catch (Exception sae) {
-            System.out.println("GOT AN ARRAYBOUND ERROR VERY STRANGE");
-            System.out.println(e.getId());
-        }
-
+        float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
+        float vx = mvSpeed;
+        moveEntity(e, vx);
     }
 
     @Override

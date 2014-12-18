@@ -6,7 +6,6 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
-import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 
 /**
@@ -26,7 +25,7 @@ public class RequestPlanetPacket extends ResponsePacket {
             @Override
             public void run() {
                 //TODO watch for several players
-                Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
+                //Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
                 //Entity planet = game.world.getManager(PlanetManager.class).getPlanet(game.world.getMapper(Position.class).get(player).worldID);
 
                 //TODO appropriate way of finding planet
