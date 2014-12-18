@@ -13,9 +13,9 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.entities.commands.Command;
+import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.SolidTile;
 import com.ives.relative.managers.assets.modules.Module;
-import com.ives.relative.network.networkentity.NetworkEntity;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;
@@ -89,7 +89,6 @@ public abstract class Network extends Listener {
     public void registerKryoClasses() {
         kryo.register(SolidTile.class);
         kryo.register(byte[].class);
-        kryo.register(NetworkEntity.class);
         kryo.register(ArrayList.class);
         kryo.register(Module.class);
         kryo.register(Vector2.class);
@@ -98,10 +97,9 @@ public abstract class Network extends Listener {
         kryo.register(Array.class);
         kryo.register(Object[].class);
         kryo.register(float[].class);
-        kryo.register(NetworkEntity[].class);
         kryo.register(Fixture.class);
         kryo.register(Body.class);
-        kryo.register(NetworkEntity.Type.class);
+        kryo.register(NetworkManager.Type.class);
         kryo.register(Command[].class);
         kryo.register(Command.class);
 

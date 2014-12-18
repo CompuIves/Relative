@@ -9,10 +9,10 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,22 +67,21 @@ public class PlanetManager extends Manager {
     }
 
     public Entity createNewPlanet(String id, String name, String seed, World physicsWorld, int velocityIterations, int positionIterations) {
-        /*
-        Entity e = new EntityBuilder(world).with(new Name(id, name),
-                new Seed(seed),
-                new Gravity(0, -10),
-                new WorldC(physicsWorld, velocityIterations, positionIterations)).
-                group("planets").
-                build();
-        */
+        //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
                 new WorldC(physicsWorld, velocityIterations, positionIterations))
-                .group("planets").build();
-        addPlanet(id, e);
+                .group("planets")
+                .build();
 
-        networkManager.setEntity(e, NetworkEntity.Type.PLANET);
+        //Get the networkID from the networkmanager
+        int networkID = networkManager.addEntity(e);
+        //Add a networkComponent to the planet
+        e.edit().add(new NetworkC(networkID, NetworkManager.Type.PLANET));
+
+        //Add the planet to the planetmanager
+        addPlanet(id, e);
         return e;
     }
 

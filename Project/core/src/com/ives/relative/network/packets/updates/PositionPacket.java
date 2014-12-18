@@ -13,12 +13,12 @@ import com.ives.relative.network.packets.UpdatePacket;
 public class PositionPacket extends UpdatePacket {
     public float x, y, rotation;
     public float vx, vy;
-    public long entityID;
+    public int entityID;
 
     public PositionPacket() {
     }
 
-    public PositionPacket(Entity entity, int sequence, long entityID) {
+    public PositionPacket(Entity entity, int sequence, int entityID) {
         super(sequence, entityID);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
         Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);

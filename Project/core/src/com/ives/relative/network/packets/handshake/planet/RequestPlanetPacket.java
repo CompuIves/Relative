@@ -3,7 +3,6 @@ package com.ives.relative.network.packets.handshake.planet;
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.network.packets.ResponsePacket;
@@ -31,7 +30,7 @@ public class RequestPlanetPacket extends ResponsePacket {
                 //TODO appropriate way of finding planet
                 Entity planet = game.world.getManager(PlanetManager.class).getPlanet("earth");
 
-                ServerNetwork.getConnection(connection).sendTCP(new PlanetPacket(planet, game.world.getManager(NetworkManager.class).getNetworkID(planet)));
+                game.network.sendObjectTCP(connection, game.world.getManager(NetworkManager.class).generateFullComponentPacket(planet, NetworkManager.Type.PLANET));
             }
         });
     }

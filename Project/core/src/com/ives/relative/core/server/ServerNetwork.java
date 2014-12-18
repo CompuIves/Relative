@@ -85,6 +85,6 @@ public class ServerNetwork extends Network {
     @Override
     public void disconnected(Connection connection) {
         Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection.getID());
-        //game.world.getManager(NetworkManager.class).removeNetworkedEntity(player);
+        //game.world.getManager(NetworkManager.class).removeEntity(player);
     }
 }

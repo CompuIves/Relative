@@ -13,10 +13,10 @@ import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Tile;
-import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 
@@ -55,7 +55,8 @@ public class TileManager extends Manager {
 
             if (gravity) {
                 e.edit().add(new Velocity());
-                networkManager.setEntity(e, NetworkEntity.Type.TILE);
+                int networkID = networkManager.addEntity(e);
+                e.edit().add(new NetworkC(networkID, NetworkManager.Type.TILE));
             }
 
             return e;

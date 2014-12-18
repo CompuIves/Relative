@@ -3,7 +3,7 @@ package com.ives.relative.network.packets.requests;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.updates.CreateEntityPacket;
+import com.ives.relative.network.packets.updates.ComponentPacket;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -12,17 +12,19 @@ import com.ives.relative.network.packets.updates.CreateEntityPacket;
  * HANDLED BY SERVER
  */
 public class RequestEntity extends ResponsePacket {
-    long id;
+    int id;
 
     public RequestEntity() {
     }
 
-    public RequestEntity(long id) {
+    public RequestEntity(int id) {
         this.id = id;
     }
 
     @Override
     public void response(GameManager game) {
-        game.network.sendObjectTCP(connection, new CreateEntityPacket(game.world.getManager(NetworkManager.class).getEntity(id), id));
+        NetworkManager networkManager = game.world.getManager(NetworkManager.class);
+        ComponentPacket componentPacket = networkManager.generateFullComponentPacket(networkManager.getEntity(id));
+        game.network.sendObjectTCP(connection, componentPacket);
     }
 }

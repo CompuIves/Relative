@@ -24,8 +24,8 @@ public class CommandSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
     protected CommandManager commandManager;
 
-    Multimap<Long, Command> hookedCommands;
-    Multimap<Byte, Long> hookedEntities;
+    Multimap<Integer, Command> hookedCommands;
+    Multimap<Byte, Integer> hookedEntities;
 
     public CommandSystem() {
         hookedCommands = ArrayListMultimap.create();
@@ -35,7 +35,7 @@ public class CommandSystem extends VoidEntitySystem {
     @Override
     protected void processSystem() {
         for (Map.Entry entry : hookedCommands.entries()) {
-            Entity e = networkManager.getEntity((Long) entry.getKey());
+            Entity e = networkManager.getEntity((Integer) entry.getKey());
             //System.out.println("EntityID = " + e.getId());
             Command command = (Command) entry.getValue();
             command.whilePressed(e);

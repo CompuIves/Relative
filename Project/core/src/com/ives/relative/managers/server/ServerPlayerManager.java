@@ -17,10 +17,10 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.living.Health;
 import com.ives.relative.entities.components.living.MovementSpeed;
+import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
-import com.ives.relative.network.networkentity.NetworkEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +71,9 @@ public class ServerPlayerManager extends PlayerManager {
 
         setPlayer(e, internalName);
 
-        networkManager.setEntity(e, NetworkEntity.Type.PLAYER);
+        int id = networkManager.addEntity(e);
+        e.edit().add(new NetworkC(id, NetworkManager.Type.PLAYER));
+
         return e;
     }
 

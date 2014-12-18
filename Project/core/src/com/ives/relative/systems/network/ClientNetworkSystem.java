@@ -50,7 +50,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     Array<Byte> commandDownNetworkList;
     Array<Byte> commandUpNetworkList;
     int sequence;
-    private long playerNetworkId;
+    private int playerNetworkId;
     private Client client;
     private Multimap<Integer, Command> sentCommands;
 
@@ -86,7 +86,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         sequence++;
     }
 
-    public void registerPlayer(long playerNetworkId) {
+    public void registerPlayer(int playerNetworkId) {
         this.playerNetworkId = playerNetworkId;
     }
 
@@ -94,7 +94,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         return networkManager.getEntity(playerNetworkId);
     }
 
-    public long getPlayerID() {
+    public int getPlayerID() {
         return playerNetworkId;
     }
 
