@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -23,6 +24,7 @@ import com.ives.relative.network.packets.updates.ComponentPacket;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -30,14 +32,15 @@ import java.util.Map;
 @Wire
 public class NetworkManager extends Manager {
     protected ComponentMapper<NetworkC> mNetworkC;
-    Map<Integer, Entity> networkEntities;
-    Map<Entity, Integer> networkIDs;
+    protected UuidEntityManager uuidEntityManager;
+    Map<Integer, UUID> networkEntities;
+    Map<UUID, Integer> networkIDs;
     int freeID;
     Array<Integer> removedIDs;
 
     public NetworkManager() {
-        networkEntities = new HashMap<Integer, Entity>();
-        networkIDs = new HashMap<Entity, Integer>();
+        networkEntities = new HashMap<Integer, UUID>();
+        networkIDs = new HashMap<UUID, Integer>();
 
         removedIDs = new Array<Integer>();
     }
@@ -55,11 +58,11 @@ public class NetworkManager extends Manager {
     }
 
     public void addEntity(int id, Entity e) {
-        if (networkEntities.containsKey(id) || networkIDs.containsKey(e)) {
+        if (networkEntities.containsKey(id) || networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
             updateEntity(e, ComponentUtils.getComponents(e), false);
         } else {
-            networkEntities.put(id, e);
-            networkIDs.put(e, id);
+            networkEntities.put(id, uuidEntityManager.getUuid(e));
+            networkIDs.put(uuidEntityManager.getUuid(e), id);
         }
     }
 
@@ -90,7 +93,7 @@ public class NetworkManager extends Manager {
     public Entity addEntity(int id, Array<Component> components, boolean delta) {
         Entity e;
         if (networkEntities.containsKey(id)) {
-            e = networkEntities.get(id);
+            e = uuidEntityManager.getEntity(networkEntities.get(id));
         } else {
             e = world.createEntity();
             addEntity(id, e);
@@ -145,12 +148,12 @@ public class NetworkManager extends Manager {
 
 
     public void removeEntity(int id) {
-        Entity e = networkEntities.get(id);
+        Entity e = uuidEntityManager.getEntity(networkEntities.get(id));
         ComponentUtils.removeAllComponents(e);
         removedIDs.add(id);
 
         networkEntities.remove(id);
-        networkIDs.remove(e);
+        networkIDs.remove(uuidEntityManager.getUuid(e));
 
         System.out.println("Removed entity: " + e.getId());
         e.deleteFromWorld();
@@ -158,7 +161,7 @@ public class NetworkManager extends Manager {
 
     public Entity getEntity(int id) {
         if (networkEntities.containsKey(id)) {
-            return networkEntities.get(id);
+            return uuidEntityManager.getEntity(networkEntities.get(id));
         } else {
             return null;
         }
@@ -178,7 +181,10 @@ public class NetworkManager extends Manager {
     }
 
     public int getNetworkID(Entity e) {
-        return networkIDs.get(e);
+        if (e != null)
+            return networkIDs.get(uuidEntityManager.getUuid(e));
+        else
+            return -1;
     }
 
 

@@ -3,12 +3,10 @@ package com.ives.relative.core.server;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.updates.RemoveEntityPacket;
 
 import java.io.IOException;
 
@@ -86,10 +84,12 @@ public class ServerNetwork extends Network {
 
     @Override
     public void disconnected(Connection connection) {
+        /*
         ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
         int id = game.world.getManager(NetworkManager.class).getNetworkID(serverPlayerManager.getPlayerByConnection(connection.getID()));
         serverPlayerManager.removeConnection(connection.getID());
         sendObjectTCPToAll(new RemoveEntityPacket(id));
         game.world.getManager(NetworkManager.class).removeEntity(id);
+        */
     }
 }

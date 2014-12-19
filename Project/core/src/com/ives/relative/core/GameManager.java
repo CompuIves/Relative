@@ -3,6 +3,7 @@ package com.ives.relative.core;
 import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
+import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.PlanetManager;
@@ -47,6 +48,7 @@ public class GameManager extends Manager {
         world.setManager(new CommandManager());
         world.setManager(new GroupManager());
         world.setManager(new NetworkManager());
+        world.setManager(new UuidEntityManager());
     }
 
     public boolean isServer() {

@@ -2,6 +2,7 @@ package com.ives.relative.systems;
 
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -10,6 +11,7 @@ import com.ives.relative.managers.CommandManager;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Ives on 14/12/2014.
@@ -21,9 +23,10 @@ import java.util.Map;
 @Wire
 public class CommandSystem extends VoidEntitySystem {
     protected CommandManager commandManager;
+    protected UuidEntityManager uuidEntityManager;
 
-    Multimap<Entity, Command> hookedCommands;
-    Multimap<Byte, Entity> hookedEntities;
+    Multimap<UUID, Command> hookedCommands;
+    Multimap<Byte, UUID> hookedEntities;
 
     public CommandSystem() {
         hookedCommands = ArrayListMultimap.create();
@@ -33,10 +36,15 @@ public class CommandSystem extends VoidEntitySystem {
     @Override
     protected void processSystem() {
         for (Map.Entry entry : hookedCommands.entries()) {
-            Entity e = (Entity) entry.getKey();
+            Entity e = uuidEntityManager.getEntity((UUID) entry.getKey());
             //System.out.println("EntityID = " + e.getId());
-            Command command = (Command) entry.getValue();
-            command.whilePressed(e);
+            if (e != null) {
+                Command command = (Command) entry.getValue();
+                command.whilePressed(e);
+            } else {
+                hookedEntities.remove(entry.getValue(), entry.getKey());
+                hookedCommands.removeAll(entry.getKey());
+            }
         }
     }
 
@@ -45,17 +53,17 @@ public class CommandSystem extends VoidEntitySystem {
     }
 
     public void commandDown(Command command, Entity e) {
-        if (hookedCommands.containsKey(e) && hookedEntities.containsKey(commandManager.getID(command)))
+        if (hookedCommands.containsKey(uuidEntityManager.getUuid(e)) && hookedEntities.containsKey(commandManager.getID(command)))
             return;
 
-        hookedCommands.put(e, command);
-        hookedEntities.put(commandManager.getID(command), e);
+        hookedCommands.put(uuidEntityManager.getUuid(e), command);
+        hookedEntities.put(commandManager.getID(command), uuidEntityManager.getUuid(e));
         command.keyDown(e, false);
     }
 
     public void commandUp(byte command, Entity e) {
-        if (hookedEntities.containsKey(command) && hookedCommands.containsKey(e)) {
-            Collection<Command> commands = hookedCommands.get(e);
+        if (hookedEntities.containsKey(command) && hookedCommands.containsKey(uuidEntityManager.getUuid(e))) {
+            Collection<Command> commands = hookedCommands.get(uuidEntityManager.getUuid(e));
 
             Command oldCommand = null;
             for (Command c : commands) {
@@ -66,8 +74,8 @@ public class CommandSystem extends VoidEntitySystem {
                 }
             }
 
-            hookedCommands.remove(e, oldCommand);
-            hookedEntities.remove(command, e);
+            hookedCommands.remove(uuidEntityManager.getUuid(e), oldCommand);
+            hookedEntities.remove(command, uuidEntityManager.getUuid(e));
         }
     }
 }
