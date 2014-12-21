@@ -27,7 +27,6 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
-import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.PositionPacket;
 
 import java.util.Map;
@@ -131,7 +130,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
                                 if (!processPosition(packet)) {
-                                    network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
+                                    //network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
                                 }
                                 applyServerReconciliation(packet);
                             }

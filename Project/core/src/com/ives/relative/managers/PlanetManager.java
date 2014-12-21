@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.GroupManager;
+import com.artemis.managers.UuidEntityManager;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -16,6 +17,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Ives on 11/12/2014.
@@ -26,28 +28,29 @@ public class PlanetManager extends Manager {
     /**
      * All entities that are mapped to a planet, with the planet as key.
      */
-    private final Map<String, Entity> entitiesByPlanet;
-    private final Map<Entity, String> planetsByEntity;
+    private final Map<String, UUID> entitiesByPlanet;
+    private final Map<UUID, String> planetsByEntity;
 
     protected NetworkManager networkManager;
+    protected UuidEntityManager uuidEntityManager;
 
     protected ComponentMapper<WorldC> mWorldC;
     protected ComponentMapper<Gravity> mGravity;
 
     public PlanetManager() {
-        entitiesByPlanet = new HashMap<String, Entity>();
-        planetsByEntity = new HashMap<Entity, String>();
+        entitiesByPlanet = new HashMap<String, UUID>();
+        planetsByEntity = new HashMap<UUID, String>();
     }
 
     public void addPlanet(String name, Entity e) {
         if (!planetsByEntity.containsKey(e)) {
             if (entitiesByPlanet.containsKey(name)) {
-                Entity old = entitiesByPlanet.remove(name);
+                UUID old = entitiesByPlanet.remove(name);
                 planetsByEntity.remove(old);
             }
 
-            entitiesByPlanet.put(name, e);
-            planetsByEntity.put(e, name);
+            entitiesByPlanet.put(name, e.getUuid());
+            planetsByEntity.put(e.getUuid(), name);
 
             if (mWorldC.get(e).world == null) {
                 Gravity gravity = mGravity.get(e);
@@ -59,11 +62,11 @@ public class PlanetManager extends Manager {
     }
 
     public Entity getPlanet(String name) {
-        return entitiesByPlanet.get(name);
+        return uuidEntityManager.getEntity(entitiesByPlanet.get(name));
     }
 
     public String getPlanetID(Entity planet) {
-        return planetsByEntity.get(planet);
+        return planetsByEntity.get(planet.getUuid());
     }
 
     public Entity createNewPlanet(String id, String name, String seed, World physicsWorld, int velocityIterations, int positionIterations) {
@@ -86,7 +89,7 @@ public class PlanetManager extends Manager {
     }
 
     public void generateTerrain(String planetID) {
-        generateTerrain(entitiesByPlanet.get(planetID));
+        generateTerrain(uuidEntityManager.getEntity(entitiesByPlanet.get(planetID)));
     }
 
     public void generateTerrain(Entity planet) {

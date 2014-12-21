@@ -4,6 +4,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.UuidEntityManager;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -29,6 +30,7 @@ public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
     protected ComponentMapper<WorldC> mWorldComponent;
     protected ComponentMapper<Name> mName;
+    protected UuidEntityManager uuidEntityManager;
 
     protected NetworkManager networkManager;
 
@@ -42,8 +44,18 @@ public class TileManager extends Manager {
         return polygonShape;
     }
 
+    /**
+     * Creates a tile at the given coordinates
+     *
+     * @param planetID which planet it needs to place the tile
+     * @param x        x coord
+     * @param y        y coord
+     * @param z        z coord
+     * @param tileID   name of tile
+     * @param gravity  should the given tile be affected by gravity?
+     * @return the entity of the tile created
+     */
     public Entity createTile(Entity planet, float x, float y, int z, String tileID, boolean gravity) {
-
         if (solidTiles.get(tileID) != null) {
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories

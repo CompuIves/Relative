@@ -43,12 +43,7 @@ public abstract class Command {
 
     public void whilePressed(final Entity e) {
         whileRecord(e);
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
                 execute(e);
-            }
-        });
     }
 
     public void keyUp(final Entity e, boolean send) {
