@@ -4,7 +4,7 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ives.relative.entities.components.MovementSpeed;
+import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;

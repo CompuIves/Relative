@@ -1,4 +1,4 @@
-package com.ives.relative.entities.components;
+package com.ives.relative.entities.components.living;
 
 
 import com.artemis.Component;
@@ -10,10 +10,10 @@ import com.ives.relative.entities.components.network.Networkable;
 public class MovementSpeed extends Component implements Networkable {
     public float movementSpeed;
 
-    public MovementSpeed(float movementSpeed) {
-        this.movementSpeed = movementSpeed;
+    public MovementSpeed() {
     }
 
-    public MovementSpeed() {
+    public MovementSpeed(float movementSpeed) {
+        this.movementSpeed = movementSpeed;
     }
 }

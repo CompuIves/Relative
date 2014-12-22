@@ -5,7 +5,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.MovementSpeed;
+import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.updates.ComponentPacket;

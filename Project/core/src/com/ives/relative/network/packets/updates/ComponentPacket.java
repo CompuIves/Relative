@@ -2,7 +2,7 @@ package com.ives.relative.network.packets.updates;
 
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.MovementSpeed;
+import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 

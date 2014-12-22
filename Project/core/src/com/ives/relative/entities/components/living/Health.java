@@ -10,10 +10,10 @@ import com.ives.relative.entities.components.network.Networkable;
 public class Health extends Component implements Networkable {
     public int health;
 
-    public Health(int health) {
-        this.health = health;
+    public Health() {
     }
 
-    public Health() {
+    public Health(int health) {
+        this.health = health;
     }
 }
