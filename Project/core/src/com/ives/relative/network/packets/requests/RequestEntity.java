@@ -22,7 +22,7 @@ public class RequestEntity extends ResponsePacket {
     }
 
     @Override
-    public void response(GameManager game) {
+    public void response(final GameManager game) {
         NetworkManager networkManager = game.world.getManager(NetworkManager.class);
         ComponentPacket componentPacket = networkManager.generateFullComponentPacket(networkManager.getEntity(id));
         game.network.sendObjectTCP(connection, componentPacket);

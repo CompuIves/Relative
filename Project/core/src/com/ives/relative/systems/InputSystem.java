@@ -16,10 +16,9 @@ import com.ives.relative.managers.CommandManager;
  */
 @Wire
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
+    public Array<Command> commandsActivated;
     protected ComponentMapper<InputC> mInputComponent;
     protected CommandManager commandManager;
-
-    private Array<Command> commandsActivated;
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
@@ -39,7 +38,6 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Override
     public boolean keyDown(int keycode) {
         for (Entity e : getActives()) {
-            System.out.println("ENR " + e.getId());
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
             Command command = commandManager.getCommand(commandTemplate);

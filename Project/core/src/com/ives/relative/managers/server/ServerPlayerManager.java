@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.MovementSpeed;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
@@ -16,7 +17,6 @@ import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.living.Health;
-import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.managers.NetworkManager;
@@ -63,7 +63,7 @@ public class ServerPlayerManager extends PlayerManager {
                 new Visual(new TextureRegion(new Texture("player.png")), 1, 1),
                 new Position(position.x, position.y, z, 0, worldID),
                 new Velocity(0, 0)).
-                group("player").
+                group("players").
                 build();
 
         Body body = Player.createBody(e, position.x, position.y, 0, 0, planet);

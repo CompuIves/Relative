@@ -8,6 +8,7 @@ import com.ives.relative.entities.commands.*;
 
 /**
  * Created by Ives on 5/12/2014.
+ * Saves which command will be executed at specified key. This will be read from the InputSystem
  */
 @Wire
 public class InputC extends Component {

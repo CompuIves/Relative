@@ -177,7 +177,7 @@ public class NetworkManager extends Manager {
     public ComponentPacket generateFullComponentPacket(Entity e, Type type) {
         Array<Component> components = ComponentUtils.getComponents(e);
         int id = getNetworkID(e);
-        return new ComponentPacket(components, id, false, type);
+        return new ComponentPacket(components, id, false, -1, type);
     }
 
     public int getNetworkID(Entity e) {

@@ -1,4 +1,4 @@
-package com.ives.relative.systems.network;
+package com.ives.relative.systems.client;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -27,7 +27,9 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
+import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
+import com.ives.relative.systems.InputSystem;
 
 import java.util.Map;
 
@@ -40,6 +42,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
+    protected InputSystem inputSystem;
+    protected NetworkReceiveSystem networkReceiveSystem;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
@@ -132,9 +136,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                                 if (!processPosition(packet)) {
                                     //network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
                                 }
-                                applyServerReconciliation(packet);
+                                //applyServerReconciliation(packet);
                             }
                         });
+                    }
+
+                    if (object instanceof ComponentPacket) {
+                        ComponentPacket packet = (ComponentPacket) object;
+                        networkReceiveSystem.addDataForProcessing(packet);
                     }
                 }
             }
@@ -193,6 +202,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                     command.applyReconciliation(entity);
                 }
             }
+            for (Command command : inputSystem.commandsActivated) {
+                command.applyReconciliation(entity);
+            }
         }
+
     }
 }

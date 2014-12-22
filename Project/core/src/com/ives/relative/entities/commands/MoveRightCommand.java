@@ -4,10 +4,10 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.ives.relative.entities.components.MovementSpeed;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
-import com.ives.relative.entities.components.living.MovementSpeed;
 
 
 /**
@@ -33,7 +33,7 @@ public class MoveRightCommand extends Command {
 
     @Override
     public void execute(Entity e) {
-        float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
+        float mvSpeed = e.getComponent(MovementSpeed.class).movementSpeed;
         float vx = mvSpeed;
         moveEntity(e, vx);
     }

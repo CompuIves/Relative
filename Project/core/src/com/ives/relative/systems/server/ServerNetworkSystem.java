@@ -1,4 +1,4 @@
-package com.ives.relative.systems.network;
+package com.ives.relative.systems.server;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

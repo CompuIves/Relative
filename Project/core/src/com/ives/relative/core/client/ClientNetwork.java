@@ -64,6 +64,7 @@ public class ClientNetwork extends Network {
 
     @Override
     public void sendObjectTCP(int connectionID, BasePacket o) {
+        System.out.println("Sent TCP: " + o.getClass().getSimpleName());
         o.connection = connectionID;
         client.sendTCP(o);
     }

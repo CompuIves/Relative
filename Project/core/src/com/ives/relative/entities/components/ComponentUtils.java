@@ -14,6 +14,12 @@ import com.ives.relative.entities.components.body.Physics;
  */
 public class ComponentUtils {
 
+    /**
+     * Gets all the components from a entity
+     *
+     * @param e
+     * @return
+     */
     public static Array<Component> getComponents(Entity e) {
         Array<Component> componentsArray = new Array<Component>();
         Bag<Component> components = new Bag<Component>();
@@ -22,37 +28,45 @@ public class ComponentUtils {
         for (Component component : components) {
             componentsArray.add(component);
         }
-
-        System.out.println("Components: ");
-        for (Component component : components) {
-            System.out.println(component.getClass().getSimpleName());
-        }
-
         return componentsArray;
     }
 
+    /**
+     * Adds the given components to the entity
+     * @param e
+     * @param components
+     * @return
+     */
     public static Entity addComponents(Entity e, Array<Component> components) {
         EntityEdit entityEdit = e.edit();
         for (Component component : components) {
             entityEdit.add(component);
-            //entityEdit.create(component.getClass());
-            System.out.println("Added: " + component.getClass().getSimpleName());
         }
         return e;
     }
 
+    /**
+     * Copies components from the first entity to the second one.
+     * @param from
+     * @param to
+     */
     public static void transferComponents(Entity from, Entity to) {
         Bag<Component> components = new Bag<Component>();
         from.getComponents(components);
 
+        EntityEdit edit = to.edit();
         for (Component component : components) {
-            to.edit().add(component);
+            edit.add(component);
         }
     }
 
+    /**
+     * Removes all components from the entity
+     * @param e
+     * @return
+     */
     public static Entity removeAllComponents(Entity e) {
         if (e != null) {
-            EntityEdit edit = e.edit();
             Bag<Component> components = new Bag<Component>();
 
             Physics physics = e.getComponent(Physics.class);
@@ -60,14 +74,19 @@ public class ComponentUtils {
                 removePhysics(physics);
             }
 
+            EntityEdit edit = e.edit();
             e.getComponents(components);
             for (Component c : components) {
-                edit.remove(c);
+                edit.remove(c.getClass());
             }
         }
         return e;
     }
 
+    /**
+     * Removes the body from the world.
+     * @param physics
+     */
     private static void removePhysics(Physics physics) {
         Body body = physics.body;
         if (body != null)

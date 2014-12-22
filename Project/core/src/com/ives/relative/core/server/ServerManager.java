@@ -13,7 +13,7 @@ import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.CommandSystem;
-import com.ives.relative.systems.network.ServerNetworkSystem;
+import com.ives.relative.systems.server.ServerNetworkSystem;
 
 import java.io.IOException;
 

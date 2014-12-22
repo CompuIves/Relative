@@ -31,10 +31,8 @@ import java.util.zip.ZipOutputStream;
 @Wire
 public class ModuleManager extends Manager {
 
+    protected TileManager tileManager;
     ArrayList<Module> modules;
-
-    TileManager tileManager;
-
     boolean isServer;
 
     public ModuleManager() {

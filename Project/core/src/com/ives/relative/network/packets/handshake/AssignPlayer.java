@@ -1,9 +1,10 @@
 package com.ives.relative.network.packets.handshake;
 
+import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.systems.network.ClientNetworkSystem;
+import com.ives.relative.systems.client.ClientNetworkSystem;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -22,8 +23,13 @@ public class AssignPlayer extends ResponsePacket {
     }
 
     @Override
-    public void response(GameManager game) {
-        game.world.getSystem(ClientNetworkSystem.class).registerPlayer(id);
-        game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+    public void response(final GameManager game) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                game.world.getSystem(ClientNetworkSystem.class).registerPlayer(id);
+                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+            }
+        });
     }
 }

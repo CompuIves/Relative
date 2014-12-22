@@ -2,8 +2,7 @@ package com.ives.relative.entities.commands;
 
 
 import com.artemis.Entity;
-import com.badlogic.gdx.Gdx;
-import com.ives.relative.systems.network.ClientNetworkSystem;
+import com.ives.relative.systems.client.ClientNetworkSystem;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -22,7 +21,13 @@ public abstract class Command {
         this.simulate = simulate;
     }
 
-    public void keyDown(final Entity e, boolean send) {
+    /**
+     * Methods which will be called from other classes
+     *
+     * @param e    entity
+     * @param send should this be sent to the server?
+     */
+    public void keyDown(Entity e, boolean send) {
         if (send) {
             e.getWorld().getSystem(ClientNetworkSystem.class).sendDownCommand(this);
 
@@ -32,21 +37,17 @@ public abstract class Command {
             }
         } else {
             startRecord(e);
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    executeDown(e);
-                }
-            });
+
+            executeDown(e);
         }
     }
 
-    public void whilePressed(final Entity e) {
+    public void whilePressed(Entity e) {
         whileRecord(e);
-                execute(e);
+        execute(e);
     }
 
-    public void keyUp(final Entity e, boolean send) {
+    public void keyUp(Entity e, boolean send) {
         if (send) {
             e.getWorld().getSystem(ClientNetworkSystem.class).sendUpCommand(this);
 
@@ -56,12 +57,8 @@ public abstract class Command {
             }
         } else {
             endRecord(e);
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    executeUp(e, deltaTime);
-                }
-            });
+            executeUp(e, deltaTime);
+
         }
     }
 

@@ -11,7 +11,8 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.InputSystem;
 import com.ives.relative.systems.RenderSystem;
-import com.ives.relative.systems.network.ClientNetworkSystem;
+import com.ives.relative.systems.client.ClientNetworkSystem;
+import com.ives.relative.systems.client.NetworkReceiveSystem;
 
 import java.io.IOException;
 
@@ -54,6 +55,7 @@ public class ClientManager extends GameManager implements Screen {
 
         world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
+        world.setSystem(new NetworkReceiveSystem());
     }
 
     @Override
