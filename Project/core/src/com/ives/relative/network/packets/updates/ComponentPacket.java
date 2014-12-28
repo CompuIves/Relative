@@ -2,7 +2,6 @@ package com.ives.relative.network.packets.updates;
 
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 
@@ -36,11 +35,5 @@ public class ComponentPacket extends UpdatePacket {
         }
         this.delta = delta;
         this.type = type;
-
-        for (Component component : components) {
-            if (component.getClass().isAssignableFrom(MovementSpeed.class)) {
-                System.out.println("WORKS");
-            }
-        }
     }
 }

@@ -5,7 +5,6 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.updates.ComponentPacket;
@@ -45,26 +44,6 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
 
                 Array<Component> componentArray = new Array<Component>();
                 componentArray.addAll(packet.components);
-
-                boolean works = false;
-                for (Component component : componentArray) {
-                    if (component.getClass().isAssignableFrom(MovementSpeed.class)) {
-                        System.out.println("WORKS");
-                        works = true;
-                    }
-                }
-
-                if (!works) {
-                    if (componentArray.size > 6) {
-                        Class<?> klass = componentArray.get(7).getClass();
-                        System.out.println("DIDN'T WORK");
-                    }
-                } else {
-                    if (componentArray.size > 6) {
-                        Class<?> klass = componentArray.get(7).getClass();
-                        System.out.println("COOL");
-                    }
-                }
 
                 Entity e;
                 if (type != null) {
