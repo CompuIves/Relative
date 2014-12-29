@@ -28,35 +28,32 @@ public abstract class Command {
      * @param send should this be sent to the server?
      */
     public void keyDown(Entity e, boolean send) {
+        startTime = System.nanoTime();
+
         if (send) {
             e.getWorld().getSystem(ClientNetworkSystem.class).sendDownCommand(this);
 
             if (simulate) {
-                startRecord(e);
                 executeDown(e);
             }
         } else {
-            startRecord(e);
-
             executeDown(e);
         }
     }
 
     public void whilePressed(Entity e) {
-        whileRecord(e);
         execute(e);
     }
 
     public void keyUp(Entity e, boolean send) {
+        deltaTime = System.nanoTime() - startTime;
         if (send) {
             e.getWorld().getSystem(ClientNetworkSystem.class).sendUpCommand(this);
 
             if (simulate) {
-                endRecord(e);
                 executeUp(e, deltaTime);
             }
         } else {
-            endRecord(e);
             executeUp(e, deltaTime);
 
         }
@@ -83,43 +80,6 @@ public abstract class Command {
      * @param delta The presstime of the button
      */
     abstract void executeUp(Entity e, float delta);
-
-    /**
-     * Starts recording the components from the moment the key is pressed.
-     */
-    void startRecord(Entity e) {
-        startTime = System.nanoTime();
-    }
-
-    /**
-     * Sometimes there also needs to be a check while applying input, for example while moving (increasing deltax)
-     *
-     * @param e
-     */
-    void whileRecord(Entity e) {
-        float curTime = System.nanoTime();
-        deltaTime = curTime - startTime;
-    }
-
-    /**
-     * Converts the changed states into deltaComponents -> Components with only changed values.
-     */
-    void endRecord(Entity e) {
-        float endTime = System.nanoTime();
-        deltaTime = endTime - startTime;
-    }
-
-    /**
-     * Replicates the button press to reconciliate between client and server
-     *
-     * @param e Entity to apply to
-     */
-    public void applyReconciliation(Entity e) {
-        if (deltaTime != 0) {
-            executeDown(e);
-            executeUp(e, deltaTime);
-        }
-    }
 
     @Override
     public boolean equals(Object obj) {

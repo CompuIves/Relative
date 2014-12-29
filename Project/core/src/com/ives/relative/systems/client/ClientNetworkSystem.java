@@ -32,8 +32,6 @@ import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
 import com.ives.relative.systems.InputSystem;
 
-import java.util.Map;
-
 /**
  * Created by Ives on 13/12/2014.
  */
@@ -180,11 +178,13 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         }
     }
 
+
     /**
      * This applies sent input which hasn't yet been processed by the server. Purely keeps it locally smooth.
      *
      * @param packet The packet which has been received.
      */
+    /*
     public void applyServerReconciliation(UpdatePacket packet) {
         //System.out.println("PLAYERNETWORKID: " + playerNetworkId);
         //System.out.println("PACKETENTITYID: " + packet.entityID);
@@ -209,4 +209,5 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         }
 
     }
+    */
 }

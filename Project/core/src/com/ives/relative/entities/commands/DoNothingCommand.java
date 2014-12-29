@@ -30,11 +30,6 @@ public class DoNothingCommand extends Command {
 
     }
 
-    @Override
-    public void applyReconciliation(Entity e) {
-
-    }
-
     /**
      * Don't return a new instance, DoNothingCommand is just garbage :D
      *
