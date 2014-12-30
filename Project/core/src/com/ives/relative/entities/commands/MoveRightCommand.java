@@ -33,6 +33,16 @@ public class MoveRightCommand extends Command {
 
     }
 
+    @Override
+    public void undo() {
+
+    }
+
+    @Override
+    public boolean canExecute(Entity e) {
+        return true;
+    }
+
     private void moveEntity(Entity e, float vx) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         float oldvx = body.getLinearVelocity().x;

@@ -37,6 +37,17 @@ public class JumpCommand extends Command {
     }
 
     @Override
+    public void undo() {
+
+    }
+
+    @Override
+    public boolean canExecute(Entity e) {
+        //TODO add a check for collision
+        return true;
+    }
+
+    @Override
     public Command clone() {
         return new JumpCommand();
     }

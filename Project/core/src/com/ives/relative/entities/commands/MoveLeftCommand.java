@@ -33,6 +33,16 @@ public class MoveLeftCommand extends Command {
     }
 
     @Override
+    public void undo() {
+
+    }
+
+    @Override
+    public boolean canExecute(Entity e) {
+        return true;
+    }
+
+    @Override
     public Command clone() {
         return new MoveLeftCommand();
     }

@@ -1,4 +1,4 @@
-package com.ives.relative.entities.commands;
+package com.ives.relative.utils;
 
 import java.util.HashMap;
 

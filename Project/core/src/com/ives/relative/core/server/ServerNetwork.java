@@ -76,9 +76,11 @@ public class ServerNetwork extends Network {
         }
     }
 
+
     public void sendObjectUDPToAll(BasePacket o) {
         for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
-            server.sendToUDP(connection, o);
+            //TODO write UDP protocol
+            server.sendToTCP(connection, o);
         }
     }
 

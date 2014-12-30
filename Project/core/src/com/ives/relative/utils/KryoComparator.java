@@ -1,4 +1,4 @@
-package com.ives.relative.network;
+package com.ives.relative.utils;
 
 import java.util.Comparator;
 

@@ -56,9 +56,12 @@ public class CommandSystem extends VoidEntitySystem {
         if (hookedCommands.containsKey(uuidEntityManager.getUuid(e)) && hookedEntities.containsKey(commandManager.getID(command)))
             return;
 
+        if (!command.canExecute(e))
+            return;
+
         hookedCommands.put(uuidEntityManager.getUuid(e), command);
         hookedEntities.put(commandManager.getID(command), uuidEntityManager.getUuid(e));
-        command.keyDown(e, false);
+        command.keyDown(e);
     }
 
     public void commandUp(byte command, Entity e) {
@@ -68,7 +71,7 @@ public class CommandSystem extends VoidEntitySystem {
             Command oldCommand = null;
             for (Command c : commands) {
                 if (commandManager.getID(c) == command) {
-                    c.keyUp(e, false);
+                    c.keyUp(e);
                     oldCommand = c;
                     commandManager.freeCommand(oldCommand);
                 }

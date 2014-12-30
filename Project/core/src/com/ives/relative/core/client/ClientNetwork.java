@@ -69,9 +69,16 @@ public class ClientNetwork extends Network {
         client.sendTCP(o);
     }
 
+    /**
+     * This SHOULD send a UDP packet, now it sends TCP
+     *
+     * @param connectionID connectionID to send to, which you can get with ClientNetwork.CONNECTIONID
+     * @param o            packet to be sent
+     */
     @Override
     public void sendObjectUDP(int connectionID, BasePacket o) {
         o.connection = connectionID;
-        client.sendUDP(o);
+        //TODO Write UDP Protocol
+        client.sendTCP(o);
     }
 }

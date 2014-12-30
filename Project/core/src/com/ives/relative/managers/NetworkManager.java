@@ -9,7 +9,6 @@ import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.ComponentUtils;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
@@ -21,6 +20,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
 import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
 import java.util.Map;

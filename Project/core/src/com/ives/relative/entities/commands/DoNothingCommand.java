@@ -30,6 +30,16 @@ public class DoNothingCommand extends Command {
 
     }
 
+    @Override
+    public void undo() {
+
+    }
+
+    @Override
+    public boolean canExecute(Entity e) {
+        return true;
+    }
+
     /**
      * Don't return a new instance, DoNothingCommand is just garbage :D
      *

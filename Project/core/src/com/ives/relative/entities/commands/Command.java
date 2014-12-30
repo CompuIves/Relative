@@ -25,38 +25,38 @@ public abstract class Command {
      * Methods which will be called from other classes
      *
      * @param e    entity
-     * @param send should this be sent to the server?
+     * @return if the command can get executed
      */
-    public void keyDown(Entity e, boolean send) {
+    public void keyDown(Entity e) {
         startTime = System.nanoTime();
-
-        if (send) {
-            e.getWorld().getSystem(ClientNetworkSystem.class).sendDownCommand(this);
-
-            if (simulate) {
-                executeDown(e);
-            }
-        } else {
-            executeDown(e);
-        }
+        executeDown(e);
     }
 
     public void whilePressed(Entity e) {
         execute(e);
     }
 
-    public void keyUp(Entity e, boolean send) {
+    public void keyUp(Entity e) {
         deltaTime = System.nanoTime() - startTime;
-        if (send) {
-            e.getWorld().getSystem(ClientNetworkSystem.class).sendUpCommand(this);
+        executeUp(e, deltaTime);
+    }
 
-            if (simulate) {
-                executeUp(e, deltaTime);
-            }
-        } else {
-            executeUp(e, deltaTime);
+    /**
+     * Send the command to the server
+     *
+     * @param e entity for getting the sendsystem
+     */
+    public void sendDown(Entity e) {
+        e.getWorld().getSystem(ClientNetworkSystem.class).sendDownCommand(this);
+    }
 
-        }
+    /**
+     * Send the command to the server
+     *
+     * @param e
+     */
+    public void sendUp(Entity e) {
+        e.getWorld().getSystem(ClientNetworkSystem.class).sendUpCommand(this);
     }
 
     /**
@@ -80,6 +80,18 @@ public abstract class Command {
      * @param delta The presstime of the button
      */
     abstract void executeUp(Entity e, float delta);
+
+    /**
+     * Undo the command
+     */
+    public abstract void undo();
+
+    /**
+     * Is the entity allowed to execute the command?
+     *
+     * @return if the entity is allowed to execute the command
+     */
+    public abstract boolean canExecute(Entity e);
 
     @Override
     public boolean equals(Object obj) {

@@ -30,6 +30,16 @@ public class CreateBodyCommand extends Command {
     }
 
     @Override
+    public void undo() {
+
+    }
+
+    @Override
+    public boolean canExecute(Entity e) {
+        return false;
+    }
+
+    @Override
     public Command clone() {
         return new CreateBodyCommand();
     }

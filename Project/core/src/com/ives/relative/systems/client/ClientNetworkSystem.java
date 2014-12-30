@@ -30,7 +30,9 @@ import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
-import com.ives.relative.systems.InputSystem;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -41,7 +43,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
-    protected InputSystem inputSystem;
     protected NetworkReceiveSystem networkReceiveSystem;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
@@ -52,10 +53,11 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     Array<Byte> commandDownNetworkList;
     Array<Byte> commandUpNetworkList;
     int sequence;
+    int frame = 0;
     private int playerNetworkId;
     private Client client;
     private Multimap<Integer, Command> sentCommands;
-
+    private Map<Object, Object> simulatedPositions;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
@@ -66,8 +68,17 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         client.updateReturnTripTime();
 
         sentCommands = ArrayListMultimap.create();
+        simulatedPositions = createFIFOMap(((int) (1 / CLIENT_NETWORK_INTERVAL)));
         processRequests(network);
+    }
 
+    public static <K, V> Map<K, V> createFIFOMap(final int maxEntries) {
+        return new LinkedHashMap<K, V>(maxEntries * 3 / 2, 0.7f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+                return size() > maxEntries;
+            }
+        };
     }
 
     public void sendDownCommand(Command command) {
@@ -78,6 +89,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
         sequence++;
+
+        client.updateReturnTripTime();
     }
 
     public void sendUpCommand(Command command) {
@@ -107,19 +120,15 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
      */
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-        /*
-        if(commandUpNetworkList.size == 0 && commandDownNetworkList.size == 0)
-            return;
+        Entity player = networkManager.getEntity(playerNetworkId);
+        if (player != null) {
+            Position p = mPosition.get(player);
+            float x = p.x;
+            float y = p.y;
+            simulatedPositions.put(frame, new Position(x, y, 0, 0, ""));
+        }
 
-        int connectionID = ClientNetwork.CONNECTIONID;
-        long entityID = this.playerNetworkId;
-        CommandPacket commandPacket = new CommandPacket(sequence, entityID, commandDownNetworkList, commandUpNetworkList);
-        clientManager.network.sendObjectUDP(connectionID, commandPacket);
-
-        commandDownNetworkList.clear();
-        commandUpNetworkList.clear();
-        sequence++;
-        */
+        frame++;
     }
 
     public void processRequests(final Network network) {
@@ -132,8 +141,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                if (!processPosition(packet)) {
-                                    network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
+                                if (packet.entityID == playerNetworkId) {
+                                    if (!checkForPrevious(packet)) {
+                                        processPosition(packet);
+                                    }
+                                } else {
+                                    if (!processPosition(packet)) {
+                                        network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
+                                    }
                                 }
                                 //applyServerReconciliation(packet);
                             }
@@ -147,6 +162,37 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                 }
             }
         });
+    }
+
+    private boolean checkForPrevious(PositionPacket packet) {
+        float x = packet.x;
+        float y = packet.y;
+
+        int timeFrame = (int) (frame - ((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
+
+        Position oldPosition = (Position) simulatedPositions.get(timeFrame);
+
+        if (oldPosition == null)
+            return false;
+
+        float dx = x - oldPosition.x;
+        float dy = y - oldPosition.y;
+        if (dx < 0) {
+            if (dx < -1) {
+                return false;
+            }
+        } else if (dx > 1) {
+            return false;
+        }
+        if (dy < 0) {
+            if (dy < -1) {
+                return false;
+            }
+        } else if (dy > 1) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean processPosition(PositionPacket packet) {

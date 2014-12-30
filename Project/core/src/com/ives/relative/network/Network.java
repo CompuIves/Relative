@@ -21,6 +21,7 @@ import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNo
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.StartFileNotice;
 import com.ives.relative.network.serializers.box2d.FixtureDefSerializer;
+import com.ives.relative.utils.KryoComparator;
 import org.reflections.Reflections;
 
 import java.io.IOException;

@@ -13,6 +13,8 @@ import com.ives.relative.managers.CommandManager;
 
 /**
  * Created by Ives on 5/12/2014.
+ * This system is clientside. It checks for pressed keys and executes them on every entity with an InputC. The executed
+ * command will be sent to the server.
  */
 @Wire
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
@@ -40,9 +42,12 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         for (Entity e : getActives()) {
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
-            Command command = commandManager.getCommand(commandTemplate);
-            command.keyDown(e, true);
-            commandsActivated.add(command);
+            if (commandTemplate.canExecute(e)) {
+                Command command = commandManager.getCommand(commandTemplate);
+                command.keyDown(e);
+                command.sendDown(e);
+                commandsActivated.add(command);
+            }
         }
         return true;
     }
@@ -54,7 +59,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             Command commandTemplate = inputC.commandKeys.get(keycode);
             for (Command c : commandsActivated) {
                 if (c.equals(commandTemplate)) {
-                    c.keyUp(e, true);
+                    c.keyUp(e);
+                    c.sendUp(e);
                     commandManager.freeCommand(c);
                 }
             }

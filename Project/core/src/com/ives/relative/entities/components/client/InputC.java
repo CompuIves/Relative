@@ -4,6 +4,7 @@ import com.artemis.Component;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Input;
 import com.ives.relative.entities.commands.*;
+import com.ives.relative.utils.CommandsMap;
 
 
 /**
