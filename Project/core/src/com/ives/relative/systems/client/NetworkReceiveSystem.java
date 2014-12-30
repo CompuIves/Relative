@@ -56,6 +56,10 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 if (id == playerID) {
                     e.edit().add(new InputC());
                 }
+
+                //This prevents from this thread taking too long, it will continue next loop.
+                if (i > 5)
+                    break;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

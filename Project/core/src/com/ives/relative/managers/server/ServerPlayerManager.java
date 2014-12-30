@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
@@ -17,6 +16,7 @@ import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.living.Health;
+import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.managers.NetworkManager;
@@ -72,7 +72,7 @@ public class ServerPlayerManager extends PlayerManager {
         setPlayer(e, internalName);
 
         int id = networkManager.addEntity(e);
-        e.edit().add(new NetworkC(id, NetworkManager.Type.PLAYER));
+        e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
 
         return e;
     }

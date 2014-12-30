@@ -1,13 +1,16 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
+import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.TileManager;
+import com.ives.relative.utils.ComponentUtils;
 
 /**
  * Created by Ives on 14/12/2014.
  */
 public class CreateBodyCommand extends Command {
+    Entity body;
 
     public CreateBodyCommand() {
         super(false);
@@ -25,18 +28,19 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeUp(Entity e, float delta) {
-        e.getWorld().getManager(TileManager.class).createTile(e.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
+        body = e.getWorld().getManager(TileManager.class).createTile(e.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
                 20, 20, 0, "dirt", true);
     }
 
     @Override
     public void undo() {
-
+        ComponentUtils.removeEntity(body);
     }
 
     @Override
     public boolean canExecute(Entity e) {
-        return false;
+        //Returns whether the world of the body is locked
+        return e.getWorld().getMapper(WorldC.class).get(e.getWorld().getManager(PlanetManager.class).getPlanet("earth")).world.isLocked();
     }
 
     @Override

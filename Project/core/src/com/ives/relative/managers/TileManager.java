@@ -66,7 +66,7 @@ public class TileManager extends Manager {
             if (gravity) {
                 e.edit().add(new Velocity());
                 int networkID = networkManager.addEntity(e);
-                e.edit().add(new NetworkC(networkID, NetworkManager.Type.TILE));
+                e.edit().add(new NetworkC(networkID, 1, NetworkManager.Type.TILE));
             }
 
             return e;

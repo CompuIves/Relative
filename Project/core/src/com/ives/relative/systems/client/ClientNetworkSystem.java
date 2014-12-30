@@ -96,7 +96,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public void sendUpCommand(Command command) {
         if (command instanceof DoNothingCommand)
             return;
-        //commandUpNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), false));
         sequence++;
     }
@@ -167,6 +166,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     private boolean checkForPrevious(PositionPacket packet) {
         float x = packet.x;
         float y = packet.y;
+        float offset = 0.5f;
 
         int timeFrame = (int) (frame - ((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
 
@@ -178,17 +178,17 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         float dx = x - oldPosition.x;
         float dy = y - oldPosition.y;
         if (dx < 0) {
-            if (dx < -1) {
+            if (dx < -offset) {
                 return false;
             }
-        } else if (dx > 1) {
+        } else if (dx > offset) {
             return false;
         }
         if (dy < 0) {
-            if (dy < -1) {
+            if (dy < -offset) {
                 return false;
             }
-        } else if (dy > 1) {
+        } else if (dy > offset) {
             return false;
         }
 

@@ -7,6 +7,7 @@ import com.artemis.utils.Bag;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.managers.NetworkManager;
 
 /**
  * Created by Ives on 17/12/2014.
@@ -57,6 +58,17 @@ public class ComponentUtils {
         EntityEdit edit = to.edit();
         for (Component component : components) {
             edit.add(component);
+        }
+    }
+
+    public static void removeEntity(Entity e) {
+        NetworkManager networkManager = e.getWorld().getManager(NetworkManager.class);
+        int id = networkManager.getNetworkID(e);
+        if (id != -1) {
+            networkManager.removeEntity(id);
+        } else {
+            removeAllComponents(e);
+            e.deleteFromWorld();
         }
     }
 

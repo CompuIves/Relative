@@ -81,7 +81,7 @@ public class PlanetManager extends Manager {
         //Get the networkID from the networkmanager
         int networkID = networkManager.addEntity(e);
         //Add a networkComponent to the planet
-        e.edit().add(new NetworkC(networkID, NetworkManager.Type.PLANET));
+        e.edit().add(new NetworkC(networkID, -1, NetworkManager.Type.PLANET));
 
         //Add the planet to the planetmanager
         addPlanet(id, e);

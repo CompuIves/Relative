@@ -10,6 +10,7 @@ import com.ives.relative.entities.commands.Command;
 import com.ives.relative.managers.CommandManager;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,15 +36,17 @@ public class CommandSystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        for (Map.Entry entry : hookedCommands.entries()) {
+        Iterator<Map.Entry<UUID, Command>> it = hookedCommands.entries().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = it.next();
             Entity e = uuidEntityManager.getEntity((UUID) entry.getKey());
-            //System.out.println("EntityID = " + e.getId());
+
             if (e != null) {
                 Command command = (Command) entry.getValue();
                 command.whilePressed(e);
             } else {
                 hookedEntities.remove(entry.getValue(), entry.getKey());
-                hookedCommands.removeAll(entry.getKey());
+                it.remove();
             }
         }
     }
