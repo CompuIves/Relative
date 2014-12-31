@@ -10,6 +10,18 @@ import com.ives.relative.managers.TileManager;
  * Created by Ives on 13/12/2014.
  */
 public class Tile {
+
+    /**
+     * Creates a body specific for tiles
+     *
+     * @param e
+     * @param tile
+     * @param x
+     * @param y
+     * @param gravity      if this tile should be affected by gravity (when the tile itself can also be affected by gravity)
+     * @param physicsWorld
+     * @return
+     */
     public static Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
         if (tile.gravity && gravity) {

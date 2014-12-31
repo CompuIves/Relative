@@ -2,6 +2,7 @@ package com.ives.relative.managers.assets.modules;
 
 /**
  * Created by Ives on 7/12/2014.
+ * This is just a standard info-object of a module.
  */
 public class Module {
     public String name;

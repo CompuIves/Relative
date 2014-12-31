@@ -28,6 +28,7 @@ import java.util.UUID;
 
 /**
  * Created by Ives on 13/12/2014.
+ * This keeps the database of every networked entity and their network ID. It also processes incoming entities
  */
 @Wire
 public class NetworkManager extends Manager {
@@ -57,6 +58,12 @@ public class NetworkManager extends Manager {
         return id;
     }
 
+    /**
+     * Add an entity to the networkmanager.
+     *
+     * @param id
+     * @param e
+     */
     public void addEntity(int id, Entity e) {
         if (networkEntities.containsKey(id) || networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
             updateEntity(e, ComponentUtils.getComponents(e), false);
@@ -102,7 +109,13 @@ public class NetworkManager extends Manager {
         return e;
     }
 
-
+    /**
+     * Adds the components to an entity.
+     * @param e
+     * @param components
+     * @param delta if delta is false, every old component will get removed first.
+     * @return The entity which has been updated.
+     */
     public Entity updateEntity(Entity e, Array<Component> components, boolean delta) {
         if (!delta) {
             ComponentUtils.removeAllComponents(e);
@@ -111,7 +124,11 @@ public class NetworkManager extends Manager {
         return e;
     }
 
-
+    /**
+     * This finishes a special entity by type. It creates a special body for example for tiles and for players.
+     * @param entity The entity to be finished
+     * @param type The type of the entity
+     */
     private void finishEntity(Entity entity, Type type) {
         Physics physics = entity.getWorld().getMapper(Physics.class).get(entity);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
@@ -146,7 +163,10 @@ public class NetworkManager extends Manager {
         }
     }
 
-
+    /**
+     * Remove networked entity from world and database
+     * @param id id of networked entity
+     */
     public void removeEntity(int id) {
         Entity e = uuidEntityManager.getEntity(networkEntities.get(id));
         ComponentUtils.removeAllComponents(e);
@@ -173,13 +193,24 @@ public class NetworkManager extends Manager {
         return generateFullComponentPacket(e, type);
     }
 
-
+    /**
+     * This generates a full packet of the desired entity, this packet can be sent to the client or server and the client/
+     * server will add this entity to it.
+     * @param e
+     * @param type
+     * @return
+     */
     public ComponentPacket generateFullComponentPacket(Entity e, Type type) {
         Array<Component> components = ComponentUtils.getComponents(e);
         int id = getNetworkID(e);
         return new ComponentPacket(components, id, false, -1, type);
     }
 
+    /**
+     * Get the network ID of the entity
+     * @param e
+     * @return
+     */
     public int getNetworkID(Entity e) {
         if (e != null)
             return networkIDs.get(uuidEntityManager.getUuid(e));
@@ -187,7 +218,10 @@ public class NetworkManager extends Manager {
             return -1;
     }
 
-
+    /**
+     * Gets free ID available, this only gets executed from the server
+     * @return free ID
+     */
     public int getFreeID() {
         if (removedIDs.size == 0) {
             freeID++;

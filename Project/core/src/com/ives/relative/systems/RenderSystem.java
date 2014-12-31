@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.systems.client.InputSystem;
 
 /**
  * Created by Ives on 3/12/2014.

@@ -11,6 +11,7 @@ import java.io.File;
 
 /**
  * Created by Ives on 6/12/2014.
+ * This reader can read json and convert it to a solidtile.
  */
 public class TileReader {
 

@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * Created by Ives on 2/12/2014.
+ * A standard tile, this object gets created once for every sort of tile, dirt, cobblestone etc. Search for 'Flyweight Pattern'
+ * for the reasoning behind this.
  */
 public class SolidTile {
     public String id;

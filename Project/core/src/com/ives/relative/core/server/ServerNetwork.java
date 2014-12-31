@@ -12,6 +12,7 @@ import java.io.IOException;
 
 /**
  * Created by Ives on 4/12/2014.
+ * The handler of the network for the server.
  */
 public class ServerNetwork extends Network {
     private static Server server;

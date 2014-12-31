@@ -19,6 +19,13 @@ public class Relative extends Game {
     private ServerManager serverManager;
     private ClientManager clientManager;
 
+    /**
+     * This gets executed when the game starts. Because this game has an internal server there is both a
+     * {@link com.ives.relative.core.server.ServerManager} and a {@link com.ives.relative.core.client.ClientManager} running
+     * most of the time. They both extend {@link com.ives.relative.core.GameManager}. The GameManager keeps starts all the
+     * common systems and managers of both client and server, the ServerManager starts all the managers and systems of the server
+     * and the ClientManager starts all the systems and managers specific to the client.
+     */
     @Override
     public void create() {
         relative = this;
@@ -44,6 +51,9 @@ public class Relative extends Game {
 
     }
 
+    /**
+     * This gets called every frame, it just passes on the method to the ServerManager and the ClientManager
+     */
     @Override
     public void render() {
         //Here was a line of code which made me debug for 2 hours. RIP.

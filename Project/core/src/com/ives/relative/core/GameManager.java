@@ -34,11 +34,17 @@ public class GameManager extends Manager {
         this.isServer = isServer;
     }
 
+    /**
+     * Register common systems between client and server.
+     */
     public void registerSystems() {
         world.setSystem(new WorldSystem());
         world.setSystem(new MovementSystem());
     }
 
+    /**
+     * Register command managers between client and server.
+     */
     public void registerManagers() {
         world.setManager(new PlanetManager());
         world.setManager(new TileManager());

@@ -58,7 +58,13 @@ public class ModuleManager extends Manager {
         }
     }
 
-    //Gets only called by server, for converting zip to bytes
+    /**
+     * Gets only called by the server, this converts a module to bytes. Used for sending modules.
+     *
+     * @param module The module to be converted
+     * @return
+     * @throws IOException
+     */
     public static byte[] moduleToBytes(Module module) throws IOException {
         Path zip = Paths.get(Gdx.files.local(AssetsDB.MODULES).path() + File.separator + module.name + "-" + module.version + ".zip");
 
@@ -95,6 +101,10 @@ public class ModuleManager extends Manager {
         indexModuleZips(moduleFiles);
     }
 
+    /**
+     * Indexes all zips of modules
+     * @param moduleFiles Folder to index
+     */
     private void indexModuleZips(FileHandle[] moduleFiles) {
         if (moduleFiles != null) {
             for (FileHandle moduleZip : moduleFiles) {
@@ -121,6 +131,10 @@ public class ModuleManager extends Manager {
         }
     }
 
+    /**
+     * Indexes all module folders
+     * @param moduleFolders modulefolder to index
+     */
     public void indexModuleFolders(FileHandle[] moduleFolders) {
         if (moduleFolders != null) {
             for (FileHandle moduleFileHandler : moduleFolders) {

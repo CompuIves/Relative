@@ -14,6 +14,7 @@ import java.io.IOException;
 
 /**
  * Created by Ives on 4/12/2014.
+ * A network handler for the client.
  */
 public class ClientNetwork extends Network {
     public static int CONNECTIONID;

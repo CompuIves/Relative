@@ -4,6 +4,7 @@ import com.ives.relative.core.GameManager;
 
 /**
  * Created by Ives on 7/12/2014.
+ * This packet requires an action to be made of the other side.
  */
 public abstract class ResponsePacket extends BasePacket {
     /**

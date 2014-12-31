@@ -8,16 +8,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.systems.InputSystem;
 import com.ives.relative.systems.RenderSystem;
 import com.ives.relative.systems.client.ClientNetworkSystem;
+import com.ives.relative.systems.client.InputSystem;
 import com.ives.relative.systems.client.NetworkReceiveSystem;
 
 import java.io.IOException;
 
 /**
  * Created by Ives on 12/12/2014.
- * The official manager of the client
+ * The official manager of the client, adds client specific systems and managers to the world.
  */
 public class ClientManager extends GameManager implements Screen {
     public String playerID;

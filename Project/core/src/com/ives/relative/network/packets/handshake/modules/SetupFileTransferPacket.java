@@ -16,7 +16,14 @@ import java.io.IOException;
 /**
  * Created by Ives on 9/12/2014.
  * <p/>
- * The foundation of the file transfer
+ * The foundation of the file transfer, this packet sets up a listener on the client for incoming module zips. When it
+ * receives a {@link com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice} it will create a zip
+ * file of all the bytes it has received. When it receives a {@link com.ives.relative.network.packets.handshake.modules.notice.StartFileNotice}
+ * (containing the file size of the file coming and the name + version) it will prepare for a new file. When it receives
+ * a {@link com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice} (containing the list of
+ * modules used by the server) it will unzip all module zips and activate the list of modules from the FinishFileTransferNotice.
+ * <p>The order of notice packets is for example this: StartFile -> CompleteFile -> StartFile -> CompleteFile -> FinishFileTransfer</p>
+ * <p></p>
  * HANDLED BY CLIENT
  */
 public class SetupFileTransferPacket extends ResponsePacket {

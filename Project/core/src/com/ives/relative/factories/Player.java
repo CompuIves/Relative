@@ -8,6 +8,18 @@ import com.ives.relative.entities.components.planet.WorldC;
  * Created by Ives on 13/12/2014.
  */
 public class Player {
+
+    /**
+     * Creates a body specific for players
+     *
+     * @param e
+     * @param x
+     * @param y
+     * @param vx
+     * @param vy
+     * @param planet
+     * @return
+     */
     public static Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;

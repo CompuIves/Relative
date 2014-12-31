@@ -12,13 +12,14 @@ import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
-import com.ives.relative.systems.CommandSystem;
+import com.ives.relative.systems.server.CommandSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
 import java.io.IOException;
 
 /**
  * Created by Ives on 12/12/2014.
+ * Manager specific for the server, adds server specific systems and managers to the world.
  */
 public class ServerManager extends GameManager {
     OrthographicCamera camera;

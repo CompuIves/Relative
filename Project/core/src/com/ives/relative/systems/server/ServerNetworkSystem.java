@@ -1,6 +1,7 @@
 package com.ives.relative.systems.server;
 
 import com.artemis.Aspect;
+import com.artemis.Component;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
@@ -17,7 +18,7 @@ import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
-import com.ives.relative.systems.CommandSystem;
+import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,5 +110,14 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public boolean checkChangePos(Entity entity) {
         Position position = mPosition.get(entity);
         return position.py != position.y || position.px != position.x;
+    }
+
+    public void manualHashCheck(Entity e) {
+        Array<Component> components = ComponentUtils.getComponents(e);
+        Array<Integer> hashCodes = new Array<Integer>();
+
+        for (Component c : components) {
+            hashCodes.add(c.hashCode());
+        }
     }
 }
