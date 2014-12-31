@@ -1,4 +1,4 @@
-package com.ives.relative.systems;
+package com.ives.relative.systems.client;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -13,11 +13,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
-import com.ives.relative.systems.client.InputSystem;
 
 /**
  * Created by Ives on 3/12/2014.
- * The render system of the tiles and entities
+ * This system renders every entity
  */
 @Wire
 public class RenderSystem extends EntityProcessingSystem {

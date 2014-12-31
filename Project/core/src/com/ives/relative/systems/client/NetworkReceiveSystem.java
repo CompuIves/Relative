@@ -16,6 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 22/12/2014.
+ *
+ * This system processes all entities received. The system makes sure that the entities get added by the main thread.
  */
 @Wire
 public class NetworkReceiveSystem extends VoidEntitySystem {
