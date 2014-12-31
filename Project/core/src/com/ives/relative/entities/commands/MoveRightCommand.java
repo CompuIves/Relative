@@ -4,6 +4,8 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
 
@@ -40,7 +42,15 @@ public class MoveRightCommand extends Command {
 
     @Override
     public boolean canExecute(Entity e) {
-        return true;
+        Physics p = e.getWorld().getMapper(Physics.class).get(e);
+        Array<Contact> contacts = p.contacts;
+        for (Contact contact : contacts) {
+            if (contact.isTouching()) {
+                //TODO make this a bit more accurate!
+                return true;
+            }
+        }
+        return false;
     }
 
     private void moveEntity(Entity e, float vx) {

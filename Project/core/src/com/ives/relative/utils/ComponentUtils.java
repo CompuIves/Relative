@@ -67,7 +67,7 @@ public class ComponentUtils {
         if (id != -1) {
             networkManager.removeEntity(id);
         } else {
-            removeAllComponents(e);
+            removeAllSpecialComponents(e);
             e.deleteFromWorld();
         }
     }
@@ -90,6 +90,22 @@ public class ComponentUtils {
             e.getComponents(components);
             for (Component c : components) {
                 edit.remove(c.getClass());
+            }
+        }
+        return e;
+    }
+
+    /**
+     * Removes all the components which needs some extra handling (like physics)
+     *
+     * @param e
+     * @return
+     */
+    public static Entity removeAllSpecialComponents(Entity e) {
+        Array<Component> components = getComponents(e);
+        for (Component component : components) {
+            if (component instanceof Physics) {
+                removePhysics((Physics) component);
             }
         }
         return e;

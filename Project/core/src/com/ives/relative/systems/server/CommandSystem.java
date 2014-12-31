@@ -43,7 +43,8 @@ public class CommandSystem extends VoidEntitySystem {
 
             if (e != null) {
                 Command command = (Command) entry.getValue();
-                command.whilePressed(e);
+                if (command.canExecute(e))
+                    command.whilePressed(e);
             } else {
                 hookedEntities.remove(entry.getValue(), entry.getKey());
                 it.remove();
@@ -59,12 +60,13 @@ public class CommandSystem extends VoidEntitySystem {
         if (hookedCommands.containsKey(uuidEntityManager.getUuid(e)) && hookedEntities.containsKey(commandManager.getID(command)))
             return;
 
-        if (!command.canExecute(e))
-            return;
-
         hookedCommands.put(uuidEntityManager.getUuid(e), command);
         hookedEntities.put(commandManager.getID(command), uuidEntityManager.getUuid(e));
-        command.keyDown(e);
+
+        if (command.canExecute(e)) {
+            //Always activate the command just in case it is allowed to be executed later, but check for keydown.
+            command.keyDown(e);
+        }
     }
 
     public void commandUp(byte command, Entity e) {
@@ -74,7 +76,10 @@ public class CommandSystem extends VoidEntitySystem {
             Command oldCommand = null;
             for (Command c : commands) {
                 if (commandManager.getID(c) == command) {
-                    c.keyUp(e);
+                    if (c.canExecute(e)) {
+                        //Always remove command, but check if up can be executed.
+                        c.keyUp(e);
+                    }
                     oldCommand = c;
                     commandManager.freeCommand(oldCommand);
                 }

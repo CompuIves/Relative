@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.TileManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
@@ -65,7 +66,7 @@ public class ServerManager extends GameManager {
         Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new World(new Vector2(0, -10), true), 10, 10);
         planetManager.generateTerrain(planet);
 
-        /*
+
         TileManager tileManager = world.getManager(TileManager.class);
         tileManager.createTile(planet, 20, 15, 0, "dirt", true);
         tileManager.createTile(planet, 25, 15, 0, "dirt", true);
@@ -73,7 +74,7 @@ public class ServerManager extends GameManager {
         tileManager.createTile(planet, 30, 13, 0, "dirt", true);
         tileManager.createTile(planet, 30, 18, 0, "dirt", true);
         tileManager.createTile(planet, 30, 30, 0, "dirt", true);
-        */
+
     }
 
     @Override

@@ -4,10 +4,7 @@ import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.UuidEntityManager;
-import com.ives.relative.managers.CommandManager;
-import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.PlanetManager;
-import com.ives.relative.managers.TileManager;
+import com.ives.relative.managers.*;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.MovementSystem;
@@ -47,6 +44,7 @@ public class GameManager extends Manager {
      */
     public void registerManagers() {
         world.setManager(new PlanetManager());
+        world.setManager(new CollisionManager());
         world.setManager(new TileManager());
         ModuleManager moduleManager = new ModuleManager();
         world.setManager(moduleManager);

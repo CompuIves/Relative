@@ -33,7 +33,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Override
     protected void process(Entity e) {
         for (Command command : commandsActivated) {
-            command.whilePressed(e);
+            if (command.canExecute(e))
+                command.whilePressed(e);
         }
     }
 
@@ -42,12 +43,15 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         for (Entity e : getActives()) {
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
+            Command command = commandManager.getCommand(commandTemplate);
             if (commandTemplate.canExecute(e)) {
-                Command command = commandManager.getCommand(commandTemplate);
+                //Send the keydown, maybe the server accepts it because the client is outdated.
                 command.keyDown(e);
-                command.sendDown(e);
-                commandsActivated.add(command);
             }
+            command.sendDown(e);
+            //Activate the command, the check will still be done while it's activated. But the state may change while
+            //executing the command and in that case you want it activated.
+            commandsActivated.add(command);
         }
         return true;
     }
@@ -59,7 +63,11 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             Command commandTemplate = inputC.commandKeys.get(keycode);
             for (Command c : commandsActivated) {
                 if (c.equals(commandTemplate)) {
-                    c.keyUp(e);
+                    if (c.canExecute(e)) {
+                        //Only execute up if it is allowed to.
+                        c.keyUp(e);
+                    }
+
                     c.sendUp(e);
                     commandManager.freeCommand(c);
                 }

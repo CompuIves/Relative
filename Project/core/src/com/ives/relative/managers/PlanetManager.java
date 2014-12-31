@@ -31,6 +31,7 @@ public class PlanetManager extends Manager {
     private final Map<String, UUID> entitiesByPlanet;
     private final Map<UUID, String> planetsByEntity;
 
+    protected CollisionManager collisionManager;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
 
@@ -56,6 +57,8 @@ public class PlanetManager extends Manager {
                 Gravity gravity = mGravity.get(e);
                 mWorldC.get(e).world = new World(new Vector2(gravity.x, gravity.y), false);
             }
+
+            mWorldC.get(e).world.setContactListener(collisionManager);
 
             world.getManager(GroupManager.class).add(e, "planets");
         }

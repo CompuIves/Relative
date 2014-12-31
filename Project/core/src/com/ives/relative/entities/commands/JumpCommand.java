@@ -3,6 +3,8 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 
 /**
@@ -26,9 +28,7 @@ public class JumpCommand extends Command {
     @Override
     public void execute(Entity e) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        if (body.getLinearVelocity().y == 0) {
-            body.applyLinearImpulse(new Vector2(0, 10), body.getPosition(), true);
-        }
+        body.applyLinearImpulse(new Vector2(0, 5), body.getPosition(), true);
     }
 
     @Override
@@ -43,8 +43,15 @@ public class JumpCommand extends Command {
 
     @Override
     public boolean canExecute(Entity e) {
-        //TODO add a check for collision
-        return true;
+        Physics p = e.getWorld().getMapper(Physics.class).get(e);
+        Array<Contact> contacts = p.contacts;
+        for (Contact contact : contacts) {
+            if (contact.isTouching()) {
+                //TODO make this a bit more accurate!
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

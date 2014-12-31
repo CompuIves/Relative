@@ -169,14 +169,16 @@ public class NetworkManager extends Manager {
      */
     public void removeEntity(int id) {
         Entity e = uuidEntityManager.getEntity(networkEntities.get(id));
-        ComponentUtils.removeAllComponents(e);
-        removedIDs.add(id);
+        if (e != null) {
+            ComponentUtils.removeAllSpecialComponents(e);
+            removedIDs.add(id);
 
-        networkEntities.remove(id);
-        networkIDs.remove(uuidEntityManager.getUuid(e));
+            networkEntities.remove(id);
+            networkIDs.remove(uuidEntityManager.getUuid(e));
 
-        System.out.println("Removed entity: " + e.getId());
-        e.deleteFromWorld();
+            System.out.println("Removed entity: " + e.getId());
+            e.deleteFromWorld();
+        }
     }
 
     public Entity getEntity(int id) {

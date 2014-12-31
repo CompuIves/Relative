@@ -17,8 +17,9 @@ public class CreateBodyCommand extends Command {
     }
 
     @Override
-    public void executeDown(final Entity entity) {
-
+    public void executeDown(Entity entity) {
+        body = entity.getWorld().getManager(TileManager.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
+                20, 20, 0, "dirt", true);
     }
 
     @Override
@@ -28,8 +29,7 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeUp(Entity e, float delta) {
-        body = e.getWorld().getManager(TileManager.class).createTile(e.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
-                20, 20, 0, "dirt", true);
+
     }
 
     @Override

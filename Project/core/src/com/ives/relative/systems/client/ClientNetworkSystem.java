@@ -163,10 +163,18 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         });
     }
 
+    /**
+     * This is a sort of Server Reconciliation, it checks if the position sent by the server was right a ReturnTripTime ago.
+     * Because the server always sends outdated information (sometimes 600ms old) this system checks if the information was
+     * right ping time ago.
+     *
+     * @param packet
+     * @return
+     */
     private boolean checkForPrevious(PositionPacket packet) {
         float x = packet.x;
         float y = packet.y;
-        float offset = 0.5f;
+        float offset = 0.3f;
 
         int timeFrame = (int) (frame - ((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
 
@@ -175,20 +183,9 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         if (oldPosition == null)
             return false;
 
-        float dx = x - oldPosition.x;
-        float dy = y - oldPosition.y;
-        if (dx < 0) {
-            if (dx < -offset) {
-                return false;
-            }
-        } else if (dx > offset) {
-            return false;
-        }
-        if (dy < 0) {
-            if (dy < -offset) {
-                return false;
-            }
-        } else if (dy > offset) {
+        float dx = Math.abs(x - oldPosition.x);
+        float dy = Math.abs(y - oldPosition.y);
+        if (dx > offset || dy > offset) {
             return false;
         }
 
@@ -223,37 +220,4 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             return false;
         }
     }
-
-
-    /**
-     * This applies sent input which hasn't yet been processed by the server. Purely keeps it locally smooth.
-     *
-     * @param packet The packet which has been received.
-     */
-    /*
-    public void applyServerReconciliation(UpdatePacket packet) {
-        //System.out.println("PLAYERNETWORKID: " + playerNetworkId);
-        //System.out.println("PACKETENTITYID: " + packet.entityID);
-        //Server Reconciliation
-        if (packet.entityID == playerNetworkId) {
-            Entity entity = getPlayer();
-            sentCommands.removeAll(packet.sequence);
-            //System.out.println("Removed packet: " + packet.sequence);
-            //System.out.println("Sequence size now: " + sentCommands.size());
-            for (Map.Entry entry : sentCommands.entries()) {
-                int localSequence = (Integer) entry.getKey();
-                System.out.println("Looking at packet with: " + packet.sequence + " and trying " + localSequence);
-                if (localSequence > packet.sequence) {
-                    System.out.println("Executed entry with localSeq: " + localSequence + " and seq: " + sequence);
-                    Command command = (Command) entry.getValue();
-                    command.applyReconciliation(entity);
-                }
-            }
-            for (Command command : inputSystem.commandsActivated) {
-                command.applyReconciliation(entity);
-            }
-        }
-
-    }
-    */
 }
