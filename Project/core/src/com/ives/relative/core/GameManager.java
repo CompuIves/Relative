@@ -37,6 +37,7 @@ public class GameManager extends Manager {
     public void registerSystems() {
         world.setSystem(new WorldSystem());
         world.setSystem(new MovementSystem());
+        world.setSystem(new TileSystem());
     }
 
     /**
@@ -45,7 +46,6 @@ public class GameManager extends Manager {
     public void registerManagers() {
         world.setManager(new PlanetManager());
         world.setManager(new CollisionManager());
-        world.setManager(new TileManager());
         ModuleManager moduleManager = new ModuleManager();
         world.setManager(moduleManager);
         moduleManager.indexModules();

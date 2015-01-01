@@ -4,7 +4,7 @@ import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.managers.SolidTile;
-import com.ives.relative.managers.TileManager;
+import com.ives.relative.managers.TileSystem;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -32,7 +32,7 @@ public class Tile {
         }
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
-        PolygonShape shape = TileManager.getCube(tile.width, tile.height);
+        PolygonShape shape = TileSystem.getCube(tile.width, tile.height);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;

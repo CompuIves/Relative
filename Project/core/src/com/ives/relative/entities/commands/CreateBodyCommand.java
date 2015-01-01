@@ -3,7 +3,7 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.PlanetManager;
-import com.ives.relative.managers.TileManager;
+import com.ives.relative.managers.TileSystem;
 import com.ives.relative.utils.ComponentUtils;
 
 /**
@@ -18,7 +18,7 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeDown(Entity entity) {
-        body = entity.getWorld().getManager(TileManager.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
+        body = entity.getWorld().getSystem(TileSystem.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
                 20, 20, 0, "dirt", true);
     }
 
@@ -35,6 +35,12 @@ public class CreateBodyCommand extends Command {
     @Override
     public void undo() {
         ComponentUtils.removeEntity(body);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        this.body = null;
     }
 
     @Override

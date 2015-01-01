@@ -6,7 +6,11 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.commands.BreakTileCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.CommandManager;
@@ -21,13 +25,16 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     public Array<Command> commandsActivated;
     protected ComponentMapper<InputC> mInputComponent;
     protected CommandManager commandManager;
+
+    Camera camera;
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
      */
-    public InputSystem() {
+    public InputSystem(Camera camera) {
         super(Aspect.getAspectForAll(InputC.class));
         commandsActivated = new Array<Command>();
+        this.camera = camera;
     }
 
     @Override
@@ -84,12 +91,32 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
+        Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
+        if (!commandsActivated.contains(c, true)) {
+            for (Entity e : getActives()) {
+                if (c.canExecute(e))
+                    c.keyDown(e);
+                c.sendDown(e);
+                commandsActivated.add(c);
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
+        Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
+        Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
+        if (commandsActivated.contains(c, true)) {
+            for (Entity e : getActives()) {
+                if (c.canExecute(e))
+                    c.keyUp(e);
+                c.sendUp(e);
+                commandsActivated.removeValue(c, true);
+            }
+        }
+        return true;
     }
 
     @Override

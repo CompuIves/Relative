@@ -96,7 +96,7 @@ public class PlanetManager extends Manager {
     }
 
     public void generateTerrain(Entity planet) {
-        TileManager tileManager = world.getManager(TileManager.class);
+        TileSystem tileManager = world.getSystem(TileSystem.class);
         for (int y = 1; y < 7; y++) {
             for (int x = 0; x < 200; x++)
                 tileManager.createTile(planet, x, y, 0, "dirt", false);

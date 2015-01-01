@@ -145,7 +145,7 @@ public class NetworkManager extends Manager {
                 break;
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
-                SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
+                SolidTile tile = entity.getWorld().getSystem(TileSystem.class).solidTiles.get(tileC.id);
                 com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID)).world;
                 physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
                 visual.texture = tile.textureRegion;
@@ -214,7 +214,7 @@ public class NetworkManager extends Manager {
      * @return
      */
     public int getNetworkID(Entity e) {
-        if (e != null)
+        if (e != null && networkIDs.containsKey(uuidEntityManager.getUuid(e)))
             return networkIDs.get(uuidEntityManager.getUuid(e));
         else
             return -1;

@@ -9,6 +9,8 @@ import com.ives.relative.entities.components.body.Physics;
 
 /**
  * Created by Ives on 5/12/2014.
+ *
+ * Makes the character JUMP!
  */
 public class JumpCommand extends Command {
 

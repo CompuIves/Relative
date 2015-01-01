@@ -48,7 +48,7 @@ public class ClientManager extends GameManager implements Screen {
         super.registerSystems();
         world.setSystem(new RenderSystem(batch, camera));
 
-        InputSystem inputSystem = new InputSystem();
+        InputSystem inputSystem = new InputSystem(camera);
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
 
