@@ -25,6 +25,7 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
+        if (worldPosClicked != null)
         e.getWorld().getSystem(TileSystem.class).removeTile(worldPosClicked);
     }
 

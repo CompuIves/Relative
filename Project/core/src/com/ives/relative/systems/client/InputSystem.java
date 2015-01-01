@@ -92,6 +92,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
+        gamePos.x += 0.5f;
+        gamePos.y += 0.5f;
         Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
         if (!commandsActivated.contains(c, true)) {
             for (Entity e : getActives()) {
@@ -107,6 +109,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
+        gamePos.x += 0.5f;
+        gamePos.y += 0.5f;
         Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
         if (commandsActivated.contains(c, true)) {
             for (Entity e : getActives()) {
