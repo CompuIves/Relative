@@ -9,11 +9,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.commands.BreakTileCommand;
+import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.CommandManager;
+import com.ives.relative.systems.server.CommandSystem;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -22,9 +23,10 @@ import com.ives.relative.managers.CommandManager;
  */
 @Wire
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
-    public Array<Command> commandsActivated;
     protected ComponentMapper<InputC> mInputComponent;
     protected CommandManager commandManager;
+    protected CommandSystem commandSystem;
+    protected ClientNetworkSystem clientNetworkSystem;
 
     Camera camera;
     /**
@@ -33,16 +35,12 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
      */
     public InputSystem(Camera camera) {
         super(Aspect.getAspectForAll(InputC.class));
-        commandsActivated = new Array<Command>();
         this.camera = camera;
     }
 
     @Override
     protected void process(Entity e) {
-        for (Command command : commandsActivated) {
-            if (command.canExecute(e))
-                command.whilePressed(e);
-        }
+
     }
 
     @Override
@@ -51,14 +49,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
             Command command = commandManager.getCommand(commandTemplate);
-            if (commandTemplate.canExecute(e)) {
-                //Send the keydown, maybe the server accepts it because the client is outdated.
-                command.keyDown(e);
-            }
-            command.sendDown(e);
-            //Activate the command, the check will still be done while it's activated. But the state may change while
-            //executing the command and in that case you want it activated.
-            commandsActivated.add(command);
+            commandSystem.commandDown(command, e);
+            clientNetworkSystem.sendDownCommand(command);
         }
         return true;
     }
@@ -68,18 +60,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         for (Entity e : getActives()) {
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
-            for (Command c : commandsActivated) {
-                if (c.equals(commandTemplate)) {
-                    if (c.canExecute(e)) {
-                        //Only execute up if it is allowed to.
-                        c.keyUp(e);
-                    }
-
-                    c.sendUp(e);
-                    commandManager.freeCommand(c);
-                }
-            }
-            commandsActivated.removeValue(commandTemplate, false);
+            commandSystem.commandUp(commandManager.getID(commandTemplate), e);
+            clientNetworkSystem.sendUpCommand(commandTemplate);
         }
         return true;
     }
@@ -94,14 +76,11 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         gamePos.x += 0.5f;
         gamePos.y += 0.5f;
-        Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
-        if (!commandsActivated.contains(c, true)) {
-            for (Entity e : getActives()) {
-                if (c.canExecute(e))
-                    c.keyDown(e);
-                c.sendDown(e);
-                commandsActivated.add(c);
-            }
+        for (Entity e : getActives()) {
+            ClickCommand c = getClickCommand(e);
+            c.setWorldPosClicked(new Vector2(gamePos.x, gamePos.y));
+            commandSystem.commandDown(c, e);
+            clientNetworkSystem.sendClickCommand(c);
         }
         return true;
     }
@@ -111,14 +90,11 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         gamePos.x += 0.5f;
         gamePos.y += 0.5f;
-        Command c = new BreakTileCommand(new Vector2(gamePos.x, gamePos.y));
-        if (commandsActivated.contains(c, true)) {
-            for (Entity e : getActives()) {
-                if (c.canExecute(e))
-                    c.keyUp(e);
-                c.sendUp(e);
-                commandsActivated.removeValue(c, true);
-            }
+        for (Entity e : getActives()) {
+            ClickCommand c = getClickCommand(e);
+            c.setWorldPosClicked(new Vector2(gamePos.x, gamePos.y));
+            commandSystem.commandUp(commandManager.getID(c), e);
+            clientNetworkSystem.sendUnClickCommand(c);
         }
         return true;
     }
@@ -136,5 +112,9 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    public ClickCommand getClickCommand(Entity e) {
+        return (ClickCommand) commandManager.getCommand(BreakTileCommand.class);
     }
 }

@@ -2,6 +2,7 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
+import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.managers.TileSystem;
 
 /**
@@ -46,7 +47,11 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     public boolean canExecute(Entity e) {
-        return true;
+        Position position = e.getWorld().getMapper(Position.class).get(e);
+        Vector2 pos = new Vector2(position.x, position.y);
+        float dx = Math.abs(pos.x - getWorldPosClicked().x);
+        float dy = Math.abs(pos.y - getWorldPosClicked().y);
+        return dx + dy < 4;
     }
 
     @Override

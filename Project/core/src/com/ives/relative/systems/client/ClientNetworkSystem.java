@@ -8,14 +8,12 @@ import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.commands.DoNothingCommand;
 import com.ives.relative.entities.components.body.Physics;
@@ -26,6 +24,7 @@ import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
+import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
@@ -47,27 +46,18 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
-    /**
-     * This contains every byte of the command, this will be sent to the server
-     */
-    Array<Byte> commandDownNetworkList;
-    Array<Byte> commandUpNetworkList;
+
     int sequence;
     int frame = 0;
     private int playerNetworkId;
     private Client client;
-    private Multimap<Integer, Command> sentCommands;
     private Map<Object, Object> simulatedPositions;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
-        commandDownNetworkList = new Array<Byte>();
-        commandUpNetworkList = new Array<Byte>();
 
         client = (Client) network.endPoint;
         client.updateReturnTripTime();
-
-        sentCommands = ArrayListMultimap.create();
         simulatedPositions = createFIFOMap(((int) (1 / CLIENT_NETWORK_INTERVAL)));
         processRequests(network);
     }
@@ -84,8 +74,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public void sendDownCommand(Command command) {
         if (command instanceof DoNothingCommand)
             return;
-        commandDownNetworkList.add(commandManager.getID(command.getClass().getSimpleName()));
-        sentCommands.put(sequence, command);
 
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
         sequence++;
@@ -93,11 +81,25 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         client.updateReturnTripTime();
     }
 
+    public void sendClickCommand(ClickCommand clickCommand) {
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, playerNetworkId, commandManager.getID(clickCommand), true, clickCommand.getWorldPosClicked()));
+        sequence++;
+    }
+
+    /**
+     * Sends the up command to the server
+     *
+     * @param command just the command which needs to be sent, can be a dummy command if needed
+     */
     public void sendUpCommand(Command command) {
         if (command instanceof DoNothingCommand)
             return;
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), false));
         sequence++;
+    }
+
+    public void sendUnClickCommand(ClickCommand clickCommand) {
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, playerNetworkId, commandManager.getID(clickCommand), false, clickCommand.getWorldPosClicked()));
     }
 
     public void registerPlayer(int playerNetworkId) {

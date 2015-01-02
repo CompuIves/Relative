@@ -7,15 +7,20 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.entities.commands.ClickCommand;
+import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.UpdatePacket;
+import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
 import com.ives.relative.utils.ComponentUtils;
@@ -37,7 +42,8 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
-    protected CommandSystem commandManager;
+    protected CommandSystem commandSystem;
+    protected CommandManager commandManager;
     protected NetworkManager networkManager;
 
     /**
@@ -89,10 +95,26 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         Entity e = networkManager.getEntity(packet.entityID);
-        if (packet.pressed)
-            commandManager.commandDown(packet.command, e);
-        else
-            commandManager.commandUp(packet.command, e);
+        Command c;
+        if (packet.pressed) {
+            if (packet instanceof CommandClickPacket) {
+                CommandClickPacket clickPacket = (CommandClickPacket) packet;
+                c = commandManager.getCommand(packet.command);
+                ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
+            } else {
+                c = commandManager.getCommand(packet.command);
+            }
+            commandSystem.commandDown(c, e);
+        } else {
+            if (packet instanceof CommandClickPacket) {
+                CommandClickPacket clickPacket = (CommandClickPacket) packet;
+                c = commandManager.getCommand(packet.command);
+                ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
+            } else {
+                c = commandManager.getCommand(packet.command);
+            }
+            commandSystem.commandUp(commandManager.getID(c), e);
+        }
     }
 
     public void sendPositions(Entity entity) {

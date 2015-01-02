@@ -13,7 +13,6 @@ import com.ives.relative.managers.TileSystem;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
-import com.ives.relative.systems.server.CommandSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
 import java.io.IOException;
@@ -48,7 +47,6 @@ public class ServerManager extends GameManager {
         super.registerSystems();
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
         world.setSystem(new Box2DDebugRendererSystem(camera));
-        world.setSystem(new CommandSystem());
     }
 
     @Override

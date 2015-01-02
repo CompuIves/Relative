@@ -2,7 +2,6 @@ package com.ives.relative.entities.commands;
 
 
 import com.artemis.Entity;
-import com.ives.relative.systems.client.ClientNetworkSystem;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -39,24 +38,6 @@ public abstract class Command {
     public void keyUp(Entity e) {
         deltaTime = System.nanoTime() - startTime;
         executeUp(e, deltaTime);
-    }
-
-    /**
-     * Send the command to the server
-     *
-     * @param e entity for getting the sendsystem
-     */
-    public void sendDown(Entity e) {
-        e.getWorld().getSystem(ClientNetworkSystem.class).sendDownCommand(this);
-    }
-
-    /**
-     * Send the command to the server
-     *
-     * @param e
-     */
-    public void sendUp(Entity e) {
-        e.getWorld().getSystem(ClientNetworkSystem.class).sendUpCommand(this);
     }
 
     /**

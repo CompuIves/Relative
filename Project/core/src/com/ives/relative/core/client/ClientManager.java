@@ -48,10 +48,6 @@ public class ClientManager extends GameManager implements Screen {
         super.registerSystems();
         world.setSystem(new RenderSystem(batch, camera));
 
-        InputSystem inputSystem = new InputSystem(camera);
-        Gdx.input.setInputProcessor(inputSystem);
-        world.setSystem(inputSystem);
-
         //world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
         world.setSystem(new NetworkReceiveSystem());
@@ -61,6 +57,9 @@ public class ClientManager extends GameManager implements Screen {
     public void registerManagers() {
         super.registerManagers();
         world.setManager(new TagManager());
+        InputSystem inputSystem = new InputSystem(camera);
+        Gdx.input.setInputProcessor(inputSystem);
+        world.setSystem(inputSystem);
     }
 
     @Override

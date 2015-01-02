@@ -18,8 +18,11 @@ public abstract class ClickCommand extends Command {
         this.worldPosClicked = worldPosClicked;
     }
 
+    public Vector2 getWorldPosClicked() {
+        return worldPosClicked;
+    }
+
     public void setWorldPosClicked(Vector2 worldPosClicked) {
         this.worldPosClicked = worldPosClicked;
     }
-
 }

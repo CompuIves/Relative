@@ -9,6 +9,7 @@ import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.MovementSystem;
 import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.systems.server.CommandSystem;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -38,6 +39,7 @@ public class GameManager extends Manager {
         world.setSystem(new WorldSystem());
         world.setSystem(new MovementSystem());
         world.setSystem(new TileSystem());
+        world.setSystem(new CommandSystem());
     }
 
     /**

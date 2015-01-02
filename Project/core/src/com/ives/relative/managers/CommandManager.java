@@ -57,13 +57,27 @@ public class CommandManager extends Manager {
      * @return a new command
      */
     public Command getCommand(Command command) {
+        return getCommand(command.getClass());
+    }
+
+    public Command getCommand(Class<? extends Command> command) {
         //If the command is in the free command pool
-        if (freeCommands.containsKey(command.getClass().getSimpleName())) {
-            Command freeCommand = freeCommands.get(command.getClass().getSimpleName()).first();
+        if (freeCommands.containsKey(command.getSimpleName())) {
+            Command freeCommand = freeCommands.get(command.getSimpleName()).first();
             freeCommand.reset();
-            return freeCommands.get(command.getClass().getSimpleName()).first();
-        } else
-            return command.clone();
+            return freeCommands.get(command.getSimpleName()).first();
+        } else {
+            try {
+                return command.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Shouldn't happen with command.newInstance()
+        return null;
     }
 
     /**
