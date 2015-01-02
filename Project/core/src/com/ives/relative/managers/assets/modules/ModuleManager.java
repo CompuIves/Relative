@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.ives.relative.managers.SolidTile;
 import com.ives.relative.managers.TileSystem;
 import com.ives.relative.managers.assets.AssetsDB;
 import com.ives.relative.managers.assets.modules.json.TileReader;
+import com.ives.relative.managers.assets.tiles.SolidTile;
 
 import java.io.*;
 import java.net.URI;

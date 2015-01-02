@@ -9,7 +9,7 @@ public class DoNothingCommand extends Command {
 
 
     /**
-     * This command literally does nothing.
+     * This command does literally nothing.
      */
     public DoNothingCommand() {
         super(false);
@@ -21,7 +21,7 @@ public class DoNothingCommand extends Command {
     }
 
     @Override
-    public void execute(Entity e) {
+    public void execute(Entity e, float delta) {
 
     }
 

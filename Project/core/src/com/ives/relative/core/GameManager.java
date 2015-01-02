@@ -55,6 +55,7 @@ public class GameManager extends Manager {
         world.setManager(new GroupManager());
         world.setManager(new NetworkManager());
         world.setManager(new UuidEntityManager());
+        world.setManager(new StateManager());
     }
 
     public boolean isServer() {

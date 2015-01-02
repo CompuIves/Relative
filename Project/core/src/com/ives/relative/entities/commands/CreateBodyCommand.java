@@ -23,7 +23,7 @@ public class CreateBodyCommand extends Command {
     }
 
     @Override
-    public void execute(Entity e) {
+    public void execute(Entity e, float delta) {
 
     }
 

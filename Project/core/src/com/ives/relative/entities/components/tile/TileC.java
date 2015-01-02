@@ -2,7 +2,7 @@ package com.ives.relative.entities.components.tile;
 
 import com.artemis.Component;
 import com.ives.relative.entities.components.network.Networkable;
-import com.ives.relative.managers.SolidTile;
+import com.ives.relative.managers.assets.tiles.SolidTile;
 
 /**
  * Created by Ives on 3/12/2014.

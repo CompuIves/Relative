@@ -4,10 +4,10 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
+import com.ives.relative.managers.StateManager;
 
 
 /**
@@ -24,7 +24,8 @@ public class MoveRightCommand extends Command {
     }
 
     @Override
-    public void execute(Entity e) {
+    public void execute(Entity e, float delta) {
+        e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.WALKING);
         float mvSpeed = e.getComponent(MovementSpeed.class).movementSpeed;
         float vx = mvSpeed;
         moveEntity(e, vx);
@@ -42,15 +43,8 @@ public class MoveRightCommand extends Command {
 
     @Override
     public boolean canExecute(Entity e) {
-        Physics p = e.getWorld().getMapper(Physics.class).get(e);
-        Array<Contact> contacts = p.contacts;
-        for (Contact contact : contacts) {
-            if (contact.isTouching()) {
-                //TODO make this a bit more accurate!
-                return true;
-            }
-        }
-        return false;
+        State s = e.getWorld().getMapper(State.class).get(e);
+        return s.entityState != StateManager.EntityState.JUMPING;
     }
 
     private void moveEntity(Entity e, float vx) {

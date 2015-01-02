@@ -1,10 +1,16 @@
 package com.ives.relative.entities.components;
 
-import com.sun.org.apache.xerces.internal.impl.validation.EntityState;
+import com.artemis.Component;
+import com.ives.relative.managers.StateManager;
 
 /**
  * Created by Ives on 2/1/2015.
+ * States for an entity, states are defined in the {@link com.ives.relative.managers.StateManager}.
  */
-public class State {
-    EntityState entityState;
+public class State extends Component {
+    public StateManager.EntityState entityState;
+
+    public State() {
+        entityState = StateManager.EntityState.STANDING;
+    }
 }

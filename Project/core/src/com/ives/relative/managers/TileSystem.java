@@ -19,6 +19,7 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Tile;
+import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;

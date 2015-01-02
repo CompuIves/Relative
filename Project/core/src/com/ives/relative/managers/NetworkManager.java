@@ -19,6 +19,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
+import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.utils.ComponentUtils;
 

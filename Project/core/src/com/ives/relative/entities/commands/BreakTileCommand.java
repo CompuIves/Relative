@@ -31,7 +31,7 @@ public class BreakTileCommand extends ClickCommand {
     }
 
     @Override
-    void execute(Entity e) {
+    void execute(Entity e, float delta) {
 
     }
 

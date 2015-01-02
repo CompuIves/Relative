@@ -3,8 +3,8 @@ package com.ives.relative.factories;
 import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.body.Velocity;
-import com.ives.relative.managers.SolidTile;
 import com.ives.relative.managers.TileSystem;
+import com.ives.relative.managers.assets.tiles.SolidTile;
 
 /**
  * Created by Ives on 13/12/2014.

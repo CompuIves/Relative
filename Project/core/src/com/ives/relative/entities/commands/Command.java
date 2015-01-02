@@ -2,6 +2,7 @@ package com.ives.relative.entities.commands;
 
 
 import com.artemis.Entity;
+import com.badlogic.gdx.Gdx;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -32,7 +33,7 @@ public abstract class Command {
     }
 
     public void whilePressed(Entity e) {
-        execute(e);
+        execute(e, Gdx.graphics.getDeltaTime());
     }
 
     public void keyUp(Entity e) {
@@ -51,8 +52,10 @@ public abstract class Command {
      * Gets executed while the button is pressed
      *
      * @param e The entity this will be executed on
+     * @param delta The time between this frame and last frame, this makes commands for things like breaking blocks
+     *              much more manageable to implement.
      */
-    abstract void execute(Entity e);
+    abstract void execute(Entity e, float delta);
 
     /**
      * Gets executed when the button is released

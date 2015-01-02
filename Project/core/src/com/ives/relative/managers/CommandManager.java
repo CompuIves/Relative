@@ -50,6 +50,17 @@ public class CommandManager extends Manager {
         idMap.put(command.getClass().getSimpleName(), id);
     }
 
+
+    /**
+     * Get command by ID
+     * @param id the id
+     * @return the command
+     */
+    public Command getCommand(byte id) {
+        Command command = commandMap.get(id);
+        return getCommand(command.getClass());
+    }
+
     /**
      * Get a new command by the command given. The command given will only be an identifier for the factory, the factory
      * will search for a free command. If there is no free command the factory will copy the command given and return it.
@@ -60,6 +71,13 @@ public class CommandManager extends Manager {
         return getCommand(command.getClass());
     }
 
+
+    /**
+     * Get the desired command, this command will be generated or called from a list called FreeCommands.
+     *
+     * @param command The class of the command which needs to be returned
+     * @return The command which needs to be returned
+     */
     public Command getCommand(Class<? extends Command> command) {
         //If the command is in the free command pool
         if (freeCommands.containsKey(command.getSimpleName())) {
@@ -78,22 +96,6 @@ public class CommandManager extends Manager {
 
         //Shouldn't happen with command.newInstance()
         return null;
-    }
-
-    /**
-     * Get command by ID
-     * @param id the id
-     * @return the command
-     */
-    public Command getCommand(byte id) {
-        Command command = commandMap.get(id);
-        //If the command is in the free command pool
-        if (freeCommands.containsKey(command.getClass().getSimpleName())) {
-            Command freeCommand = freeCommands.get(command.getClass().getSimpleName()).first();
-            freeCommand.reset();
-            return freeCommands.get(command.getClass().getSimpleName()).first();
-        } else
-            return command.clone();
     }
 
     /**

@@ -14,7 +14,7 @@ import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.SolidTile;
+import com.ives.relative.managers.StateManager;
 import com.ives.relative.managers.assets.modules.Module;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
@@ -88,7 +88,6 @@ public abstract class Network extends Listener {
      * The central place for server and client to register the classes used by Kryo.
      */
     public void registerKryoClasses() {
-        kryo.register(SolidTile.class);
         kryo.register(byte[].class);
         kryo.register(ArrayList.class);
         kryo.register(Module.class);
@@ -104,6 +103,7 @@ public abstract class Network extends Listener {
         kryo.register(Command[].class);
         kryo.register(Command.class);
         kryo.register(Component[].class);
+        kryo.register(StateManager.EntityState.class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

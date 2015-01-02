@@ -4,10 +4,12 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 
 /**
@@ -16,7 +18,11 @@ import com.ives.relative.entities.components.body.Physics;
  */
 @Wire
 public class CollisionManager extends Manager implements ContactListener {
+
+    protected StateManager stateManager;
+
     protected ComponentMapper<Physics> mPhysics;
+    protected ComponentMapper<State> mState;
 
     /**
      * Creates a new EntityProcessingSystem.
@@ -34,6 +40,14 @@ public class CollisionManager extends Manager implements ContactListener {
 
         p1.contacts.add(contact);
         p2.contacts.add(contact);
+
+        if (!checkJumping(p1)) {
+            stateManager.assertState(e1, StateManager.EntityState.STANDING);
+        }
+
+        if (!checkJumping(p2)) {
+            stateManager.assertState(e2, StateManager.EntityState.STANDING);
+        }
     }
 
     @Override
@@ -56,5 +70,17 @@ public class CollisionManager extends Manager implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
 
+    }
+
+    private boolean checkJumping(Physics p) {
+        Vector2 position = p.body.getPosition();
+        for (Contact contact : p.contacts) {
+            if (contact.isTouching()) {
+                if (contact.getFixtureB().getBody().getPosition().y < position.y) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
