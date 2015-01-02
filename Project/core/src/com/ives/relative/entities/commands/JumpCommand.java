@@ -31,7 +31,7 @@ public class JumpCommand extends Command {
     public void execute(Entity e, float delta) {
         e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.JUMPING);
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        body.applyLinearImpulse(new Vector2(0, 10), body.getPosition(), true);
+        body.applyLinearImpulse(new Vector2(0, 8), body.getPosition(), true);
     }
 
     @Override

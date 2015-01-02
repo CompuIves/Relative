@@ -41,11 +41,11 @@ public class CollisionManager extends Manager implements ContactListener {
         p1.contacts.add(contact);
         p2.contacts.add(contact);
 
-        if (!checkJumping(p1)) {
+        if (!checkHitGround(p1)) {
             stateManager.assertState(e1, StateManager.EntityState.STANDING);
         }
 
-        if (!checkJumping(p2)) {
+        if (!checkHitGround(p2)) {
             stateManager.assertState(e2, StateManager.EntityState.STANDING);
         }
     }
@@ -72,11 +72,11 @@ public class CollisionManager extends Manager implements ContactListener {
 
     }
 
-    private boolean checkJumping(Physics p) {
+    private boolean checkHitGround(Physics p) {
         Vector2 position = p.body.getPosition();
         for (Contact contact : p.contacts) {
             if (contact.isTouching()) {
-                if (contact.getFixtureB().getBody().getPosition().y < position.y) {
+                if (contact.getFixtureB().getBody().getPosition().y < position.y && p.body.getLinearVelocity().y <= 0) {
                     return true;
                 }
             }
