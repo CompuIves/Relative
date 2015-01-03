@@ -23,10 +23,13 @@ import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
+import com.ives.relative.network.packets.updates.RemoveTilePacket;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -46,6 +49,8 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
 
+
+    BlockingQueue<CommandPressPacket> packetQueue;
     /**
      * Creates a new IntervalEntitySystem.
      */
@@ -54,11 +59,24 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         lastInputsReceived = new HashMap<Integer, Integer>();
         this.network = network;
 
+        packetQueue = new LinkedBlockingQueue<CommandPressPacket>();
+
         processRequests();
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
+
+        //Process inputs in the main thread, this will solve concurrent issues.
+        for (int i = 0; i < packetQueue.size(); i++) {
+            try {
+                CommandPressPacket packet = packetQueue.take();
+                processInput(packet);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         Array<Entity> players = world.getManager(ServerPlayerManager.class).getPlayers();
         for (Entity player : players) {
             Position playerPos = mPosition.get(player);
@@ -85,7 +103,8 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 if (object instanceof UpdatePacket) {
                     if (object instanceof CommandPressPacket) {
                         CommandPressPacket packet = (CommandPressPacket) object;
-                        processInput(packet);
+                        //Add the packet to the queue for processing.
+                        packetQueue.add(packet);
                     }
                 }
             }
@@ -95,17 +114,23 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public void processInput(CommandPressPacket packet) {
         lastInputsReceived.put(packet.entityID, packet.sequence);
         Entity e = networkManager.getEntity(packet.entityID);
+        if (e == null)
+            return;
+
         Command c;
         if (packet.pressed) {
             if (packet instanceof CommandClickPacket) {
                 CommandClickPacket clickPacket = (CommandClickPacket) packet;
                 c = commandManager.getCommand(packet.command);
                 ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
+                if (c.canExecute(e))
+                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y));
             } else {
                 c = commandManager.getCommand(packet.command);
             }
             commandSystem.commandDown(c, e);
         } else {
+            //TODO don't have to send worldPos with unclick and should also send packets when moving the mouse.
             if (packet instanceof CommandClickPacket) {
                 CommandClickPacket clickPacket = (CommandClickPacket) packet;
                 c = commandManager.getCommand(packet.command);

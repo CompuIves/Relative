@@ -44,6 +44,6 @@ public class StateManager extends Manager {
     public enum EntityState {
         WALKING,
         STANDING,
-        JUMPING
+        AIRBORNE
     }
 }

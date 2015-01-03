@@ -30,7 +30,7 @@ public class Relative extends Game {
     public void create() {
         relative = this;
         Gdx.graphics.setDisplayMode(1280, 720, false);
-
+        //MODE = Mode.Client;
         //Log.DEBUG();
         //Creates two instances, an internal server and a client which connects to the server.
         //Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.

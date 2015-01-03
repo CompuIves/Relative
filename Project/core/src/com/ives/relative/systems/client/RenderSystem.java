@@ -71,7 +71,7 @@ public class RenderSystem extends EntityProcessingSystem {
         }
 
         fpsFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 10);
-        fpsFont.setScale(0.1f);
+        fpsFont.setScale(0.2f);
     }
 
     @Override

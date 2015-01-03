@@ -7,6 +7,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -29,6 +30,7 @@ import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
+import com.ives.relative.systems.server.CommandSystem;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
+    protected CommandSystem commandSystem;
     protected NetworkManager networkManager;
     protected NetworkReceiveSystem networkReceiveSystem;
     protected ComponentMapper<Position> mPosition;
@@ -77,8 +80,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
         sequence++;
-
-        client.updateReturnTripTime();
     }
 
     public void sendClickCommand(ClickCommand clickCommand) {
@@ -174,11 +175,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
      * @return
      */
     private boolean checkForPrevious(PositionPacket packet) {
+        //TODO The ping can vary greatly, there needs to be a way to make the check somewhat less precise but still right.
+        return false;
+        /*
         float x = packet.x;
         float y = packet.y;
-        float offset = 0.3f;
+        float offset = 0.1f;
 
-        int timeFrame = (int) (frame - ((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
+        int timeFrame = frame - Math.round(((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
 
         Position oldPosition = (Position) simulatedPositions.get(timeFrame);
 
@@ -188,10 +192,13 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         float dx = Math.abs(x - oldPosition.x);
         float dy = Math.abs(y - oldPosition.y);
         if (dx > offset || dy > offset) {
+            client.updateReturnTripTime();
+            System.out.println("Not accepted: " + client.getReturnTripTime());
             return false;
         }
 
         return true;
+        */
     }
 
     public boolean processPosition(PositionPacket packet) {
@@ -209,13 +216,19 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             Physics physics = mPhysics.get(entity);
 
             Body body = physics.body;
+            Vector2 bodyPos = body.getTransform().getPosition();
+            //if(bodyPos.x != x || bodyPos.y != y) {
             body.setTransform(x, y, rotation);
             localPosition.x = x;
             localPosition.y = y;
+            //}
 
+            Vector2 bodyVel = body.getLinearVelocity();
+            //if(bodyVel.x != vx || bodyVel.y != vy) {
             body.setLinearVelocity(vx, vy);
             localVelocity.vx = vx;
             localVelocity.vy = vy;
+            //}
 
             return true;
         } else {

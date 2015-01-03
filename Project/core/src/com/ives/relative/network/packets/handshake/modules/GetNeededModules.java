@@ -27,7 +27,6 @@ public class GetNeededModules extends ResponsePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Breakie breakie");
                 modules = game.world.getManager(ModuleManager.class).getModules();
                 game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestModulesPacket(modules));
             }

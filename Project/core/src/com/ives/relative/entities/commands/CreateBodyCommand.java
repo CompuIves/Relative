@@ -1,7 +1,6 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
-import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.PlanetManager;
 import com.ives.relative.managers.TileSystem;
 import com.ives.relative.utils.ComponentUtils;
@@ -46,7 +45,7 @@ public class CreateBodyCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         //Returns whether the world of the body is locked
-        return e.getWorld().getMapper(WorldC.class).get(e.getWorld().getManager(PlanetManager.class).getPlanet("earth")).world.isLocked();
+        return true;
     }
 
     @Override

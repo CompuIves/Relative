@@ -41,12 +41,18 @@ public class CollisionManager extends Manager implements ContactListener {
         p1.contacts.add(contact);
         p2.contacts.add(contact);
 
-        if (!checkHitGround(p1)) {
-            stateManager.assertState(e1, StateManager.EntityState.STANDING);
+
+        Entity e = null;
+        if (contact.getFixtureA().getUserData().equals("FootSensor")) {
+            e = (Entity) contact.getFixtureA().getBody().getUserData();
         }
 
-        if (!checkHitGround(p2)) {
-            stateManager.assertState(e2, StateManager.EntityState.STANDING);
+        if (contact.getFixtureB().getUserData().equals("FootSensor")) {
+            e = (Entity) contact.getFixtureB().getBody().getUserData();
+        }
+
+        if (e != null) {
+            stateManager.assertState(e, StateManager.EntityState.STANDING);
         }
     }
 
@@ -60,6 +66,19 @@ public class CollisionManager extends Manager implements ContactListener {
 
         p1.contacts.removeValue(contact, false);
         p2.contacts.removeValue(contact, false);
+
+        Entity e = null;
+        if (contact.getFixtureA().getUserData().equals("FootSensor")) {
+            e = (Entity) contact.getFixtureA().getBody().getUserData();
+        }
+
+        if (contact.getFixtureB().getUserData().equals("FootSensor")) {
+            e = (Entity) contact.getFixtureB().getBody().getUserData();
+        }
+
+        if (e != null) {
+            stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
+        }
     }
 
     @Override
@@ -76,8 +95,14 @@ public class CollisionManager extends Manager implements ContactListener {
         Vector2 position = p.body.getPosition();
         for (Contact contact : p.contacts) {
             if (contact.isTouching()) {
-                if (contact.getFixtureB().getBody().getPosition().y < position.y && p.body.getLinearVelocity().y <= 0) {
-                    return true;
+                if (contact.getFixtureA().getBody().equals(p.body)) {
+                    if (contact.getFixtureB().getBody().getPosition().y <= position.y) {
+                        return true;
+                    }
+                } else {
+                    if (contact.getFixtureA().getBody().getPosition().y <= position.y) {
+                        return true;
+                    }
                 }
             }
         }

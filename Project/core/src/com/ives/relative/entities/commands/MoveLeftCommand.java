@@ -43,7 +43,7 @@ public class MoveLeftCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
-        return s.entityState != StateManager.EntityState.JUMPING;
+        return s.entityState != StateManager.EntityState.AIRBORNE;
     }
 
     @Override

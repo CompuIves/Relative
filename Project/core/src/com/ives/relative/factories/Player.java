@@ -1,6 +1,7 @@
 package com.ives.relative.factories;
 
 import com.artemis.Entity;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.planet.WorldC;
 
@@ -45,9 +46,18 @@ public class Player {
         fixtureDef.density = 1.0f;
         body.createFixture(fixtureDef);
 */
+
+        PolygonShape sensorShape = new PolygonShape();
+        sensorShape.setAsBox(0.3f, 0.3f, new Vector2(0, -0.5f), 0);
+        fixtureDef.shape = sensorShape;
+        fixtureDef.isSensor = true;
+        Fixture sensorFixture = body.createFixture(fixtureDef);
+        sensorFixture.setUserData("FootSensor");
+
         fixture.setUserData(e);
         body.setUserData(e);
         shape.dispose();
+        sensorShape.dispose();
         return body;
     }
 }

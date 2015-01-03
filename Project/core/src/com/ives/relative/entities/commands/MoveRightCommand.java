@@ -44,7 +44,7 @@ public class MoveRightCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
-        return s.entityState != StateManager.EntityState.JUMPING;
+        return s.entityState != StateManager.EntityState.AIRBORNE;
     }
 
     private void moveEntity(Entity e, float vx) {

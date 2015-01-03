@@ -22,6 +22,7 @@ public class Box2DDebugRendererSystem extends EntityProcessingSystem {
     public Box2DDebugRendererSystem(OrthographicCamera camera) {
         super(Aspect.getAspectForAll(WorldC.class));
         box2DDebugRenderer = new Box2DDebugRenderer();
+        box2DDebugRenderer.setDrawVelocities(true);
         this.camera = camera;
     }
 

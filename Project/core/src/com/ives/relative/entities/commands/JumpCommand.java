@@ -29,7 +29,6 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.JUMPING);
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         body.applyLinearImpulse(new Vector2(0, 8), body.getPosition(), true);
     }
@@ -47,7 +46,7 @@ public class JumpCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
-        return s.entityState != StateManager.EntityState.JUMPING;
+        return s.entityState != StateManager.EntityState.AIRBORNE;
     }
 
     @Override
