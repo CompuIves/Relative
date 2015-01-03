@@ -3,6 +3,7 @@ package com.ives.relative.factories;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.planet.WorldC;
 
 /**
@@ -52,7 +53,10 @@ public class Player {
         fixtureDef.shape = sensorShape;
         fixtureDef.isSensor = true;
         Fixture sensorFixture = body.createFixture(fixtureDef);
-        sensorFixture.setUserData("FootSensor");
+
+        FootC footC = new FootC();
+        sensorFixture.setUserData(FootC.class);
+        e.edit().add(footC);
 
         fixture.setUserData(e);
         body.setUserData(e);

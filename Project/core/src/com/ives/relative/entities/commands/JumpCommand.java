@@ -13,6 +13,7 @@ import com.ives.relative.managers.StateManager;
  * Makes the character JUMP!
  */
 public class JumpCommand extends Command {
+    float accumulator = 0;
 
     public JumpCommand() {
         super(true);
@@ -29,8 +30,14 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        body.applyLinearImpulse(new Vector2(0, 8), body.getPosition(), true);
+        if (accumulator == 0) {
+            Body body = e.getWorld().getMapper(Physics.class).get(e).body;
+            body.applyLinearImpulse(new Vector2(0, 15), body.getPosition(), true);
+        }
+
+        accumulator += delta;
+        if (accumulator > 0.3f)
+            accumulator = 0;
     }
 
     @Override
@@ -41,6 +48,12 @@ public class JumpCommand extends Command {
     @Override
     public void undo() {
 
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        accumulator = 0;
     }
 
     @Override

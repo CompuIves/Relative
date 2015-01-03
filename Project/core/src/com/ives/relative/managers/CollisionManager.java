@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.State;
+import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
 
 /**
@@ -23,6 +24,7 @@ public class CollisionManager extends Manager implements ContactListener {
 
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<State> mState;
+    protected ComponentMapper<FootC> mFootC;
 
     /**
      * Creates a new EntityProcessingSystem.
@@ -43,16 +45,21 @@ public class CollisionManager extends Manager implements ContactListener {
 
 
         Entity e = null;
-        if (contact.getFixtureA().getUserData().equals("FootSensor")) {
+        if (contact.getFixtureA().getUserData().equals(FootC.class)) {
             e = (Entity) contact.getFixtureA().getBody().getUserData();
         }
 
-        if (contact.getFixtureB().getUserData().equals("FootSensor")) {
+        if (contact.getFixtureB().getUserData().equals(FootC.class)) {
             e = (Entity) contact.getFixtureB().getBody().getUserData();
         }
 
         if (e != null) {
-            stateManager.assertState(e, StateManager.EntityState.STANDING);
+            FootC footC = mFootC.get(e);
+            footC.footContacts.add(contact);
+            footC.contactAmount++;
+            if (footC.contactAmount > 0) {
+                stateManager.assertState(e, StateManager.EntityState.STANDING);
+            }
         }
     }
 
@@ -68,16 +75,21 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.contacts.removeValue(contact, false);
 
         Entity e = null;
-        if (contact.getFixtureA().getUserData().equals("FootSensor")) {
+        if (contact.getFixtureA().getUserData().equals(FootC.class)) {
             e = (Entity) contact.getFixtureA().getBody().getUserData();
         }
 
-        if (contact.getFixtureB().getUserData().equals("FootSensor")) {
+        if (contact.getFixtureB().getUserData().equals(FootC.class)) {
             e = (Entity) contact.getFixtureB().getBody().getUserData();
         }
 
         if (e != null) {
-            stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
+            FootC footC = mFootC.get(e);
+            footC.footContacts.removeValue(contact, false);
+            footC.contactAmount--;
+            if (footC.contactAmount == 0) {
+                stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
+            }
         }
     }
 
