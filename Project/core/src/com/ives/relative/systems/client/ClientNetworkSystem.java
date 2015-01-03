@@ -176,8 +176,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
      */
     private boolean checkForPrevious(PositionPacket packet) {
         //TODO The ping can vary greatly, there needs to be a way to make the check somewhat less precise but still right.
-        return false;
-        /*
+
         float x = packet.x;
         float y = packet.y;
         float offset = 0.1f;
@@ -198,7 +197,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         }
 
         return true;
-        */
     }
 
     public boolean processPosition(PositionPacket packet) {
@@ -217,18 +215,18 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
             Body body = physics.body;
             Vector2 bodyPos = body.getTransform().getPosition();
-            //if(bodyPos.x != x || bodyPos.y != y) {
-            body.setTransform(x, y, rotation);
-            localPosition.x = x;
-            localPosition.y = y;
-            //}
+            if (bodyPos.x != x || bodyPos.y != y) {
+                body.setTransform(x, y, rotation);
+                localPosition.x = x;
+                localPosition.y = y;
+            }
 
             Vector2 bodyVel = body.getLinearVelocity();
-            //if(bodyVel.x != vx || bodyVel.y != vy) {
-            body.setLinearVelocity(vx, vy);
-            localVelocity.vx = vx;
-            localVelocity.vy = vy;
-            //}
+            if (bodyVel.x != vx || bodyVel.y != vy) {
+                body.setLinearVelocity(vx, vy);
+                localVelocity.vx = vx;
+                localVelocity.vy = vy;
+            }
 
             return true;
         } else {

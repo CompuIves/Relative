@@ -7,6 +7,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Connection;
@@ -28,8 +29,6 @@ import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -49,8 +48,6 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
 
-
-    BlockingQueue<CommandPressPacket> packetQueue;
     /**
      * Creates a new IntervalEntitySystem.
      */
@@ -58,25 +55,11 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), SERVER_NETWORK_INTERVAL);
         lastInputsReceived = new HashMap<Integer, Integer>();
         this.network = network;
-
-        packetQueue = new LinkedBlockingQueue<CommandPressPacket>();
-
         processRequests();
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-
-        //Process inputs in the main thread, this will solve concurrent issues.
-        for (int i = 0; i < packetQueue.size(); i++) {
-            try {
-                CommandPressPacket packet = packetQueue.take();
-                processInput(packet);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         Array<Entity> players = world.getManager(ServerPlayerManager.class).getPlayers();
         for (Entity player : players) {
             Position playerPos = mPosition.get(player);
@@ -102,9 +85,16 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
             public void received(Connection connection, Object object) {
                 if (object instanceof UpdatePacket) {
                     if (object instanceof CommandPressPacket) {
-                        CommandPressPacket packet = (CommandPressPacket) object;
+                        final CommandPressPacket packet = (CommandPressPacket) object;
                         //Add the packet to the queue for processing.
-                        packetQueue.add(packet);
+                        //packetQueue.add(packet);
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                processInput(packet);
+                            }
+                        });
+
                     }
                 }
             }

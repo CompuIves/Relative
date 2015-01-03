@@ -57,6 +57,9 @@ public class CommandSystem extends VoidEntitySystem {
     }
 
     public void commandDown(Command command, Entity e) {
+        if (e == null)
+            return;
+
         if (hookedCommands.containsKey(uuidEntityManager.getUuid(e)) && hookedEntities.containsKey(commandManager.getID(command)))
             return;
 
@@ -70,6 +73,9 @@ public class CommandSystem extends VoidEntitySystem {
     }
 
     public void commandUp(byte command, Entity e) {
+        if (e == null)
+            return;
+
         if (hookedEntities.containsKey(command) && hookedCommands.containsKey(uuidEntityManager.getUuid(e))) {
             Collection<Command> commands = hookedCommands.get(uuidEntityManager.getUuid(e));
 
