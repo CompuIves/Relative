@@ -17,9 +17,9 @@ import com.ives.relative.systems.server.CommandSystem;
  * There are two instances of this manager on a local computer, the server instance and the client instance.
  */
 public class GameManager extends Manager {
-    public boolean isServer;
     public World world;
     public Network network;
+    private boolean isServer;
 
     /**
      * This GameManager can be a server AND a client. This way it will be handled
