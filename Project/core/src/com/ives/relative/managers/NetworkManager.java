@@ -71,7 +71,7 @@ public class NetworkManager extends Manager {
      */
     public void addEntity(int id, Entity e) {
         if (networkEntities.containsKey(id) || networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
-            updateEntity(e, ComponentUtils.getComponents(e), false);
+            addComponentsToEntity(e, ComponentUtils.getComponents(e), false);
         } else {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
@@ -107,11 +107,12 @@ public class NetworkManager extends Manager {
         Entity e;
         if (networkEntities.containsKey(id)) {
             e = uuidEntityManager.getEntity(networkEntities.get(id));
+            addComponentsToEntity(e, components, delta);
         } else {
             e = world.createEntity();
+            addComponentsToEntity(e, components, delta);
             addEntity(id, e);
         }
-        updateEntity(e, components, delta);
         return e;
     }
 
@@ -122,7 +123,7 @@ public class NetworkManager extends Manager {
      * @param delta if delta is false, every old component will get removed first.
      * @return The entity which has been updated.
      */
-    public Entity updateEntity(Entity e, Array<Component> components, boolean delta) {
+    public Entity addComponentsToEntity(Entity e, Array<Component> components, boolean delta) {
         if (!delta) {
             ComponentUtils.removeAllComponents(e);
         }
@@ -196,6 +197,9 @@ public class NetworkManager extends Manager {
         }
     }
 
+    public boolean containsEntity(int id) {
+        return networkEntities.containsKey(id);
+    }
 
     public ComponentPacket generateFullComponentPacket(Entity e) {
         Type type = mNetworkC.get(e).type;

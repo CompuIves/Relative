@@ -54,7 +54,7 @@ public class Chunk {
     }
 
     public void addEntity(UUID e) {
-        System.out.println("Added an Entity to chunk " + startX + " to " + endX + "!");
+        System.out.println("Added an entity to chunk " + startX + " to " + endX + "!");
         if (!entities.contains(e, false))
             entities.add(e);
     }

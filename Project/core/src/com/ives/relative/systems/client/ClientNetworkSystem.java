@@ -9,6 +9,7 @@ import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -30,7 +31,6 @@ import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.PositionPacket;
-import com.ives.relative.systems.server.CommandSystem;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,7 +43,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
-    protected CommandSystem commandSystem;
     protected NetworkManager networkManager;
     protected NetworkReceiveSystem networkReceiveSystem;
     protected ComponentMapper<Position> mPosition;
@@ -55,12 +54,16 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
     private int playerNetworkId;
     private Client client;
     private Map<Object, Object> simulatedPositions;
+    private Array<Integer> requestedEntities;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
 
         client = (Client) network.endPoint;
         client.updateReturnTripTime();
+
+        requestedEntities = new Array<Integer>();
+
         simulatedPositions = createFIFOMap(((int) (1 / CLIENT_NETWORK_INTERVAL)));
         processRequests(network);
     }
@@ -150,7 +153,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                                     }
                                 } else {
                                     if (!processPosition(packet)) {
-                                        network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
+                                        if (!requestedEntities.contains(packet.entityID, true)) {
+                                            network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
+                                            requestedEntities.add(packet.entityID);
+                                        }
                                     }
                                 }
                             }
@@ -160,6 +166,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                     if (object instanceof ComponentPacket) {
                         ComponentPacket packet = (ComponentPacket) object;
                         networkReceiveSystem.addDataForProcessing(packet);
+                        requestedEntities.removeValue(packet.entityID, true);
                     }
                 }
             }
@@ -179,7 +186,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         float x = packet.x;
         float y = packet.y;
-        float offset = 0.3f;
+        float offset = 1f;
 
         int timeFrame = frame - Math.round(((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
 
