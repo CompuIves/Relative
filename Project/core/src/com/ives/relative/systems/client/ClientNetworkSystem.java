@@ -51,6 +51,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
     int sequence;
     int frame = 0;
+    float updateAccumulator;
     private int playerNetworkId;
     private Client client;
     private Map<Object, Object> simulatedPositions;
@@ -60,8 +61,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
 
         client = (Client) network.endPoint;
-        client.updateReturnTripTime();
-
         requestedEntities = new Array<Integer>();
 
         simulatedPositions = createFIFOMap(((int) (1 / CLIENT_NETWORK_INTERVAL)));
@@ -83,7 +82,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
         sequence++;
-        client.updateReturnTripTime();
     }
 
     public void sendClickCommand(ClickCommand clickCommand) {
@@ -134,6 +132,13 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             simulatedPositions.put(frame, new Position(x, y, 0, 0, ""));
         }
 
+        //Update the returntriptime every 5 seconds
+        updateAccumulator += world.getDelta();
+
+        if (updateAccumulator > 5) {
+            updateAccumulator = 0;
+            client.updateReturnTripTime();
+        }
         frame++;
     }
 

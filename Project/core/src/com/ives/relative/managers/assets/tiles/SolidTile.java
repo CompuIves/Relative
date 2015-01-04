@@ -11,6 +11,7 @@ public class SolidTile {
     public String id;
     public String name;
     public String texture;
+    public float friction = 0.5f;
     public int durability = 10;
     public float movementMultiplier = 1f;
     public boolean gravity = false;

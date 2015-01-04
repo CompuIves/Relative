@@ -94,6 +94,5 @@ public class ServerNetwork extends Network {
         serverPlayerManager.removeConnection(connection.getID());
         sendObjectTCPToAll(new RemoveEntityPacket(id));
         game.world.getManager(NetworkManager.class).removeEntity(id);
-
     }
 }

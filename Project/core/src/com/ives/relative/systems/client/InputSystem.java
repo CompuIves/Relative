@@ -49,7 +49,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
             Command command = commandManager.getCommand(commandTemplate);
-            commandSystem.commandDown(command, e);
+            if (command.isSimulate())
+                commandSystem.commandDown(command, e);
             clientNetworkSystem.sendDownCommand(command);
         }
         return true;
@@ -60,7 +61,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         for (Entity e : getActives()) {
             InputC inputC = mInputComponent.get(e);
             Command commandTemplate = inputC.commandKeys.get(keycode);
-            commandSystem.commandUp(commandManager.getID(commandTemplate), e);
+            if (commandTemplate.isSimulate())
+                commandSystem.commandUp(commandManager.getID(commandTemplate), e);
             clientNetworkSystem.sendUpCommand(commandTemplate);
         }
         return true;

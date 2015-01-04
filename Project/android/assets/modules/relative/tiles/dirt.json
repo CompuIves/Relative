@@ -2,6 +2,7 @@
 	"id": "dirt",
 	"name": "Dirt",
 	"durability": 3,
+  "friction": 0.5,
 	"gravity": true,
 	"texture": "tiles/assets/dirt.png"
 }

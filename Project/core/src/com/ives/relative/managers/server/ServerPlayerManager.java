@@ -68,7 +68,7 @@ public class ServerPlayerManager extends PlayerManager {
                 group("players").
                 build();
 
-        Body body = Player.createBody(e, position.x, position.y, 0, 0, planet);
+        Body body = Player.createBody(e, position.x, position.y, 0, 0, 0.5f, planet);
         e.edit().add(new Physics(body)).add(new Transform(1, 1, null));
 
         setPlayer(e, internalName);

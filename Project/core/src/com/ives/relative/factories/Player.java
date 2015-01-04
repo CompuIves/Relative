@@ -22,7 +22,7 @@ public class Player {
      * @param planet
      * @return
      */
-    public static Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
+    public static Body createBody(Entity e, float x, float y, float vx, float vy, float radius, Entity planet) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
@@ -35,7 +35,7 @@ public class Player {
         FixtureDef fixtureDef = new FixtureDef();
         Shape shape = new CircleShape();
         fixtureDef.shape = shape;
-        shape.setRadius(0.5f);
+        shape.setRadius(radius);
 
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 2.0f;
@@ -49,7 +49,7 @@ public class Player {
 */
 
         PolygonShape sensorShape = new PolygonShape();
-        sensorShape.setAsBox(0.3f, 0.3f, new Vector2(0, -0.5f), 0);
+        sensorShape.setAsBox(0.3f, 0.1f, new Vector2(0, -0.5f), 0);
         fixtureDef.shape = sensorShape;
         fixtureDef.isSensor = true;
         Fixture sensorFixture = body.createFixture(fixtureDef);

@@ -37,7 +37,7 @@ public class Tile {
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.9f;
+        fixtureDef.friction = tile.friction;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(e);
         body.setUserData(e);

@@ -96,4 +96,7 @@ public abstract class Command {
         deltaTime = 0;
     }
 
+    public boolean isSimulate() {
+        return simulate;
+    }
 }

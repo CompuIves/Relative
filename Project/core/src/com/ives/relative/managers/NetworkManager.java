@@ -70,9 +70,7 @@ public class NetworkManager extends Manager {
      * @param e
      */
     public void addEntity(int id, Entity e) {
-        if (networkEntities.containsKey(id) || networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
-            addComponentsToEntity(e, ComponentUtils.getComponents(e), false);
-        } else {
+        if (!networkEntities.containsKey(id) && !networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
             chunkManager.addEntity(e);
@@ -105,13 +103,13 @@ public class NetworkManager extends Manager {
      */
     public Entity addEntity(int id, Array<Component> components, boolean delta) {
         Entity e;
-        if (networkEntities.containsKey(id)) {
-            e = uuidEntityManager.getEntity(networkEntities.get(id));
-            addComponentsToEntity(e, components, delta);
-        } else {
+        if (!networkEntities.containsKey(id)) {
             e = world.createEntity();
             addComponentsToEntity(e, components, delta);
             addEntity(id, e);
+        } else {
+            e = uuidEntityManager.getEntity(networkEntities.get(id));
+            addComponentsToEntity(e, components, delta);
         }
         return e;
     }
@@ -147,7 +145,7 @@ public class NetworkManager extends Manager {
                 Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
                 Entity planet = entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID);
 
-                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, planet);
+                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.5f, planet);
                 visual.texture = new TextureRegion(new Texture("player.png"));
                 break;
             case TILE:
