@@ -25,7 +25,7 @@ public class ConnectionSuccessful extends ResponsePacket {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
                 Entity player = serverPlayerManager.createPlayer(playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
-                        new Vector2(10, 10), 0);
+                        new Vector2(50, 10), 0);
                 serverPlayerManager.addConnection(connection, player);
 
                 game.network.sendObjectTCP(connection, new AssignPlayer(game.world.getManager(NetworkManager.class).getNetworkID(player)));

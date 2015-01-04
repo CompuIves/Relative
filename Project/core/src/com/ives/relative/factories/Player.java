@@ -55,6 +55,7 @@ public class Player {
         Fixture sensorFixture = body.createFixture(fixtureDef);
 
         FootC footC = new FootC();
+        footC.yOffset = -0.5f;
         sensorFixture.setUserData(FootC.class);
         e.edit().add(footC);
 

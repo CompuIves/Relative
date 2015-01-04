@@ -107,19 +107,19 @@ public class PlanetManager extends Manager {
             if (chunk == null || !chunk.isThisChunk(x)) {
                 chunk = chunkManager.getChunk(x, getPlanetID(planet));
             }
-            for (int y = 1; y < 7; y++) {
+            for (int y = 1; y < 10; y++) {
                 Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
                 chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
             }
         }
 
         for (int x = 0; x < 200; x++) {
-            for (int y = 0; y < 1; y++) {
-                if (!chunk.isThisChunk(x)) {
-                    chunk = chunkManager.getChunk(x, getPlanetID(planet));
-                }
+            if (!chunk.isThisChunk(x)) {
+                chunk = chunkManager.getChunk(x, getPlanetID(planet));
+            }
 
-                Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
+            for (int y = 0; y < 1; y++) {
+                Entity tile = tileManager.createTile(planet, x, y, 0, "bedrock", false);
                 chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
             }
         }

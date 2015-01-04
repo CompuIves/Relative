@@ -4,7 +4,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -43,24 +42,7 @@ public class CollisionManager extends Manager implements ContactListener {
         p1.contacts.add(contact);
         p2.contacts.add(contact);
 
-
-        Entity e = null;
-        if (contact.getFixtureA().getUserData().equals(FootC.class)) {
-            e = (Entity) contact.getFixtureA().getBody().getUserData();
-        }
-
-        if (contact.getFixtureB().getUserData().equals(FootC.class)) {
-            e = (Entity) contact.getFixtureB().getBody().getUserData();
-        }
-
-        if (e != null) {
-            FootC footC = mFootC.get(e);
-            footC.footContacts.add(contact);
-            footC.contactAmount++;
-            if (footC.contactAmount > 0) {
-                stateManager.assertState(e, StateManager.EntityState.STANDING);
-            }
-        }
+        checkHitGround(contact, true);
     }
 
     @Override
@@ -74,23 +56,7 @@ public class CollisionManager extends Manager implements ContactListener {
         p1.contacts.removeValue(contact, false);
         p2.contacts.removeValue(contact, false);
 
-        Entity e = null;
-        if (contact.getFixtureA().getUserData().equals(FootC.class)) {
-            e = (Entity) contact.getFixtureA().getBody().getUserData();
-        }
-
-        if (contact.getFixtureB().getUserData().equals(FootC.class)) {
-            e = (Entity) contact.getFixtureB().getBody().getUserData();
-        }
-
-        if (e != null) {
-            FootC footC = mFootC.get(e);
-            footC.footContacts.removeValue(contact, false);
-            footC.contactAmount--;
-            if (footC.contactAmount == 0) {
-                stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
-            }
-        }
+        checkHitGround(contact, false);
     }
 
     @Override
@@ -103,21 +69,47 @@ public class CollisionManager extends Manager implements ContactListener {
 
     }
 
-    private boolean checkHitGround(Physics p) {
-        Vector2 position = p.body.getPosition();
-        for (Contact contact : p.contacts) {
-            if (contact.isTouching()) {
-                if (contact.getFixtureA().getBody().equals(p.body)) {
-                    if (contact.getFixtureB().getBody().getPosition().y <= position.y) {
-                        return true;
-                    }
+    private void checkHitGround(Contact contact, boolean beginContact) {
+        Entity e = null;
+        Entity eStanding = null;
+        if (contact.getFixtureA().getUserData().equals(FootC.class)) {
+            e = (Entity) contact.getFixtureA().getBody().getUserData();
+            eStanding = (Entity) contact.getFixtureB().getBody().getUserData();
+        }
+
+        if (contact.getFixtureB().getUserData().equals(FootC.class)) {
+            e = (Entity) contact.getFixtureB().getBody().getUserData();
+            eStanding = (Entity) contact.getFixtureA().getBody().getUserData();
+        }
+
+        if (e != null && eStanding != null) {
+            if (!e.equals(eStanding)) {
+                if (beginContact) {
+                    addFootC(contact, e, eStanding);
                 } else {
-                    if (contact.getFixtureA().getBody().getPosition().y <= position.y) {
-                        return true;
-                    }
+                    removeFootC(contact, e, eStanding);
                 }
             }
         }
-        return false;
+    }
+
+    private void addFootC(Contact contact, Entity e, Entity eStanding) {
+        FootC footC = mFootC.get(e);
+        footC.footContacts.add(contact);
+        footC.standingOn.add(eStanding);
+        footC.contactAmount++;
+        if (footC.contactAmount > 0) {
+            stateManager.assertState(e, StateManager.EntityState.STANDING);
+        }
+    }
+
+    private void removeFootC(Contact contact, Entity e, Entity eStanding) {
+        FootC footC = mFootC.get(e);
+        footC.footContacts.removeValue(contact, false);
+        footC.standingOn.removeValue(eStanding, false);
+        footC.contactAmount--;
+        if (footC.contactAmount == 0) {
+            stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
+        }
     }
 }

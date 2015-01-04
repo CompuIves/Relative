@@ -3,7 +3,9 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.State;
+import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.managers.StateManager;
 
@@ -30,9 +32,16 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        if (accumulator == 0) {
-            Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-            body.applyLinearImpulse(new Vector2(0, 15), body.getPosition(), true);
+        float jumpingSpeed = 15;
+        Body body = e.getWorld().getMapper(Physics.class).get(e).body;
+        body.applyLinearImpulse(new Vector2(0, jumpingSpeed), body.getPosition(), true);
+
+
+        FootC footC = e.getWorld().getMapper(FootC.class).get(e);
+        Array<Entity> standingOn = footC.standingOn;
+        for (Entity eStanding : standingOn) {
+            Body body2 = eStanding.getWorld().getMapper(Physics.class).get(eStanding).body;
+            body2.applyLinearImpulse(new Vector2(-body.getLinearVelocity().x, -jumpingSpeed), new Vector2(body.getPosition().x, body.getPosition().y + footC.yOffset), true);
         }
 
         accumulator += delta;
@@ -59,7 +68,7 @@ public class JumpCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
-        return s.entityState != StateManager.EntityState.AIRBORNE;
+        return s.entityState != StateManager.EntityState.AIRBORNE && accumulator == 0;
     }
 
     @Override

@@ -65,7 +65,7 @@ public class Chunk {
 
     public UUID getTile(float x, float y) {
         if (isThisChunk(x)) {
-            Vector2 vector2 = new Vector2(x, y);
+            Vector2 vector2 = new Vector2((int) x, (int) y);
             if (tiles.containsKey(vector2)) {
                 return tiles.get(vector2);
             }

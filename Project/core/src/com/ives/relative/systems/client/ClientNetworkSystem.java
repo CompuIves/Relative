@@ -80,6 +80,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
         sequence++;
+        client.updateReturnTripTime();
     }
 
     public void sendClickCommand(ClickCommand clickCommand) {
@@ -152,7 +153,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                                         network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(((PositionPacket) object).entityID));
                                     }
                                 }
-                                //applyServerReconciliation(packet);
                             }
                         });
                     }
@@ -179,7 +179,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
         float x = packet.x;
         float y = packet.y;
-        float offset = 0.1f;
+        float offset = 0.3f;
 
         int timeFrame = frame - Math.round(((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
 
@@ -191,8 +191,9 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         float dx = Math.abs(x - oldPosition.x);
         float dy = Math.abs(y - oldPosition.y);
         if (dx > offset || dy > offset) {
-            client.updateReturnTripTime();
-            System.out.println("Not accepted: " + client.getReturnTripTime());
+            System.out.println("Not accepted: " + client.getReturnTripTime() + " dx: " + dx + " dy: " + dy);
+            System.out.println("Frame: " + frame + " OldFrame: " + timeFrame);
+            System.out.println("Previous frame x : " + Math.abs(x - ((Position) simulatedPositions.get(timeFrame - 5)).x));
             return false;
         }
 
