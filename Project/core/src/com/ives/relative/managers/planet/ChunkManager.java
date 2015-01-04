@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
+import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
 
 import java.util.Map;
@@ -20,7 +21,9 @@ public class ChunkManager extends Manager {
     private static final int chunkSize = 128;
     protected PlanetManager planetManager;
     protected UuidEntityManager uuidEntityManager;
+
     protected ComponentMapper<ChunkC> mChunkC;
+    protected ComponentMapper<Position> mPosition;
 
     public ChunkManager() {
     }
@@ -87,6 +90,22 @@ public class ChunkManager extends Manager {
             Chunk chunk = new Chunk(index * chunkSize, index * chunkSize + chunkSize, planet);
             chunks.put(index, chunk);
             return chunk;
+        }
+    }
+
+    public void addEntity(Entity e) {
+        Position position = mPosition.get(e);
+        if (position != null) {
+            Chunk chunk = getChunk(position.x, position.worldID);
+            chunk.addEntity(uuidEntityManager.getUuid(e));
+        }
+    }
+
+    public void removeEntity(Entity e) {
+        Position position = mPosition.get(e);
+        if (position != null) {
+            Chunk chunk = getChunk(position.x, position.worldID);
+            chunk.removeEntity(uuidEntityManager.getUuid(e));
         }
     }
 }

@@ -54,7 +54,13 @@ public class Chunk {
     }
 
     public void addEntity(UUID e) {
-        entities.add(e);
+        System.out.println("Added an Entity to chunk " + startX + " to " + endX + "!");
+        if (!entities.contains(e, false))
+            entities.add(e);
+    }
+
+    public void removeEntity(UUID e) {
+        entities.removeValue(e, false);
     }
 
     public void addTile(float x, float y, UUID tile) {

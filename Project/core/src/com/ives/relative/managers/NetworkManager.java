@@ -20,6 +20,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.updates.ComponentPacket;
@@ -37,6 +38,7 @@ import java.util.UUID;
 public class NetworkManager extends Manager {
     protected ComponentMapper<NetworkC> mNetworkC;
     protected UuidEntityManager uuidEntityManager;
+    protected ChunkManager chunkManager;
     Map<Integer, UUID> networkEntities;
     Map<UUID, Integer> networkIDs;
     int freeID;
@@ -73,6 +75,7 @@ public class NetworkManager extends Manager {
         } else {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
+            chunkManager.addEntity(e);
         }
     }
 
@@ -179,6 +182,7 @@ public class NetworkManager extends Manager {
             networkEntities.remove(id);
             networkIDs.remove(uuidEntityManager.getUuid(e));
 
+            chunkManager.removeEntity(e);
             System.out.println("Removed entity: " + e.getId());
             e.deleteFromWorld();
         }
