@@ -21,7 +21,7 @@ import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.planet.PlanetManager;
 
 import java.util.HashMap;
 import java.util.Map;

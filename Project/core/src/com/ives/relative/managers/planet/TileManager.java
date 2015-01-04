@@ -1,10 +1,9 @@
-package com.ives.relative.managers;
+package com.ives.relative.managers.planet;
 
-import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -19,6 +18,7 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Tile;
+import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -29,16 +29,16 @@ import java.util.HashMap;
  * The manager of all tiles
  */
 @Wire
-public class TileSystem extends EntityProcessingSystem {
+public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
     protected ComponentMapper<WorldC> mWorldComponent;
     protected ComponentMapper<Name> mName;
     protected ComponentMapper<Position> mPosition;
 
     protected NetworkManager networkManager;
+    protected ChunkManager chunkManager;
 
-    public TileSystem() {
-        super(Aspect.getAspectForAll(TileC.class, Position.class));
+    public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
     }
 
@@ -46,11 +46,6 @@ public class TileSystem extends EntityProcessingSystem {
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.setAsBox(width / 2f, height / 2f);
         return polygonShape;
-    }
-
-    @Override
-    protected void process(Entity e) {
-
     }
 
     /**
@@ -92,24 +87,14 @@ public class TileSystem extends EntityProcessingSystem {
         solidTiles.put(id, tile);
     }
 
-    public void removeTile(Vector2 tilePos) {
-        Entity e = getTile(tilePos);
+    public void removeTile(Vector2 tilePos, String planet) {
+        Entity e = getTile(tilePos, planet);
         if (e != null) {
             ComponentUtils.removeEntity(e);
         }
     }
 
-    public Entity getTile(Vector2 tilePos) {
-        //Remove the numbers after decimal
-        int x = (int) tilePos.x;
-        int y = (int) tilePos.y;
-
-        for (Entity e : getActives()) {
-            Position p = mPosition.get(e);
-            if (x == p.x && y == p.y) {
-                return e;
-            }
-        }
-        return null;
+    public Entity getTile(Vector2 tilePos, String planet) {
+        return chunkManager.getTile(tilePos.x, tilePos.y, planet);
     }
 }

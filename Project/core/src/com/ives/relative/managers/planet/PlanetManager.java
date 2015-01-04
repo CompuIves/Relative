@@ -1,4 +1,4 @@
-package com.ives.relative.managers;
+package com.ives.relative.managers.planet;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -11,9 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.managers.CollisionManager;
+import com.ives.relative.managers.NetworkManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +37,7 @@ public class PlanetManager extends Manager {
     protected CollisionManager collisionManager;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
+    protected ChunkManager chunkManager;
 
     protected ComponentMapper<WorldC> mWorldC;
     protected ComponentMapper<Gravity> mGravity;
@@ -77,7 +81,8 @@ public class PlanetManager extends Manager {
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
-                new WorldC(physicsWorld, velocityIterations, positionIterations))
+                new WorldC(physicsWorld, velocityIterations, positionIterations),
+                new ChunkC())
                 .group("planets")
                 .build();
 
@@ -96,14 +101,26 @@ public class PlanetManager extends Manager {
     }
 
     public void generateTerrain(Entity planet) {
-        TileSystem tileManager = world.getSystem(TileSystem.class);
-        for (int y = 1; y < 7; y++) {
-            for (int x = 0; x < 200; x++)
-                tileManager.createTile(planet, x, y, 0, "dirt", false);
+        TileManager tileManager = world.getManager(TileManager.class);
+        Chunk chunk = null;
+        for (int x = 0; x < 200; x++) {
+            if (chunk == null || !chunk.isThisChunk(x)) {
+                chunk = chunkManager.getChunk(x, getPlanetID(planet));
+            }
+            for (int y = 1; y < 7; y++) {
+                Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
+                chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
+            }
         }
-        for (int y = 0; y < 1; y++) {
-            for (int x = 0; x < 200; x++) {
-                tileManager.createTile(planet, x, y, 0, "bedrock", false);
+
+        for (int x = 0; x < 200; x++) {
+            for (int y = 0; y < 1; y++) {
+                if (!chunk.isThisChunk(x)) {
+                    chunk = chunkManager.getChunk(x, getPlanetID(planet));
+                }
+
+                Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
+                chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
             }
         }
     }

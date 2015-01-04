@@ -3,7 +3,7 @@ package com.ives.relative.network.packets.handshake.planet;
 import com.artemis.Entity;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.network.packets.handshake.AskTransferSuccessful;
 

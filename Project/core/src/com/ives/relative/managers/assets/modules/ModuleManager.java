@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.ives.relative.managers.TileSystem;
 import com.ives.relative.managers.assets.AssetsDB;
 import com.ives.relative.managers.assets.modules.json.TileReader;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.managers.planet.TileManager;
 
 import java.io.*;
 import java.net.URI;
@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
 @Wire
 public class ModuleManager extends Manager {
 
-    protected TileSystem tileManager;
+    protected TileManager tileManager;
     ArrayList<Module> modules;
     boolean isServer;
 
@@ -246,7 +246,7 @@ public class ModuleManager extends Manager {
             SolidTile tile = TileReader.readFile(fileHandle, module.location);
             if (tile != null) {
                 //TODO Check if wired is possible
-                world.getSystem(TileSystem.class).addTile(tile.id, tile);
+                world.getManager(TileManager.class).addTile(tile.id, tile);
             }
         }
     }

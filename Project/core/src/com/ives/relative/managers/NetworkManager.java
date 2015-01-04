@@ -20,6 +20,8 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.managers.planet.PlanetManager;
+import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -146,7 +148,7 @@ public class NetworkManager extends Manager {
                 break;
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
-                SolidTile tile = entity.getWorld().getSystem(TileSystem.class).solidTiles.get(tileC.id);
+                SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
                 com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID)).world;
                 physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
                 visual.texture = tile.textureRegion;

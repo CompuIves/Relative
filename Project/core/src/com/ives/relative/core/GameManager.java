@@ -4,8 +4,14 @@ import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.UuidEntityManager;
-import com.ives.relative.managers.*;
+import com.ives.relative.managers.CollisionManager;
+import com.ives.relative.managers.CommandManager;
+import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.StateManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
+import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.PlanetManager;
+import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.MovementSystem;
 import com.ives.relative.systems.WorldSystem;
@@ -38,7 +44,6 @@ public class GameManager extends Manager {
     public void registerSystems() {
         world.setSystem(new WorldSystem());
         world.setSystem(new MovementSystem());
-        world.setSystem(new TileSystem());
         world.setSystem(new CommandSystem());
     }
 
@@ -56,6 +61,8 @@ public class GameManager extends Manager {
         world.setManager(new NetworkManager());
         world.setManager(new UuidEntityManager());
         world.setManager(new StateManager());
+        world.setManager(new TileManager());
+        world.setManager(new ChunkManager());
     }
 
     public boolean isServer() {

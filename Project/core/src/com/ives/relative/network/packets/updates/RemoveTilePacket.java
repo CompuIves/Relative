@@ -3,7 +3,7 @@ package com.ives.relative.network.packets.updates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.TileSystem;
+import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.ResponsePacket;
 
 /**
@@ -11,14 +11,16 @@ import com.ives.relative.network.packets.ResponsePacket;
  */
 public class RemoveTilePacket extends ResponsePacket {
     float x, y;
+    String planet;
 
     public RemoveTilePacket() {
         super();
     }
 
-    public RemoveTilePacket(float x, float y) {
+    public RemoveTilePacket(float x, float y, String planet) {
         this.x = x;
         this.y = y;
+        this.planet = planet;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class RemoveTilePacket extends ResponsePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                game.world.getSystem(TileSystem.class).removeTile(new Vector2(x, y));
+                game.world.getManager(TileManager.class).removeTile(new Vector2(x, y), planet);
             }
         });
     }

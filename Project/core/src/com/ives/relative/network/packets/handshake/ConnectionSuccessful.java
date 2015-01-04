@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.PlanetManager;
+import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 
