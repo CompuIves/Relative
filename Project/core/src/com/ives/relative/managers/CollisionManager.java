@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.managers.event.StateManager;
 
 /**
  * Created by Ives on 31/12/2014.

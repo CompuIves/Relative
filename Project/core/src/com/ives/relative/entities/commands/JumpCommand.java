@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.managers.StateManager;
+import com.ives.relative.managers.event.StateManager;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -32,7 +32,7 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        float jumpingSpeed = 15;
+        float jumpingSpeed = 30;
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         body.applyLinearImpulse(new Vector2(0, jumpingSpeed), body.getPosition(), true);
 

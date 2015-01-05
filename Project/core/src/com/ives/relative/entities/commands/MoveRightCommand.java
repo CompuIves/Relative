@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
-import com.ives.relative.managers.StateManager;
+import com.ives.relative.managers.event.StateManager;
 
 
 /**

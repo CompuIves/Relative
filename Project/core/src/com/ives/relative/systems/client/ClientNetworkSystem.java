@@ -10,7 +10,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.client.ClientManager;
@@ -22,25 +21,30 @@ import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.MovementEvent;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.network.packets.updates.DeltaPositionPacket;
+import com.ives.relative.network.packets.updates.PositionHeartbeat;
 import com.ives.relative.network.packets.updates.PositionPacket;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Created by Ives on 13/12/2014.
+ * This is the system which handles networked commands and movement. This system communicates with the server and updatees
+ * every entity accordingly.
  */
 @Wire
-public class ClientNetworkSystem extends IntervalEntitySystem {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
+public class ClientNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 10f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
@@ -51,29 +55,21 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
 
     int sequence;
     int frame = 0;
-    float updateAccumulator;
     private int playerNetworkId;
-    private Client client;
-    private Map<Object, Object> simulatedPositions;
     private Array<Integer> requestedEntities;
+    private Array<Entity> heartbeatEntities;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
-
-        client = (Client) network.endPoint;
         requestedEntities = new Array<Integer>();
-
-        simulatedPositions = createFIFOMap(((int) (1 / CLIENT_NETWORK_INTERVAL)));
+        heartbeatEntities = new Array<Entity>();
         processRequests(network);
     }
 
-    public static <K, V> Map<K, V> createFIFOMap(final int maxEntries) {
-        return new LinkedHashMap<K, V>(maxEntries * 3 / 2, 0.7f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-                return size() > maxEntries;
-            }
-        };
+    @Override
+    protected void initialize() {
+        super.initialize();
+        world.getManager(EventManager.class).addObserver(this);
     }
 
     public void sendDownCommand(Command command) {
@@ -124,21 +120,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
      */
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-        Entity player = networkManager.getEntity(playerNetworkId);
-        if (player != null) {
-            Position p = mPosition.get(player);
-            float x = p.x;
-            float y = p.y;
-            simulatedPositions.put(frame, new Position(x, y, 0, 0, ""));
-        }
-
-        //Update the returntriptime every 5 seconds
-        updateAccumulator += world.getDelta();
-
-        if (updateAccumulator > 5) {
-            updateAccumulator = 0;
-            client.updateReturnTripTime();
-        }
+        sendPositionHeartbeat();
         frame++;
     }
 
@@ -152,10 +134,15 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                if (packet.entityID == playerNetworkId) {
-                                    if (!checkForPrevious(packet)) {
-                                        processPosition(packet);
+                                if (packet.force) {
+                                    if (!processPosition(packet)) {
+                                        network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
+                                        requestedEntities.add(packet.entityID);
                                     }
+                                }
+                                /*
+                                if (packet.entityID == playerNetworkId) {
+
                                 } else {
                                     if (!processPosition(packet)) {
                                         if (!requestedEntities.contains(packet.entityID, true)) {
@@ -164,6 +151,15 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
                                         }
                                     }
                                 }
+                                */
+                            }
+                        });
+                    }
+                    if (object instanceof DeltaPositionPacket) {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                processDeltaPosition((DeltaPositionPacket) object);
                             }
                         });
                     }
@@ -178,38 +174,26 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
         });
     }
 
-    /**
-     * This is a sort of Server Reconciliation, it checks if the position sent by the server was right a ReturnTripTime ago.
-     * Because the server always sends outdated information (sometimes 600ms old) this system checks if the information was
-     * right ping time ago.
-     *
-     * @param packet
-     * @return
-     */
-    private boolean checkForPrevious(PositionPacket packet) {
-        //TODO The ping can vary greatly, there needs to be a way to make the check somewhat less precise but still right.
-
-        float x = packet.x;
-        float y = packet.y;
-        float offset = 1f;
-
-        int timeFrame = frame - Math.round(((client.getReturnTripTime() / 1000f) / CLIENT_NETWORK_INTERVAL));
-
-        Position oldPosition = (Position) simulatedPositions.get(timeFrame);
-
-        if (oldPosition == null)
-            return false;
-
-        float dx = Math.abs(x - oldPosition.x);
-        float dy = Math.abs(y - oldPosition.y);
-        if (dx > offset || dy > offset) {
-            System.out.println("Not accepted: " + client.getReturnTripTime() + " dx: " + dx + " dy: " + dy);
-            System.out.println("Frame: " + frame + " OldFrame: " + timeFrame);
-            System.out.println("Previous frame x : " + Math.abs(x - ((Position) simulatedPositions.get(timeFrame - 5)).x));
-            return false;
+    private void sendPositionHeartbeat() {
+        /*
+        Entity player = networkManager.getEntity(playerNetworkId);
+        if(player != null) {
+            Position playerPos = mPosition.get(player);
+            Velocity playerVel = mVelocity.get(player);
+            PositionHeartbeat positionHeartbeat = new PositionHeartbeat(sequence, playerNetworkId, playerPos.x, playerPos.y, playerVel.vx, playerVel.vy);
+            clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionHeartbeat);
         }
+        */
 
-        return true;
+        for (Entity e : heartbeatEntities) {
+            if (e != null) {
+                Position ePos = mPosition.get(e);
+                Velocity eVel = mVelocity.get(e);
+                PositionHeartbeat positionHeartbeat = new PositionHeartbeat(sequence, networkManager.getNetworkID(e), ePos.x, ePos.y, eVel.vx, eVel.vy);
+                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionHeartbeat);
+            }
+        }
+        heartbeatEntities.clear();
     }
 
     public boolean processPosition(PositionPacket packet) {
@@ -242,8 +226,33 @@ public class ClientNetworkSystem extends IntervalEntitySystem {
             }
 
             return true;
-        } else {
-            return false;
+        }
+        return false;
+    }
+
+    public boolean processDeltaPosition(DeltaPositionPacket packet) {
+        Entity e = networkManager.getEntity(packet.entityID);
+        if (e != null) {
+            float dx = packet.dx;
+            float dy = packet.dy;
+
+            Position p = mPosition.get(e);
+            Physics physics = mPhysics.get(e);
+
+            Body body = physics.body;
+            body.applyLinearImpulse(new Vector2(dx * body.getMass() * 4, dy * body.getMass() * 4), body.getPosition(), true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onNotify(Entity e, EntityEvent event) {
+        if (event instanceof MovementEvent) {
+            MovementEvent mvEvent = (MovementEvent) event;
+            heartbeatEntities.removeValue(e, false);
+            System.out.println("Added heartbeatentity: " + e.getId());
+            heartbeatEntities.add(e);
         }
     }
 }

@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
+import com.ives.relative.entities.events.MovementEvent;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
 
 /**
@@ -24,6 +26,7 @@ public class MovementSystem extends EntityProcessingSystem {
     protected ComponentMapper<Velocity> mVelocity;
 
     protected ChunkManager chunkManager;
+    protected EventManager eventManager;
     protected UuidEntityManager uuidEntityManager;
 
     /**
@@ -58,6 +61,19 @@ public class MovementSystem extends EntityProcessingSystem {
                     chunkManager.getChunk(position.x, position.worldID).addEntity(uuidEntityManager.getUuid(e));
                 }
             }
+
+            if (hasMoved(position)) {
+                sendEvent(e, position, velocity);
+            }
         }
+    }
+
+    public boolean hasMoved(Position position) {
+        return position.x != position.px || position.y != position.py;
+    }
+
+    public void sendEvent(Entity e, Position p, Velocity v) {
+        MovementEvent movementEvent = new MovementEvent(e, p, v);
+        eventManager.notifyEvent(e, movementEvent);
     }
 }

@@ -145,7 +145,7 @@ public class NetworkManager extends Manager {
                 Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
                 Entity planet = entity.getWorld().getManager(PlanetManager.class).getPlanet(position.worldID);
 
-                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.5f, planet);
+                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 1f, planet);
                 visual.texture = new TextureRegion(new Texture("player.png"));
                 break;
             case TILE:

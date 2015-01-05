@@ -1,4 +1,4 @@
-package com.ives.relative.managers;
+package com.ives.relative.managers.event;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -6,7 +6,7 @@ import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.State;
-import com.ives.relative.utils.EntityChangeObserver;
+import com.ives.relative.entities.events.EntityChangeObserver;
 
 /**
  * Created by Ives on 2/1/2015.
@@ -16,11 +16,11 @@ import com.ives.relative.utils.EntityChangeObserver;
  */
 @Wire
 public class StateManager extends Manager {
-    protected final Array<EntityChangeObserver> observers;
+    protected final Array<EntityChangeObserver> stateObservers;
     protected ComponentMapper<State> mState;
 
     public StateManager() {
-        observers = new Array<EntityChangeObserver>();
+        stateObservers = new Array<EntityChangeObserver>();
     }
 
     public void assertState(Entity e, EntityState state) {
@@ -32,11 +32,11 @@ public class StateManager extends Manager {
     }
 
     public void addObserver(EntityChangeObserver observer) {
-        observers.add(observer);
+        stateObservers.add(observer);
     }
 
     public void notifyObservers(Entity e, EntityState state) {
-        for (EntityChangeObserver observer : observers) {
+        for (EntityChangeObserver observer : stateObservers) {
             observer.onNotify(e, state);
         }
     }

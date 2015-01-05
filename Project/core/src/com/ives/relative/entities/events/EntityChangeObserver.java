@@ -1,7 +1,7 @@
-package com.ives.relative.utils;
+package com.ives.relative.entities.events;
 
 import com.artemis.Entity;
-import com.ives.relative.managers.StateManager;
+import com.ives.relative.managers.event.StateManager;
 
 /**
  * Created by Ives on 2/1/2015.

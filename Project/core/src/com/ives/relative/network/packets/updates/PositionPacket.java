@@ -13,7 +13,8 @@ import com.ives.relative.network.packets.UpdatePacket;
 public class PositionPacket extends UpdatePacket {
     public float x, y, rotation;
     public float vx, vy;
-    public int entityID;
+
+    public boolean force = false;
 
     public PositionPacket() {
     }
@@ -30,5 +31,15 @@ public class PositionPacket extends UpdatePacket {
         this.vy = velocity.vy;
 
         this.entityID = entityID;
+    }
+
+    public PositionPacket(int sequence, int entityID, float x, float y, float rotation, float vx, float vy, boolean force) {
+        super(sequence, entityID);
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
+        this.vx = vx;
+        this.vy = vy;
+        this.force = force;
     }
 }

@@ -49,13 +49,13 @@ public class Player {
 */
 
         PolygonShape sensorShape = new PolygonShape();
-        sensorShape.setAsBox(0.3f, 0.1f, new Vector2(0, -0.5f), 0);
+        sensorShape.setAsBox(0.5f, 0.1f, new Vector2(0, -radius), 0);
         fixtureDef.shape = sensorShape;
         fixtureDef.isSensor = true;
         Fixture sensorFixture = body.createFixture(fixtureDef);
 
         FootC footC = new FootC();
-        footC.yOffset = -0.5f;
+        footC.yOffset = -radius;
         sensorFixture.setUserData(FootC.class);
         e.edit().add(footC);
 
