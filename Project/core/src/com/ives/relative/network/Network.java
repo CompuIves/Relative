@@ -104,6 +104,7 @@ public abstract class Network extends Listener {
         kryo.register(Command.class);
         kryo.register(Component[].class);
         kryo.register(StateManager.EntityState.class);
+        kryo.register(int[].class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

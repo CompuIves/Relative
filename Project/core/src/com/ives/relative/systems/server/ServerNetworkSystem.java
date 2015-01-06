@@ -9,29 +9,30 @@ import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
-import com.ives.relative.network.packets.updates.DeltaPositionPacket;
-import com.ives.relative.network.packets.updates.PositionHeartbeat;
+import com.ives.relative.network.packets.updates.GrantEntitiesAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
 import com.ives.relative.network.packets.updates.RemoveTilePacket;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -44,17 +45,20 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Wire
 public class ServerNetworkSystem extends IntervalEntitySystem {
-    public final static float SERVER_NETWORK_INTERVAL = 1 / 10f;
+    public final static float SERVER_NETWORK_INTERVAL = 1 / 60f;
     private final ServerNetwork network;
     private final Map<Integer, Integer> lastInputsReceived;
-    private final Map<Integer, Float> lastReturnTripTime;
     protected ComponentMapper<Position> mPosition;
-    protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<NetworkC> mNetworkC;
+    protected ComponentMapper<Velocity> mVelocity;
+    protected ComponentMapper<Physics> mPhysics;
+
     protected CommandSystem commandSystem;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
+    protected AuthorityManager authorityManager;
     private BlockingQueue<UpdatePacket> packetQueue;
+
 
     /**
      * Creates a new IntervalEntitySystem.
@@ -62,7 +66,6 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
     public ServerNetworkSystem(ServerNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), SERVER_NETWORK_INTERVAL);
         lastInputsReceived = new HashMap<Integer, Integer>();
-        lastReturnTripTime = new HashMap<Integer, Float>();
         packetQueue = new LinkedBlockingQueue<UpdatePacket>();
         this.network = network;
         processRequests();
@@ -83,20 +86,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 int priority = networkC.priority;
             }
         }
-        /*
-        for (Entity entity : entities) {
-            if (mPosition.get(entity) != null)
-                sendPositions(entity);
-        }
-        */
-        Iterator<Map.Entry<Integer, Float>> it = lastReturnTripTime.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Integer, Float> entry = it.next();
-            entry.setValue(entry.getValue() - SERVER_NETWORK_INTERVAL);
-            if (entry.getValue() < 0) {
-                it.remove();
-            }
-        }
+
 
         for (int i = 0; i < packetQueue.size(); i++) {
             try {
@@ -104,9 +94,14 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 if (updatePacket instanceof CommandPressPacket) {
                     CommandPressPacket packet = (CommandPressPacket) updatePacket;
                     processInput(packet);
-                } else if (updatePacket instanceof PositionHeartbeat) {
-                    PositionHeartbeat packet = (PositionHeartbeat) updatePacket;
-                    processHeartbeat(packet);
+                }
+                if (updatePacket instanceof PositionPacket) {
+                    PositionPacket packet = (PositionPacket) updatePacket;
+                    if (authorityManager.isEntityAuthorizedByConnection(packet.connection, packet.entityID)) {
+                        Entity e = networkManager.getEntity(packet.entityID);
+                        processPosition(e, packet);
+                        network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID));
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -119,11 +114,9 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof UpdatePacket) {
-                    lastInputsReceived.put(((UpdatePacket) object).entityID, ((UpdatePacket) object).sequence);
+                    lastInputsReceived.put(((UpdatePacket) object).connection, ((UpdatePacket) object).sequence);
                     if (object instanceof CommandPressPacket) {
                         final CommandPressPacket packet = (CommandPressPacket) object;
-                        //Add the packet to the queue for processing.
-                        //packetQueue.add(packet);
                         Gdx.app.postRunnable(new Runnable() {
                             @Override
                             public void run() {
@@ -131,11 +124,9 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                             }
                         });
 
-                    } else if (object instanceof PositionHeartbeat) {
-                        PositionHeartbeat packet = (PositionHeartbeat) object;
-                        //Remove old packet
-                        packetQueue.remove(packet);
-                        packetQueue.add(packet);
+                    }
+                    if (object instanceof PositionPacket) {
+                        packetQueue.add((UpdatePacket) object);
                     }
                 }
             }
@@ -174,34 +165,35 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
         }
     }
 
-    public void processHeartbeat(PositionHeartbeat packet) {
-        Entity e = networkManager.getEntity(packet.entityID);
-        if (e != null) {
-            float posOffset = 0.5f;
-            float posDOffset = 0.2f;
-            Position position = mPosition.get(e);
-            Velocity velocity = mVelocity.get(e);
-            float dx = Math.abs(packet.x - position.x);
-            float dy = Math.abs(packet.y - position.y);
-            if (dx > posOffset || dy > posOffset) {
-                System.out.println("dx: " + dx + " dy: " + dy);
-                System.out.println("Entity PosHeartbeat rejected! ID: " + e.getId());
-                network.sendObjectTCP(packet.connection, new PositionPacket(lastInputsReceived.get(packet.entityID), packet.entityID, position.x, position.y, position.rotation,
-                        velocity.vx, velocity.vy, velocity.vr, true));
-            } else {
-                System.out.println("Entity PosHeartbeat accepted! DX: " + dx);
+    public void processPosition(Entity entity, PositionPacket packet) {
+        if (entity != null) {
+            float x = packet.x;
+            float y = packet.y;
+            float vx = packet.vx;
+            float vy = packet.vy;
+            float rotation = packet.rotation;
+            float rVelocity = packet.vr;
 
-                if (dx > posDOffset || dy > posDOffset) {
-                    if (!lastReturnTripTime.containsKey(packet.entityID)) {
-                        network.sendObjectTCP(packet.connection, new DeltaPositionPacket(lastInputsReceived.get(packet.entityID), packet.entityID, position.x - packet.x, position.y - packet.y));
-                        System.out.println(ServerNetwork.getConnection(packet.connection).getReturnTripTime());
-                        ServerNetwork.getConnection(packet.connection).updateReturnTripTime();
-                        lastReturnTripTime.put(packet.entityID, ServerNetwork.getConnection(packet.connection).getReturnTripTime() / 1000f);
-                    }
-                }
+            Position localPosition = mPosition.get(entity);
+            Velocity localVelocity = mVelocity.get(entity);
+            Physics physics = mPhysics.get(entity);
+
+            Body body = physics.body;
+            Vector2 bodyPos = body.getTransform().getPosition();
+            if (bodyPos.x != x || bodyPos.y != y) {
+                body.setTransform(x, y, rotation);
+                localPosition.x = x;
+                localPosition.y = y;
             }
 
+            Vector2 bodyVel = body.getLinearVelocity();
+            if (bodyVel.x != vx || bodyVel.y != vy) {
+                body.setLinearVelocity(vx, vy);
+                localVelocity.vx = vx;
+                localVelocity.vy = vy;
+            }
 
+            body.setAngularVelocity(rVelocity);
         }
     }
 
@@ -228,6 +220,21 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
         for (Component c : components) {
             hashCodes.add(c.hashCode());
+        }
+    }
+
+    public void sendAuthorization(int connection, Array<Integer> entityIDs) {
+        if (entityIDs.size != 0) {
+            network.sendObjectTCP(connection, new GrantEntitiesAuthority(0, entityIDs));
+        }
+    }
+
+    public void sendAuthorization(int connection, Entity e) {
+        int id = networkManager.getNetworkID(e);
+        Array<Integer> entity = new Array<Integer>();
+        if (id != -1) {
+            entity.add(id);
+            network.sendObjectTCP(connection, new GrantEntitiesAuthority(0, entity));
         }
     }
 }

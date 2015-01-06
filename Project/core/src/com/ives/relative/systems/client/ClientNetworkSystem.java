@@ -34,7 +34,7 @@ import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
-import com.ives.relative.network.packets.updates.PositionHeartbeat;
+import com.ives.relative.network.packets.updates.GrantEntitiesAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
 
 /**
@@ -44,7 +44,7 @@ import com.ives.relative.network.packets.updates.PositionPacket;
  */
 @Wire
 public class ClientNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 10f;
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
@@ -57,12 +57,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     int frame = 0;
     private int playerNetworkId;
     private Array<Integer> requestedEntities;
-    private Array<Entity> heartbeatEntities;
+    private Array<Integer> grantedEntities;
+    private Array<Integer> entitiesToSend;
 
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
         requestedEntities = new Array<Integer>();
-        heartbeatEntities = new Array<Entity>();
+        grantedEntities = new Array<Integer>();
+        entitiesToSend = new Array<Integer>();
         processRequests(network);
     }
 
@@ -120,8 +122,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
      */
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-        sendPositionHeartbeat();
         frame++;
+        for (int entity : entitiesToSend) {
+            Entity e = networkManager.getEntity(entity);
+            PositionPacket positionPacket = new PositionPacket(e, sequence, entity);
+            clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
+            System.out.println("SENDOBJECT");
+        }
+        entitiesToSend.clear();
     }
 
     public void processRequests(final Network network) {
@@ -134,7 +142,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                if (packet.force) {
+                                if (packet.force && !grantedEntities.contains(packet.entityID, true)) {
                                     if (!processPosition(packet)) {
                                         network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
                                         requestedEntities.add(packet.entityID);
@@ -170,30 +178,16 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                         requestedEntities.removeValue(packet.entityID, true);
                     }
                 }
+                if (object instanceof GrantEntitiesAuthority) {
+                    GrantEntitiesAuthority packet = (GrantEntitiesAuthority) object;
+                    for (Integer e : packet.entities) {
+                        if (!grantedEntities.contains(e, true)) {
+                            grantedEntities.add(e);
+                        }
+                    }
+                }
             }
         });
-    }
-
-    private void sendPositionHeartbeat() {
-        /*
-        Entity player = networkManager.getEntity(playerNetworkId);
-        if(player != null) {
-            Position playerPos = mPosition.get(player);
-            Velocity playerVel = mVelocity.get(player);
-            PositionHeartbeat positionHeartbeat = new PositionHeartbeat(sequence, playerNetworkId, playerPos.x, playerPos.y, playerVel.vx, playerVel.vy);
-            clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionHeartbeat);
-        }
-        */
-
-        for (Entity e : heartbeatEntities) {
-            if (e != null) {
-                Position ePos = mPosition.get(e);
-                Velocity eVel = mVelocity.get(e);
-                PositionHeartbeat positionHeartbeat = new PositionHeartbeat(sequence, networkManager.getNetworkID(e), ePos.x, ePos.y, eVel.vx, eVel.vy);
-                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionHeartbeat);
-            }
-        }
-        heartbeatEntities.clear();
     }
 
     public boolean processPosition(PositionPacket packet) {
@@ -252,10 +246,12 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     @Override
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof MovementEvent) {
-            MovementEvent mvEvent = (MovementEvent) event;
-            heartbeatEntities.removeValue(e, false);
-            System.out.println("Added heartbeatentity: " + e.getId());
-            heartbeatEntities.add(e);
+            int id = networkManager.getNetworkID(e);
+            if (grantedEntities.contains(id, true)) {
+                if (!entitiesToSend.contains(id, true)) {
+                    entitiesToSend.add(id);
+                }
+            }
         }
     }
 }

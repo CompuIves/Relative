@@ -7,6 +7,9 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
+import com.ives.relative.entities.events.JoinChunkEvent;
+import com.ives.relative.entities.events.LeaveChunkEvent;
+import com.ives.relative.managers.event.EventManager;
 
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +24,7 @@ public class ChunkManager extends Manager {
     private static final int chunkSize = 128;
     protected PlanetManager planetManager;
     protected UuidEntityManager uuidEntityManager;
+    protected EventManager eventManager;
 
     protected ComponentMapper<ChunkC> mChunkC;
     protected ComponentMapper<Position> mPosition;
@@ -96,16 +100,26 @@ public class ChunkManager extends Manager {
     public void addEntity(Entity e) {
         Position position = mPosition.get(e);
         if (position != null) {
-            Chunk chunk = getChunk(position.x, position.worldID);
-            chunk.addEntity(uuidEntityManager.getUuid(e));
+            addEntity(e, position.x, position.worldID);
         }
+    }
+
+    public void addEntity(Entity e, float x, String world) {
+        Chunk chunk = getChunk(x, world);
+        chunk.addEntity(uuidEntityManager.getUuid(e));
+        eventManager.notifyEvent(e, new JoinChunkEvent(e, chunk));
     }
 
     public void removeEntity(Entity e) {
         Position position = mPosition.get(e);
         if (position != null) {
-            Chunk chunk = getChunk(position.x, position.worldID);
-            chunk.removeEntity(uuidEntityManager.getUuid(e));
+            removeEntity(e, position.x, position.worldID);
         }
+    }
+
+    public void removeEntity(Entity e, float x, String world) {
+        Chunk chunk = getChunk(x, world);
+        chunk.removeEntity(uuidEntityManager.getUuid(e));
+        eventManager.notifyEvent(e, new LeaveChunkEvent(e, chunk));
     }
 }

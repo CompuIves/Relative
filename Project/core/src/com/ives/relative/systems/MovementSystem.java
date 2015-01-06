@@ -57,8 +57,8 @@ public class MovementSystem extends EntityProcessingSystem {
 
             if (position.px != position.x) {
                 if (!chunkManager.getChunk(position.x, position.worldID).equals(chunkManager.getChunk(position.px, position.worldID))) {
-                    chunkManager.getChunk(position.px, position.worldID).removeEntity(uuidEntityManager.getUuid(e));
-                    chunkManager.getChunk(position.x, position.worldID).addEntity(uuidEntityManager.getUuid(e));
+                    chunkManager.removeEntity(e, position.x, position.worldID);
+                    chunkManager.addEntity(e, position.x, position.worldID);
                 }
             }
 

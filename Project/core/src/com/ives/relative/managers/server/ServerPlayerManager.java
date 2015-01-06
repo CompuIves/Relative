@@ -56,7 +56,7 @@ public class ServerPlayerManager extends PlayerManager {
      * @param z            depth
      * @return a new entity (player)
      */
-    public Entity createPlayer(String internalName, String realName, Entity planet, Vector2 position, int z) {
+    public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = new EntityBuilder(world).with(new Health(100),
                 new MovementSpeed(3.5f),
@@ -72,6 +72,7 @@ public class ServerPlayerManager extends PlayerManager {
         e.edit().add(new Physics(body)).add(new Transform(1, 1, null));
 
         setPlayer(e, internalName);
+        addConnection(connection, e);
 
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
@@ -120,6 +121,10 @@ public class ServerPlayerManager extends PlayerManager {
             entities.add((Entity) entry.getValue());
         }
         return entities;
+    }
+
+    public boolean isPlayer(Entity e) {
+        return connectionsByPlayers.containsKey(e);
     }
 
     /**

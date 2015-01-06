@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
@@ -53,6 +54,7 @@ public class ServerManager extends GameManager {
     public void registerManagers() {
         super.registerManagers();
         world.setManager(new ServerPlayerManager());
+        world.setManager(new AuthorityManager());
 
         ModuleManager moduleManager = world.getManager(ModuleManager.class);
         moduleManager.loadModules();

@@ -33,6 +33,7 @@ public class PositionPacket extends UpdatePacket {
         this.vr = velocity.vr;
 
         this.entityID = entityID;
+        force = true;
     }
 
     public PositionPacket(int sequence, int entityID, float x, float y, float rotation, float vx, float vy, float vr, boolean force) {
