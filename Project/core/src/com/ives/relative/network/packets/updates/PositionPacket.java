@@ -15,6 +15,7 @@ public class PositionPacket extends UpdatePacket {
     public float vx, vy;
 
     public boolean force = false;
+    public float vr;
 
     public PositionPacket() {
     }
@@ -29,17 +30,19 @@ public class PositionPacket extends UpdatePacket {
 
         this.vx = velocity.vx;
         this.vy = velocity.vy;
+        this.vr = velocity.vr;
 
         this.entityID = entityID;
     }
 
-    public PositionPacket(int sequence, int entityID, float x, float y, float rotation, float vx, float vy, boolean force) {
+    public PositionPacket(int sequence, int entityID, float x, float y, float rotation, float vx, float vy, float vr, boolean force) {
         super(sequence, entityID);
         this.x = x;
         this.y = y;
         this.rotation = rotation;
         this.vx = vx;
         this.vy = vy;
+        this.vr = vr;
         this.force = force;
     }
 }

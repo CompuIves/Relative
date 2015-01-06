@@ -72,7 +72,6 @@ public class ServerManager extends GameManager {
         tileManager.createTile(planet, 30, 13, 0, "dirt", true);
         tileManager.createTile(planet, 30, 18, 0, "dirt", true);
         tileManager.createTile(planet, 30, 30, 0, "dirt", true);
-
     }
 
     @Override

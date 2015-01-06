@@ -25,7 +25,7 @@ public class Tile {
     public static Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
         if (tile.gravity && gravity) {
-            e.edit().add(new Velocity(0, 0));
+            e.edit().add(new Velocity(0, 0, 0));
             bodyDef.type = BodyDef.BodyType.DynamicBody;
         } else {
             bodyDef.type = BodyDef.BodyType.StaticBody;

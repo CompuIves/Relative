@@ -205,6 +205,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
             float vx = packet.vx;
             float vy = packet.vy;
             float rotation = packet.rotation;
+            float rVelocity = packet.vr;
 
             Position localPosition = mPosition.get(entity);
             Velocity localVelocity = mVelocity.get(entity);
@@ -224,6 +225,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                 localVelocity.vx = vx;
                 localVelocity.vy = vy;
             }
+
+            body.setAngularVelocity(rVelocity);
 
             return true;
         }

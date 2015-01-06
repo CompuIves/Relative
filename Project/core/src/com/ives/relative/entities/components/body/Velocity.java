@@ -8,13 +8,14 @@ import com.ives.relative.entities.components.network.Networkable;
  */
 public class Velocity extends Component implements Networkable {
     public float vx, vy;
+    public float vr;
 
     public Velocity() {
     }
 
-    public Velocity(float vx, float vy) {
-
+    public Velocity(float vx, float vy, float vr) {
         this.vx = vx;
         this.vy = vy;
+        this.vr = vr;
     }
 }

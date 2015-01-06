@@ -63,7 +63,7 @@ public class ServerPlayerManager extends PlayerManager {
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 2, 2),
                 new Position(position.x, position.y, z, 0, worldID),
-                new Velocity(0, 0),
+                new Velocity(0, 0, 0),
                 new State()).
                 group("players").
                 build();

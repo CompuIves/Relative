@@ -187,7 +187,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 System.out.println("dx: " + dx + " dy: " + dy);
                 System.out.println("Entity PosHeartbeat rejected! ID: " + e.getId());
                 network.sendObjectTCP(packet.connection, new PositionPacket(lastInputsReceived.get(packet.entityID), packet.entityID, position.x, position.y, position.rotation,
-                        velocity.vx, velocity.vy, true));
+                        velocity.vx, velocity.vy, velocity.vr, true));
             } else {
                 System.out.println("Entity PosHeartbeat accepted! DX: " + dx);
 
