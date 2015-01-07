@@ -10,7 +10,6 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
-import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetGenerator;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
@@ -64,7 +63,6 @@ public class GameManager extends Manager {
         world.setManager(new UuidEntityManager());
         world.setManager(new StateManager());
         world.setManager(new TileManager());
-        world.setManager(new ChunkManager());
     }
 
     public boolean isServer() {

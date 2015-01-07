@@ -16,8 +16,6 @@ import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
-import com.ives.relative.entities.events.EntityEvent;
-import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
@@ -31,7 +29,7 @@ import java.util.UUID;
  * Manager of the planets! Sort of an Interstellar Manager.
  */
 @Wire
-public class PlanetManager extends Manager implements EntityEventObserver {
+public class PlanetManager extends Manager {
     /**
      * All entities that are mapped to a planet, with the planet as key.
      */
@@ -56,7 +54,6 @@ public class PlanetManager extends Manager implements EntityEventObserver {
     @Override
     protected void initialize() {
         super.initialize();
-        eventManager.addObserver(this);
     }
 
     public void addPlanet(String name, Entity e) {
@@ -106,10 +103,5 @@ public class PlanetManager extends Manager implements EntityEventObserver {
         //Add the planet to the planetmanager
         addPlanet(id, e);
         return e;
-    }
-
-    @Override
-    public void onNotify(Entity e, EntityEvent event) {
-
     }
 }

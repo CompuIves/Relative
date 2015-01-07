@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunkloaders.ClientChunkLoader;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.client.ClientNetworkSystem;
@@ -54,15 +56,17 @@ public class ClientManager extends GameManager implements Screen {
         world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
         world.setSystem(new NetworkReceiveSystem());
+
+        InputSystem inputSystem = new InputSystem(camera);
+        Gdx.input.setInputProcessor(inputSystem);
+        world.setSystem(inputSystem);
     }
 
     @Override
     public void registerManagers() {
         super.registerManagers();
         world.setManager(new TagManager());
-        InputSystem inputSystem = new InputSystem(camera);
-        Gdx.input.setInputProcessor(inputSystem);
-        world.setSystem(inputSystem);
+        world.setManager(new ChunkManager(new ClientChunkLoader((ClientNetwork) network)));
     }
 
     @Override

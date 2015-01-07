@@ -8,7 +8,7 @@ import com.ives.relative.network.packets.ResponsePacket;
 
 /**
  * Created by Ives on 7/1/2015.
- * Contains chunks
+ * Contains chunk
  * HANDLED BY CLIENT
  */
 public class ChunkPacket extends ResponsePacket {
@@ -27,8 +27,7 @@ public class ChunkPacket extends ResponsePacket {
             @Override
             public void run() {
                 ChunkManager chunkManager = game.world.getManager(ChunkManager.class);
-                chunk.setLoaded(false);
-                chunkManager.addChunk(chunk);
+                chunkManager.updateChunk(chunk);
             }
         });
     }

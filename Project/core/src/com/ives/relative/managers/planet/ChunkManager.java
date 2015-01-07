@@ -11,6 +11,7 @@ import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.events.*;
 import com.ives.relative.managers.event.EventManager;
+import com.ives.relative.managers.planet.chunkloaders.ChunkLoader;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.Map;
@@ -34,7 +35,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     protected ComponentMapper<ChunkC> mChunkC;
     protected ComponentMapper<Position> mPosition;
 
-    public ChunkManager() {
+    protected ChunkLoader chunkLoader;
+
+    public ChunkManager(ChunkLoader chunkLoader) {
+        this.chunkLoader = chunkLoader;
     }
 
     @Override
@@ -54,10 +58,12 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
 
-    public void addChunk(Chunk chunk) {
-        Map<Integer, Chunk> chunks = getChunks(chunk.getPlanet());
-        chunks.put(getChunkIndex(chunk.getStartX()), chunk);
-        loadChunk(chunk);
+    public void updateChunk(Chunk chunk) {
+        if (chunk != null) {
+            Chunk oldChunk = getChunk(chunk.getStartX(), chunk.getPlanet());
+            if (chunk.getChangedTiles() != null)
+                oldChunk.setChangedTiles(chunk.getChangedTiles());
+        }
     }
 
     /**
@@ -135,10 +141,11 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      */
     public void loadChunk(Chunk chunk) {
         if (chunk != null) {
-            if (!chunk.isLoaded()) {
+            if (!chunk.loaded) {
                 chunk.initialize();
                 planetGenerator.generateTerrain(chunk);
-                chunk.setLoaded(true);
+                chunkLoader.loadChunkInfo(chunk);
+                chunk.loaded = true;
             }
         }
     }
@@ -231,10 +238,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     /**
      * Get the tile from a chunk
      *
-     * @param x
-     * @param y
-     * @param planet
-     * @return
+     * @param x coord
+     * @param y coord
+     * @param planet name of the planet
+     * @return the tile which was requested
      */
     public Entity getTile(float x, float y, String planet) {
         Chunk chunk = getChunk(x, planet);

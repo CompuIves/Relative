@@ -15,12 +15,13 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk {
+    public int owner;
+    public boolean loaded = false;
     private int startX, endX;
     private String planet;
-    private int owner;
     private transient Map<Vector2, UUID> tiles;
+    private Map<Vector2, String> changedTiles;
     private transient Array<UUID> entities;
-    private boolean loaded = false;
 
     public Chunk() {
     }
@@ -61,6 +62,10 @@ public class Chunk {
         return entities;
     }
 
+    public void setEntities(Array<UUID> entities) {
+        this.entities = entities;
+    }
+
     public void addEntity(UUID e) {
         System.out.println("Added an entity to chunk " + startX + " to " + endX + "!");
         if (!entities.contains(e, false)) {
@@ -88,29 +93,26 @@ public class Chunk {
         return null;
     }
 
-    public int getOwner() {
-        return owner;
-    }
-
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
-
     public boolean isThisChunk(float x) {
         return x >= startX && x <= endX;
+    }
+
+    public void updateTiles() {
+
     }
 
     public void dispose() {
         tiles.clear();
         entities.clear();
         loaded = false;
+    }
+
+    public Map<Vector2, String> getChangedTiles() {
+        return changedTiles;
+    }
+
+    public void setChangedTiles(Map<Vector2, String> changedTiles) {
+        this.changedTiles = changedTiles;
+        updateTiles();
     }
 }

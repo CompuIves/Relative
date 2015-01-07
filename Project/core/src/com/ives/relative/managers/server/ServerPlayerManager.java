@@ -21,6 +21,7 @@ import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.CreatePlayerEvent;
 import com.ives.relative.factories.Player;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.PlanetManager;
@@ -35,6 +36,7 @@ import java.util.Map;
 @Wire
 public class ServerPlayerManager extends PlayerManager {
     protected NetworkManager networkManager;
+    protected AuthorityManager authorityManager;
     //For the server
     private Map<Integer, Entity> playersByConnection;
     private Map<Entity, Integer> connectionsByPlayers;
@@ -61,7 +63,7 @@ public class ServerPlayerManager extends PlayerManager {
     public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = new EntityBuilder(world).with(new Health(100),
-                new MovementSpeed(3.5f),
+                new MovementSpeed(10f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 2, 2),
                 new Position(position.x, position.y, z, 0, worldID),
@@ -72,12 +74,14 @@ public class ServerPlayerManager extends PlayerManager {
 
         Body body = Player.createBody(e, position.x, position.y, 0, 0, 1f, planet);
         e.edit().add(new Physics(body)).add(new Transform(1, 1, null));
+        authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
 
         setPlayer(e, internalName);
         addConnection(connection, e);
 
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
+
 
         world.getManager(EventManager.class).notifyEvent(e, new CreatePlayerEvent(e));
 

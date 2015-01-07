@@ -10,7 +10,9 @@ import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
+import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
+import com.ives.relative.managers.planet.chunkloaders.ServerChunkLoader;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.server.NetworkSendSystem;
@@ -56,6 +58,7 @@ public class ServerManager extends GameManager {
         super.registerManagers();
         world.setManager(new ServerPlayerManager());
         world.setManager(new AuthorityManager());
+        world.setManager(new ChunkManager(new ServerChunkLoader()));
 
         ModuleManager moduleManager = world.getManager(ModuleManager.class);
         moduleManager.loadModules();

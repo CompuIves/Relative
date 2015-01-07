@@ -1,6 +1,7 @@
 package com.ives.relative.network;
 
 import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -76,6 +77,9 @@ public abstract class Network extends Listener {
         Reflections componentReflections = new Reflections("com.ives.relative.entities.components");
         Set<Class<? extends Component>> components = componentReflections.getSubTypesOf(Component.class);
 
+        Reflections pooledComponentReflections = new Reflections("com.ives.relative.entities.components");
+        Set<Class<? extends PooledComponent>> pooledComponents = pooledComponentReflections.getSubTypesOf(PooledComponent.class);
+
         Reflections packetReflections = new Reflections("com.ives.relative.network.packets");
         Set<Class<? extends BasePacket>> packets = packetReflections.getSubTypesOf(BasePacket.class);
 
@@ -83,6 +87,7 @@ public abstract class Network extends Listener {
         kryoList = new ArrayList<Class<?>>();
         kryoList.addAll(components);
         kryoList.addAll(packets);
+        kryoList.addAll(pooledComponents);
 
         kryoList.sort(new KryoComparator());
     }

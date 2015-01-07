@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
@@ -18,19 +19,13 @@ import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
-import com.ives.relative.entities.events.EntityEvent;
-import com.ives.relative.entities.events.EntityEventObserver;
-import com.ives.relative.entities.events.JoinChunkEvent;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.handshake.RequestWorldSnapshot;
-import com.ives.relative.network.packets.handshake.planet.RequestChunk;
-import com.ives.relative.network.packets.handshake.planet.RequestNearbyChunks;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -45,7 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * This system processes all entities received. The system makes sure that the entities get added by the main thread.
  */
 @Wire
-public class NetworkReceiveSystem extends VoidEntitySystem implements EntityEventObserver {
+public class NetworkReceiveSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
 
     protected ComponentMapper<Velocity> mVelocity;
@@ -173,6 +168,9 @@ public class NetworkReceiveSystem extends VoidEntitySystem implements EntityEven
 
                 physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 1f, planet);
                 visual.texture = new TextureRegion(new Texture("player.png"));
+
+                Authority authority = world.getMapper(Authority.class).get(entity);
+                //authorityManager.authorizeEntity(authority.owner, entity, authority.type);
                 break;
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
@@ -185,26 +183,13 @@ public class NetworkReceiveSystem extends VoidEntitySystem implements EntityEven
                 Name name = world.getMapper(Name.class).get(entity);
                 PlanetManager planetManager = world.getManager(PlanetManager.class);
                 planetManager.addPlanet(name.internalName, entity);
-                world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestNearbyChunks());
+                //world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestNearbyChunks());
                 world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
                 break;
             case OTHER:
                 break;
             default:
                 break;
-        }
-    }
-
-    @Override
-    public void onNotify(Entity e, EntityEvent event) {
-        if (event instanceof JoinChunkEvent) {
-            Velocity v = mVelocity.get(e);
-            Position p = mPosition.get(e);
-            if (v.vx < 0) {
-                world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(p.x - ChunkManager.CHUNK_SIZE, p.planet));
-            } else {
-                world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(p.x + ChunkManager.CHUNK_SIZE, p.planet));
-            }
         }
     }
 }

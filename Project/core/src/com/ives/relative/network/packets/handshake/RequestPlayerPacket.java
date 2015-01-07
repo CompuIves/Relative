@@ -25,7 +25,7 @@ public class RequestPlayerPacket extends ResponsePacket {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
                 Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
-                        new Vector2(50, 10), 0);
+                        new Vector2(5, 12), 0);
                 game.network.sendObjectTCP(connection, new AssignPlayer(game.world.getManager(NetworkManager.class).getNetworkID(player)));
             }
         });
