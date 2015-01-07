@@ -3,11 +3,15 @@ package com.ives.relative.utils;
 import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.EntityEdit;
+import com.artemis.PooledComponent;
 import com.artemis.utils.Bag;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.managers.NetworkManager;
+import org.apache.commons.beanutils.BeanUtils;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Ives on 17/12/2014.
@@ -41,9 +45,23 @@ public class ComponentUtils {
     public static Entity addComponents(Entity e, Array<Component> components) {
         EntityEdit entityEdit = e.edit();
         for (Component component : components) {
-            entityEdit.add(component);
+            if (component instanceof PooledComponent) {
+                try {
+                    transferPooledComponent((PooledComponent) component, entityEdit);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                entityEdit.add(component);
+            }
         }
         return e;
+    }
+
+    public static Component transferPooledComponent(PooledComponent fromComponent, EntityEdit edit) throws InvocationTargetException, IllegalAccessException {
+        Component component = edit.create(fromComponent.getClass());
+        BeanUtils.copyProperties(fromComponent, component);
+        return component;
     }
 
     /**

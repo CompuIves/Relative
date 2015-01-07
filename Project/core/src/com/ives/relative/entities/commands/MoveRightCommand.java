@@ -26,7 +26,7 @@ public class MoveRightCommand extends Command {
     @Override
     public void execute(Entity e, float delta) {
         e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.WALKING);
-        float mvSpeed = e.getComponent(MovementSpeed.class).movementSpeed;
+        float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
         float vx = mvSpeed;
         moveEntity(e, vx);
     }

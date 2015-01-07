@@ -30,7 +30,7 @@ public class RequestWorldSnapshot extends ResponsePacket {
                 NetworkManager networkManager = game.world.getManager(NetworkManager.class);
                 for (Entity entity : networkEntities) {
                     //Filter planets out
-                    if (entity.getComponent(WorldC.class) == null) {
+                    if (!entity.getWorld().getMapper(WorldC.class).has(entity)) {
                         NetworkC networkC = game.world.getMapper(NetworkC.class).get(entity);
                         UpdatePacket packet = new UpdatePacket(0, networkManager.getNetworkID(entity));
                         packet.connection = connection;

@@ -17,6 +17,7 @@ import java.util.UUID;
 public class Chunk {
     private float startX, endX;
     private String planet;
+    private int authority;
     private Map<Vector2, UUID> tiles;
     private Array<UUID> entities;
 
@@ -78,6 +79,14 @@ public class Chunk {
             }
         }
         return null;
+    }
+
+    public int getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(int authority) {
+        this.authority = authority;
     }
 
     public boolean isThisChunk(float x) {

@@ -24,8 +24,8 @@ public class StateManager extends Manager {
     }
 
     public void assertState(Entity e, EntityState state) {
-        State stateC = e.getComponent(State.class);
-        if (stateC != null) {
+        if (mState.has(e)) {
+            State stateC = mState.get(e);
             stateC.entityState = state;
             notifyObservers(e, state);
         }

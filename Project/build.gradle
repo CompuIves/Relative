@@ -130,6 +130,7 @@ project(":core") {
         // Support for artemis-odb
         compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
         compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
+        compile 'net.onedaybeard.artemis:artemis-odb-cli:0.8.1'
     }
 
 
