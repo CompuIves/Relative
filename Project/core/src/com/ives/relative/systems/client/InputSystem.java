@@ -9,9 +9,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.ives.relative.entities.commands.BreakTileCommand;
-import com.ives.relative.entities.commands.ClickCommand;
-import com.ives.relative.entities.commands.Command;
+import com.ives.relative.entities.commands.*;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.systems.CommandSystem;
@@ -51,7 +49,9 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             Command command = commandManager.getCommand(commandTemplate);
             if (command.isSimulate())
                 commandSystem.commandDown(command, e);
-            clientNetworkSystem.sendDownCommand(command);
+
+            if (!(command instanceof MoveRightCommand) && !(command instanceof MoveLeftCommand) && !(command instanceof JumpCommand))
+                clientNetworkSystem.sendDownCommand(command);
         }
         return true;
     }
@@ -63,7 +63,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             Command commandTemplate = inputC.commandKeys.get(keycode);
             if (commandTemplate.isSimulate())
                 commandSystem.commandUp(commandManager.getID(commandTemplate), e);
-            clientNetworkSystem.sendUpCommand(commandTemplate);
+            if (!(commandTemplate instanceof MoveRightCommand) && !(commandTemplate instanceof MoveLeftCommand) && !(commandTemplate instanceof JumpCommand))
+                clientNetworkSystem.sendUpCommand(commandTemplate);
         }
         return true;
     }

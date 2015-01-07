@@ -74,7 +74,6 @@ public class ServerPlayerManager extends PlayerManager {
 
         Body body = Player.createBody(e, position.x, position.y, 0, 0, 1f, planet);
         e.edit().add(new Physics(body)).add(new Transform(1, 1, null));
-        authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
 
         setPlayer(e, internalName);
         addConnection(connection, e);
@@ -82,7 +81,7 @@ public class ServerPlayerManager extends PlayerManager {
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
 
-
+        authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
         world.getManager(EventManager.class).notifyEvent(e, new CreatePlayerEvent(e));
 
         return e;

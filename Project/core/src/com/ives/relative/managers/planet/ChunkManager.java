@@ -48,13 +48,17 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Simple equation to check which chunk to get
+     * Simple equation to check which chunk is bound to x coordinate
      *
      * @param x
      * @return
      */
     public int getChunkIndex(float x) {
-        return (int) x / CHUNK_SIZE;
+        float rawIndex = x / CHUNK_SIZE;
+        if (rawIndex < 0) {
+            rawIndex--;
+        }
+        return (int) rawIndex;
     }
 
 
@@ -75,6 +79,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      */
     public Chunk getChunk(float x, String planet) {
         int index = getChunkIndex(x);
+        return getChunk(index, planet);
+    }
+
+    public Chunk getChunk(int index, String planet) {
         Map<Integer, Chunk> chunks = getChunks(planet);
 
         if (chunks.containsKey(index)) {
@@ -127,10 +135,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         for (int i = -(CHUNK_LOAD - 1) / 2; i < (CHUNK_LOAD + 1) / 2; i++) {
             int index = baseIndex + i;
 
-            Chunk chunk = getChunk(index * CHUNK_SIZE, position.planet);
+            Chunk chunk = getChunk(index, position.planet);
             chunkSurrounding.add(chunk);
         }
-
         return chunkSurrounding;
     }
 
@@ -207,7 +214,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Chunk chunk = getChunk(x, world);
         UUID entityID = uuidEntityManager.getUuid(e);
         if (!chunk.getEntities().contains(entityID, false)) {
-            chunk.addEntity(uuidEntityManager.getUuid(e));
+            chunk.addEntity(entityID);
             eventManager.notifyEvent(e, new JoinChunkEvent(e, chunk));
         }
     }
@@ -230,7 +237,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Chunk chunk = getChunk(x, world);
         UUID entityID = uuidEntityManager.getUuid(e);
         if (chunk.getEntities().contains(entityID, false)) {
-            chunk.removeEntity(uuidEntityManager.getUuid(e));
+            chunk.removeEntity(entityID);
             eventManager.notifyEvent(e, new LeaveChunkEvent(e, chunk));
         }
     }

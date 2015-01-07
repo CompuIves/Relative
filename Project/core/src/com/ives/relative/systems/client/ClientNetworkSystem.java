@@ -24,18 +24,22 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.MovementEvent;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.network.Network;
+import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.ComponentPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
-import com.ives.relative.network.packets.updates.GrantEntitiesAuthority;
+import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
+
+import java.util.Iterator;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -44,7 +48,7 @@ import com.ives.relative.network.packets.updates.PositionPacket;
  */
 @Wire
 public class ClientNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 10f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
@@ -60,11 +64,15 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     private Array<Integer> grantedEntities;
     private Array<Integer> entitiesToSend;
 
+    private Array<BasePacket> packetsToBeProcessed;
+
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
         requestedEntities = new Array<Integer>();
         grantedEntities = new Array<Integer>();
         entitiesToSend = new Array<Integer>();
+
+        packetsToBeProcessed = new Array<BasePacket>();
         processRequests(network);
     }
 
@@ -127,9 +135,18 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
             Entity e = networkManager.getEntity(entity);
             PositionPacket positionPacket = new PositionPacket(e, sequence, entity);
             clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
-            System.out.println("SENDOBJECT");
         }
         entitiesToSend.clear();
+
+        Iterator<BasePacket> it = packetsToBeProcessed.iterator();
+        while (it.hasNext()) {
+            BasePacket basePacket = it.next();
+            if (basePacket instanceof GrantEntityAuthority) {
+                if (processAuthority((GrantEntityAuthority) basePacket)) {
+                    it.remove();
+                }
+            }
+        }
     }
 
     public void processRequests(final Network network) {
@@ -178,16 +195,28 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                         requestedEntities.removeValue(packet.entityID, true);
                     }
                 }
-                if (object instanceof GrantEntitiesAuthority) {
-                    GrantEntitiesAuthority packet = (GrantEntitiesAuthority) object;
-                    for (Integer e : packet.entities) {
-                        if (!grantedEntities.contains(e, true)) {
-                            grantedEntities.add(e);
-                        }
+                if (object instanceof GrantEntityAuthority) {
+                    if (!processAuthority((GrantEntityAuthority) object)) {
+                        packetsToBeProcessed.add((BasePacket) object);
                     }
                 }
             }
         });
+    }
+
+    public boolean processAuthority(GrantEntityAuthority packet) {
+        Entity entity = networkManager.getEntity(packet.entity);
+        System.out.println(packet.entity);
+        if (entity != null) {
+            if (packet.type == AuthorityManager.AuthorityType.PERMANENT) {
+                Physics p = mPhysics.get(entity);
+                AuthorityManager.addProximitySensor(p);
+            }
+            grantedEntities.add(packet.entity);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean processPosition(PositionPacket packet) {
@@ -247,10 +276,8 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof MovementEvent) {
             int id = networkManager.getNetworkID(e);
-            if (grantedEntities.contains(id, true)) {
-                if (!entitiesToSend.contains(id, true)) {
-                    entitiesToSend.add(id);
-                }
+            if (!entitiesToSend.contains(id, true)) {
+                entitiesToSend.add(id);
             }
         }
     }

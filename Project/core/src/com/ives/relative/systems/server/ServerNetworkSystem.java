@@ -24,6 +24,7 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
+import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
 import com.ives.relative.network.packets.updates.RemoveTilePacket;
 import com.ives.relative.systems.CommandSystem;
@@ -39,7 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Wire
 public class ServerNetworkSystem extends IntervalEntitySystem {
-    public final static float SERVER_NETWORK_INTERVAL = 1 / 60f;
+    public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
     private final ServerNetwork network;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
@@ -74,11 +75,11 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 }
                 if (updatePacket instanceof PositionPacket) {
                     PositionPacket packet = (PositionPacket) updatePacket;
-                    //if (authorityManager.isEntityAuthorizedByConnection(packet.connection, packet.entityID)) {
-                    //Entity e = networkManager.getEntity(packet.entityID);
-                    //processPosition(e, packet);
-                    //network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID));
-                    //}
+                    if (authorityManager.isEntityAuthorizedByPlayer(packet.connection, networkManager.getEntity(packet.entityID))) {
+                        Entity e = networkManager.getEntity(packet.entityID);
+                        processPosition(e, packet);
+                        network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID));
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -99,7 +100,6 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                                 processInput(packet);
                             }
                         });
-
                     }
                     if (object instanceof PositionPacket) {
                         packetQueue.add((UpdatePacket) object);
@@ -171,5 +171,9 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
             body.setAngularVelocity(rVelocity);
         }
+    }
+
+    public void sendAuthority(int connection, Entity e, AuthorityManager.AuthorityType type) {
+        network.sendObjectTCP(connection, new GrantEntityAuthority(0, networkManager.getNetworkID(e), type));
     }
 }

@@ -108,7 +108,7 @@ public class NetworkManager extends Manager {
      * Gets free ID available, this only gets executed from the server
      * @return free ID
      */
-    public int getFreeID() {
+    private int getFreeID() {
         if (removedIDs.size == 0) {
             freeID++;
             return freeID;

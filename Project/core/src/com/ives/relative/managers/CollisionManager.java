@@ -8,9 +8,12 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.events.ProximityAuthorityEvent;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
 
 /**
@@ -21,6 +24,7 @@ import com.ives.relative.managers.event.StateManager;
 public class CollisionManager extends Manager implements ContactListener {
 
     protected StateManager stateManager;
+    protected EventManager eventManager;
 
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<State> mState;
@@ -44,6 +48,7 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.contacts.add(contact);
 
         checkHitGround(contact, true);
+        checkProximityCollision(contact, true);
     }
 
     @Override
@@ -58,6 +63,7 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.contacts.removeValue(contact, false);
 
         checkHitGround(contact, false);
+        checkProximityCollision(contact, false);
     }
 
     @Override
@@ -111,6 +117,25 @@ public class CollisionManager extends Manager implements ContactListener {
         footC.contactAmount--;
         if (footC.contactAmount == 0) {
             stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
+        }
+    }
+
+    private void checkProximityCollision(Contact contact, boolean start) {
+        if (contact.isTouching()) {
+            Entity permanent = null;
+            Entity object = null;
+            if (contact.getFixtureA().getUserData().equals(Authority.class)) {
+                permanent = (Entity) contact.getFixtureA().getBody().getUserData();
+                object = (Entity) contact.getFixtureB().getBody().getUserData();
+            }
+
+            if (contact.getFixtureB().getUserData().equals(Authority.class)) {
+                permanent = (Entity) contact.getFixtureB().getBody().getUserData();
+                object = (Entity) contact.getFixtureA().getBody().getUserData();
+            }
+            if (permanent != null && object != null) {
+                eventManager.notifyEvent(permanent, new ProximityAuthorityEvent(permanent, object, start));
+            }
         }
     }
 }

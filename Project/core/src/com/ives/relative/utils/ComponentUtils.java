@@ -80,13 +80,15 @@ public class ComponentUtils {
     }
 
     public static void removeEntity(Entity e) {
-        NetworkManager networkManager = e.getWorld().getManager(NetworkManager.class);
-        int id = networkManager.getNetworkID(e);
-        if (id != -1) {
-            networkManager.removeEntity(id);
-        } else {
-            removeAllSpecialComponents(e);
-            e.deleteFromWorld();
+        if (e != null) {
+            NetworkManager networkManager = e.getWorld().getManager(NetworkManager.class);
+            int id = networkManager.getNetworkID(e);
+            if (id != -1) {
+                networkManager.removeEntity(id);
+            } else {
+                removeAllSpecialComponents(e);
+                e.deleteFromWorld();
+            }
         }
     }
 
