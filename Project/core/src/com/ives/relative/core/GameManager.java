@@ -11,11 +11,12 @@ import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
 import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.PlanetGenerator;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.Network;
+import com.ives.relative.systems.CommandSystem;
 import com.ives.relative.systems.MovementSystem;
-import com.ives.relative.systems.server.CommandSystem;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -51,6 +52,7 @@ public class GameManager extends Manager {
      */
     public void registerManagers() {
         world.setManager(new PlanetManager());
+        world.setManager(new PlanetGenerator());
         world.setManager(new EventManager());
         world.setManager(new CollisionManager());
         ModuleManager moduleManager = new ModuleManager();

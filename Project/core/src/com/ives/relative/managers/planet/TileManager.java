@@ -37,6 +37,7 @@ public class TileManager extends Manager {
 
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
+    protected PlanetManager planetManager;
 
     public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
@@ -59,14 +60,20 @@ public class TileManager extends Manager {
      * @param gravity  should the given tile be affected by gravity?
      * @return the entity of the tile created
      */
-    public Entity createTile(Entity planet, float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
+            Entity tile;
+            if ((tile = getTile(new Vector2(x, y), planet)) != null) {
+                removeTile(tile);
+            }
+
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
-                    new Position(x, y, z, 0, mName.get(planet).internalName)).group("tile").build();
-            Body body = Tile.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planet).world);
+                    new Position(x, y, z, 0, planet)).group("tile").build();
+
+            Body body = Tile.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
             e.edit().add(new Physics(body));
 
             if (gravity) {
@@ -88,10 +95,11 @@ public class TileManager extends Manager {
     }
 
     public void removeTile(Vector2 tilePos, String planet) {
-        Entity e = getTile(tilePos, planet);
-        if (e != null) {
-            ComponentUtils.removeEntity(e);
-        }
+        chunkManager.removeTile(tilePos, planet);
+    }
+
+    public void removeTile(Entity tile) {
+        ComponentUtils.removeEntity(tile);
     }
 
     public Entity getTile(Vector2 tilePos, String planet) {

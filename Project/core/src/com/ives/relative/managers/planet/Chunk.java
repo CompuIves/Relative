@@ -15,26 +15,33 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk {
-    private float startX, endX;
+    private int startX, endX;
     private String planet;
-    private int authority;
-    private Map<Vector2, UUID> tiles;
-    private Array<UUID> entities;
+    private int owner;
+    private transient Map<Vector2, UUID> tiles;
+    private transient Array<UUID> entities;
+    private boolean loaded = false;
 
-    public Chunk(float startX, float endX, String planet) {
+    public Chunk() {
+    }
+
+    public Chunk(int startX, int endX, String planet) {
         this.startX = startX;
         this.endX = endX;
         this.planet = planet;
+        initialize();
+    }
 
+    public void initialize() {
         tiles = new HashMap<Vector2, UUID>();
         entities = new Array<UUID>();
     }
 
-    public float getStartX() {
+    public int getStartX() {
         return startX;
     }
 
-    public float getEndX() {
+    public int getEndX() {
         return endX;
     }
 
@@ -81,15 +88,29 @@ public class Chunk {
         return null;
     }
 
-    public int getAuthority() {
-        return authority;
+    public int getOwner() {
+        return owner;
     }
 
-    public void setAuthority(int authority) {
-        this.authority = authority;
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     public boolean isThisChunk(float x) {
         return x >= startX && x <= endX;
+    }
+
+    public void dispose() {
+        tiles.clear();
+        entities.clear();
+        loaded = false;
     }
 }

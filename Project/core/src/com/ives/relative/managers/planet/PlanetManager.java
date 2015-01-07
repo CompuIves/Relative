@@ -10,13 +10,17 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.Seed;
 import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.event.EventManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +31,7 @@ import java.util.UUID;
  * Manager of the planets! Sort of an Interstellar Manager.
  */
 @Wire
-public class PlanetManager extends Manager {
+public class PlanetManager extends Manager implements EntityEventObserver {
     /**
      * All entities that are mapped to a planet, with the planet as key.
      */
@@ -37,14 +41,22 @@ public class PlanetManager extends Manager {
     protected CollisionManager collisionManager;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
+    protected EventManager eventManager;
     protected ChunkManager chunkManager;
 
     protected ComponentMapper<WorldC> mWorldC;
     protected ComponentMapper<Gravity> mGravity;
+    protected ComponentMapper<Position> mPosition;
 
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, UUID>();
         planetsByEntity = new HashMap<UUID, String>();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        eventManager.addObserver(this);
     }
 
     public void addPlanet(String name, Entity e) {
@@ -96,32 +108,8 @@ public class PlanetManager extends Manager {
         return e;
     }
 
-    public void generateTerrain(String planetID) {
-        generateTerrain(uuidEntityManager.getEntity(entitiesByPlanet.get(planetID)));
-    }
+    @Override
+    public void onNotify(Entity e, EntityEvent event) {
 
-    public void generateTerrain(Entity planet) {
-        TileManager tileManager = world.getManager(TileManager.class);
-        Chunk chunk = null;
-        for (int x = 0; x < 200; x++) {
-            if (chunk == null || !chunk.isThisChunk(x)) {
-                chunk = chunkManager.getChunk(x, getPlanetID(planet));
-            }
-            for (int y = 2; y < 10; y++) {
-                Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
-                chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
-            }
-        }
-
-        for (int x = 0; x < 200; x++) {
-            if (!chunk.isThisChunk(x)) {
-                chunk = chunkManager.getChunk(x, getPlanetID(planet));
-            }
-
-            for (int y = 0; y < 2; y++) {
-                Entity tile = tileManager.createTile(planet, x, y, 0, "bedrock", false);
-                chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
-            }
-        }
     }
 }

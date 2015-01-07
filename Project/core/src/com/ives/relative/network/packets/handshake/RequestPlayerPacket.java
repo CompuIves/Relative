@@ -16,7 +16,7 @@ import com.ives.relative.network.packets.ResponsePacket;
  * <p/>
  * HANDLED BY SERVER
  */
-public class ConnectionSuccessful extends ResponsePacket {
+public class RequestPlayerPacket extends ResponsePacket {
     @Override
     public void response(final GameManager game) {
         Gdx.app.postRunnable(new Runnable() {

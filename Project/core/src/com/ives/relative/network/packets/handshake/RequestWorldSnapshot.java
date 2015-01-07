@@ -9,6 +9,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.network.packets.UpdatePacket;
+import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
 /**
@@ -34,7 +35,7 @@ public class RequestWorldSnapshot extends ResponsePacket {
                         NetworkC networkC = game.world.getMapper(NetworkC.class).get(entity);
                         UpdatePacket packet = new UpdatePacket(0, networkManager.getNetworkID(entity));
                         packet.connection = connection;
-                        game.network.sendObjectTCP(connection, networkManager.generateFullComponentPacket(entity, networkC.type));
+                        game.network.sendObjectTCP(connection, game.world.getSystem(NetworkSendSystem.class).generateFullComponentPacket(entity, networkC.type));
                     }
                 }
                 //game.network.sendObjectTCP(connection, new WorldSnapshotPacket(entities, ids));

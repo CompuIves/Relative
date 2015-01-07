@@ -14,7 +14,7 @@ import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.managers.CommandManager;
-import com.ives.relative.systems.server.CommandSystem;
+import com.ives.relative.systems.CommandSystem;
 
 /**
  * Created by Ives on 5/12/2014.

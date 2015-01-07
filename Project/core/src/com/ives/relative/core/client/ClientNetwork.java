@@ -18,14 +18,13 @@ import java.io.IOException;
  */
 public class ClientNetwork extends Network {
     public static int CONNECTIONID;
+    private static Client client;
     private ClientManager game;
-    private Client client;
 
     public ClientNetwork(ClientManager game, Client client) throws IOException {
         super(client);
         this.game = game;
-        this.client = client;
-
+        ClientNetwork.client = client;
 
         startClient();
         client.addListener(this);
@@ -58,14 +57,12 @@ public class ClientNetwork extends Network {
     @Override
     public void received(Connection connection, Object object) {
         if (object instanceof ResponsePacket) {
-            System.out.println("CLIENT: Received packet with type: " + object.getClass().getSimpleName());
             ((ResponsePacket) object).response(game);
         }
     }
 
     @Override
     public void sendObjectTCP(int connectionID, BasePacket o) {
-        System.out.println("Sent TCP: " + o.getClass().getSimpleName());
         o.connection = connectionID;
         client.sendTCP(o);
     }

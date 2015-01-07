@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.network.packets.handshake.planet.RequestPlanetPacket;
 import com.ives.relative.systems.client.ClientNetworkSystem;
 
 /**
@@ -28,7 +29,7 @@ public class AssignPlayer extends ResponsePacket {
             @Override
             public void run() {
                 game.world.getSystem(ClientNetworkSystem.class).registerPlayer(id);
-                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestPlanetPacket());
             }
         });
     }

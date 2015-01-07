@@ -5,19 +5,17 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
-import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
-import com.ives.relative.entities.events.JoinChunkEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
-import java.util.UUID;
-
 /**
  * Created by Ives on 6/1/2015.
+ * <p></p>
+ * This manager
  */
 @Wire
 public class AuthorityManager extends Manager implements EntityEventObserver {
@@ -39,19 +37,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
 
     @Override
     public void onNotify(Entity e, EntityEvent event) {
-        if (event instanceof JoinChunkEvent) {
-            JoinChunkEvent joinChunkEvent = (JoinChunkEvent) event;
-            if (serverPlayerManager.isPlayer(e)) {
-                Array<Entity> entities = new Array<Entity>();
-                for (UUID eID : joinChunkEvent.chunk.getEntities()) {
-                    Entity entity = uuidEntityManager.getEntity(eID);
-                    if (!isEntityAuthorized(entity)) {
-                        entities.add(entity);
-                    }
-                }
-                authorizeEntities(serverPlayerManager.getConnectionByPlayer(e), entities);
-            }
-        }
+
     }
 
     public boolean isEntityAuthorized(Entity e) {

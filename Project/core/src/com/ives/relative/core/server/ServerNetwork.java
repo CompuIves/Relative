@@ -45,7 +45,6 @@ public class ServerNetwork extends Network {
     @Override
     public void received(Connection connection, final Object object) {
         if (object instanceof ResponsePacket) {
-            System.out.println("SERVER: Received Packet: " + object.getClass().getSimpleName());
             ((ResponsePacket) object).response(game);
         }
     }
@@ -63,7 +62,6 @@ public class ServerNetwork extends Network {
 
     @Override
     public void sendObjectTCP(int connectionID, BasePacket o) {
-        System.out.println("SERVER: Sent a packet named: " + o.getClass().getSimpleName());
         o.connection = connectionID;
         server.sendToTCP(connectionID, o);
     }

@@ -1,7 +1,6 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
-import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -17,8 +16,7 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeDown(Entity entity) {
-        body = entity.getWorld().getManager(TileManager.class).createTile(entity.getWorld().getManager(PlanetManager.class).getPlanet("earth"),
-                20, 20, 0, "dirt", true);
+        body = entity.getWorld().getManager(TileManager.class).createTile("earth", 20, 20, 0, "dirt", true);
     }
 
     @Override

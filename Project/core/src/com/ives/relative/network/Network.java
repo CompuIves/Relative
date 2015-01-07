@@ -13,9 +13,11 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.entities.commands.Command;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.modules.Module;
 import com.ives.relative.managers.event.StateManager;
+import com.ives.relative.managers.planet.Chunk;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -105,6 +108,9 @@ public abstract class Network extends Listener {
         kryo.register(Component[].class);
         kryo.register(StateManager.EntityState.class);
         kryo.register(int[].class);
+        kryo.register(AuthorityManager.AuthorityType.class);
+        kryo.register(Chunk.class);
+        kryo.register(UUID.class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

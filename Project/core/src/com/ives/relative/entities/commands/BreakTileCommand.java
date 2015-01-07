@@ -26,7 +26,7 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
-        String planet = e.getWorld().getMapper(Position.class).get(e).worldID;
+        String planet = e.getWorld().getMapper(Position.class).get(e).planet;
         if (worldPosClicked != null)
             e.getWorld().getManager(TileManager.class).removeTile(worldPosClicked, planet);
     }

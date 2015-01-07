@@ -1,4 +1,4 @@
-package com.ives.relative.systems.server;
+package com.ives.relative.systems;
 
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;

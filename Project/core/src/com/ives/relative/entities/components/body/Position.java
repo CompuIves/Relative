@@ -17,7 +17,7 @@ public class Position extends Component implements Networkable {
     public float rotation;
     public float protation;
 
-    public String worldID;
+    public String planet;
 
     public Position() {
     }
@@ -27,6 +27,6 @@ public class Position extends Component implements Networkable {
         this.y = y;
         this.z = z;
         this.rotation = rotation;
-        this.worldID = worldID;
+        this.planet = worldID;
     }
 }

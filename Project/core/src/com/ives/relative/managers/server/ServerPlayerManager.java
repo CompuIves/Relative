@@ -19,8 +19,10 @@ import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.living.Health;
 import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.events.CreatePlayerEvent;
 import com.ives.relative.factories.Player;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.PlanetManager;
 
 import java.util.HashMap;
@@ -76,6 +78,8 @@ public class ServerPlayerManager extends PlayerManager {
 
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
+
+        world.getManager(EventManager.class).notifyEvent(e, new CreatePlayerEvent(e));
 
         return e;
     }

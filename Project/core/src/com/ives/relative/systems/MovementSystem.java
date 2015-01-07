@@ -56,9 +56,9 @@ public class MovementSystem extends EntityProcessingSystem {
             velocity.vy = entityBody.getLinearVelocity().y;
 
             if (position.px != position.x) {
-                if (!chunkManager.getChunk(position.x, position.worldID).equals(chunkManager.getChunk(position.px, position.worldID))) {
-                    chunkManager.removeEntity(e, position.x, position.worldID);
-                    chunkManager.addEntity(e, position.x, position.worldID);
+                if (!chunkManager.getChunk(position.x, position.planet).equals(chunkManager.getChunk(position.px, position.planet))) {
+                    chunkManager.removeEntity(e, position.x, position.planet);
+                    chunkManager.addEntity(e, position.x, position.planet);
                 }
             }
 
