@@ -1,11 +1,7 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
-import com.ives.relative.core.server.ServerManager;
-import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.planet.TileManager;
-import com.ives.relative.network.packets.updates.ComponentPacket;
-import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.utils.ComponentUtils;
 
 /**
@@ -19,10 +15,8 @@ public class CreateBodyCommand extends Command {
     }
 
     @Override
-    public void executeDown(Entity entity) {
+    public void executeDown(final Entity entity) {
         body = entity.getWorld().getManager(TileManager.class).createTile("earth", 10, 15, 0, "dirt", true);
-        ComponentPacket componentPacket = entity.getWorld().getSystem(NetworkSendSystem.class).generateFullComponentPacket(body);
-        ((ServerNetwork) entity.getWorld().getManager(ServerManager.class).network).sendObjectTCPToAll(componentPacket);
     }
 
     @Override

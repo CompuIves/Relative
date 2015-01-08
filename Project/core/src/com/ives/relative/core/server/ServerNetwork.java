@@ -9,6 +9,7 @@ import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.network.packets.updates.RemoveEntityPacket;
+import com.ives.relative.systems.WorldSystem;
 
 import java.io.IOException;
 
@@ -51,7 +52,7 @@ public class ServerNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-
+        game.world.getSystem(WorldSystem.class).setEnabled(false);
     }
 
     @Override
@@ -92,5 +93,9 @@ public class ServerNetwork extends Network {
         serverPlayerManager.removeConnection(connection.getID());
         sendObjectTCPToAll(new RemoveEntityPacket(id));
         game.world.getManager(NetworkManager.class).removeEntity(id);
+
+        if (server.getConnections().length == 0) {
+            game.world.getSystem(WorldSystem.class).setEnabled(true);
+        }
     }
 }

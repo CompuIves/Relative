@@ -8,13 +8,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.chunkloaders.ServerChunkLoader;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
+import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
@@ -48,6 +48,8 @@ public class ServerManager extends GameManager {
     @Override
     public void registerSystems() {
         super.registerSystems();
+        WorldSystem worldSystem = new WorldSystem();
+        world.setSystem(worldSystem);
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
         world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new NetworkSendSystem());
@@ -57,7 +59,6 @@ public class ServerManager extends GameManager {
     public void registerManagers() {
         super.registerManagers();
         world.setManager(new ServerPlayerManager());
-        world.setManager(new AuthorityManager());
         world.setManager(new ChunkManager(new ServerChunkLoader()));
 
         ModuleManager moduleManager = world.getManager(ModuleManager.class);

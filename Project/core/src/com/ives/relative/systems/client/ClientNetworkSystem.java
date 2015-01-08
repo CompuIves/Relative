@@ -34,12 +34,10 @@ import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
-import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
 import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
-
-import java.util.Iterator;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -53,6 +51,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
     protected NetworkReceiveSystem networkReceiveSystem;
+    protected AuthorityManager authorityManager;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
@@ -133,33 +132,26 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         frame++;
         for (int entity : entitiesToSend) {
             Entity e = networkManager.getEntity(entity);
-            PositionPacket positionPacket = new PositionPacket(e, sequence, entity);
-            clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
-        }
-        entitiesToSend.clear();
-
-        Iterator<BasePacket> it = packetsToBeProcessed.iterator();
-        while (it.hasNext()) {
-            BasePacket basePacket = it.next();
-            if (basePacket instanceof GrantEntityAuthority) {
-                if (processAuthority((GrantEntityAuthority) basePacket)) {
-                    it.remove();
-                }
+            if (e != null) {
+                PositionPacket positionPacket = new PositionPacket(e, sequence, entity);
+                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
             }
         }
+        entitiesToSend.clear();
     }
 
     public void processRequests(final Network network) {
         network.endPoint.addListener(new Listener() {
             @Override
-            public void received(Connection connection, final Object object) {
+            public void received(final Connection connection, final Object object) {
                 if (object instanceof UpdatePacket) {
                     if (object instanceof PositionPacket) {
                         Gdx.app.postRunnable(new Runnable() {
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                if (packet.force && !grantedEntities.contains(packet.entityID, true)) {
+                                Entity e = networkManager.getEntity(packet.entityID);
+                                if (!authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, e)) {
                                     if (!processPosition(packet)) {
                                         network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
                                         requestedEntities.add(packet.entityID);
@@ -189,22 +181,21 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                         });
                     }
 
-                    if (object instanceof ComponentPacket) {
-                        ComponentPacket packet = (ComponentPacket) object;
+                    if (object instanceof CreateEntityPacket) {
+                        CreateEntityPacket packet = (CreateEntityPacket) object;
                         networkReceiveSystem.addDataForProcessing(packet);
                         requestedEntities.removeValue(packet.entityID, true);
                     }
                 }
                 if (object instanceof GrantEntityAuthority) {
-                    if (!processAuthority((GrantEntityAuthority) object)) {
-                        packetsToBeProcessed.add((BasePacket) object);
-                    }
+                    //If the entity isn't loaded yet
+                    processAuthority((GrantEntityAuthority) object);
                 }
             }
         });
     }
 
-    public boolean processAuthority(GrantEntityAuthority packet) {
+    public void processAuthority(GrantEntityAuthority packet) {
         Entity entity = networkManager.getEntity(packet.entity);
         System.out.println(packet.entity);
         if (entity != null) {
@@ -213,9 +204,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                 AuthorityManager.addProximitySensor(p);
             }
             grantedEntities.add(packet.entity);
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -276,8 +264,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof MovementEvent) {
             int id = networkManager.getNetworkID(e);
-            if (!entitiesToSend.contains(id, true)) {
-                entitiesToSend.add(id);
+            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, e)) {
+                if (!entitiesToSend.contains(id, true)) {
+                    entitiesToSend.add(id);
+                }
             }
         }
     }

@@ -21,12 +21,13 @@ import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
 import com.ives.relative.factories.Tile;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.handshake.RequestWorldSnapshot;
-import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
@@ -42,16 +43,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Wire
 public class NetworkReceiveSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
+    protected AuthorityManager authorityManager;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
 
     Map<Integer, Array<Component>> changedEntities;
-    BlockingQueue<ComponentPacket> queue;
+    BlockingQueue<CreateEntityPacket> queue;
 
     public NetworkReceiveSystem() {
         changedEntities = new HashMap<Integer, Array<Component>>();
-        queue = new LinkedBlockingQueue<ComponentPacket>();
+        queue = new LinkedBlockingQueue<CreateEntityPacket>();
     }
 
     @Override
@@ -63,7 +65,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected void begin() {
         try {
             for (int i = 0; i < queue.size(); i++) {
-                ComponentPacket packet = queue.take();
+                CreateEntityPacket packet = queue.take();
                 int id = packet.entityID;
                 NetworkManager.Type type = packet.type;
                 boolean delta = packet.delta;
@@ -92,8 +94,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         }
     }
 
-    public void addDataForProcessing(ComponentPacket componentPacket) {
-        queue.add(componentPacket);
+    public void addDataForProcessing(CreateEntityPacket createEntityPacket) {
+        queue.add(createEntityPacket);
     }
 
 
@@ -170,7 +172,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 visual.texture = new TextureRegion(new Texture("player.png"));
 
                 Authority authority = world.getMapper(Authority.class).get(entity);
-                //authorityManager.authorizeEntity(authority.owner, entity, authority.type);
+                authorityManager.authorizeEntity(authority.owner, entity, authority.type);
                 break;
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);

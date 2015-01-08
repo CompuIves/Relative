@@ -4,6 +4,7 @@ import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.UuidEntityManager;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
@@ -63,6 +64,7 @@ public class GameManager extends Manager {
         world.setManager(new UuidEntityManager());
         world.setManager(new StateManager());
         world.setManager(new TileManager());
+        world.setManager(new AuthorityManager());
     }
 
     public boolean isServer() {

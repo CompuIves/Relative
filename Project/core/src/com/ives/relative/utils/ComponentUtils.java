@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.managers.NetworkManager;
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -58,9 +58,10 @@ public class ComponentUtils {
         return e;
     }
 
-    public static Component transferPooledComponent(PooledComponent fromComponent, EntityEdit edit) throws InvocationTargetException, IllegalAccessException {
-        Component component = edit.create(fromComponent.getClass());
-        BeanUtils.copyProperties(fromComponent, component);
+    public static Component transferPooledComponent(PooledComponent fromComponent, EntityEdit edit) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        PooledComponent component = edit.create(fromComponent.getClass());
+        BeanUtilsBean beanUtilsBean = BeanUtilsBean.getInstance();
+        beanUtilsBean.copyProperties(component, fromComponent);
         return component;
     }
 

@@ -62,9 +62,12 @@ public class TileManager extends Manager {
      */
     public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
-            Entity tile;
-            if ((tile = getTile(new Vector2(x, y), planet)) != null) {
-                removeTile(tile);
+
+            if (!gravity) {
+                Entity tile;
+                if ((tile = getTile(new Vector2(x, y), planet)) != null) {
+                    removeTile(tile);
+                }
             }
 
             SolidTile solidTile = solidTiles.get(tileID);

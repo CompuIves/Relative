@@ -16,8 +16,6 @@ import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.ProximityAuthorityEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
-import com.ives.relative.managers.server.ServerPlayerManager;
-import com.ives.relative.systems.server.ServerNetworkSystem;
 
 /**
  * Created by Ives on 6/1/2015.
@@ -26,8 +24,6 @@ import com.ives.relative.systems.server.ServerNetworkSystem;
  */
 @Wire
 public class AuthorityManager extends Manager implements EntityEventObserver {
-    protected ServerPlayerManager serverPlayerManager;
-    protected ServerNetworkSystem serverNetworkSystem;
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
 
@@ -86,8 +82,6 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
             Physics p = mPhysics.get(e);
             addProximitySensor(p);
         }
-
-        serverNetworkSystem.sendAuthority(owner, e, type);
     }
 
     @Override
@@ -95,8 +89,8 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         if (event instanceof ProximityAuthorityEvent) {
             ProximityAuthorityEvent proximityEvent = (ProximityAuthorityEvent) event;
             if (!mAuthority.has(proximityEvent.entity)) {
-                int connection = serverPlayerManager.getConnectionByPlayer(e);
-                authorizeEntity(connection, e, AuthorityType.PROXIMITY);
+                int owner = mAuthority.get(e).owner;
+                authorizeEntity(owner, e, AuthorityType.PROXIMITY);
             }
         }
     }

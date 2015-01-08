@@ -8,7 +8,7 @@ import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.utils.ComponentUtils;
 
 /**
@@ -26,7 +26,7 @@ public class NetworkSendSystem extends VoidEntitySystem {
 
     }
 
-    public ComponentPacket generateFullComponentPacket(Entity e) {
+    public CreateEntityPacket generateFullComponentPacket(Entity e) {
         NetworkManager.Type type = mNetworkC.get(e).type;
         return generateFullComponentPacket(e, type);
     }
@@ -39,9 +39,9 @@ public class NetworkSendSystem extends VoidEntitySystem {
      * @param type
      * @return
      */
-    public ComponentPacket generateFullComponentPacket(Entity e, NetworkManager.Type type) {
+    public CreateEntityPacket generateFullComponentPacket(Entity e, NetworkManager.Type type) {
         Array<Component> components = ComponentUtils.getComponents(e);
         int id = networkManager.getNetworkID(e);
-        return new ComponentPacket(components, id, false, -1, type);
+        return new CreateEntityPacket(components, id, false, -1, type);
     }
 }

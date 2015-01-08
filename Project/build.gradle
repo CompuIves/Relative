@@ -131,6 +131,10 @@ project(":core") {
         compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
         compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
         compile 'net.onedaybeard.artemis:artemis-odb-cli:0.8.1'
+
+        //Annotation support
+        // ProjectSettings->CodeStyle->Java->CodeGeneration->use external annotations
+        compile 'com.intellij:annotations:12.0'
     }
 
 

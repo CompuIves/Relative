@@ -7,7 +7,7 @@ import com.ives.relative.managers.AuthorityManager;
  * Created by Ives on 7/1/2015.
  */
 public class Authority extends PooledComponent {
-    public int owner;
+    public int owner = -1;
     public AuthorityManager.AuthorityType type;
 
     public Authority() {
@@ -15,6 +15,22 @@ public class Authority extends PooledComponent {
 
     public Authority(int owner, AuthorityManager.AuthorityType type) {
         this.owner = owner;
+        this.type = type;
+    }
+
+    public int getOwner() {
+        return owner;
+    }
+
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    public AuthorityManager.AuthorityType getType() {
+        return type;
+    }
+
+    public void setType(AuthorityManager.AuthorityType type) {
         this.type = type;
     }
 

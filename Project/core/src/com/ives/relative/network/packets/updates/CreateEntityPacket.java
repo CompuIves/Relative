@@ -10,15 +10,15 @@ import com.ives.relative.network.packets.UpdatePacket;
  *
  * HANDLED BY CLIENT
  */
-public class ComponentPacket extends UpdatePacket {
+public class CreateEntityPacket extends UpdatePacket {
     public Component[] components;
     public boolean delta;
     public NetworkManager.Type type;
 
-    public ComponentPacket() {
+    public CreateEntityPacket() {
     }
 
-    public ComponentPacket(Array<Component> components, int id, boolean delta, int sequence) {
+    public CreateEntityPacket(Array<Component> components, int id, boolean delta, int sequence) {
         super(sequence, id);
         this.components = new Component[components.size];
         for (int i = 0; i < components.size; i++) {
@@ -27,7 +27,7 @@ public class ComponentPacket extends UpdatePacket {
         this.delta = delta;
     }
 
-    public ComponentPacket(Array<Component> components, int id, boolean delta, int sequence, NetworkManager.Type type) {
+    public CreateEntityPacket(Array<Component> components, int id, boolean delta, int sequence, NetworkManager.Type type) {
         super(sequence, id);
         this.components = new Component[components.size];
         for (int i = 0; i < components.size; i++) {

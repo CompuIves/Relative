@@ -4,7 +4,7 @@ import com.artemis.Entity;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.updates.ComponentPacket;
+import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
 
 /**
@@ -28,8 +28,8 @@ public class RequestEntity extends ResponsePacket {
         NetworkManager networkManager = game.world.getManager(NetworkManager.class);
         Entity entity = networkManager.getEntity(id);
         if (entity != null) {
-            ComponentPacket componentPacket = game.world.getSystem(NetworkSendSystem.class).generateFullComponentPacket(networkManager.getEntity(id));
-            game.network.sendObjectTCP(connection, componentPacket);
+            CreateEntityPacket createEntityPacket = game.world.getSystem(NetworkSendSystem.class).generateFullComponentPacket(networkManager.getEntity(id));
+            game.network.sendObjectTCP(connection, createEntityPacket);
         }
     }
 }

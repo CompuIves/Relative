@@ -7,6 +7,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.events.*;
@@ -34,6 +35,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     protected ComponentMapper<ChunkC> mChunkC;
     protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Authority> mAuthority;
 
     protected ChunkLoader chunkLoader;
 
@@ -277,7 +279,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             loadChunksAroundPlayer(e);
             addEntity(e);
         } else if (event instanceof JoinChunkEvent) {
-            loadChunksAroundPlayer(e);
+            if (mAuthority.has(e))
+                loadChunksAroundPlayer(e);
         }
     }
 }
