@@ -66,9 +66,11 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     public void updateChunk(Chunk chunk) {
         if (chunk != null) {
-            Chunk oldChunk = getChunk(chunk.getStartX(), chunk.getPlanet());
-            if (chunk.getChangedTiles() != null)
+            Chunk oldChunk = getChunk(getChunkIndex(chunk.getStartX()), chunk.getPlanet());
+            if (chunk.getChangedTiles() != null) {
                 oldChunk.setChangedTiles(chunk.getChangedTiles());
+                oldChunk.owner = chunk.owner;
+            }
         }
     }
 

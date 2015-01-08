@@ -150,7 +150,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                Entity e = networkManager.getEntity(packet.entityID);
                                 if (packet.owner != ClientNetwork.CONNECTIONID) {
                                     if (!processPosition(packet)) {
                                         network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));

@@ -4,10 +4,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
@@ -90,7 +87,7 @@ public class CollisionManager extends Manager implements ContactListener {
         }
 
         if (e != null && eStanding != null) {
-            if (!e.equals(eStanding)) {
+            if (e.getId() != eStanding.getId()) {
                 if (beginContact) {
                     addFootC(contact, e, eStanding);
                 } else {
@@ -126,15 +123,19 @@ public class CollisionManager extends Manager implements ContactListener {
             Entity object = null;
             if (contact.getFixtureA().getUserData().equals(Authority.class)) {
                 permanent = (Entity) contact.getFixtureA().getBody().getUserData();
-                object = (Entity) contact.getFixtureB().getBody().getUserData();
+                if (contact.getFixtureB().getBody().getType() == BodyDef.BodyType.DynamicBody)
+                    object = (Entity) contact.getFixtureB().getBody().getUserData();
             }
 
             if (contact.getFixtureB().getUserData().equals(Authority.class)) {
                 permanent = (Entity) contact.getFixtureB().getBody().getUserData();
-                object = (Entity) contact.getFixtureA().getBody().getUserData();
+                if (contact.getFixtureA().getBody().getType() == BodyDef.BodyType.DynamicBody)
+                    object = (Entity) contact.getFixtureA().getBody().getUserData();
             }
             if (permanent != null && object != null) {
-                eventManager.notifyEvent(permanent, new ProximityAuthorityEvent(permanent, object, start));
+                if (permanent.getId() != object.getId()) {
+                    eventManager.notifyEvent(permanent, new ProximityAuthorityEvent(permanent, object, start));
+                }
             }
         }
     }

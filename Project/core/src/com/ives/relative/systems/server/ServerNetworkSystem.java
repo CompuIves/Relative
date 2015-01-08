@@ -75,10 +75,13 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 }
                 if (updatePacket instanceof PositionPacket) {
                     PositionPacket packet = (PositionPacket) updatePacket;
-                    if (authorityManager.isEntityAuthorizedByPlayer(packet.connection, networkManager.getEntity(packet.entityID))) {
-                        Entity e = networkManager.getEntity(packet.entityID);
-                        processPosition(e, packet);
-                        network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID, packet.connection));
+                    Entity e = networkManager.getEntity(packet.entityID);
+                    //TODO bad null check.
+                    if (e != null) {
+                        if (authorityManager.isEntityAuthorizedByPlayer(packet.connection, e)) {
+                            processPosition(e, packet);
+                            network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID, packet.connection));
+                        }
                     }
                 }
             } catch (InterruptedException e) {

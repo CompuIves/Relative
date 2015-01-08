@@ -83,24 +83,29 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
             Physics p = mPhysics.get(e);
             addProximitySensor(p);
         }
+
+        System.out.println("Authorized entity to " + owner);
     }
 
     public void unAuthorizeEntity(Entity e) {
         if (mAuthority.has(e)) {
             e.edit().remove(Authority.class);
         }
+        System.out.println("Unauthorized entity");
     }
 
     @Override
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof ProximityAuthorityEvent) {
             ProximityAuthorityEvent proximityEvent = (ProximityAuthorityEvent) event;
-            if (!mAuthority.has(proximityEvent.entity)) {
+            if (!mAuthority.has(proximityEvent.object)) {
                 if (proximityEvent.start) {
                     int owner = mAuthority.get(e).owner;
-                    authorizeEntity(owner, e, AuthorityType.PROXIMITY);
-                } else {
-                    unAuthorizeEntity(e);
+                    authorizeEntity(owner, proximityEvent.object, AuthorityType.PROXIMITY);
+                }
+            } else {
+                if (!proximityEvent.start) {
+                    unAuthorizeEntity(proximityEvent.object);
                 }
             }
         }
