@@ -133,7 +133,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         for (int entity : entitiesToSend) {
             Entity e = networkManager.getEntity(entity);
             if (e != null) {
-                PositionPacket positionPacket = new PositionPacket(e, sequence, entity);
+                PositionPacket positionPacket = new PositionPacket(e, sequence, entity, ClientNetwork.CONNECTIONID);
                 clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
             }
         }
@@ -151,7 +151,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
                                 Entity e = networkManager.getEntity(packet.entityID);
-                                if (!authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, e)) {
+                                if (packet.owner != ClientNetwork.CONNECTIONID) {
                                     if (!processPosition(packet)) {
                                         network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
                                         requestedEntities.add(packet.entityID);

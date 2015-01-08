@@ -23,8 +23,10 @@ public class EventManager extends Manager {
      * @param event
      */
     public void notifyEvent(Entity e, EntityEvent event) {
-        for (int i = 0; i < eventObservers.size; i++) {
-            eventObservers.get(i).onNotify(e, event);
+        if (e != null) {
+            for (int i = 0; i < eventObservers.size; i++) {
+                eventObservers.get(i).onNotify(e, event);
+            }
         }
     }
 

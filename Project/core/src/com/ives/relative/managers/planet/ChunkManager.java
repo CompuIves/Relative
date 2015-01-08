@@ -123,8 +123,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param player player to be based around
      */
     public void loadChunksAroundPlayer(Entity player) {
+        Authority authority = mAuthority.get(player);
         for (Chunk chunk : getChunksSurroundingPlayer(player)) {
             loadChunk(chunk);
+            chunk.owner = authority.owner;
         }
     }
 

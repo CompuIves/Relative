@@ -16,10 +16,12 @@ public class PositionPacket extends UpdatePacket {
 
     public float vr;
 
+    public int owner;
+
     public PositionPacket() {
     }
 
-    public PositionPacket(Entity entity, int sequence, int entityID) {
+    public PositionPacket(Entity entity, int sequence, int entityID, int owner) {
         super(sequence, entityID);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
         Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
@@ -32,6 +34,7 @@ public class PositionPacket extends UpdatePacket {
         this.vr = velocity.vr;
 
         this.entityID = entityID;
+        this.owner = owner;
     }
 
     public PositionPacket(int sequence, int entityID, float x, float y, float rotation, float vx, float vy, float vr) {

@@ -8,7 +8,7 @@ import com.ives.relative.network.packets.UpdatePacket;
 /**
  * Created by Ives on 18/12/2014.
  *
- * HANDLED BY CLIENT
+ * Gets sent to the client, the client converts it back to an entity.
  */
 public class CreateEntityPacket extends UpdatePacket {
     public Component[] components;

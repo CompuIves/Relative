@@ -52,7 +52,7 @@ public class ServerManager extends GameManager {
         world.setSystem(worldSystem);
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
         world.setSystem(new Box2DDebugRendererSystem(camera));
-        world.setSystem(new NetworkSendSystem());
+        world.setSystem(new NetworkSendSystem((ServerNetwork) network));
     }
 
     @Override

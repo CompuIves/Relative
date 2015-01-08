@@ -6,9 +6,8 @@ import com.artemis.Entity;
  * Created by Ives on 7/1/2015.
  */
 public class ProximityAuthorityEvent extends EntityEvent {
+    public boolean start;
     Entity object;
-
-    boolean start;
 
     public ProximityAuthorityEvent(Entity entity, Entity object, boolean start) {
         super(entity);

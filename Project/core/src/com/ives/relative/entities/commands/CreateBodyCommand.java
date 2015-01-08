@@ -1,7 +1,9 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
+import com.badlogic.gdx.Gdx;
 import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.utils.ComponentUtils;
 
 /**
@@ -17,6 +19,12 @@ public class CreateBodyCommand extends Command {
     @Override
     public void executeDown(final Entity entity) {
         body = entity.getWorld().getManager(TileManager.class).createTile("earth", 10, 15, 0, "dirt", true);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                entity.getWorld().getSystem(NetworkSendSystem.class).sendEntity(body);
+            }
+        });
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
@@ -17,8 +18,12 @@ import com.ives.relative.utils.ComponentUtils;
 @Wire
 public class NetworkSendSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
-
     protected ComponentMapper<NetworkC> mNetworkC;
+    private ServerNetwork serverNetwork;
+
+    public NetworkSendSystem(ServerNetwork serverNetwork) {
+        this.serverNetwork = serverNetwork;
+    }
 
     //TODO see viability for system
     @Override
@@ -43,5 +48,9 @@ public class NetworkSendSystem extends VoidEntitySystem {
         Array<Component> components = ComponentUtils.getComponents(e);
         int id = networkManager.getNetworkID(e);
         return new CreateEntityPacket(components, id, false, -1, type);
+    }
+
+    public void sendEntity(Entity body) {
+        serverNetwork.sendObjectTCPToAll(generateFullComponentPacket(body));
     }
 }

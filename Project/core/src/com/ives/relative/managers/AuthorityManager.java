@@ -16,6 +16,7 @@ import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.ProximityAuthorityEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Ives on 6/1/2015.
@@ -63,7 +64,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         return mAuthority.has(e);
     }
 
-    public boolean isEntityAuthorizedByPlayer(int connection, Entity e) {
+    public boolean isEntityAuthorizedByPlayer(int connection, @NotNull Entity e) {
         if (mAuthority.has(e)) {
             Authority authority = mAuthority.get(e);
             return authority.owner == connection;
@@ -84,13 +85,23 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
     }
 
+    public void unAuthorizeEntity(Entity e) {
+        if (mAuthority.has(e)) {
+            e.edit().remove(Authority.class);
+        }
+    }
+
     @Override
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof ProximityAuthorityEvent) {
             ProximityAuthorityEvent proximityEvent = (ProximityAuthorityEvent) event;
             if (!mAuthority.has(proximityEvent.entity)) {
-                int owner = mAuthority.get(e).owner;
-                authorizeEntity(owner, e, AuthorityType.PROXIMITY);
+                if (proximityEvent.start) {
+                    int owner = mAuthority.get(e).owner;
+                    authorizeEntity(owner, e, AuthorityType.PROXIMITY);
+                } else {
+                    unAuthorizeEntity(e);
+                }
             }
         }
     }

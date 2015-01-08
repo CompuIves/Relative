@@ -63,7 +63,7 @@ public class ServerPlayerManager extends PlayerManager {
     public Entity createPlayer(int connection, String internalName, String realName, Entity planet, Vector2 position, int z) {
         String worldID = world.getManager(PlanetManager.class).getPlanetID(planet);
         Entity e = new EntityBuilder(world).with(new Health(100),
-                new MovementSpeed(10f),
+                new MovementSpeed(5f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 2, 2),
                 new Position(position.x, position.y, z, 0, worldID),
