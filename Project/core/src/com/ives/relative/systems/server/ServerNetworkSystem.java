@@ -80,7 +80,10 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                     if (e != null) {
                         if (authorityManager.isEntityAuthorizedByPlayer(packet.connection, e)) {
                             processPosition(e, packet);
-                            network.sendObjectUDPToAll(new PositionPacket(e, 0, packet.entityID, packet.connection));
+                            network.sendObjectUDPToAllExcept(packet.connection, new PositionPacket(e, 0, packet.entityID, packet.connection));
+                        } else {
+                            //If the client doesn't have authority it has to be corrected
+                            network.sendObjectUDP(packet.connection, new PositionPacket(e, 0, packet.entityID, packet.connection));
                         }
                     }
                 }

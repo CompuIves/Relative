@@ -2,7 +2,6 @@ package com.ives.relative.factories;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.managers.planet.TileManager;
 
@@ -22,14 +21,9 @@ public class Tile {
      * @param physicsWorld
      * @return
      */
-    public static Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
+    public static Body createBody(Entity e, SolidTile tile, float x, float y, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
-        if (tile.gravity && gravity) {
-            e.edit().add(new Velocity(0, 0, 0));
-            bodyDef.type = BodyDef.BodyType.DynamicBody;
-        } else {
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-        }
+        bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
         PolygonShape shape = TileManager.getCube(tile.width, tile.height);

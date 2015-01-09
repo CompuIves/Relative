@@ -1,29 +1,44 @@
 package com.ives.relative.entities.components;
 
 import com.artemis.PooledComponent;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.managers.AuthorityManager;
 
 /**
  * Created by Ives on 7/1/2015.
  */
 public class Authority extends PooledComponent {
-    public int owner = -1;
+    public Array<Integer> owners;
     public AuthorityManager.AuthorityType type;
 
     public Authority() {
+        owners = new Array<Integer>();
+        owners.ordered = true;
     }
 
-    public Authority(int owner, AuthorityManager.AuthorityType type) {
-        this.owner = owner;
-        this.type = type;
+    public Array<Integer> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(Array<Integer> owners) {
+        this.owners = owners;
     }
 
     public int getOwner() {
-        return owner;
+        if (owners.size > 0) {
+            return owners.get(0);
+        } else {
+            return -1;
+        }
     }
 
     public void setOwner(int owner) {
-        this.owner = owner;
+        if (!owners.contains(owner, true))
+            owners.add(owner);
+    }
+
+    public void removeOwner(int owner) {
+        owners.removeValue(owner, true);
     }
 
     public AuthorityManager.AuthorityType getType() {
@@ -36,7 +51,7 @@ public class Authority extends PooledComponent {
 
     @Override
     protected void reset() {
-        owner = -1;
+        owners.clear();
         type = null;
     }
 }

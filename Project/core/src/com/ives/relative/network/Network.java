@@ -116,6 +116,7 @@ public abstract class Network extends Listener {
         kryo.register(AuthorityManager.AuthorityType.class);
         kryo.register(Chunk.class);
         kryo.register(UUID.class);
+        kryo.register(BodyDef.BodyType.class);
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

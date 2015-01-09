@@ -8,6 +8,7 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
@@ -76,8 +77,8 @@ public class TileManager extends Manager {
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
                     new Position(x, y, z, 0, planet)).group("tile").build();
 
-            Body body = Tile.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
-            e.edit().add(new Physics(body));
+            Body body = Tile.createBody(e, solidTile, x, y, mWorldComponent.get(planetManager.getPlanet(planet)).world);
+            e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
 
             if (gravity) {
                 e.edit().add(new Velocity());

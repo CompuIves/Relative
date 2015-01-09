@@ -52,7 +52,7 @@ public class ServerNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        game.world.getSystem(WorldSystem.class).setEnabled(false);
+        //game.world.getSystem(WorldSystem.class).setEnabled(false);
     }
 
     @Override
@@ -82,7 +82,15 @@ public class ServerNetwork extends Network {
     public void sendObjectUDPToAll(BasePacket o) {
         for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
             //TODO write UDP protocol
-            server.sendToTCP(connection, o);
+            server.sendToUDP(connection, o);
+        }
+    }
+
+    public void sendObjectUDPToAllExcept(int exceptConnection, BasePacket o) {
+        for (int connection : game.world.getManager(ServerPlayerManager.class).getConnections()) {
+            //TODO write UDP protocol
+            if (connection != exceptConnection)
+                server.sendToUDP(connection, o);
         }
     }
 

@@ -128,7 +128,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Authority authority = mAuthority.get(player);
         for (Chunk chunk : getChunksSurroundingPlayer(player)) {
             loadChunk(chunk);
-            chunk.owner = authority.owner;
+            chunk.owner = authority.getOwner();
         }
     }
 

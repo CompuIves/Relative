@@ -7,6 +7,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
@@ -171,14 +172,20 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 1f, planet);
                 visual.texture = new TextureRegion(new Texture("player.png"));
 
+                physics.body.setType(BodyDef.BodyType.DynamicBody);
+
                 Authority authority = world.getMapper(Authority.class).get(entity);
-                authorityManager.authorizeEntity(authority.owner, entity, authority.type);
+                authorityManager.authorizeEntity(authority.getOwner(), entity, authority.type);
                 break;
             case TILE:
                 TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
                 SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
                 com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.planet)).world;
-                physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
+
+                physics.body = Tile.createBody(entity, tile, position.x, position.y, physicsWorld);
+                if (physics.bodyType == BodyDef.BodyType.DynamicBody) {
+                    physics.body.setType(BodyDef.BodyType.DynamicBody);
+                }
                 visual.texture = tile.textureRegion;
                 break;
             case PLANET:

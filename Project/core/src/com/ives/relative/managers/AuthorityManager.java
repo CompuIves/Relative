@@ -4,19 +4,20 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.artemis.managers.UuidEntityManager;
+import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.events.CollisionEvent;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.ProximityAuthorityEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * Created by Ives on 6/1/2015.
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class AuthorityManager extends Manager implements EntityEventObserver {
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
+    protected UuidEntityManager uuidEntityManager;
 
     protected ComponentMapper<Authority> mAuthority;
     protected ComponentMapper<Physics> mPhysics;
@@ -44,7 +46,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
 
         CircleShape sensorShape = new CircleShape();
-        sensorShape.setRadius(4);
+        sensorShape.setRadius(2f);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = sensorShape;
         fixtureDef.isSensor = true;
@@ -67,7 +69,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
     public boolean isEntityAuthorizedByPlayer(int connection, @NotNull Entity e) {
         if (mAuthority.has(e)) {
             Authority authority = mAuthority.get(e);
-            return authority.owner == connection;
+            return authority.getOwner() == connection;
         } else {
             Position position = mPosition.get(e);
             return chunkManager.getChunk(position.x, position.planet).owner == connection;
@@ -75,37 +77,67 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
     }
 
     public void authorizeEntity(int owner, Entity e, AuthorityType type) {
-        Authority authority = e.edit().create(Authority.class);
-        authority.owner = owner;
-        authority.type = type;
+        if (owner != -1) {
+            Authority authority;
+            if (!mAuthority.has(e)) {
+                authority = e.edit().create(Authority.class);
+                authority.type = type;
+            } else {
+                authority = mAuthority.get(e);
+            }
 
-        if (authority.type == AuthorityType.PERMANENT) {
-            Physics p = mPhysics.get(e);
-            addProximitySensor(p);
+            if (type == AuthorityType.PERMANENT) {
+                Physics p = mPhysics.get(e);
+                addProximitySensor(p);
+            }
+
+            if (!authority.getOwners().contains(owner, true)) {
+                authority.setOwner(owner);
+                if (type == AuthorityType.PROXIMITY) {
+                    for (UUID eUUID : mPhysics.get(e).entitiesInContact) {
+                        Entity e2 = uuidEntityManager.getEntity(eUUID);
+                        if (mPhysics.get(e2).bodyType == BodyDef.BodyType.DynamicBody) {
+                            authorizeEntity(owner, e2, type);
+                        }
+                    }
+                }
+
+                System.out.println("Added AuthorityType: " + type.toString() + " to " + owner);
+            }
         }
-
-        System.out.println("Authorized entity to " + owner);
     }
 
-    public void unAuthorizeEntity(Entity e) {
+    public void unAuthorizeEntity(Entity e, int owner) {
         if (mAuthority.has(e)) {
-            e.edit().remove(Authority.class);
+            Authority authority = mAuthority.get(e);
+            if (authority.type != AuthorityType.PERMANENT) {
+                System.out.println("Unauthorized entity");
+
+                if (authority.getOwners().size == 1) {
+                    e.edit().remove(Authority.class);
+                } else {
+                    //The array is sorted automatically, if the first owner is removed the second owner will shift up.
+                    authority.removeOwner(owner);
+                }
+            }
         }
-        System.out.println("Unauthorized entity");
     }
 
     @Override
     public void onNotify(Entity e, EntityEvent event) {
         if (event instanceof ProximityAuthorityEvent) {
             ProximityAuthorityEvent proximityEvent = (ProximityAuthorityEvent) event;
-            if (!mAuthority.has(proximityEvent.object)) {
-                if (proximityEvent.start) {
-                    int owner = mAuthority.get(e).owner;
-                    authorizeEntity(owner, proximityEvent.object, AuthorityType.PROXIMITY);
-                }
+            int owner = mAuthority.get(e).getOwner();
+            if (proximityEvent.start) {
+                authorizeEntity(owner, proximityEvent.object, AuthorityType.PROXIMITY);
             } else {
-                if (!proximityEvent.start) {
-                    unAuthorizeEntity(proximityEvent.object);
+                unAuthorizeEntity(proximityEvent.object, owner);
+            }
+        } else if (event instanceof CollisionEvent) {
+            CollisionEvent collisionEvent = (CollisionEvent) event;
+            if (!collisionEvent.start) {
+                if (mAuthority.has(collisionEvent.e1)) {
+
                 }
             }
         }

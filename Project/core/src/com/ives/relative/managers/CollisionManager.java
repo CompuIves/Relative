@@ -9,6 +9,7 @@ import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.events.CollisionEvent;
 import com.ives.relative.entities.events.ProximityAuthorityEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
@@ -42,10 +43,14 @@ public class CollisionManager extends Manager implements ContactListener {
         Physics p2 = mPhysics.get(e2);
 
         p1.contacts.add(contact);
+        p1.entitiesInContact.add(e2.getUuid());
         p2.contacts.add(contact);
+        p2.entitiesInContact.add(e1.getUuid());
 
         checkHitGround(contact, true);
         checkProximityCollision(contact, true);
+        eventManager.notifyEvent(e1, new CollisionEvent(true, contact, e1, e2));
+        eventManager.notifyEvent(e2, new CollisionEvent(true, contact, e1, e2));
     }
 
     @Override
@@ -57,10 +62,14 @@ public class CollisionManager extends Manager implements ContactListener {
         Physics p2 = mPhysics.get(e2);
 
         p1.contacts.removeValue(contact, false);
+        p1.entitiesInContact.removeValue(e2.getUuid(), true);
         p2.contacts.removeValue(contact, false);
+        p2.entitiesInContact.removeValue(e1.getUuid(), true);
 
         checkHitGround(contact, false);
         checkProximityCollision(contact, false);
+        eventManager.notifyEvent(e1, new CollisionEvent(false, contact, e1, e2));
+        eventManager.notifyEvent(e2, new CollisionEvent(false, contact, e1, e2));
     }
 
     @Override
@@ -118,21 +127,19 @@ public class CollisionManager extends Manager implements ContactListener {
     }
 
     private void checkProximityCollision(Contact contact, boolean start) {
-        if (contact.isTouching()) {
-            Entity permanent = null;
-            Entity object = null;
-            if (contact.getFixtureA().getUserData().equals(Authority.class)) {
-                permanent = (Entity) contact.getFixtureA().getBody().getUserData();
-                if (contact.getFixtureB().getBody().getType() == BodyDef.BodyType.DynamicBody)
-                    object = (Entity) contact.getFixtureB().getBody().getUserData();
-            }
+        Entity permanent = null;
+        Entity object = null;
+        if (contact.getFixtureA().getUserData().equals(Authority.class)) {
+            permanent = (Entity) contact.getFixtureA().getBody().getUserData();
+            object = (Entity) contact.getFixtureB().getBody().getUserData();
+        }
 
-            if (contact.getFixtureB().getUserData().equals(Authority.class)) {
-                permanent = (Entity) contact.getFixtureB().getBody().getUserData();
-                if (contact.getFixtureA().getBody().getType() == BodyDef.BodyType.DynamicBody)
-                    object = (Entity) contact.getFixtureA().getBody().getUserData();
-            }
-            if (permanent != null && object != null) {
+        if (contact.getFixtureB().getUserData().equals(Authority.class)) {
+            permanent = (Entity) contact.getFixtureB().getBody().getUserData();
+            object = (Entity) contact.getFixtureA().getBody().getUserData();
+        }
+        if (permanent != null && object != null) {
+            if (mPhysics.get(object).bodyType == BodyDef.BodyType.DynamicBody) {
                 if (permanent.getId() != object.getId()) {
                     eventManager.notifyEvent(permanent, new ProximityAuthorityEvent(permanent, object, start));
                 }

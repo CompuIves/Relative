@@ -46,7 +46,7 @@ import com.ives.relative.network.packets.updates.PositionPacket;
  */
 @Wire
 public class ClientNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
-    public static float CLIENT_NETWORK_INTERVAL = 1 / 10f;
+    public static float CLIENT_NETWORK_INTERVAL = 1 / 60f;
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
@@ -133,8 +133,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         for (int entity : entitiesToSend) {
             Entity e = networkManager.getEntity(entity);
             if (e != null) {
-                PositionPacket positionPacket = new PositionPacket(e, sequence, entity, ClientNetwork.CONNECTIONID);
-                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
+                if (networkManager.getNetworkID(e) == playerNetworkId || frame % 10 == 0) {
+                    PositionPacket positionPacket = new PositionPacket(e, sequence, entity, ClientNetwork.CONNECTIONID);
+                    clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
+                }
             }
         }
         entitiesToSend.clear();
@@ -150,24 +152,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                             @Override
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
-                                if (packet.owner != ClientNetwork.CONNECTIONID) {
-                                    if (!processPosition(packet)) {
-                                        network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
-                                        requestedEntities.add(packet.entityID);
-                                    }
+                                if (!processPosition(packet)) {
+                                    network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
+                                    requestedEntities.add(packet.entityID);
                                 }
-                                /*
-                                if (packet.entityID == playerNetworkId) {
-
-                                } else {
-                                    if (!processPosition(packet)) {
-                                        if (!requestedEntities.contains(packet.entityID, true)) {
-                                            network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
-                                            requestedEntities.add(packet.entityID);
-                                        }
-                                    }
-                                }
-                                */
                             }
                         });
                     }

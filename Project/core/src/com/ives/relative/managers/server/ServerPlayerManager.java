@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.State;
@@ -73,7 +74,7 @@ public class ServerPlayerManager extends PlayerManager {
                 build();
 
         Body body = Player.createBody(e, position.x, position.y, 0, 0, 1f, planet);
-        e.edit().add(new Physics(body)).add(new Transform(1, 1, null));
+        e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody)).add(new Transform(1, 1, null));
 
         setPlayer(e, internalName);
         addConnection(connection, e);
