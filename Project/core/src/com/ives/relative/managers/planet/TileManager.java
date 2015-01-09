@@ -77,7 +77,7 @@ public class TileManager extends Manager {
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
                     new Position(x, y, z, 0, planet)).group("tile").build();
 
-            Body body = Tile.createBody(e, solidTile, x, y, mWorldComponent.get(planetManager.getPlanet(planet)).world);
+            Body body = Tile.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
             e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
 
             if (gravity) {

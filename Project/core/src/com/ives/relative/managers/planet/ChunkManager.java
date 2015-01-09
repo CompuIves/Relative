@@ -127,8 +127,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void loadChunksAroundPlayer(Entity player) {
         Authority authority = mAuthority.get(player);
         for (Chunk chunk : getChunksSurroundingPlayer(player)) {
-            loadChunk(chunk);
-            chunk.owner = authority.getOwner();
+            if (!chunk.loaded) {
+                loadChunk(chunk);
+                chunk.owner = authority.getOwner();
+            }
         }
     }
 
@@ -153,14 +155,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param chunk chunk which has to be loaded
      */
     public void loadChunk(Chunk chunk) {
-        if (chunk != null) {
-            if (!chunk.loaded) {
-                chunk.initialize();
-                planetGenerator.generateTerrain(chunk);
-                chunkLoader.loadChunkInfo(chunk);
-                chunk.loaded = true;
-            }
-        }
+        chunk.initialize();
+        planetGenerator.generateTerrain(chunk);
+        chunkLoader.loadChunkInfo(chunk);
+        chunk.loaded = true;
     }
 
     public void unLoadChunk(float x, String planet) {
@@ -221,7 +219,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         UUID entityID = uuidEntityManager.getUuid(e);
         if (!chunk.getEntities().contains(entityID, false)) {
             chunk.addEntity(entityID);
-            eventManager.notifyEvent(e, new JoinChunkEvent(e, chunk));
+            eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
         }
     }
 
@@ -244,7 +242,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         UUID entityID = uuidEntityManager.getUuid(e);
         if (chunk.getEntities().contains(entityID, false)) {
             chunk.removeEntity(entityID);
-            eventManager.notifyEvent(e, new LeaveChunkEvent(e, chunk));
+            eventManager.notifyEvent(new LeaveChunkEvent(e, chunk));
         }
     }
 
@@ -278,13 +276,13 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     @Override
-    public void onNotify(Entity e, EntityEvent event) {
+    public void onNotify(EntityEvent event) {
         if (event instanceof CreatePlayerEvent) {
-            loadChunksAroundPlayer(e);
-            addEntity(e);
+            loadChunksAroundPlayer(event.entity);
+            addEntity(event.entity);
         } else if (event instanceof JoinChunkEvent) {
-            if (mAuthority.has(e))
-                loadChunksAroundPlayer(e);
+            if (mAuthority.has(event.entity))
+                loadChunksAroundPlayer(event.entity);
         }
     }
 }

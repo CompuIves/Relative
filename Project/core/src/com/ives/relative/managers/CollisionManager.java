@@ -49,8 +49,8 @@ public class CollisionManager extends Manager implements ContactListener {
 
         checkHitGround(contact, true);
         checkProximityCollision(contact, true);
-        eventManager.notifyEvent(e1, new CollisionEvent(true, contact, e1, e2));
-        eventManager.notifyEvent(e2, new CollisionEvent(true, contact, e1, e2));
+        eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
+        eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
     }
 
     @Override
@@ -68,8 +68,8 @@ public class CollisionManager extends Manager implements ContactListener {
 
         checkHitGround(contact, false);
         checkProximityCollision(contact, false);
-        eventManager.notifyEvent(e1, new CollisionEvent(false, contact, e1, e2));
-        eventManager.notifyEvent(e2, new CollisionEvent(false, contact, e1, e2));
+        eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
+        eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class CollisionManager extends Manager implements ContactListener {
         if (permanent != null && object != null) {
             if (mPhysics.get(object).bodyType == BodyDef.BodyType.DynamicBody) {
                 if (permanent.getId() != object.getId()) {
-                    eventManager.notifyEvent(permanent, new ProximityAuthorityEvent(permanent, object, start));
+                    eventManager.notifyEvent(new ProximityAuthorityEvent(permanent, object, start));
                 }
             }
         }

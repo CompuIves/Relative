@@ -182,7 +182,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
                 com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.planet)).world;
 
-                physics.body = Tile.createBody(entity, tile, position.x, position.y, physicsWorld);
+                physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
                 if (physics.bodyType == BodyDef.BodyType.DynamicBody) {
                     physics.body.setType(BodyDef.BodyType.DynamicBody);
                 }

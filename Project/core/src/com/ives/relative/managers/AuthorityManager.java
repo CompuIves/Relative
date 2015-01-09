@@ -5,14 +5,14 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.events.CollisionEvent;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
-import com.ives.relative.entities.events.ProximityAuthorityEvent;
+import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
 import org.jetbrains.annotations.NotNull;
@@ -35,25 +35,6 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
     protected ComponentMapper<Position> mPosition;
 
     public AuthorityManager() {
-    }
-
-    public static void addProximitySensor(Physics p) {
-        Body body = p.body;
-        //Small check if the sensor is already added
-        for (Fixture fixture : body.getFixtureList()) {
-            if (fixture.getUserData().equals(Authority.class))
-                return;
-        }
-
-        CircleShape sensorShape = new CircleShape();
-        sensorShape.setRadius(2f);
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = sensorShape;
-        fixtureDef.isSensor = true;
-        Fixture sensorFixture = body.createFixture(fixtureDef);
-        sensorFixture.setUserData(Authority.class);
-
-        sensorShape.dispose();
     }
 
     @Override
@@ -84,66 +65,68 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
                 authority.type = type;
             } else {
                 authority = mAuthority.get(e);
-            }
-
-            if (type == AuthorityType.PERMANENT) {
-                Physics p = mPhysics.get(e);
-                addProximitySensor(p);
+                if (authority.type == AuthorityType.PERMANENT)
+                    return;
             }
 
             if (!authority.getOwners().contains(owner, true)) {
+                System.out.println("Added AuthorityType: " + type.toString() + " of entity: " + e.getId() + " to " + owner);
                 authority.setOwner(owner);
-                if (type == AuthorityType.PROXIMITY) {
+                if (authority.type == AuthorityType.TOUCH) {
                     for (UUID eUUID : mPhysics.get(e).entitiesInContact) {
                         Entity e2 = uuidEntityManager.getEntity(eUUID);
                         if (mPhysics.get(e2).bodyType == BodyDef.BodyType.DynamicBody) {
-                            authorizeEntity(owner, e2, type);
+                            authorizeEntity(owner, e2, AuthorityType.TOUCH);
                         }
                     }
                 }
-
-                System.out.println("Added AuthorityType: " + type.toString() + " to " + owner);
             }
         }
     }
 
     public void unAuthorizeEntity(Entity e, int owner) {
-        if (mAuthority.has(e)) {
-            Authority authority = mAuthority.get(e);
-            if (authority.type != AuthorityType.PERMANENT) {
-                System.out.println("Unauthorized entity");
+        Authority authority = mAuthority.get(e);
+        if (authority.type != AuthorityType.PERMANENT) {
+            System.out.println("Unauthorized entity");
 
-                if (authority.getOwners().size == 1) {
-                    e.edit().remove(Authority.class);
-                } else {
-                    //The array is sorted automatically, if the first owner is removed the second owner will shift up.
-                    authority.removeOwner(owner);
-                }
+            if (authority.getOwners().size == 1) {
+                e.edit().remove(Authority.class);
+            } else {
+                //The array is sorted automatically, if the first owner is removed the second owner will shift up.
+                authority.removeOwner(owner);
             }
         }
     }
 
-    @Override
-    public void onNotify(Entity e, EntityEvent event) {
-        if (event instanceof ProximityAuthorityEvent) {
-            ProximityAuthorityEvent proximityEvent = (ProximityAuthorityEvent) event;
-            int owner = mAuthority.get(e).getOwner();
-            if (proximityEvent.start) {
-                authorizeEntity(owner, proximityEvent.object, AuthorityType.PROXIMITY);
-            } else {
-                unAuthorizeEntity(proximityEvent.object, owner);
-            }
-        } else if (event instanceof CollisionEvent) {
-            CollisionEvent collisionEvent = (CollisionEvent) event;
-            if (!collisionEvent.start) {
-                if (mAuthority.has(collisionEvent.e1)) {
+    public void unAuthorizeEntity(Entity e) {
+        if (mAuthority.get(e).type != AuthorityType.PERMANENT) {
+            e.edit().remove(Authority.class);
+            System.out.println("Unauthorized entity: " + e.getId());
+        }
+    }
 
+    @Override
+    public void onNotify(EntityEvent event) {
+        if (event instanceof CollisionEvent) {
+            CollisionEvent collisionEvent = (CollisionEvent) event;
+            if (collisionEvent.start) {
+                if (mAuthority.has(collisionEvent.e1)) {
+                    if (mPhysics.get(collisionEvent.e2).bodyType == BodyDef.BodyType.DynamicBody)
+                        authorizeEntity(mAuthority.get(collisionEvent.e1).getOwner(), collisionEvent.e2, AuthorityType.TOUCH);
                 }
+                if (mAuthority.has(collisionEvent.e2)) {
+                    if (mPhysics.get(collisionEvent.e1).bodyType == BodyDef.BodyType.DynamicBody)
+                        authorizeEntity(mAuthority.get(collisionEvent.e2).getOwner(), collisionEvent.e1, AuthorityType.TOUCH);
+                }
+            }
+        } else if (event instanceof StoppedMovementEvent) {
+            if (mAuthority.has(event.entity)) {
+                unAuthorizeEntity(event.entity);
             }
         }
     }
 
     public static enum AuthorityType {
-        PERMANENT, PROXIMITY, CHUNK
+        PERMANENT, TOUCH
     }
 }

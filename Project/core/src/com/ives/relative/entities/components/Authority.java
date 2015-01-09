@@ -33,8 +33,15 @@ public class Authority extends PooledComponent {
     }
 
     public void setOwner(int owner) {
-        if (!owners.contains(owner, true))
-            owners.add(owner);
+        if (type != AuthorityManager.AuthorityType.PERMANENT) {
+            if (!owners.contains(owner, true)) {
+                owners.add(owner);
+            }
+        } else {
+            if (owners.size == 0) {
+                owners.add(owner);
+            }
+        }
     }
 
     public void removeOwner(int owner) {

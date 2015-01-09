@@ -55,7 +55,7 @@ public class ClientManager extends GameManager implements Screen {
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
 
-        world.setSystem(new WorldSystem());
+        world.setSystem(new WorldSystem(WorldSystem.PHYSICS_ITERATIONS));
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
         world.setSystem(new NetworkReceiveSystem());
 

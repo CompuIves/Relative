@@ -1,6 +1,5 @@
 package com.ives.relative.managers.event;
 
-import com.artemis.Entity;
 import com.artemis.Manager;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.events.EntityEvent;
@@ -19,14 +18,11 @@ public class EventManager extends Manager {
     /**
      * This notifies every interested observer of an event which happened to an entity
      *
-     * @param e
      * @param event
      */
-    public void notifyEvent(Entity e, EntityEvent event) {
-        if (e != null) {
-            for (int i = 0; i < eventObservers.size; i++) {
-                eventObservers.get(i).onNotify(e, event);
-            }
+    public void notifyEvent(EntityEvent event) {
+        for (int i = 0; i < eventObservers.size; i++) {
+            eventObservers.get(i).onNotify(event);
         }
     }
 

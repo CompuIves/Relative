@@ -186,10 +186,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         Entity entity = networkManager.getEntity(packet.entity);
         System.out.println(packet.entity);
         if (entity != null) {
-            if (packet.type == AuthorityManager.AuthorityType.PERMANENT) {
-                Physics p = mPhysics.get(entity);
-                AuthorityManager.addProximitySensor(p);
-            }
             grantedEntities.add(packet.entity);
         }
     }
@@ -248,10 +244,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     }
 
     @Override
-    public void onNotify(Entity e, EntityEvent event) {
+    public void onNotify(EntityEvent event) {
         if (event instanceof MovementEvent) {
-            int id = networkManager.getNetworkID(e);
-            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, e)) {
+            int id = networkManager.getNetworkID(event.entity);
+            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, event.entity)) {
                 if (!entitiesToSend.contains(id, true)) {
                     entitiesToSend.add(id);
                 }

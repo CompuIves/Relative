@@ -4,28 +4,27 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
-import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.systems.IntervalEntitySystem;
+import com.artemis.utils.ImmutableBag;
 import com.ives.relative.entities.components.planet.WorldC;
 
 /**
  * Created by Ives on 4/12/2014.
  */
 @Wire
-public class WorldSystem extends EntityProcessingSystem {
+public class WorldSystem extends IntervalEntitySystem {
     public static float PHYSICS_ITERATIONS = 1 / 60f;
 
     ComponentMapper<WorldC> worldMapper;
 
-    public WorldSystem() {
-        super(Aspect.getAspectForAll(WorldC.class));
+    public WorldSystem(float interval) {
+        super(Aspect.getAspectForAll(WorldC.class), interval);
     }
 
     @Override
-    protected void process(Entity e) {
-        WorldC worldC = worldMapper.get(e);
-        worldC.acc += world.getDelta();
-        while (worldC.acc >= PHYSICS_ITERATIONS) {
-            worldC.acc -= PHYSICS_ITERATIONS;
+    protected void processEntities(ImmutableBag<Entity> entities) {
+        for (Entity e : entities) {
+            WorldC worldC = worldMapper.get(e);
             worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
         }
     }

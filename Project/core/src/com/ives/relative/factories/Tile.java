@@ -21,9 +21,9 @@ public class Tile {
      * @param physicsWorld
      * @return
      */
-    public static Body createBody(Entity e, SolidTile tile, float x, float y, World physicsWorld) {
+    public static Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.type = gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody;
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
         PolygonShape shape = TileManager.getCube(tile.width, tile.height);

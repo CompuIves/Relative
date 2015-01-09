@@ -8,10 +8,12 @@ import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.events.MovementEvent;
+import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
 
@@ -29,12 +31,15 @@ public class MovementSystem extends EntityProcessingSystem {
     protected EventManager eventManager;
     protected UuidEntityManager uuidEntityManager;
 
+    Array<Integer> noMovementEntities;
+
     /**
      * Creates a new EntityProcessingSystem.
      */
     public MovementSystem() {
         //noinspection unchecked
         super(Aspect.getAspectForAll(Physics.class, Position.class, Velocity.class));
+        noMovementEntities = new Array<Integer>();
     }
 
     @Override
@@ -52,28 +57,41 @@ public class MovementSystem extends EntityProcessingSystem {
             position.y = bodyPosition.y;
             position.protation = position.rotation;
             position.rotation = physics.body.getTransform().getRotation();
-            velocity.vx = entityBody.getLinearVelocity().x;
-            velocity.vy = entityBody.getLinearVelocity().y;
+            Vector2 vel = entityBody.getLinearVelocity();
+            velocity.vx = vel.x;
+            velocity.vy = vel.y;
 
-            if (position.px != position.x) {
-                if (chunkManager.getChunkIndex(position.x) != chunkManager.getChunkIndex(position.px)) {
-                    chunkManager.removeEntity(e, position.x, position.planet);
-                    chunkManager.addEntity(e, position.x, position.planet);
-                }
-            }
-
-            if (hasMoved(position)) {
-                sendEvent(e, position, velocity);
+            if (isMoving(velocity)) {
+                sendMovementEvent(e, position, velocity);
+                checkChunkEvent(e, position);
+            } else {
+                sendNoMovementEvent(e, position);
             }
         }
     }
 
-    public boolean hasMoved(Position position) {
-        return position.x != position.px || position.y != position.py;
+    public boolean isMoving(Velocity v) {
+        return Math.abs(v.vx) + Math.abs(v.vy) > 0.1f;
     }
 
-    public void sendEvent(Entity e, Position p, Velocity v) {
+    public void sendMovementEvent(Entity e, Position p, Velocity v) {
+        noMovementEntities.removeValue(e.getId(), true);
         MovementEvent movementEvent = new MovementEvent(e, p, v);
-        eventManager.notifyEvent(e, movementEvent);
+        eventManager.notifyEvent(movementEvent);
+    }
+
+    public void sendNoMovementEvent(Entity e, Position p) {
+        if (!noMovementEntities.contains(e.getId(), true)) {
+            noMovementEntities.add(e.getId());
+            eventManager.notifyEvent(new StoppedMovementEvent(e, p));
+        }
+    }
+
+    //TODO Move this to chunkmanager
+    private void checkChunkEvent(Entity e, Position position) {
+        if (chunkManager.getChunkIndex(position.x) != chunkManager.getChunkIndex(position.px)) {
+            chunkManager.removeEntity(e, position.x, position.planet);
+            chunkManager.addEntity(e, position.x, position.planet);
+        }
     }
 }
