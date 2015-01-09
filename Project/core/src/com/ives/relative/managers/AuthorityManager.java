@@ -69,14 +69,17 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
                     return;
             }
 
-            if (!authority.getOwners().contains(owner, true)) {
-                System.out.println("Added AuthorityType: " + type.toString() + " of entity: " + e.getId() + " to " + owner);
-                authority.setOwner(owner);
-                if (authority.type == AuthorityType.TOUCH) {
-                    for (UUID eUUID : mPhysics.get(e).entitiesInContact) {
-                        Entity e2 = uuidEntityManager.getEntity(eUUID);
-                        if (mPhysics.get(e2).bodyType == BodyDef.BodyType.DynamicBody) {
-                            authorizeEntity(owner, e2, AuthorityType.TOUCH);
+            if (!authority.onGoing) {
+                authority.onGoing = true;
+                if (!authority.getOwners().contains(owner, true)) {
+                    System.out.println("Added AuthorityType: " + type.toString() + " of entity: " + e.getId() + " to " + owner);
+                    authority.setOwner(owner);
+                    if (authority.type == AuthorityType.TOUCH) {
+                        for (UUID eUUID : mPhysics.get(e).entitiesInContact) {
+                            Entity e2 = uuidEntityManager.getEntity(eUUID);
+                            if (mPhysics.get(e2).bodyType == BodyDef.BodyType.DynamicBody) {
+                                authorizeEntity(owner, e2, AuthorityType.TOUCH);
+                            }
                         }
                     }
                 }
@@ -121,7 +124,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
             }
         } else if (event instanceof StoppedMovementEvent) {
             if (mAuthority.has(event.entity)) {
-                unAuthorizeEntity(event.entity);
+                mAuthority.get(event.entity).onGoing = false;
             }
         }
     }

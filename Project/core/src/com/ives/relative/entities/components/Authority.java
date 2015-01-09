@@ -10,6 +10,7 @@ import com.ives.relative.managers.AuthorityManager;
 public class Authority extends PooledComponent {
     public Array<Integer> owners;
     public AuthorityManager.AuthorityType type;
+    public boolean onGoing = false;
 
     public Authority() {
         owners = new Array<Integer>();
@@ -35,7 +36,10 @@ public class Authority extends PooledComponent {
     public void setOwner(int owner) {
         if (type != AuthorityManager.AuthorityType.PERMANENT) {
             if (!owners.contains(owner, true)) {
-                owners.add(owner);
+                if (owners.size > 0)
+                    owners.set(0, owner);
+                else
+                    owners.add(owner);
             }
         } else {
             if (owners.size == 0) {
@@ -56,9 +60,18 @@ public class Authority extends PooledComponent {
         this.type = type;
     }
 
+    public boolean isOnGoing() {
+        return onGoing;
+    }
+
+    public void setOnGoing(boolean onGoing) {
+        this.onGoing = onGoing;
+    }
+
     @Override
     protected void reset() {
         owners.clear();
         type = null;
+        onGoing = false;
     }
 }

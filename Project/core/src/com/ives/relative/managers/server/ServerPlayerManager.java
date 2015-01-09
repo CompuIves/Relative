@@ -66,14 +66,14 @@ public class ServerPlayerManager extends PlayerManager {
         Entity e = new EntityBuilder(world).with(new Health(100),
                 new MovementSpeed(5f),
                 new Name(internalName, realName),
-                new Visual(new TextureRegion(new Texture("player.png")), 2, 2),
+                new Visual(new TextureRegion(new Texture("player.png")), 1.8f, 1.8f),
                 new Position(position.x, position.y, z, 0, worldID),
                 new Velocity(0, 0, 0),
                 new State()).
                 group("players").
                 build();
 
-        Body body = Player.createBody(e, position.x, position.y, 0, 0, 1f, planet);
+        Body body = Player.createBody(e, position.x, position.y, 0, 0, 0.9f, planet);
         e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody)).add(new Transform(1, 1, null));
 
         setPlayer(e, internalName);

@@ -31,6 +31,8 @@ public class WorldSystem extends EntityProcessingSystem {
                 worldC.acc -= PHYSICS_ITERATIONS;
                 worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
             }
+        } else {
+            worldC.world.step(0, worldC.velocityIterations, worldC.positionIterations);
         }
     }
 }

@@ -169,7 +169,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
                 Entity planet = entity.getWorld().getManager(PlanetManager.class).getPlanet(position.planet);
 
-                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 1f, planet);
+                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
                 visual.texture = new TextureRegion(new Texture("player.png"));
 
                 physics.body.setType(BodyDef.BodyType.DynamicBody);
