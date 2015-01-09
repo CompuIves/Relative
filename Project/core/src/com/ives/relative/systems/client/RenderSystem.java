@@ -9,7 +9,6 @@ import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.ives.relative.entities.components.body.Position;
@@ -23,7 +22,6 @@ import com.ives.relative.entities.components.client.Visual;
 public class RenderSystem extends EntityProcessingSystem {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Visual> visualMapper;
-    BitmapFont fpsFont;
     private SpriteBatch batch;
     private OrthographicCamera camera;
 
@@ -32,8 +30,6 @@ public class RenderSystem extends EntityProcessingSystem {
         super(Aspect.getAspectForAll(Visual.class, Position.class));
         this.batch = batch;
         this.camera = camera;
-
-        fpsFont = new BitmapFont();
     }
 
     @Override
@@ -69,9 +65,6 @@ public class RenderSystem extends EntityProcessingSystem {
                     1, 1,
                     position.rotation * MathUtils.radiansToDegrees);
         }
-
-        fpsFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 10);
-        fpsFont.setScale(0.2f);
     }
 
     @Override

@@ -48,8 +48,7 @@ public class ServerManager extends GameManager {
     @Override
     public void registerSystems() {
         super.registerSystems();
-        WorldSystem worldSystem = new WorldSystem(0);
-        world.setSystem(worldSystem);
+        world.setSystem(new WorldSystem());
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
         world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new NetworkSendSystem((ServerNetwork) network));

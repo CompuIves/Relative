@@ -10,7 +10,6 @@ import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.chunkloaders.ClientChunkLoader;
-import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.client.ClientNetworkSystem;
 import com.ives.relative.systems.client.InputSystem;
@@ -54,13 +53,12 @@ public class ClientManager extends GameManager implements Screen {
         InputSystem inputSystem = new InputSystem(camera);
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
-
-        world.setSystem(new WorldSystem(WorldSystem.PHYSICS_ITERATIONS));
-        world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
         world.setSystem(new NetworkReceiveSystem());
+        world.setSystem(new WorldSystem());
+        world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
 
         world.setSystem(new RenderSystem(batch, camera));
-        world.setSystem(new Box2DDebugRendererSystem(camera));
+        //world.setSystem(new Box2DDebugRendererSystem(camera));
     }
 
     @Override

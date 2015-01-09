@@ -8,7 +8,6 @@ import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
@@ -31,15 +30,12 @@ public class MovementSystem extends EntityProcessingSystem {
     protected EventManager eventManager;
     protected UuidEntityManager uuidEntityManager;
 
-    Array<Integer> noMovementEntities;
-
     /**
      * Creates a new EntityProcessingSystem.
      */
     public MovementSystem() {
         //noinspection unchecked
         super(Aspect.getAspectForAll(Physics.class, Position.class, Velocity.class));
-        noMovementEntities = new Array<Integer>();
     }
 
     @Override
@@ -64,27 +60,27 @@ public class MovementSystem extends EntityProcessingSystem {
             if (isMoving(velocity)) {
                 sendMovementEvent(e, position, velocity);
                 checkChunkEvent(e, position);
+                velocity.isMoving = true;
             } else {
-                sendNoMovementEvent(e, position);
+                if (velocity.isMoving) {
+                    sendNoMovementEvent(e, position);
+                    velocity.isMoving = false;
+                }
             }
         }
     }
 
     public boolean isMoving(Velocity v) {
-        return Math.abs(v.vx) + Math.abs(v.vy) > 0.1f;
+        return Math.abs(v.vx) > 0.1f || Math.abs(v.vy) > 0.1f;
     }
 
     public void sendMovementEvent(Entity e, Position p, Velocity v) {
-        noMovementEntities.removeValue(e.getId(), true);
         MovementEvent movementEvent = new MovementEvent(e, p, v);
         eventManager.notifyEvent(movementEvent);
     }
 
     public void sendNoMovementEvent(Entity e, Position p) {
-        if (!noMovementEntities.contains(e.getId(), true)) {
-            noMovementEntities.add(e.getId());
-            eventManager.notifyEvent(new StoppedMovementEvent(e, p));
-        }
+        eventManager.notifyEvent(new StoppedMovementEvent(e, p));
     }
 
     //TODO Move this to chunkmanager
