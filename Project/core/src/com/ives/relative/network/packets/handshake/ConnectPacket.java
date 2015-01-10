@@ -7,7 +7,7 @@ import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.handshake.modules.GetNeededModules;
+import com.ives.relative.network.packets.handshake.modules.GetInstalledModules;
 
 /**
  * Created by Ives on 8/12/2014.
@@ -72,7 +72,7 @@ public class ConnectPacket extends ResponsePacket {
             public void run() {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 serverPlayerManager.addPlayerLoggingIn(connection, playerID);
-                network.sendObjectTCP(connection, new GetNeededModules());
+                network.sendObjectTCP(connection, new GetInstalledModules());
             }
         });
     }

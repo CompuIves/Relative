@@ -65,32 +65,46 @@ public class PlanetManager extends Manager {
 
             entitiesByPlanet.put(name, e.getUuid());
             planetsByEntity.put(e.getUuid(), name);
-
-            if (mWorldC.get(e).world == null) {
-                Gravity gravity = mGravity.get(e);
-                mWorldC.get(e).world = new World(new Vector2(gravity.x, gravity.y), false);
-            }
-
             mWorldC.get(e).world.setContactListener(collisionManager);
 
             world.getManager(GroupManager.class).add(e, "planets");
         }
     }
 
+    public World createWorld(Gravity gravity) {
+        return new World(new Vector2(gravity.x, gravity.y), true);
+    }
+
     public Entity getPlanet(String name) {
-        return uuidEntityManager.getEntity(entitiesByPlanet.get(name));
+        if (entitiesByPlanet.containsKey(name))
+            return uuidEntityManager.getEntity(entitiesByPlanet.get(name));
+        else
+            return null;
     }
 
     public String getPlanetID(Entity planet) {
         return planetsByEntity.get(planet.getUuid());
     }
 
-    public Entity createNewPlanet(String id, String name, String seed, World physicsWorld, int velocityIterations, int positionIterations) {
+    /**
+     * Creates a planet and adds it to the planet registry. The {@link com.badlogic.gdx.physics.box2d.World} created for physics (Box2D) has a gravity of
+     * 0,0. This way the server doesn't have to simulate any physics. The planet has a separate gravity component which describes the gravity. When the
+     * planet arrives on the planet the client will make a world with the gravity specified in the gravity component.
+     *
+     * @param id                 ID of the planet, the planet gets referenced by this ID.
+     * @param name               The name of the planet, the players will see this name.
+     * @param seed               A seed which determines how the planet will look like. Purely a random value would suffice.
+     * @param gravity            Gravity on the planet.
+     * @param velocityIterations This value is used for the physics, it will determine how many times each step the velocity is updated
+     * @param positionIterations Same as velocityIterations, but for position.
+     * @return Return the entity of the planet
+     */
+    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int velocityIterations, int positionIterations) {
         //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
-                new Gravity(physicsWorld.getGravity().x, physicsWorld.getGravity().y),
-                new WorldC(physicsWorld, velocityIterations, positionIterations),
+                new Gravity(gravity.x, gravity.y),
+                new WorldC(new World(new Vector2(0, 0),true), velocityIterations, positionIterations),
                 new ChunkC())
                 .group("planets")
                 .build();

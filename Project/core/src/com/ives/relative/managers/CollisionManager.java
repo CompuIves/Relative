@@ -4,13 +4,13 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.physics.box2d.*;
-import com.ives.relative.entities.components.Authority;
-import com.ives.relative.entities.components.State;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.events.CollisionEvent;
-import com.ives.relative.entities.events.ProximityAuthorityEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
 
@@ -25,7 +25,6 @@ public class CollisionManager extends Manager implements ContactListener {
     protected EventManager eventManager;
 
     protected ComponentMapper<Physics> mPhysics;
-    protected ComponentMapper<State> mState;
     protected ComponentMapper<FootC> mFootC;
 
     /**
@@ -48,7 +47,6 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.entitiesInContact.add(e1.getUuid());
 
         checkHitGround(contact, true);
-        checkProximityCollision(contact, true);
         eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
         eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
     }
@@ -67,7 +65,6 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.entitiesInContact.removeValue(e1.getUuid(), true);
 
         checkHitGround(contact, false);
-        checkProximityCollision(contact, false);
         eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
         eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
     }
@@ -123,27 +120,6 @@ public class CollisionManager extends Manager implements ContactListener {
         footC.contactAmount--;
         if (footC.contactAmount == 0) {
             stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
-        }
-    }
-
-    private void checkProximityCollision(Contact contact, boolean start) {
-        Entity permanent = null;
-        Entity object = null;
-        if (contact.getFixtureA().getUserData().equals(Authority.class)) {
-            permanent = (Entity) contact.getFixtureA().getBody().getUserData();
-            object = (Entity) contact.getFixtureB().getBody().getUserData();
-        }
-
-        if (contact.getFixtureB().getUserData().equals(Authority.class)) {
-            permanent = (Entity) contact.getFixtureB().getBody().getUserData();
-            object = (Entity) contact.getFixtureA().getBody().getUserData();
-        }
-        if (permanent != null && object != null) {
-            if (mPhysics.get(object).bodyType == BodyDef.BodyType.DynamicBody) {
-                if (permanent.getId() != object.getId()) {
-                    eventManager.notifyEvent(new ProximityAuthorityEvent(permanent, object, start));
-                }
-            }
         }
     }
 }

@@ -6,7 +6,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.handshake.RequestPlayerPacket;
+import com.ives.relative.network.packets.handshake.RequestPlayer;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.StartFileNotice;
@@ -58,8 +58,8 @@ public class SetupFileTransferPacket extends ResponsePacket {
                         }
                     });
 
-                    //Ask for the planet
-                    game.network.sendObjectTCP(connection.getID(), new RequestPlayerPacket());
+                    //Ask for the player
+                    game.network.sendObjectTCP(connection.getID(), new RequestPlayer());
                     game.network.endPoint.removeListener(this);
                 }
 

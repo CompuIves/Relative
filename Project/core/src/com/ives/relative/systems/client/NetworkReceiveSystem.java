@@ -4,9 +4,13 @@ import com.artemis.Component;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.artemis.systems.VoidEntitySystem;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
@@ -18,6 +22,8 @@ import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.Player;
@@ -27,7 +33,8 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
-import com.ives.relative.network.packets.handshake.RequestWorldSnapshot;
+import com.ives.relative.network.packets.handshake.planet.RequestPlanet;
+import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -45,9 +52,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class NetworkReceiveSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
     protected AuthorityManager authorityManager;
+    protected TileManager tileManager;
+    protected PlanetManager planetManager;
+    protected ClientManager clientManager;
+    protected ClientNetworkSystem clientNetworkSystem;
+    protected TagManager tagManager;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<WorldC> mWorldC;
+    protected ComponentMapper<Gravity> mGravity;
+    protected ComponentMapper<Physics> mPhysics;
+    protected ComponentMapper<Visual> mVisual;
+    protected ComponentMapper<TileC> mTileC;
+    protected ComponentMapper<Authority> mAuthority;
+    protected ComponentMapper<NetworkC> mNetworkC;
 
     Map<Integer, Array<Component>> changedEntities;
     BlockingQueue<CreateEntityPacket> queue;
@@ -159,46 +178,73 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
      * @param type   The type of the entity
      */
     private void finishEntity(Entity entity, NetworkManager.Type type) {
-        Physics physics = entity.getWorld().getMapper(Physics.class).get(entity);
-        Position position = entity.getWorld().getMapper(Position.class).get(entity);
-        Visual visual = entity.getWorld().getMapper(Visual.class).get(entity);
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        Gdx.app.log("EntityReceived", "Received entity with type: " + type);
+        Physics physics;
+        Position position;
+        Velocity velocity;
+        Visual visual;
         switch (type) {
             case PLAYER:
-                physics = entity.getWorld().getMapper(Physics.class).get(entity);
-                position = entity.getWorld().getMapper(Position.class).get(entity);
-                Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
-                Entity planet = entity.getWorld().getManager(PlanetManager.class).getPlanet(position.planet);
-
-                physics.body = Player.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
+                position = mPosition.get(entity);
+                visual = mVisual.get(entity);
                 visual.texture = new TextureRegion(new Texture("player.png"));
+                Entity planet = planetManager.getPlanet(position.planet);
 
-                physics.body.setType(BodyDef.BodyType.DynamicBody);
-
-                Authority authority = world.getMapper(Authority.class).get(entity);
-                authorityManager.authorizeEntity(authority.getOwner(), entity, authority.type);
+                //If the planet hasn't been received yet.
+                if (planet == null) {
+                    clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestPlanet(position.planet));
+                }
+                tagManager.register("player", entity);
+                clientNetworkSystem.registerPlayer(mNetworkC.get(entity).id);
                 break;
             case TILE:
-                TileC tileC = entity.getWorld().getMapper(TileC.class).get(entity);
-                SolidTile tile = entity.getWorld().getManager(TileManager.class).solidTiles.get(tileC.id);
-                com.badlogic.gdx.physics.box2d.World physicsWorld = entity.getWorld().getMapper(WorldC.class).get(entity.getWorld().getManager(PlanetManager.class).getPlanet(position.planet)).world;
+                physics = mPhysics.get(entity);
+                visual = mVisual.get(entity);
+                position = mPosition.get(entity);
+                TileC tileC = mTileC.get(entity);
+                SolidTile tile = tileManager.solidTiles.get(tileC.id);
+                com.badlogic.gdx.physics.box2d.World physicsWorld = mWorldC.get(planetManager.getPlanet(position.planet)).world;
 
                 physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
+
                 if (physics.bodyType == BodyDef.BodyType.DynamicBody) {
-                    physics.body.setType(BodyDef.BodyType.DynamicBody);
+                    processBody(physics.body);
                 }
                 visual.texture = tile.textureRegion;
                 break;
             case PLANET:
                 Name name = world.getMapper(Name.class).get(entity);
-                PlanetManager planetManager = world.getManager(PlanetManager.class);
+                WorldC worldC = mWorldC.get(entity);
+                worldC.world = planetManager.createWorld(mGravity.get(entity));
                 planetManager.addPlanet(name.internalName, entity);
-                //world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestNearbyChunks());
-                world.getManager(ClientManager.class).network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestWorldSnapshot());
+                System.out.println("RECEIVED PLANET");
+                spawnPlayer(tagManager.getEntity("player"), entity);
                 break;
             case OTHER:
                 break;
             default:
                 break;
         }
+    }
+
+    private void processBody(Body body) {
+        body.setType(BodyDef.BodyType.DynamicBody);
+        body.getFixtureList().get(0).setSensor(false);
+    }
+
+    private void spawnPlayer(Entity player, Entity planet) {
+        Physics physics = mPhysics.get(player);
+        Velocity velocity = mVelocity.get(player);
+        Position position = mPosition.get(player);
+        physics.body = Player.createBody(player, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
+
+        processBody(physics.body);
+        Authority authority = mAuthority.get(player);
+        authorityManager.authorizeEntity(authority.getOwner(), player, authority.type);
+    }
+
+    public void requestEntity(int id) {
+        clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(id));
     }
 }

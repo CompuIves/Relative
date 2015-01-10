@@ -22,7 +22,7 @@ public class CreateBodyCommand extends Command {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                entity.getWorld().getSystem(NetworkSendSystem.class).sendEntity(body);
+                entity.getWorld().getSystem(NetworkSendSystem.class).sendEntityToAll(body);
             }
         });
     }

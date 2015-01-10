@@ -170,12 +170,12 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
             Vector2 bodyVel = body.getLinearVelocity();
             if (bodyVel.x != vx || bodyVel.y != vy) {
-                body.setLinearVelocity(vx, vy);
+                //body.setLinearVelocity(vx, vy);
                 localVelocity.vx = vx;
                 localVelocity.vy = vy;
             }
 
-            body.setAngularVelocity(rVelocity);
+            //body.setAngularVelocity(rVelocity);
         }
     }
 

@@ -1,11 +1,18 @@
 package com.ives.relative.network.packets.handshake.planet;
 
 import com.ives.relative.core.GameManager;
+import com.ives.relative.managers.planet.Chunk;
 import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.systems.server.NetworkSendSystem;
+
+import java.util.UUID;
 
 /**
  * Created by Ives on 7/1/2015.
+ * Sends the information of a chunk to the client.
+ *
+ * HANDLED BY SERVER
  */
 public class RequestChunk extends ResponsePacket {
     float x;
@@ -21,6 +28,12 @@ public class RequestChunk extends ResponsePacket {
 
     @Override
     public void response(GameManager game) {
-        game.network.sendObjectTCP(connection, new ChunkPacket(game.world.getManager(ChunkManager.class).getChunk(x, planet)));
+        Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(x, planet);
+        game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
+
+        NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);
+        for (UUID eUUID : chunk.getEntities()) {
+            networkSendSystem.sendEntityToAll(eUUID);
+        }
     }
 }

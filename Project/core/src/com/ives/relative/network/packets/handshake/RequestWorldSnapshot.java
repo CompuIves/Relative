@@ -35,7 +35,7 @@ public class RequestWorldSnapshot extends ResponsePacket {
                         NetworkC networkC = game.world.getMapper(NetworkC.class).get(entity);
                         UpdatePacket packet = new UpdatePacket(0, networkManager.getNetworkID(entity));
                         packet.connection = connection;
-                        game.network.sendObjectTCP(connection, game.world.getSystem(NetworkSendSystem.class).generateFullComponentPacket(entity, networkC.type));
+                        game.world.getSystem(NetworkSendSystem.class).sendEntity(connection, entity);
                     }
                 }
                 //game.network.sendObjectTCP(connection, new WorldSnapshotPacket(entities, ids));

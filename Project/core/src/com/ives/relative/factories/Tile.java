@@ -30,8 +30,10 @@ public class Tile {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;
-        fixtureDef.density = 1.0f;
+        fixtureDef.density = 6.0f;
         fixtureDef.friction = tile.friction;
+        if (gravity)
+            fixtureDef.isSensor = true;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(e);
         body.setUserData(e);

@@ -26,14 +26,4 @@ public class CreateEntityPacket extends UpdatePacket {
         }
         this.delta = delta;
     }
-
-    public CreateEntityPacket(Array<Component> components, int id, boolean delta, int sequence, NetworkManager.Type type) {
-        super(sequence, id);
-        this.components = new Component[components.size];
-        for (int i = 0; i < components.size; i++) {
-            this.components[i] = components.get(i);
-        }
-        this.delta = delta;
-        this.type = type;
-    }
 }

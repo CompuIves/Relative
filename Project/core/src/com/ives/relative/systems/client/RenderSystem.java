@@ -4,8 +4,8 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
-import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -74,14 +74,15 @@ public class RenderSystem extends EntityProcessingSystem {
     }
 
     private void positionCamera() {
-        ImmutableBag<Entity> playerEntities = world.getSystem(InputSystem.class).getActives();
-        if (playerEntities.size() != 0) {
-            Entity player = playerEntities.get(0);
+        Entity player = world.getManager(TagManager.class).getEntity("player");
+
+        //If player has spawned
+        if (player != null) {
             Position playerPosition = mPosition.get(player);
             camera.position.x = playerPosition.x;
             camera.position.y = playerPosition.y + 4;
+            camera.update();
+            batch.setProjectionMatrix(camera.combined);
         }
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
     }
 }

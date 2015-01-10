@@ -24,15 +24,11 @@ public class WorldSystem extends EntityProcessingSystem {
     protected void process(Entity e) {
         WorldC worldC = worldMapper.get(e);
 
-        //This check, the while loop would be infinite.
-        if (PHYSICS_ITERATIONS != 0) {
-            worldC.acc += world.getDelta();
-            while (worldC.acc >= PHYSICS_ITERATIONS) {
-                worldC.acc -= PHYSICS_ITERATIONS;
-                worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
-            }
-        } else {
-            worldC.world.step(0, worldC.velocityIterations, worldC.positionIterations);
+        worldC.acc += world.getDelta();
+        while (worldC.acc >= PHYSICS_ITERATIONS) {
+            worldC.acc -= PHYSICS_ITERATIONS;
+            worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
         }
+
     }
 }

@@ -1,0 +1,10 @@
+1. -> Server: ConnectPacket
+2. -> Client: GetInstalledModules
+3. -> Server: RequestModules
+4. -> Client: SetupFileTransfer
+--- Transfer Modules ---
+5. -> Server: RequestPlayer
+6. Server -> Client: CreateEntityPacket (player)
+7. -> Server: RequestPlanet
+8. Server -> Client: CreateEntityPacket (planet)
+9. Client: Spawn Player

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
@@ -67,7 +66,7 @@ public class ServerManager extends GameManager {
 
     private void createPlanet() {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
-        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new World(new Vector2(0, -10), true), 10, 10);
+        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 10, 10);
     }
 
     @Override

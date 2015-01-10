@@ -31,17 +31,17 @@ import java.util.List;
  * <p/>
  * HANDLED FROM SERVER
  */
-public class RequestModulesPacket extends ResponsePacket {
+public class RequestModules extends ResponsePacket {
     List<Module> modules;
 
     transient List<Module> deltaModules;
 
     transient ModuleInputStreamSender sender;
 
-    public RequestModulesPacket() {
+    public RequestModules() {
     }
 
-    public RequestModulesPacket(List<Module> modules) {
+    public RequestModules(List<Module> modules) {
         this.modules = modules;
     }
 

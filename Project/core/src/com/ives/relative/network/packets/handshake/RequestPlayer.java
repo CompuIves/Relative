@@ -4,10 +4,10 @@ import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.systems.server.NetworkSendSystem;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -16,7 +16,7 @@ import com.ives.relative.network.packets.ResponsePacket;
  * <p/>
  * HANDLED BY SERVER
  */
-public class RequestPlayerPacket extends ResponsePacket {
+public class RequestPlayer extends ResponsePacket {
     @Override
     public void response(final GameManager game) {
         Gdx.app.postRunnable(new Runnable() {
@@ -26,7 +26,7 @@ public class RequestPlayerPacket extends ResponsePacket {
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
                 Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
                         new Vector2(5, 12), 0);
-                game.network.sendObjectTCP(connection, new AssignPlayer(game.world.getManager(NetworkManager.class).getNetworkID(player)));
+                game.world.getSystem(NetworkSendSystem.class).sendEntityToAll(player);
             }
         });
     }

@@ -15,10 +15,10 @@ import java.util.List;
  * Connection is accepted. Now the server needs the list of the modules the client has.
  * HANDLED BY CLIENT
  */
-public class GetNeededModules extends ResponsePacket {
+public class GetInstalledModules extends ResponsePacket {
     List<Module> modules;
 
-    public GetNeededModules() {
+    public GetInstalledModules() {
     }
 
     @Override
@@ -28,7 +28,7 @@ public class GetNeededModules extends ResponsePacket {
             @Override
             public void run() {
                 modules = game.world.getManager(ModuleManager.class).getModules();
-                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestModulesPacket(modules));
+                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestModules(modules));
             }
         });
     }
