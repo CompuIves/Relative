@@ -283,6 +283,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         } else if (event instanceof JoinChunkEvent) {
             if (mAuthority.has(event.entity))
                 loadChunksAroundPlayer(event.entity);
+        } else if (event instanceof EntityDeletionEvent) {
+            removeEntity(event.entity);
         }
     }
 }

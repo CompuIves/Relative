@@ -18,7 +18,7 @@ import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
-import com.ives.relative.factories.Tile;
+import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.utils.ComponentUtils;
@@ -77,13 +77,15 @@ public class TileManager extends Manager {
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
                     new Position(x, y, z, 0, planet)).group("tile").build();
 
-            Body body = Tile.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
+            Body body = TileFactory.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
             e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
 
             if (gravity) {
                 e.edit().add(new Velocity());
                 int networkID = networkManager.addEntity(e);
                 e.edit().add(new NetworkC(networkID, 1, NetworkManager.Type.TILE));
+
+                chunkManager.addEntity(e);
             }
 
             return e;

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
@@ -26,14 +27,15 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.Gravity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
-import com.ives.relative.factories.Player;
-import com.ives.relative.factories.Tile;
+import com.ives.relative.factories.PlayerFactory;
+import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
-import com.ives.relative.network.packets.handshake.planet.RequestPlanet;
+import com.ives.relative.network.packets.handshake.planet.ReceivedPlanet;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.utils.ComponentUtils;
@@ -57,6 +59,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ClientManager clientManager;
     protected ClientNetworkSystem clientNetworkSystem;
     protected TagManager tagManager;
+    protected ChunkManager chunkManager;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
@@ -84,21 +87,16 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     @Override
     protected void begin() {
         try {
+            Array<Component> componentArray = new Array<Component>();
             for (int i = 0; i < queue.size(); i++) {
                 CreateEntityPacket packet = queue.take();
                 int id = packet.entityID;
-                NetworkManager.Type type = packet.type;
                 boolean delta = packet.delta;
 
-                Array<Component> componentArray = new Array<Component>();
                 componentArray.addAll(packet.components);
 
-                Entity e;
-                if (type != null) {
-                    e = addEntity(id, componentArray, delta, type);
-                } else {
-                    e = addEntity(id, componentArray, delta);
-                }
+                Entity e = addEntity(id, componentArray, delta);
+                componentArray.clear();
 
                 int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerID();
                 if (id == playerID) {
@@ -116,22 +114,6 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
 
     public void addDataForProcessing(CreateEntityPacket createEntityPacket) {
         queue.add(createEntityPacket);
-    }
-
-
-    /**
-     * When a remote entity is added there is a chance of duplicates, this method looks for the id and edits the
-     * existing entity accordingly.
-     *
-     * @param id         id of the entity which needs to be changed
-     * @param components the components of the old Entity
-     * @param delta      should every component be removed before adding these components?
-     * @param type       which type needs to be used for finishing the entity
-     */
-    public Entity addEntity(int id, Array<Component> components, boolean delta, NetworkManager.Type type) {
-        Entity e = addEntity(id, components, delta);
-        finishEntity(e, type);
-        return e;
     }
 
     /**
@@ -152,6 +134,9 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
             e = networkManager.getEntity(id);
             addComponentsToEntity(e, components, delta);
         }
+
+        NetworkC networkC = mNetworkC.get(e);
+        finishEntity(e, networkC.type);
         return e;
     }
 
@@ -191,10 +176,15 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 visual.texture = new TextureRegion(new Texture("player.png"));
                 Entity planet = planetManager.getPlanet(position.planet);
 
-                //If the planet hasn't been received yet.
-                if (planet == null) {
-                    clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestPlanet(position.planet));
-                }
+                physics = mPhysics.get(entity);
+                velocity = mVelocity.get(entity);
+                position = mPosition.get(entity);
+                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
+
+                processBody(entity);
+                Authority authority = mAuthority.get(entity);
+                authorityManager.authorizeEntity(authority.getOwner(), entity, authority.type);
+
                 tagManager.register("player", entity);
                 clientNetworkSystem.registerPlayer(mNetworkC.get(entity).id);
                 break;
@@ -204,12 +194,12 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 position = mPosition.get(entity);
                 TileC tileC = mTileC.get(entity);
                 SolidTile tile = tileManager.solidTiles.get(tileC.id);
-                com.badlogic.gdx.physics.box2d.World physicsWorld = mWorldC.get(planetManager.getPlanet(position.planet)).world;
+                World physicsWorld = mWorldC.get(planetManager.getPlanet(position.planet)).world;
 
-                physics.body = Tile.createBody(entity, tile, position.x, position.y, true, physicsWorld);
+                physics.body = TileFactory.createBody(entity, tile, position.x, position.y, true, physicsWorld);
 
                 if (physics.bodyType == BodyDef.BodyType.DynamicBody) {
-                    processBody(physics.body);
+                    processBody(entity);
                 }
                 visual.texture = tile.textureRegion;
                 break;
@@ -218,8 +208,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 WorldC worldC = mWorldC.get(entity);
                 worldC.world = planetManager.createWorld(mGravity.get(entity));
                 planetManager.addPlanet(name.internalName, entity);
-                System.out.println("RECEIVED PLANET");
-                spawnPlayer(tagManager.getEntity("player"), entity);
+
+                clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new ReceivedPlanet());
                 break;
             case OTHER:
                 break;
@@ -228,20 +218,11 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         }
     }
 
-    private void processBody(Body body) {
+    private void processBody(Entity e) {
+        Body body = mPhysics.get(e).body;
         body.setType(BodyDef.BodyType.DynamicBody);
         body.getFixtureList().get(0).setSensor(false);
-    }
-
-    private void spawnPlayer(Entity player, Entity planet) {
-        Physics physics = mPhysics.get(player);
-        Velocity velocity = mVelocity.get(player);
-        Position position = mPosition.get(player);
-        physics.body = Player.createBody(player, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
-
-        processBody(physics.body);
-        Authority authority = mAuthority.get(player);
-        authorityManager.authorizeEntity(authority.getOwner(), player, authority.type);
+        chunkManager.addEntity(e);
     }
 
     public void requestEntity(int id) {

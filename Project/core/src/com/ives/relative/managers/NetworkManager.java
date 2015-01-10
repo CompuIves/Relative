@@ -7,8 +7,11 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.events.EntityDeletionEvent;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.ChunkManager;
-import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +22,7 @@ import java.util.UUID;
  * This keeps the database of every networked entity and their network ID. It also processes incoming entities
  */
 @Wire
-public class NetworkManager extends Manager {
+public class NetworkManager extends Manager implements EntityEventObserver {
     protected ComponentMapper<NetworkC> mNetworkC;
     protected UuidEntityManager uuidEntityManager;
     protected ChunkManager chunkManager;
@@ -33,6 +36,12 @@ public class NetworkManager extends Manager {
         networkIDs = new HashMap<UUID, Integer>();
 
         removedIDs = new Array<Integer>();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        world.getManager(EventManager.class).addObserver(this);
     }
 
     /**
@@ -57,7 +66,6 @@ public class NetworkManager extends Manager {
         if (!networkEntities.containsKey(id) && !networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
-            chunkManager.addEntity(e);
         }
     }
 
@@ -68,15 +76,9 @@ public class NetworkManager extends Manager {
     public void removeEntity(int id) {
         Entity e = uuidEntityManager.getEntity(networkEntities.get(id));
         if (e != null) {
-            ComponentUtils.removeAllSpecialComponents(e);
             removedIDs.add(id);
-
             networkEntities.remove(id);
             networkIDs.remove(uuidEntityManager.getUuid(e));
-
-            chunkManager.removeEntity(e);
-            System.out.println("Removed entity: " + e.getId());
-            e.deleteFromWorld();
         }
     }
 
@@ -114,6 +116,16 @@ public class NetworkManager extends Manager {
             return freeID;
         } else {
             return removedIDs.first();
+        }
+    }
+
+    @Override
+    public void onNotify(EntityEvent event) {
+        if (event instanceof EntityDeletionEvent) {
+            int id;
+            if ((id = getNetworkID(event.entity)) != -1) {
+                removeEntity(id);
+            }
         }
     }
 

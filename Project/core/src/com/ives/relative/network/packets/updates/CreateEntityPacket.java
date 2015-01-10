@@ -2,7 +2,6 @@ package com.ives.relative.network.packets.updates;
 
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.UpdatePacket;
 
 /**
@@ -13,7 +12,6 @@ import com.ives.relative.network.packets.UpdatePacket;
 public class CreateEntityPacket extends UpdatePacket {
     public Component[] components;
     public boolean delta;
-    public NetworkManager.Type type;
 
     public CreateEntityPacket() {
     }

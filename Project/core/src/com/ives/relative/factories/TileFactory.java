@@ -8,7 +8,7 @@ import com.ives.relative.managers.planet.TileManager;
 /**
  * Created by Ives on 13/12/2014.
  */
-public class Tile {
+public class TileFactory {
 
     /**
      * Creates a body specific for tiles

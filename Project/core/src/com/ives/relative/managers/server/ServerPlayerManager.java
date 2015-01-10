@@ -21,10 +21,11 @@ import com.ives.relative.entities.components.living.Health;
 import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.CreatePlayerEvent;
-import com.ives.relative.factories.Player;
+import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
+import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import java.util.Map;
 public class ServerPlayerManager extends PlayerManager {
     protected NetworkManager networkManager;
     protected AuthorityManager authorityManager;
+    protected ChunkManager chunkManager;
     //For the server
     private Map<Integer, Entity> playersByConnection;
     private Map<Entity, Integer> connectionsByPlayers;
@@ -73,11 +75,10 @@ public class ServerPlayerManager extends PlayerManager {
                 group("players").
                 build();
 
-        Body body = Player.createBody(e, position.x, position.y, 0, 0, 0.9f, planet);
+        Body body = PlayerFactory.createBody(e, position.x, position.y, 0, 0, 0.9f, planet);
         e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody)).add(new Transform(1, 1, null));
 
         setPlayer(e, internalName);
-        addConnection(connection, e);
 
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
@@ -85,6 +86,7 @@ public class ServerPlayerManager extends PlayerManager {
         authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
         world.getManager(EventManager.class).notifyEvent(new CreatePlayerEvent(e));
 
+        chunkManager.addEntity(e);
         return e;
     }
 
@@ -160,7 +162,7 @@ public class ServerPlayerManager extends PlayerManager {
     }
 
     public Array<Integer> getConnections() {
-        Array<Integer> connections = new Array<Integer>();
+        Array<Integer> connections = new Array<Integer>(connectionsByPlayers.size());
         for (Map.Entry entry : connectionsByPlayers.entrySet()) {
             connections.add((Integer) entry.getValue());
         }

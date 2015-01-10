@@ -3,8 +3,8 @@
 3. -> Server: RequestModules
 4. -> Client: SetupFileTransfer
 --- Transfer Modules ---
-5. -> Server: RequestPlayer
-6. Server -> Client: CreateEntityPacket (player)
-7. -> Server: RequestPlanet
-8. Server -> Client: CreateEntityPacket (planet)
-9. Client: Spawn Player
+5. -> Server: RequestWorld
+6. Server -> Client: CreateEntityPacket (planet)
+7. Client -> Server: ReceivedPlanet
+7. Server -> Client: ChunkPacket (based on player position)
+8. Server -> Client: Entities for chunkpacket (including the player)

@@ -8,7 +8,8 @@ import com.artemis.utils.Bag;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.entities.events.EntityDeletionEvent;
+import com.ives.relative.managers.event.EventManager;
 import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +29,7 @@ public class ComponentUtils {
     public static Array<Component> getComponents(Entity e) {
         Array<Component> componentsArray = new Array<Component>();
         Bag<Component> components = new Bag<Component>();
-        e.getComponents(components);
+        e.getWorld().getComponentManager().getComponentsFor(e, components);
 
         for (Component component : components) {
             componentsArray.add(component);
@@ -82,14 +83,10 @@ public class ComponentUtils {
 
     public static void removeEntity(Entity e) {
         if (e != null) {
-            NetworkManager networkManager = e.getWorld().getManager(NetworkManager.class);
-            int id = networkManager.getNetworkID(e);
-            if (id != -1) {
-                networkManager.removeEntity(id);
-            } else {
-                removeAllSpecialComponents(e);
-                e.deleteFromWorld();
-            }
+            e.getWorld().getManager(EventManager.class).notifyEvent(new EntityDeletionEvent(e));
+            removeAllSpecialComponents(e);
+            System.out.println("Removed entity: " + e.getId());
+            e.deleteFromWorld();
         }
     }
 

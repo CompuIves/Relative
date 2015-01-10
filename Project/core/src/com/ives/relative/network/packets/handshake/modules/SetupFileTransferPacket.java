@@ -6,10 +6,10 @@ import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.network.packets.ResponsePacket;
-import com.ives.relative.network.packets.handshake.RequestPlayer;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.StartFileNotice;
+import com.ives.relative.network.packets.handshake.planet.RequestWorld;
 
 import java.io.IOException;
 
@@ -58,8 +58,8 @@ public class SetupFileTransferPacket extends ResponsePacket {
                         }
                     });
 
-                    //Ask for the player
-                    game.network.sendObjectTCP(connection.getID(), new RequestPlayer());
+                    //Ask for the rest of the world.
+                    game.network.sendObjectTCP(connection.getID(), new RequestWorld());
                     game.network.endPoint.removeListener(this);
                 }
 

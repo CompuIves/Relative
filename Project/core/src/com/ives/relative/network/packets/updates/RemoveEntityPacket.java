@@ -3,6 +3,7 @@ package com.ives.relative.network.packets.updates;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.utils.ComponentUtils;
 
 /**
  * Created by Ives on 18/12/2014.
@@ -22,6 +23,6 @@ public class RemoveEntityPacket extends ResponsePacket {
 
     @Override
     public void response(GameManager game) {
-        game.world.getManager(NetworkManager.class).removeEntity(entityID);
+        ComponentUtils.removeEntity(game.world.getManager(NetworkManager.class).getEntity(entityID));
     }
 }

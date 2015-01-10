@@ -13,27 +13,48 @@ import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.utils.ComponentUtils;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 7/1/2015.
  */
 @Wire
 public class NetworkSendSystem extends VoidEntitySystem {
+    final LinkedBlockingQueue<Entity> entitiesToSendToAll;
+    final LinkedHashMap<Integer, Entity> entitiesToSendToConnection;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
-
     protected ComponentMapper<NetworkC> mNetworkC;
     private ServerNetwork serverNetwork;
 
     public NetworkSendSystem(ServerNetwork serverNetwork) {
         this.serverNetwork = serverNetwork;
+        entitiesToSendToAll = new LinkedBlockingQueue<Entity>();
+        entitiesToSendToConnection = new LinkedHashMap<Integer, Entity>();
     }
 
     //TODO see viability for system
     @Override
     protected void processSystem() {
+        for (int i = 0; i < entitiesToSendToAll.size(); i++) {
+            try {
+                Entity e = entitiesToSendToAll.take();
+                serverNetwork.sendObjectTCPToAll(generateFullComponentPacket(e));
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        }
 
+        Iterator it = entitiesToSendToConnection.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Entity> entry = (Map.Entry<Integer, Entity>) it.next();
+            serverNetwork.sendObjectTCP(entry.getKey(), generateFullComponentPacket(entry.getValue()));
+            it.remove();
+        }
     }
 
     /**
@@ -54,11 +75,15 @@ public class NetworkSendSystem extends VoidEntitySystem {
         sendEntityToAll(uuidEntityManager.getEntity(entity));
     }
 
+    public void sendEntity(int connection, UUID entity) {
+        sendEntity(connection, uuidEntityManager.getEntity(entity));
+    }
+
     public void sendEntityToAll(Entity entity) {
-        serverNetwork.sendObjectTCPToAll(generateFullComponentPacket(entity));
+        entitiesToSendToAll.add(entity);
     }
 
     public void sendEntity(int connection, Entity entity) {
-        serverNetwork.sendObjectTCP(connection, generateFullComponentPacket(entity));
+        entitiesToSendToConnection.put(connection, entity);
     }
 }

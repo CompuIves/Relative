@@ -9,7 +9,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 /**
  * Created by Ives on 13/12/2014.
  */
-public class Player {
+public class PlayerFactory {
 
     /**
      * Creates a body specific for players
@@ -42,12 +42,6 @@ public class Player {
         fixtureDef.friction = 0.6f;
         fixtureDef.isSensor = true;
         Fixture fixture = body.createFixture(fixtureDef);
-/*
-        shape = new CircleShape();
-        shape.setRadius(0.5f);
-        fixtureDef.density = 1.0f;
-        body.createFixture(fixtureDef);
-*/
 
         PolygonShape sensorShape = new PolygonShape();
         sensorShape.setAsBox(0.5f, 0.1f, new Vector2(0, -radius), 0);
