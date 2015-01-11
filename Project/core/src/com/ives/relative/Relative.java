@@ -17,6 +17,7 @@ public class Relative extends Game {
      */
     public static Mode MODE;
     float fpsAccumulator = 0;
+    boolean fps = false;
     private ServerManager serverManager;
     private ClientManager clientManager;
 
@@ -64,10 +65,13 @@ public class Relative extends Game {
         if (clientManager != null)
             clientManager.render(Gdx.graphics.getDeltaTime());
 
-        fpsAccumulator++;
-        if (fpsAccumulator % 60 == 0) {
-            System.out.println(Gdx.graphics.getFramesPerSecond());
+        if (fps) {
+            fpsAccumulator++;
+            if (fpsAccumulator % 60 == 0) {
+                System.out.println(Gdx.graphics.getFramesPerSecond());
+            }
         }
+
     }
 
     @Override
