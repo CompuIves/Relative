@@ -6,6 +6,7 @@ import com.ives.relative.entities.components.network.Networkable;
 
 /**
  * Created by Ives on 10/12/2014.
+ * Defines gravity of a planet.
  */
 public class Gravity extends Component implements Networkable {
     public float x;

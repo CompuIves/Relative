@@ -5,6 +5,7 @@ import com.ives.relative.managers.planet.Chunk;
 
 /**
  * Created by Ives on 6/1/2015.
+ * Gets called when an entity joins a chunk.
  */
 public class JoinChunkEvent extends EntityEvent {
     public Chunk chunk;

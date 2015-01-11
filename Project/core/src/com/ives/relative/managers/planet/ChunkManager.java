@@ -115,17 +115,24 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     /**
      * Loads the chunks around the player based on a radius of {@link com.ives.relative.managers.planet.ChunkManager#CHUNK_LOAD}.
      * There is a check built in if the chunk is already loaded, there is no need to check for it again.
+     *
      * @param player player to be based around
      */
     public void loadChunksAroundEntity(Entity player) {
-        for (Chunk chunk : getChunksSurroundingPlayer(player)) {
+        for (Chunk chunk : getChunksSurroundingEntity(player)) {
             if (!chunk.loaded) {
                 loadChunk(chunk);
             }
         }
     }
 
-    public Array<Chunk> getChunksSurroundingPlayer(Entity player) {
+    /**
+     * Returns the chunks surrounding the entity following a radius of {@link com.ives.relative.managers.planet.ChunkManager#CHUNK_LOAD}
+     *
+     * @param player
+     * @return
+     */
+    public Array<Chunk> getChunksSurroundingEntity(Entity player) {
         Array<Chunk> chunkSurrounding = new Array<Chunk>();
 
         Position position = mPosition.get(player);
@@ -193,6 +200,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     /**
      * Add an entity to the list of entities in a chunk, this entity should be able to move.
+     *
      * @param e
      * @param x
      * @param world
@@ -203,7 +211,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         if (!chunk.entities.contains(entityID, false)) {
             chunk.addEntity(entityID);
 
-            //A check if the entity has permanent authority, this needs to be handled as a player.
+            //A check if the entity has permanent authority, if it has permanent authority it has to load the chunks
+            //surrounding it
             if (mAuthority.has(e)) {
                 if (mAuthority.get(e).type == AuthorityManager.AuthorityType.PERMANENT) {
                     loadChunksAroundEntity(e);
@@ -215,6 +224,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     /**
      * Remove an entity from a chunk, this doesn't remove the entity itself. It only removes the pointer to the entity.
+     *
      * @param e
      */
     public void removeEntity(Entity e) {
@@ -239,8 +249,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     /**
      * Get the tile from a chunk
      *
-     * @param x coord
-     * @param y coord
+     * @param x      coord
+     * @param y      coord
      * @param planet name of the planet
      * @return the tile which was requested
      */

@@ -27,7 +27,7 @@ public class Chunk {
      */
     public Map<Integer, String> tileLegend;
     /**
-     * Every changed tile from generation in a chunk, -1 stands for air.
+     * Every changed tile from generation in a chunk, -1 = air.
      */
     public Map<Vector2, Integer> changedTiles;
 

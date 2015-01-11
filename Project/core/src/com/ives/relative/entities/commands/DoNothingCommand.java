@@ -39,14 +39,4 @@ public class DoNothingCommand extends Command {
     public boolean canExecute(Entity e) {
         return true;
     }
-
-    /**
-     * Don't return a new instance, DoNothingCommand is just garbage :D
-     *
-     * @return
-     */
-    @Override
-    public Command clone() {
-        return this;
-    }
 }

@@ -46,11 +46,6 @@ public class MoveLeftCommand extends Command {
         return true;
     }
 
-    @Override
-    public Command clone() {
-        return new MoveLeftCommand();
-    }
-
     private void moveEntity(Entity e, float vx) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         float oldvx = body.getLinearVelocity().x;

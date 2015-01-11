@@ -47,7 +47,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 22/12/2014.
- *
+ * <p/>
  * This system processes all entities received. The system makes sure that the entities get added by the main thread.
  */
 @Wire
@@ -98,7 +98,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 Entity e = addEntity(id, componentArray, delta);
                 componentArray.clear();
 
-                int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerID();
+                int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerNetworkID();
                 if (id == playerID) {
                     e.edit().add(new InputC());
                 }
@@ -162,6 +162,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
      * @param entity The entity to be finished
      * @param type   The type of the entity
      */
+    //TODO move this overly coupled method to a nice handler.
     private void finishEntity(Entity entity, NetworkManager.Type type) {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.app.log("EntityReceived", "Received entity with type: " + type);

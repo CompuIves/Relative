@@ -52,9 +52,4 @@ public class CreateBodyCommand extends Command {
     public boolean canExecute(Entity e) {
         return true;
     }
-
-    @Override
-    public Command clone() {
-        return new CreateBodyCommand();
-    }
 }

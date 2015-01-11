@@ -8,7 +8,7 @@ import com.ives.relative.systems.server.NetworkSendSystem;
 /**
  * Created by Ives on 11/1/2015.
  * Says to the server the planet is received and the server can send more info.
- *
+ * <p/>
  * HANDLED BY SERVER
  */
 public class ReceivedPlanet extends ResponsePacket {

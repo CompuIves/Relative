@@ -37,7 +37,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Ives on 13/12/2014.
- *
+ * <p/>
  * This is the network system which receives all input packets and processes it, as you can see the server doesn't have
  * to send update packets every frame. We assume that te client is almost always synchronous with the server.
  */

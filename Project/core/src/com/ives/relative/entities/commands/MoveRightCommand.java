@@ -54,9 +54,4 @@ public class MoveRightCommand extends Command {
         float impulse = body.getMass() * deltavx;
         body.applyLinearImpulse(new Vector2(impulse, 0), body.getWorldCenter(), true);
     }
-
-    @Override
-    public Command clone() {
-        return new MoveRightCommand();
-    }
 }

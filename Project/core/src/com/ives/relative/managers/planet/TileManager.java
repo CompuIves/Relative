@@ -53,12 +53,12 @@ public class TileManager extends Manager {
     /**
      * Creates a tile at the given coordinates
      *
-     * @param planet   which planet it needs to place the tile
-     * @param x        x coord
-     * @param y        y coord
-     * @param z        z coord
-     * @param tileID   name of tile
-     * @param gravity  should the given tile be affected by gravity?
+     * @param planet  which planet it needs to place the tile
+     * @param x       x coord
+     * @param y       y coord
+     * @param z       z coord
+     * @param tileID  name of tile
+     * @param gravity should the given tile be affected by gravity?
      * @return the entity of the tile created
      */
     public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {

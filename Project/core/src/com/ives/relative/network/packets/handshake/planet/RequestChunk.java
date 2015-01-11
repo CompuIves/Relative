@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Created by Ives on 7/1/2015.
  * Sends the information of a chunk to the client.
- *
+ * <p/>
  * HANDLED BY SERVER
  */
 public class RequestChunk extends ResponsePacket {

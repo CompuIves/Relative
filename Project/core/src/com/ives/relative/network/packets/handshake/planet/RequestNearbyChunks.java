@@ -20,7 +20,7 @@ public class RequestNearbyChunks extends ResponsePacket {
     @Override
     public void response(GameManager game) {
         Entity player = game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection);
-        Array<Chunk> chunks = game.world.getManager(ChunkManager.class).getChunksSurroundingPlayer(player);
+        Array<Chunk> chunks = game.world.getManager(ChunkManager.class).getChunksSurroundingEntity(player);
         for (Chunk chunk : chunks) {
             game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
         }

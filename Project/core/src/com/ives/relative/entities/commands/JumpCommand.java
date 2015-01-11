@@ -11,7 +11,7 @@ import com.ives.relative.managers.event.StateManager;
 
 /**
  * Created by Ives on 5/12/2014.
- *
+ * <p/>
  * Makes the character JUMP!
  */
 public class JumpCommand extends Command {
@@ -69,10 +69,5 @@ public class JumpCommand extends Command {
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
         return s.entityState != StateManager.EntityState.AIRBORNE && accumulator == 0;
-    }
-
-    @Override
-    public Command clone() {
-        return new JumpCommand();
     }
 }

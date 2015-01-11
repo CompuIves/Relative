@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * Created by Ives on 3/12/2014.
+ * Gives the entity the ability to visual represent itself.
  */
 public class Visual extends Component {
     public transient TextureRegion texture;

@@ -6,6 +6,7 @@ import com.ives.relative.entities.components.network.Networkable;
 
 /**
  * Created by Ives on 2/12/2014.
+ * Defines the health of an entity.
  */
 public class Health extends Component implements Networkable {
     public int health;

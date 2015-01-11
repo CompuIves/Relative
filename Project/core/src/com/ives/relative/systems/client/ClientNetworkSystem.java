@@ -30,7 +30,6 @@ import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.network.Network;
-import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.UpdatePacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
@@ -66,15 +65,12 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     private Array<Integer> grantedEntities;
     private Array<Integer> entitiesToSend;
 
-    private Array<BasePacket> packetsToBeProcessed;
-
     public ClientNetworkSystem(ClientNetwork network) {
         super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
         requestedEntities = new Array<Integer>();
         grantedEntities = new Array<Integer>();
         entitiesToSend = new Array<Integer>();
 
-        packetsToBeProcessed = new Array<BasePacket>();
         processRequests(network);
     }
 
@@ -121,13 +117,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         return networkManager.getEntity(playerNetworkId);
     }
 
-    public int getPlayerID() {
+    public int getPlayerNetworkID() {
         return playerNetworkId;
     }
 
     /**
      * Sends the input of the player to the server, also puts it in a local variable to know how to apply Server
      * Reconciliation.
+     *
      * @param entities Entities to process
      */
     @Override

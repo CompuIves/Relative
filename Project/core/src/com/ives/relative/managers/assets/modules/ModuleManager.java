@@ -54,7 +54,7 @@ public class ModuleManager extends Manager {
                 }
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -103,6 +103,7 @@ public class ModuleManager extends Manager {
 
     /**
      * Indexes all zips of modules
+     *
      * @param moduleFiles Folder to index
      */
     private void indexModuleZips(FileHandle[] moduleFiles) {
@@ -133,6 +134,7 @@ public class ModuleManager extends Manager {
 
     /**
      * Indexes all module folders
+     *
      * @param moduleFolders modulefolder to index
      */
     public void indexModuleFolders(FileHandle[] moduleFolders) {
@@ -245,7 +247,6 @@ public class ModuleManager extends Manager {
         for (FileHandle fileHandle : fileHandles) {
             SolidTile tile = TileReader.readFile(fileHandle, module.location);
             if (tile != null) {
-                //TODO Check if wired is possible
                 world.getManager(TileManager.class).addTile(tile.id, tile);
             }
         }

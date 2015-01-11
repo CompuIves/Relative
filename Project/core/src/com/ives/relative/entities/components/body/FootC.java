@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by Ives on 3/1/2015.
- *
+ * <p/>
  * Component which functions as information bag for the sensor beneath living objects. The sensor checks if the
  * player is standing on the ground or not (useful for jump checks).
  */

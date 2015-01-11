@@ -53,6 +53,7 @@ public class CommandManager extends Manager {
 
     /**
      * Get command by ID
+     *
      * @param id the id
      * @return the command
      */
@@ -64,6 +65,7 @@ public class CommandManager extends Manager {
     /**
      * Get a new command by the command given. The command given will only be an identifier for the factory, the factory
      * will search for a free command. If there is no free command the factory will copy the command given and return it.
+     *
      * @param command sort of template
      * @return a new command
      */
@@ -100,6 +102,7 @@ public class CommandManager extends Manager {
 
     /**
      * This command is done being used. It will be reset for recycling.
+     *
      * @param command The command to be freed
      */
     public void freeCommand(Command command) {

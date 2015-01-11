@@ -25,6 +25,7 @@ import java.io.IOException;
  */
 public class ServerManager extends GameManager {
     OrthographicCamera camera;
+
     /**
      * This GameManager is a server.
      */

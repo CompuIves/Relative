@@ -54,9 +54,4 @@ public class BreakTileCommand extends ClickCommand {
         float dy = Math.abs(pos.y - getWorldPosClicked().y);
         return dx + dy < 4;
     }
-
-    @Override
-    public Command clone() {
-        return new BreakTileCommand();
-    }
 }

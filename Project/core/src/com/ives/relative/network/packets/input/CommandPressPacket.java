@@ -5,7 +5,7 @@ import com.ives.relative.network.packets.UpdatePacket;
 /**
  * Created by Ives on 17/12/2014.
  * A simple packet which gets sent when the player presses a button or releases a button.
- *
+ * <p/>
  * SENT BY CLIENT
  */
 public class CommandPressPacket extends UpdatePacket {

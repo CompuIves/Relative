@@ -71,6 +71,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
 
     /**
      * Remove networked entity from world and database
+     *
      * @param id id of networked entity
      */
     public void removeEntity(int id) {
@@ -98,6 +99,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
 
     /**
      * Get the network ID of the entity
+     *
      * @param e
      * @return
      */
@@ -110,6 +112,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
 
     /**
      * Gets free ID available, this only gets executed from the server
+     *
      * @return free ID
      */
     private int getFreeID() {

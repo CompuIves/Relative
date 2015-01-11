@@ -9,6 +9,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 
 /**
  * Created by Ives on 4/12/2014.
+ * This system iterates the physics engine. Physics are simulated here!
  */
 @Wire
 public class WorldSystem extends EntityProcessingSystem {

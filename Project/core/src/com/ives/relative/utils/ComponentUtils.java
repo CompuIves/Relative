@@ -39,6 +39,7 @@ public class ComponentUtils {
 
     /**
      * Adds the given components to the entity
+     *
      * @param e
      * @param components
      * @return
@@ -68,6 +69,7 @@ public class ComponentUtils {
 
     /**
      * Copies components from the first entity to the second one.
+     *
      * @param from
      * @param to
      */
@@ -92,6 +94,7 @@ public class ComponentUtils {
 
     /**
      * Removes all components from the entity
+     *
      * @param e
      * @return
      */
@@ -131,6 +134,7 @@ public class ComponentUtils {
 
     /**
      * Removes the body from the world.
+     *
      * @param physics
      */
     private static void removePhysics(Physics physics) {

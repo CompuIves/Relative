@@ -56,6 +56,13 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
     }
 
+    /**
+     * Authorizes an entity to an owner
+     *
+     * @param owner
+     * @param e
+     * @param type
+     */
     public void authorizeEntity(int owner, Entity e, AuthorityType type) {
         if (owner != -1) {
             Authority authority;
@@ -68,15 +75,18 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
                     return;
             }
 
+            //If the object isn't being controlled at this moment by someone else
             if (!authority.onGoing) {
+                //Mark it as controlled
                 authority.onGoing = true;
                 if (!authority.getOwners().contains(owner, true)) {
-                    System.out.println("Added AuthorityType: " + type.toString() + " of entity: " + e.getId() + " to " + owner);
                     authority.setOwner(owner);
+                    System.out.println("Added AuthorityType: " + type.toString() + " of entity: " + e.getId() + " to " + owner);
                     if (authority.type == AuthorityType.TOUCH) {
                         for (UUID eUUID : mPhysics.get(e).entitiesInContact) {
                             Entity e2 = uuidEntityManager.getEntity(eUUID);
                             if (mPhysics.get(e2).bodyType == BodyDef.BodyType.DynamicBody) {
+                                //Authorize every entity which touches the entity.
                                 authorizeEntity(owner, e2, AuthorityType.TOUCH);
                             }
                         }
@@ -86,6 +96,11 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
     }
 
+    /**
+     * Removes an owner from an entity. If the owner was the last owner the whole entity will lose authority.
+     * @param e
+     * @param owner
+     */
     public void unAuthorizeEntity(Entity e, int owner) {
         Authority authority = mAuthority.get(e);
         if (authority.type != AuthorityType.PERMANENT) {
@@ -100,6 +115,10 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
     }
 
+    /**
+     * Removes every authority from an entity.
+     * @param e
+     */
     public void unAuthorizeEntity(Entity e) {
         if (mAuthority.get(e).type != AuthorityType.PERMANENT) {
             e.edit().remove(Authority.class);

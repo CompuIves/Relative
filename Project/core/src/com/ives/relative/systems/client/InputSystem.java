@@ -27,6 +27,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     protected ClientNetworkSystem clientNetworkSystem;
 
     Camera camera;
+
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.

@@ -6,6 +6,9 @@ import com.badlogic.gdx.Gdx;
 
 /**
  * Created by Ives on 5/12/2014.
+ * A command can be applied to an entity. This can vary greatly from removing an entity to letting an entity jump. The
+ * big advantage of this is that you can perform commands on entities using inputs or AI. See Game Programming Patterns:
+ * Command.
  */
 public abstract class Command {
     boolean simulate;
@@ -24,7 +27,7 @@ public abstract class Command {
     /**
      * Methods which will be called from other classes
      *
-     * @param e    entity
+     * @param e entity
      * @return if the command can get executed
      */
     public void keyDown(Entity e) {
@@ -51,7 +54,7 @@ public abstract class Command {
     /**
      * Gets executed while the button is pressed
      *
-     * @param e The entity this will be executed on
+     * @param e     The entity this will be executed on
      * @param delta The time between this frame and last frame, this makes commands for things like breaking blocks
      *              much more manageable to implement.
      */
@@ -81,14 +84,6 @@ public abstract class Command {
     public boolean equals(Object obj) {
         return this.getClass().getSimpleName().equals(obj.getClass().getSimpleName());
     }
-
-    /**
-     * If a new command needs to be made it can be done using this clone method, will return
-     * a new version of the last command.
-     *
-     * @return Desired command
-     */
-    public abstract Command clone();
 
 
     public void reset() {
