@@ -69,7 +69,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             Chunk oldChunk = getChunk(getChunkIndex(chunk.getStartX()), chunk.getPlanet());
             if (chunk.getChangedTiles() != null) {
                 oldChunk.setChangedTiles(chunk.getChangedTiles());
-                oldChunk.owner = chunk.owner;
             }
         }
     }
@@ -129,7 +128,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         for (Chunk chunk : getChunksSurroundingPlayer(player)) {
             if (!chunk.loaded) {
                 loadChunk(chunk);
-                chunk.owner = authority.getOwner();
             }
         }
     }

@@ -139,7 +139,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
             int id = it.next();
             if (id == playerNetworkId || frame % 10 == 0) {
                 Entity e = networkManager.getEntity(id);
-                PositionPacket positionPacket = new PositionPacket(e, sequence, id, ClientNetwork.CONNECTIONID);
+                PositionPacket positionPacket = new PositionPacket(e, sequence, id);
                 clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
                 it.remove();
             }

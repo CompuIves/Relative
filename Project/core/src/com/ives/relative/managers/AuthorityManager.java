@@ -52,8 +52,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
             Authority authority = mAuthority.get(e);
             return authority.getOwner() == connection;
         } else {
-            Position position = mPosition.get(e);
-            return chunkManager.getChunk(position.x, position.planet).owner == connection;
+            return false;
         }
     }
 

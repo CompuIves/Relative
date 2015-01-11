@@ -18,6 +18,9 @@ import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.MovementEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
@@ -39,7 +42,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * to send update packets every frame. We assume that te client is almost always synchronous with the server.
  */
 @Wire
-public class ServerNetworkSystem extends IntervalEntitySystem {
+public class ServerNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
     public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
     private final ServerNetwork network;
     protected ComponentMapper<Position> mPosition;
@@ -80,10 +83,10 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                     if (e != null) {
                         if (authorityManager.isEntityAuthorizedByPlayer(packet.connection, e)) {
                             processPosition(e, packet);
-                            network.sendObjectUDPToAllExcept(packet.connection, new PositionPacket(e, 0, packet.entityID, packet.connection));
+                            network.sendObjectUDPToAllExcept(packet.connection, new PositionPacket(e, 0, packet.entityID));
                         } else {
                             //If the client doesn't have authority it has to be corrected
-                            network.sendObjectUDP(packet.connection, new PositionPacket(e, 0, packet.entityID, packet.connection));
+                            network.sendObjectUDP(packet.connection, new PositionPacket(e, 0, packet.entityID));
                         }
                     }
                 }
@@ -91,6 +94,8 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
                 e.printStackTrace();
             }
         }
+
+
     }
 
     public void processRequests() {
@@ -174,5 +179,14 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
 
     public void sendAuthority(int connection, Entity e, AuthorityManager.AuthorityType type) {
         network.sendObjectTCP(connection, new GrantEntityAuthority(0, networkManager.getNetworkID(e), type));
+    }
+
+    @Override
+    public void onNotify(EntityEvent event) {
+        if (event instanceof MovementEvent) {
+            if (!authorityManager.isEntityAuthorized(event.entity)) {
+                network.sendObjectUDPToAll(new PositionPacket(event.entity, -1, networkManager.getNetworkID(event.entity)));
+            }
+        }
     }
 }

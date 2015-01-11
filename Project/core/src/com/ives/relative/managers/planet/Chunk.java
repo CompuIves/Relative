@@ -15,7 +15,6 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk {
-    public int owner;
     public boolean loaded = false;
     private int startX, endX;
     private String planet;
