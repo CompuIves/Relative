@@ -40,7 +40,6 @@ public class PlayerFactory {
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 30.0f;
         fixtureDef.friction = 0.6f;
-        fixtureDef.isSensor = true;
         Fixture fixture = body.createFixture(fixtureDef);
 
         PolygonShape sensorShape = new PolygonShape();

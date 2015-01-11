@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
-import com.ives.relative.managers.event.StateManager;
 
 
 /**
@@ -25,7 +24,7 @@ public class MoveRightCommand extends Command {
 
     @Override
     public void execute(Entity e, float delta) {
-        e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.WALKING);
+        //e.getWorld().getManager(StateManager.class).assertState(e, StateManager.EntityState.WALKING);
         float mvSpeed = e.getWorld().getMapper(MovementSpeed.class).get(e).movementSpeed;
         float vx = mvSpeed;
         moveEntity(e, vx);
@@ -44,7 +43,8 @@ public class MoveRightCommand extends Command {
     @Override
     public boolean canExecute(Entity e) {
         State s = e.getWorld().getMapper(State.class).get(e);
-        return s.entityState != StateManager.EntityState.AIRBORNE;
+        //return s.entityState != StateManager.EntityState.AIRBORNE;
+        return true;
     }
 
     private void moveEntity(Entity e, float vx) {

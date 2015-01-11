@@ -32,8 +32,6 @@ public class TileFactory {
         fixtureDef.restitution = 0.0f;
         fixtureDef.density = 6.0f;
         fixtureDef.friction = tile.friction;
-        if (gravity)
-            fixtureDef.isSensor = true;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(e);
         body.setUserData(e);

@@ -161,21 +161,14 @@ public class ServerNetworkSystem extends IntervalEntitySystem {
             Physics physics = mPhysics.get(entity);
 
             Body body = physics.body;
-            Vector2 bodyPos = body.getTransform().getPosition();
-            if (bodyPos.x != x || bodyPos.y != y) {
-                body.setTransform(x, y, rotation);
-                localPosition.x = x;
-                localPosition.y = y;
-            }
-
-            Vector2 bodyVel = body.getLinearVelocity();
-            if (bodyVel.x != vx || bodyVel.y != vy) {
-                //body.setLinearVelocity(vx, vy);
-                localVelocity.vx = vx;
-                localVelocity.vy = vy;
-            }
-
-            //body.setAngularVelocity(rVelocity);
+            body.setTransform(x, y, rotation);
+            body.setLinearVelocity(vx, vy);
+            localPosition.x = x;
+            localPosition.y = y;
+            localVelocity.vx = vx;
+            localVelocity.vy = vy;
+            localVelocity.vr = rVelocity;
+            body.setAngularVelocity(rVelocity);
         }
     }
 

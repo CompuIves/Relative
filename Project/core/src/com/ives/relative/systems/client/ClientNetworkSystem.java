@@ -24,6 +24,7 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.MovementEvent;
+import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
@@ -38,6 +39,8 @@ import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
 import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
+
+import java.util.Iterator;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -130,16 +133,17 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
         frame++;
-        for (int entity : entitiesToSend) {
-            Entity e = networkManager.getEntity(entity);
-            if (e != null) {
-                if (networkManager.getNetworkID(e) == playerNetworkId || frame % 10 == 0) {
-                    PositionPacket positionPacket = new PositionPacket(e, sequence, entity, ClientNetwork.CONNECTIONID);
-                    clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
-                }
+
+        Iterator<Integer> it = entitiesToSend.iterator();
+        while (it.hasNext()) {
+            int id = it.next();
+            if (id == playerNetworkId || frame % 10 == 0) {
+                Entity e = networkManager.getEntity(id);
+                PositionPacket positionPacket = new PositionPacket(e, sequence, id, ClientNetwork.CONNECTIONID);
+                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
+                it.remove();
             }
         }
-        entitiesToSend.clear();
     }
 
     public void processRequests(final Network network) {
@@ -246,6 +250,13 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     @Override
     public void onNotify(EntityEvent event) {
         if (event instanceof MovementEvent) {
+            int id = networkManager.getNetworkID(event.entity);
+            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, event.entity)) {
+                if (!entitiesToSend.contains(id, true)) {
+                    entitiesToSend.add(id);
+                }
+            }
+        } else if (event instanceof StoppedMovementEvent) {
             int id = networkManager.getNetworkID(event.entity);
             if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, event.entity)) {
                 if (!entitiesToSend.contains(id, true)) {

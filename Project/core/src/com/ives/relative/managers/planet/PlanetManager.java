@@ -104,7 +104,7 @@ public class PlanetManager extends Manager {
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new Gravity(gravity.x, gravity.y),
-                new WorldC(new World(new Vector2(0, 0),true), velocityIterations, positionIterations),
+                new WorldC(new World(new Vector2(gravity.x, gravity.y), true), velocityIterations, positionIterations),
                 new ChunkC())
                 .group("planets")
                 .build();

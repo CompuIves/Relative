@@ -71,7 +71,7 @@ public class MovementSystem extends EntityProcessingSystem {
     }
 
     public boolean isMoving(Velocity v) {
-        return Math.abs(v.vx) > 0.1f || Math.abs(v.vy) > 0.1f;
+        return Math.abs(v.vx) + Math.abs(v.vy) + Math.abs(v.vr) > 0;
     }
 
     public void sendMovementEvent(Entity e, Position p, Velocity v) {

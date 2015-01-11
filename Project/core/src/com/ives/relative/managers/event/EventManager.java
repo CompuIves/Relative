@@ -1,8 +1,6 @@
 package com.ives.relative.managers.event;
 
 import com.artemis.Manager;
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
@@ -23,8 +21,8 @@ public class EventManager extends Manager {
      * @param event
      */
     public void notifyEvent(EntityEvent event) {
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.app.log("EntityEvent", "Received event: " + event.getClass().getSimpleName() + " for entity: " + event.entity.getId());
+        //Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        //Gdx.app.log("EntityEvent", "Received event: " + event.getClass().getSimpleName() + " for entity: " + event.entity.getId());
         for (int i = 0; i < eventObservers.size; i++) {
             eventObservers.get(i).onNotify(event);
         }
