@@ -16,11 +16,23 @@ import java.util.UUID;
  */
 public class Chunk {
     public boolean loaded = false;
-    private int startX, endX;
-    private String planet;
-    private transient Map<Vector2, UUID> tiles;
-    private Map<Vector2, String> changedTiles;
-    private transient Array<UUID> entities;
+    public int startX, endX;
+    public int z;
+    public String planet;
+    public transient Map<Vector2, UUID> tiles;
+
+    /**
+     * To preserve space when saving, or sending the tiles I don't want to save every changed tile by name. I give every
+     * name an id and add it to the changed tiles.
+     */
+    public Map<Integer, String> tileLegend;
+    /**
+     * Every changed tile from generation in a chunk, -1 stands for air.
+     */
+    public Map<Vector2, Integer> changedTiles;
+
+
+    public transient Array<UUID> entities;
 
     public Chunk() {
     }
@@ -35,34 +47,8 @@ public class Chunk {
     public void initialize() {
         tiles = new HashMap<Vector2, UUID>();
         entities = new Array<UUID>();
-    }
-
-    public int getStartX() {
-        return startX;
-    }
-
-    public int getEndX() {
-        return endX;
-    }
-
-    public String getPlanet() {
-        return planet;
-    }
-
-    public Map<Vector2, UUID> getTiles() {
-        return tiles;
-    }
-
-    public void setTiles(Map<Vector2, UUID> tiles) {
-        this.tiles = tiles;
-    }
-
-    public Array<UUID> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(Array<UUID> entities) {
-        this.entities = entities;
+        changedTiles = new HashMap<Vector2, Integer>();
+        tileLegend = new HashMap<Integer, String>();
     }
 
     public void addEntity(UUID e) {
@@ -96,22 +82,19 @@ public class Chunk {
         return x >= startX && x <= endX;
     }
 
-    public void updateTiles() {
-
+    public Map<Vector2, Integer> getChangedTiles() {
+        return changedTiles;
     }
+
+    public void setChangedTiles(Map<Vector2, Integer> changedTiles) {
+        this.changedTiles = changedTiles;
+    }
+
 
     public void dispose() {
         tiles.clear();
         entities.clear();
+        changedTiles.clear();
         loaded = false;
-    }
-
-    public Map<Vector2, String> getChangedTiles() {
-        return changedTiles;
-    }
-
-    public void setChangedTiles(Map<Vector2, String> changedTiles) {
-        this.changedTiles = changedTiles;
-        updateTiles();
     }
 }

@@ -11,6 +11,9 @@ import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.events.*;
+import com.ives.relative.entities.events.creation.NetworkedEntityCreationEvent;
+import com.ives.relative.entities.events.creation.NetworkedEntityDeletionEvent;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.planet.chunkloaders.ChunkLoader;
 import com.ives.relative.utils.ComponentUtils;
@@ -30,6 +33,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     protected PlanetManager planetManager;
     protected PlanetGenerator planetGenerator;
+    protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
 
@@ -61,16 +65,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             rawIndex--;
         }
         return (int) rawIndex;
-    }
-
-
-    public void updateChunk(Chunk chunk) {
-        if (chunk != null) {
-            Chunk oldChunk = getChunk(getChunkIndex(chunk.getStartX()), chunk.getPlanet());
-            if (chunk.getChangedTiles() != null) {
-                oldChunk.setChangedTiles(chunk.getChangedTiles());
-            }
-        }
     }
 
     /**
@@ -123,8 +117,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * There is a check built in if the chunk is already loaded, there is no need to check for it again.
      * @param player player to be based around
      */
-    public void loadChunksAroundPlayer(Entity player) {
-        Authority authority = mAuthority.get(player);
+    public void loadChunksAroundEntity(Entity player) {
         for (Chunk chunk : getChunksSurroundingPlayer(player)) {
             if (!chunk.loaded) {
                 loadChunk(chunk);
@@ -148,7 +141,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Loads the desired chunk
+     * Loads the desired chunk from the network or the file system
      *
      * @param chunk chunk which has to be loaded
      */
@@ -157,6 +150,21 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         planetGenerator.generateTerrain(chunk);
         chunkLoader.loadChunkInfo(chunk);
         chunk.loaded = true;
+    }
+
+    /**
+     * Updates the chunk with the new info which is loaded
+     *
+     * @param chunk
+     */
+    public void updateChunk(Chunk chunk) {
+        if (chunk != null) {
+            Chunk localChunk = getChunk(getChunkIndex(chunk.startX), chunk.planet);
+            if (chunk.getChangedTiles() != null) {
+                localChunk.setChangedTiles(chunk.getChangedTiles());
+                updateTiles(localChunk);
+            }
+        }
     }
 
     public void unLoadChunk(float x, String planet) {
@@ -170,29 +178,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public boolean isChunkLoaded(float x, String planet) {
         return getChunks(planet).containsKey(getChunkIndex(x));
     }
-
-
-    /* I now just pass on the player which wants to load the chunk, this player has to control the chunk too.
-    public void findNewOwner(Chunk chunk) {
-        Array<Entity> players = serverPlayerManager.getPlayers();
-        float smallestDistance = Float.MAX_VALUE;
-        Entity smallestEntity = null;
-        float middleX = chunk.getStartX() + chunk.getEndX() / 2;
-        for(Entity player : players) {
-            Position position = mPosition.get(player);
-            float distance = Math.abs(middleX - position.x);
-            if(distance < smallestDistance) {
-                smallestEntity = player;
-                smallestDistance = distance;
-            }
-        }
-
-        int owner = serverPlayerManager.getConnectionByPlayer(smallestEntity);
-        if(owner != -1) {
-            chunk.setOwner(owner);
-        }
-    }
-    */
 
     /**
      * Add an entity to the list of entities in a chunk, this entity should be able to move
@@ -215,8 +200,15 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void addEntity(Entity e, float x, String world) {
         Chunk chunk = getChunk(x, world);
         UUID entityID = uuidEntityManager.getUuid(e);
-        if (!chunk.getEntities().contains(entityID, false)) {
+        if (!chunk.entities.contains(entityID, false)) {
             chunk.addEntity(entityID);
+
+            //A check if the entity has permanent authority, this needs to be handled as a player.
+            if (mAuthority.has(e)) {
+                if (mAuthority.get(e).type == AuthorityManager.AuthorityType.PERMANENT) {
+                    loadChunksAroundEntity(e);
+                }
+            }
             eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
         }
     }
@@ -238,7 +230,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void removeEntity(Entity e, float x, String world) {
         Chunk chunk = getChunk(x, world);
         UUID entityID = uuidEntityManager.getUuid(e);
-        if (chunk.getEntities().contains(entityID, false)) {
+        if (chunk.entities.contains(entityID, false)) {
             chunk.removeEntity(entityID);
             eventManager.notifyEvent(new LeaveChunkEvent(e, chunk));
         }
@@ -270,19 +262,48 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void removeTile(Vector2 tilePos, String planet) {
         Chunk chunk = getChunk(tilePos.x, planet);
         Entity tile = uuidEntityManager.getEntity(chunk.getTile(tilePos.x, tilePos.y));
+        //-1 is the value for air.
+        chunk.changedTiles.put(tilePos, -1);
         ComponentUtils.removeEntity(tile);
+    }
+
+    /**
+     * Updates the chunk tiles based on the {@link Chunk#changedTiles}.
+     *
+     * @param chunk
+     */
+    public void updateTiles(Chunk chunk) {
+        Map<Integer, String> legend = chunk.tileLegend;
+
+        for (Map.Entry<Vector2, Integer> entry : chunk.getChangedTiles().entrySet()) {
+            Vector2 position = entry.getKey();
+            int newTile = entry.getValue();
+            Entity tile = uuidEntityManager.getEntity(chunk.getTile(position.x, position.y));
+            ComponentUtils.removeEntity(tile);
+
+            if (newTile != -1) {
+                //TODO implement Z?
+                tileManager.createTile(chunk.planet, position.x, position.y, 0, legend.get(newTile), false);
+            }
+        }
+    }
+
+    private void checkChunkChange(Entity e, Position position) {
+        if (getChunkIndex(position.x) != getChunkIndex(position.px)) {
+            removeEntity(e, position.x, position.planet);
+            addEntity(e, position.x, position.planet);
+        }
     }
 
     @Override
     public void onNotify(EntityEvent event) {
-        if (event instanceof CreatePlayerEvent) {
-            loadChunksAroundPlayer(event.entity);
+        if (event instanceof NetworkedEntityCreationEvent) {
             addEntity(event.entity);
-        } else if (event instanceof JoinChunkEvent) {
-            if (mAuthority.has(event.entity))
-                loadChunksAroundPlayer(event.entity);
-        } else if (event instanceof EntityDeletionEvent) {
+        } else if (event instanceof NetworkedEntityDeletionEvent) {
             removeEntity(event.entity);
+        } else if (event instanceof MovementEvent) {
+            MovementEvent movementEvent = (MovementEvent) event;
+            checkChunkChange(movementEvent.entity, movementEvent.position);
         }
     }
 }

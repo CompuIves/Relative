@@ -8,7 +8,7 @@ import com.artemis.utils.Bag;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.events.EntityDeletionEvent;
+import com.ives.relative.entities.events.creation.EntityDeletionEvent;
 import com.ives.relative.managers.event.EventManager;
 import org.apache.commons.beanutils.BeanUtilsBean;
 

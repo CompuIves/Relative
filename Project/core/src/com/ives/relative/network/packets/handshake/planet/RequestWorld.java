@@ -33,6 +33,7 @@ public class RequestWorld extends ResponsePacket {
                 Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
                         new Vector2(5, 12), 0);
 
+
                 //I'll have to do it this way since the object only gets sent next frame (so the world can update).
                 Array<Integer> connections = serverPlayerManager.getConnections();
                 for (int connection : connections) {

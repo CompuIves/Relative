@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.serializers.MapSerializer;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
@@ -28,10 +29,7 @@ import com.ives.relative.utils.KryoComparator;
 import org.reflections.Reflections;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Ives on 4/12/2014.
@@ -117,6 +115,7 @@ public abstract class Network extends Listener {
         kryo.register(Chunk.class);
         kryo.register(UUID.class);
         kryo.register(BodyDef.BodyType.class);
+        kryo.register(HashMap.class, new MapSerializer());
 
         kryo.register(CompleteFileNotice.class);
         kryo.register(StartFileNotice.class);

@@ -1,17 +1,16 @@
 package com.ives.relative.managers;
 
-import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.events.EntityDeletionEvent;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.creation.EntityDeletionEvent;
+import com.ives.relative.entities.events.creation.NetworkedEntityCreationEvent;
+import com.ives.relative.entities.events.creation.NetworkedEntityDeletionEvent;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.ChunkManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +22,8 @@ import java.util.UUID;
  */
 @Wire
 public class NetworkManager extends Manager implements EntityEventObserver {
-    protected ComponentMapper<NetworkC> mNetworkC;
     protected UuidEntityManager uuidEntityManager;
-    protected ChunkManager chunkManager;
+    protected EventManager eventManager;
     Map<Integer, UUID> networkEntities;
     Map<UUID, Integer> networkIDs;
     int freeID;
@@ -66,6 +64,8 @@ public class NetworkManager extends Manager implements EntityEventObserver {
         if (!networkEntities.containsKey(id) && !networkIDs.containsKey(uuidEntityManager.getUuid(e))) {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
+
+            eventManager.notifyEvent(new NetworkedEntityCreationEvent(e));
         }
     }
 
@@ -79,6 +79,8 @@ public class NetworkManager extends Manager implements EntityEventObserver {
             removedIDs.add(id);
             networkEntities.remove(id);
             networkIDs.remove(uuidEntityManager.getUuid(e));
+
+            eventManager.notifyEvent(new NetworkedEntityDeletionEvent(e));
         }
     }
 

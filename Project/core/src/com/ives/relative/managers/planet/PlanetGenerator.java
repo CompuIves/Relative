@@ -14,9 +14,9 @@ public class PlanetGenerator extends Manager {
     protected UuidEntityManager uuidEntityManager;
 
     public void generateTerrain(Chunk chunk) {
-        int startX = chunk.getStartX();
-        int endX = chunk.getEndX();
-        String planet = chunk.getPlanet();
+        int startX = chunk.startX;
+        int endX = chunk.endX;
+        String planet = chunk.planet;
 
         for (int x = startX; x < endX; x++) {
             for (int y = 2; y < 10; y++) {

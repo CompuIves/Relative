@@ -1,6 +1,7 @@
-package com.ives.relative.entities.events;
+package com.ives.relative.entities.events.creation;
 
 import com.artemis.Entity;
+import com.ives.relative.entities.events.EntityEvent;
 
 /**
  * Created by Ives on 7/1/2015.

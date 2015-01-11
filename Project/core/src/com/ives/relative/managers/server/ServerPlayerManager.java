@@ -20,7 +20,7 @@ import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.living.Health;
 import com.ives.relative.entities.components.living.MovementSpeed;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.events.CreatePlayerEvent;
+import com.ives.relative.entities.events.creation.CreatePlayerEvent;
 import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
@@ -80,11 +80,11 @@ public class ServerPlayerManager extends PlayerManager {
 
         setPlayer(e, internalName);
 
-        int id = networkManager.addEntity(e);
-        e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
-
         authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
         world.getManager(EventManager.class).notifyEvent(new CreatePlayerEvent(e));
+
+        int id = networkManager.addEntity(e);
+        e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
 
         chunkManager.addEntity(e);
         return e;

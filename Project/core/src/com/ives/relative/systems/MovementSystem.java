@@ -59,7 +59,6 @@ public class MovementSystem extends EntityProcessingSystem {
 
             if (isMoving(velocity)) {
                 sendMovementEvent(e, position, velocity);
-                checkChunkEvent(e, position);
                 velocity.isMoving = true;
             } else {
                 if (velocity.isMoving) {
@@ -81,13 +80,5 @@ public class MovementSystem extends EntityProcessingSystem {
 
     public void sendNoMovementEvent(Entity e, Position p) {
         eventManager.notifyEvent(new StoppedMovementEvent(e, p));
-    }
-
-    //TODO Move this to chunkmanager
-    private void checkChunkEvent(Entity e, Position position) {
-        if (chunkManager.getChunkIndex(position.x) != chunkManager.getChunkIndex(position.px)) {
-            chunkManager.removeEntity(e, position.x, position.planet);
-            chunkManager.addEntity(e, position.x, position.planet);
-        }
     }
 }

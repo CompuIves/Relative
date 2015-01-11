@@ -16,6 +16,6 @@ public class ClientChunkLoader implements ChunkLoader {
 
     @Override
     public void loadChunkInfo(Chunk chunk) {
-        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(chunk.getStartX(), chunk.getPlanet()));
+        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(chunk.startX, chunk.planet));
     }
 }

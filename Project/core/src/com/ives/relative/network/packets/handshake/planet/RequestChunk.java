@@ -32,8 +32,8 @@ public class RequestChunk extends ResponsePacket {
         game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
 
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);
-        for (UUID eUUID : chunk.getEntities()) {
-            networkSendSystem.sendEntityToAll(eUUID);
+        for (UUID eUUID : chunk.entities) {
+            networkSendSystem.sendEntity(connection, eUUID);
         }
     }
 }
