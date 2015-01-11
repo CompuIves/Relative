@@ -1,0 +1,1 @@
+java -jar artemis-odb-cli-0.8.1.jar matrix -l "Relative" -c "C:\Java Development\Relative\Project\core\build\classes" -o "index.html"
