@@ -15,19 +15,23 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk {
+    public int index;
     public boolean loaded = false;
-    public int startX, endX;
     public int z;
     public String planet;
+    /**
+     * Every tile in this chunk, the positions are relative to the chunk.
+     */
     public transient Map<Vector2, UUID> tiles;
 
     /**
      * To preserve space when saving, or sending the tiles I don't want to save every changed tile by name. I give every
      * name an id and add it to the changed tiles.
      */
+    //TODO move this to the chunkmanager
     public Map<Integer, String> tileLegend;
     /**
-     * Every changed tile from generation in a chunk, -1 = air.
+     * Every changed tile from generation in a chunk, -1 = air. Relative to the chunk.
      */
     public Map<Vector2, Integer> changedTiles;
 
@@ -37,9 +41,8 @@ public class Chunk {
     public Chunk() {
     }
 
-    public Chunk(int startX, int endX, String planet) {
-        this.startX = startX;
-        this.endX = endX;
+    public Chunk(int index, String planet) {
+        this.index = index;
         this.planet = planet;
         initialize();
     }
@@ -52,7 +55,6 @@ public class Chunk {
     }
 
     public void addEntity(UUID e) {
-        System.out.println("Added an entity to chunk " + startX + " to " + endX + "!");
         if (!entities.contains(e, false)) {
             entities.add(e);
         }
@@ -63,23 +65,30 @@ public class Chunk {
     }
 
     public void addTile(float x, float y, UUID tile) {
-        if (isThisChunk(x)) {
-            tiles.put(new Vector2(x, y), tile);
-        }
+        this.addTile((int) x, (int) y, tile);
     }
 
+    public void addTile(int x, int y, UUID tile) {
+        tiles.put(new Vector2(x, y), tile);
+    }
+
+    public void addChangedTile(int x, int y, int tile) {
+        changedTiles.put(new Vector2(x, y), tile);
+    }
+
+    /**
+     * Gets the tile relative to the chunk
+     * @param x the x relative to the chunk
+     * @param y the y coordinate
+     * @return
+     */
     public UUID getTile(float x, float y) {
-        if (isThisChunk(x)) {
-            Vector2 vector2 = new Vector2((int) x, (int) y);
-            if (tiles.containsKey(vector2)) {
-                return tiles.get(vector2);
-            }
+        Vector2 vector2 = new Vector2((int) x, (int) y);
+        if (tiles.containsKey(vector2)) {
+            //Return the tile relative to the chunk
+            return tiles.get(vector2);
         }
         return null;
-    }
-
-    public boolean isThisChunk(float x) {
-        return x >= startX && x <= endX;
     }
 
     public Map<Vector2, Integer> getChangedTiles() {
@@ -89,7 +98,6 @@ public class Chunk {
     public void setChangedTiles(Map<Vector2, Integer> changedTiles) {
         this.changedTiles = changedTiles;
     }
-
 
     public void dispose() {
         tiles.clear();

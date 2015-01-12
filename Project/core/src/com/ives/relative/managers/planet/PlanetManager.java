@@ -10,15 +10,10 @@ import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ives.relative.entities.components.Name;
-import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.planet.ChunkC;
-import com.ives.relative.entities.components.planet.Gravity;
-import com.ives.relative.entities.components.planet.Seed;
-import com.ives.relative.entities.components.planet.WorldC;
+import com.ives.relative.entities.components.planet.*;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.event.EventManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,12 +34,8 @@ public class PlanetManager extends Manager {
     protected CollisionManager collisionManager;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
-    protected EventManager eventManager;
-    protected ChunkManager chunkManager;
 
     protected ComponentMapper<WorldC> mWorldC;
-    protected ComponentMapper<Gravity> mGravity;
-    protected ComponentMapper<Position> mPosition;
 
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, UUID>();
@@ -95,17 +86,19 @@ public class PlanetManager extends Manager {
      * @param name               The name of the planet, the players will see this name.
      * @param seed               A seed which determines how the planet will look like. Purely a random value would suffice.
      * @param gravity            Gravity on the planet.
+     * @param size               Size over x-axis of the planet in tiles
      * @param velocityIterations This value is used for the physics, it will determine how many times each step the velocity is updated
      * @param positionIterations Same as velocityIterations, but for position.
      * @return Return the entity of the planet
      */
-    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int velocityIterations, int positionIterations) {
+    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int size, int velocityIterations, int positionIterations) {
         //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new Gravity(gravity.x, gravity.y),
                 new WorldC(new World(new Vector2(gravity.x, gravity.y), true), velocityIterations, positionIterations),
-                new ChunkC())
+                new ChunkC(),
+                new Size(size / ChunkManager.CHUNK_SIZE))
                 .group("planets")
                 .build();
 

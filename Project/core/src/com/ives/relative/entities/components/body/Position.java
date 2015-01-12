@@ -22,11 +22,11 @@ public class Position extends Component implements Networkable {
     public Position() {
     }
 
-    public Position(float x, float y, int z, float rotation, String worldID) {
+    public Position(float x, float y, int z, float rotation, String planet) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.rotation = rotation;
-        this.planet = worldID;
+        this.planet = planet;
     }
 }

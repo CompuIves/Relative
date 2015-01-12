@@ -15,20 +15,20 @@ import java.util.UUID;
  * HANDLED BY SERVER
  */
 public class RequestChunk extends ResponsePacket {
-    float x;
+    int index;
     String planet;
 
     public RequestChunk() {
     }
 
-    public RequestChunk(float x, String planet) {
-        this.x = x;
+    public RequestChunk(int index, String planet) {
+        this.index = index;
         this.planet = planet;
     }
 
     @Override
     public void response(GameManager game) {
-        Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(x, planet);
+        Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(index, planet);
         game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
 
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);

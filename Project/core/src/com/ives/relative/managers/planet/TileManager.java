@@ -58,18 +58,10 @@ public class TileManager extends Manager {
      * @param y       y coord
      * @param z       z coord
      * @param tileID  name of tile
-     * @param gravity should the given tile be affected by gravity?
      * @return the entity of the tile created
      */
     public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
-
-            if (!gravity) {
-                Entity tile;
-                if ((tile = getTile(new Vector2(x, y), planet)) != null) {
-                    removeTile(tile);
-                }
-            }
 
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
