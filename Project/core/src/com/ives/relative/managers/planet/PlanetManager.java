@@ -62,10 +62,6 @@ public class PlanetManager extends Manager {
         }
     }
 
-    public World createWorld(Gravity gravity) {
-        return new World(new Vector2(gravity.x, gravity.y), true);
-    }
-
     public Entity getPlanet(String name) {
         if (entitiesByPlanet.containsKey(name))
             return uuidEntityManager.getEntity(entitiesByPlanet.get(name));
@@ -95,8 +91,8 @@ public class PlanetManager extends Manager {
         //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
-                new Gravity(gravity.x, gravity.y),
-                new WorldC(new World(new Vector2(gravity.x, gravity.y), true), velocityIterations, positionIterations),
+                new PGravity(gravity.x, gravity.y),
+                new WorldC(new World(new Vector2(0, 0), true), velocityIterations, positionIterations),
                 new ChunkC(),
                 new Size(size / ChunkManager.CHUNK_SIZE))
                 .group("planets")

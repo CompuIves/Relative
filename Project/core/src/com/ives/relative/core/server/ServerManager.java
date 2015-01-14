@@ -13,7 +13,6 @@ import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.chunkloaders.ServerChunkLoader;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
-import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 
@@ -48,7 +47,6 @@ public class ServerManager extends GameManager {
     @Override
     public void registerSystems() {
         super.registerSystems();
-        world.setSystem(new WorldSystem());
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
         world.setSystem(new Box2DDebugRendererSystem(camera));
         world.setSystem(new NetworkSendSystem((ServerNetwork) network));

@@ -11,7 +11,6 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.chunkloaders.ClientChunkLoader;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
-import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.client.ClientNetworkSystem;
 import com.ives.relative.systems.client.InputSystem;
 import com.ives.relative.systems.client.NetworkReceiveSystem;
@@ -55,7 +54,6 @@ public class ClientManager extends GameManager implements Screen {
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);
         world.setSystem(new NetworkReceiveSystem());
-        world.setSystem(new WorldSystem());
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
 
         world.setSystem(new RenderSystem(batch, camera));

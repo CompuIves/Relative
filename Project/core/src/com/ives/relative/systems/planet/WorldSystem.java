@@ -1,4 +1,4 @@
-package com.ives.relative.systems;
+package com.ives.relative.systems.planet;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -14,7 +14,7 @@ import com.ives.relative.entities.components.planet.WorldC;
 @Wire
 public class WorldSystem extends EntityProcessingSystem {
     public static float PHYSICS_ITERATIONS = 1 / 60f;
-
+    protected GravitySystem gravitySystem;
     ComponentMapper<WorldC> worldMapper;
 
     public WorldSystem() {
@@ -28,6 +28,7 @@ public class WorldSystem extends EntityProcessingSystem {
         worldC.acc += world.getDelta();
         while (worldC.acc >= PHYSICS_ITERATIONS) {
             worldC.acc -= PHYSICS_ITERATIONS;
+            gravitySystem.process();
             worldC.world.step(PHYSICS_ITERATIONS, worldC.velocityIterations, worldC.positionIterations);
         }
 

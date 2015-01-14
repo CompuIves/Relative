@@ -49,9 +49,10 @@ public class MoveRightCommand extends Command {
 
     private void moveEntity(Entity e, float vx) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        float oldvx = body.getLinearVelocity().x;
-        float deltavx = vx - oldvx;
-        float impulse = body.getMass() * deltavx;
-        body.applyLinearImpulse(new Vector2(impulse, 0), body.getWorldCenter(), true);
+        //TODO acceleration component
+        if (body.getLinearVelocity().x < vx) {
+            float impulse = body.getMass() * vx * 8;
+            body.applyForce(new Vector2(impulse, 0), body.getWorldCenter(), true);
+        }
     }
 }

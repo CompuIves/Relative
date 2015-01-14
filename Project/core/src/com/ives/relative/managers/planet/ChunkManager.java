@@ -32,6 +32,7 @@ import java.util.UUID;
 public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_SIZE = 64;
     public static final int CHUNK_LOAD = 5;
+    public Array<Chunk> loadedChunks;
 
     protected PlanetManager planetManager;
     protected PlanetGenerator planetGenerator;
@@ -48,6 +49,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     public ChunkManager(ChunkLoader chunkLoader) {
         this.chunkLoader = chunkLoader;
+        loadedChunks = new Array<Chunk>();
     }
 
     @Override
@@ -99,7 +101,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         if (chunks.containsKey(index)) {
             return chunks.get(index);
         } else {
-            Chunk chunk = new Chunk(index, planet);
+            Chunk chunk = new Chunk(index, 0, -10, planet);
             chunks.put(index, chunk);
             return chunk;
         }
@@ -171,6 +173,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         planetGenerator.generateTerrain(chunk);
         chunkLoader.loadChunkInfo(chunk);
         chunk.loaded = true;
+        loadedChunks.add(chunk);
     }
 
     /**
@@ -193,6 +196,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             Chunk chunk = getChunk(x, planet);
             chunk.dispose();
             mChunkC.get(planetManager.getPlanet(planet)).chunks.remove(getChunkIndex(x, planet));
+            loadedChunks.removeValue(chunk, false);
         }
     }
 
@@ -314,7 +318,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     private void checkChunkChange(Entity e, Position position) {
         if (RelativeMath.fastfloor(position.x / CHUNK_SIZE) != RelativeMath.fastfloor(position.px / CHUNK_SIZE)) {
-            removeEntity(e, position.x, position.planet);
+            removeEntity(e, position.px, position.planet);
             addEntity(e, position.x, position.planet);
         }
     }

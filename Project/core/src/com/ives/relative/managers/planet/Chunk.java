@@ -18,6 +18,7 @@ public class Chunk {
     public int index;
     public boolean loaded = false;
     public int z;
+    public transient Vector2 gravity;
     public String planet;
     /**
      * Every tile in this chunk, the positions are relative to the chunk.
@@ -41,9 +42,10 @@ public class Chunk {
     public Chunk() {
     }
 
-    public Chunk(int index, String planet) {
+    public Chunk(int index, float gravityX, float gravityY, String planet) {
         this.index = index;
         this.planet = planet;
+        this.gravity = new Vector2(gravityX, gravityY);
         initialize();
     }
 

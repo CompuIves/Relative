@@ -10,6 +10,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -24,7 +25,7 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.planet.Gravity;
+import com.ives.relative.entities.components.planet.PGravity;
 import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.PlayerFactory;
@@ -64,7 +65,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<WorldC> mWorldC;
-    protected ComponentMapper<Gravity> mGravity;
+    protected ComponentMapper<PGravity> mGravity;
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<Visual> mVisual;
     protected ComponentMapper<TileC> mTileC;
@@ -207,7 +208,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
             case PLANET:
                 Name name = world.getMapper(Name.class).get(entity);
                 WorldC worldC = mWorldC.get(entity);
-                worldC.world = planetManager.createWorld(mGravity.get(entity));
+                worldC.world = new World(new Vector2(0, 0), true);
                 planetManager.addPlanet(name.internalName, entity);
 
                 clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new ReceivedPlanet());

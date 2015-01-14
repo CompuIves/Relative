@@ -9,7 +9,7 @@ import com.ives.relative.network.Network;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.network.packets.updates.RemoveEntityPacket;
-import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.systems.planet.WorldSystem;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.io.IOException;
