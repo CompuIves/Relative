@@ -2,12 +2,15 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
+import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.utils.ComponentUtils;
 
 /**
  * Created by Ives on 14/12/2014.
+ *
+ * Creates a dirt tile above the executor
  */
 public class CreateBodyCommand extends Command {
     Entity body;
@@ -18,7 +21,8 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeDown(final Entity entity) {
-        body = entity.getWorld().getManager(TileManager.class).createTile("earth", 10, 15, 0, "dirt", true);
+        Position position = entity.getWorld().getMapper(Position.class).get(entity);
+        body = entity.getWorld().getManager(TileManager.class).createTile("earth", position.x, position.y + 4, 0, "dirt", true);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -51,7 +51,7 @@ public class GravitySystem extends VoidEntitySystem {
                         gY = chunk.gravity.y;
                     }
 
-                    physics.body.applyForceToCenter(gX * physics.body.getMass(), gY * physics.body.getMass(), true);
+                    physics.body.applyForceToCenter(gX * physics.body.getMass(), gY * physics.body.getMass(), false);
                 }
             }
         }
