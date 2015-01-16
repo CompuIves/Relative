@@ -86,7 +86,6 @@ public class CollisionManager extends Manager implements ContactListener {
             e = (Entity) contact.getFixtureA().getBody().getUserData();
             eStanding = (Entity) contact.getFixtureB().getBody().getUserData();
         }
-
         if (contact.getFixtureB().getUserData().equals(FootC.class)) {
             e = (Entity) contact.getFixtureB().getBody().getUserData();
             eStanding = (Entity) contact.getFixtureA().getBody().getUserData();

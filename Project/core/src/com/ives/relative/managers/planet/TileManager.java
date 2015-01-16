@@ -44,9 +44,19 @@ public class TileManager extends Manager {
         solidTiles = new HashMap<String, SolidTile>();
     }
 
-    public static PolygonShape getCube(float width, float height) {
+    public static PolygonShape createCubeShape(float width, float height) {
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.setAsBox(width / 2f, height / 2f);
+        return polygonShape;
+    }
+
+    public static PolygonShape createTriangleShape(float width, float height) {
+        PolygonShape polygonShape = new PolygonShape();
+        Vector2[] vertices = new Vector2[3];
+        vertices[0] = new Vector2(-width / 2, -height / 2);
+        vertices[1] = new Vector2(width / 2, -height / 2);
+        vertices[2] = new Vector2(-width / 2, height / 2);
+        polygonShape.set(vertices);
         return polygonShape;
     }
 

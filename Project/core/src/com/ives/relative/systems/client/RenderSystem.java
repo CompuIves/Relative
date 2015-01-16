@@ -37,10 +37,9 @@ public class RenderSystem extends EntityProcessingSystem {
         super.begin();
         Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(camera.combined);
-
         positionCamera();
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
     }
 
@@ -56,13 +55,11 @@ public class RenderSystem extends EntityProcessingSystem {
         if (position.x > startX && position.x < endX
                 && position.y > startY && position.y < endY) {
             Visual visual = visualMapper.get(entity);
-            //Upped the texture width and height to fill the gaps between blocks
             batch.draw(visual.texture,
-                    position.x - visual.width / 2f,
-                    position.y - visual.height / 2f,
-                    visual.width / 2f, visual.height / 2f,
+                    position.x - visual.width / 2, position.y - visual.height / 2,
+                    visual.width / 2, visual.height / 2,
                     visual.width, visual.height,
-                    1, 1,
+                    1.02f, 1.02f,
                     position.rotation * MathUtils.radiansToDegrees);
         }
     }

@@ -2,6 +2,7 @@ package com.ives.relative.entities.components.body;
 
 import com.artemis.Component;
 import com.ives.relative.entities.components.network.Networkable;
+import com.ives.relative.managers.planet.Chunk;
 
 /**
  * Created by Ives on 12/12/2014.
@@ -18,6 +19,7 @@ public class Position extends Component implements Networkable {
     public float protation;
 
     public String planet;
+    public transient Chunk chunk;
 
     public Position() {
     }

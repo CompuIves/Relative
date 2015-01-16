@@ -22,8 +22,10 @@ public class PlayerFactory {
      * @param planet
      * @return
      */
-    public static Body createBody(Entity e, float x, float y, float vx, float vy, float radius, Entity planet) {
+    public static Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
         BodyDef bodyDef = new BodyDef();
+        float height = 1.8f;
+        float width = 0.9f;
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
         bodyDef.linearVelocity.set(vx, vy);
@@ -33,23 +35,32 @@ public class PlayerFactory {
         Body body = world.createBody(bodyDef);
         body.setFixedRotation(true);
         FixtureDef fixtureDef = new FixtureDef();
-        Shape shape = new CircleShape();
-        fixtureDef.shape = shape;
-        shape.setRadius(radius);
 
+        CircleShape shape = new CircleShape();
+        shape.setPosition(new Vector2(0, -height / 2 + 0.45f));
+        fixtureDef.shape = shape;
+        shape.setRadius(0.45f);
         fixtureDef.restitution = 0.0f;
-        fixtureDef.density = 30.0f;
+        fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.6f;
         Fixture fixture = body.createFixture(fixtureDef);
 
+        PolygonShape playerShape = new PolygonShape();
+        playerShape.setAsBox(width / 2, height / 2 - 0.25f);
+        fixtureDef.shape = playerShape;
+        fixtureDef.density = 30.0f;
+        fixtureDef.friction = 0.0f;
+        Fixture playerBodyFixture = body.createFixture(fixtureDef);
+        playerBodyFixture.setUserData(e);
+
         PolygonShape sensorShape = new PolygonShape();
-        sensorShape.setAsBox(0.5f, 0.1f, new Vector2(0, -radius), 0);
+        sensorShape.setAsBox(width / 2 - 0.05f, 0.1f, new Vector2(0, -height / 2 - 0.1f), 0);
         fixtureDef.shape = sensorShape;
         fixtureDef.isSensor = true;
         Fixture sensorFixture = body.createFixture(fixtureDef);
 
         FootC footC = new FootC();
-        footC.yOffset = -radius;
+        footC.yOffset = -height / 2 - 0.1f;
         sensorFixture.setUserData(FootC.class);
         e.edit().add(footC);
 
@@ -57,6 +68,7 @@ public class PlayerFactory {
         body.setUserData(e);
         shape.dispose();
         sensorShape.dispose();
+        playerShape.dispose();
         return body;
     }
 }

@@ -32,7 +32,7 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        float jumpingSpeed = 500;
+        float jumpingSpeed = 300;
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         body.applyLinearImpulse(new Vector2(0, jumpingSpeed), body.getPosition(), true);
 

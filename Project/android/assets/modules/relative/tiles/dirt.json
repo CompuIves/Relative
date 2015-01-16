@@ -4,5 +4,5 @@
 	"durability": 3,
   "friction": 0.5,
 	"gravity": true,
-	"texture": "tiles/assets/dirt.png"
+  "texture": "tiles/textures/dirt.png"
 }

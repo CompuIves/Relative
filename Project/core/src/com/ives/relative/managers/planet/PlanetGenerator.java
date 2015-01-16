@@ -1,9 +1,11 @@
 package com.ives.relative.managers.planet;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
+import com.ives.relative.entities.components.planet.ChunkC;
 
 /**
  * Created by Ives on 4/1/2015.
@@ -13,29 +15,33 @@ import com.artemis.managers.UuidEntityManager;
 @Wire
 public class PlanetGenerator extends Manager {
     protected TileManager tileManager;
-    protected ChunkManager chunkManager;
+    protected PlanetManager planetManager;
     protected UuidEntityManager uuidEntityManager;
 
+    protected ComponentMapper<ChunkC> mChunkC;
+
     public void generateTerrain(Chunk chunk) {
-        int startX = chunk.index * ChunkManager.CHUNK_SIZE;
-        int endX = chunk.index * ChunkManager.CHUNK_SIZE + ChunkManager.CHUNK_SIZE;
+        Entity ePlanet = planetManager.getPlanet(chunk.planet);
+        int chunkSize = mChunkC.get(ePlanet).chunkSize;
+
+        int startX = chunk.x * chunkSize;
+        int startY = chunk.y * chunkSize;
+        int endX = startX + chunkSize;
+        int endY = startY + chunkSize;
         String planet = chunk.planet;
 
         for (int x = startX; x < endX; x++) {
-            for (int y = 2; y < 10; y++) {
-                Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
-                chunk.addTile(x - startX, y, uuidEntityManager.getUuid(tile));
+            for (int y = startY; y < endY; y++) {
+                if (y < 10) {
+                    Entity tile = tileManager.createTile(planet, x, y, 0, "dirt", false);
+                    chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
+                }
             }
         }
 
-        for (int x = startX; x < endX; x++) {
-            for (int y = 0; y < 2; y++) {
-                Entity tile = tileManager.createTile(planet, x, y, 0, "bedrock", false);
-                chunk.addTile(x - startX, y, uuidEntityManager.getUuid(tile));
-            }
-        }
-
-        chunk.addTile(startX, 10, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, 10, 0, "bedrock", false)));
-        chunk.addTile(endX, 10, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, 10, 0, "bedrock", false)));
+        chunk.addTile(startX, startY, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, startY, 0, "bedrock", false)));
+        chunk.addTile(startX, endY, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, endY, 0, "bedrock", false)));
+        chunk.addTile(endX, startY, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, startY, 0, "bedrock", false)));
+        chunk.addTile(endX, endY, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, endY, 0, "bedrock", false)));
     }
 }

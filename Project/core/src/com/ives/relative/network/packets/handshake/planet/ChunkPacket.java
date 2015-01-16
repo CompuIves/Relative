@@ -27,7 +27,7 @@ public class ChunkPacket extends ResponsePacket {
             @Override
             public void run() {
                 ChunkManager chunkManager = game.world.getManager(ChunkManager.class);
-                chunkManager.updateChunk(chunk);
+                chunkManager.transferChunk(chunk);
             }
         });
     }

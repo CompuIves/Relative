@@ -2,6 +2,7 @@ package com.ives.relative.managers.planet;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.utils.RelativeMath;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk {
-    public int index;
+    public int x, y;
     public boolean loaded = false;
     public int z;
     public transient Vector2 gravity;
@@ -42,8 +43,9 @@ public class Chunk {
     public Chunk() {
     }
 
-    public Chunk(int index, float gravityX, float gravityY, String planet) {
-        this.index = index;
+    public Chunk(int x, int y, float gravityX, float gravityY, String planet) {
+        this.x = x;
+        this.y = y;
         this.planet = planet;
         this.gravity = new Vector2(gravityX, gravityY);
         initialize();
@@ -85,7 +87,7 @@ public class Chunk {
      * @return
      */
     public UUID getTile(float x, float y) {
-        Vector2 vector2 = new Vector2((int) x, (int) y);
+        Vector2 vector2 = new Vector2(RelativeMath.fastfloor(x), RelativeMath.fastfloor(y));
         if (tiles.containsKey(vector2)) {
             //Return the tile relative to the chunk
             return tiles.get(vector2);

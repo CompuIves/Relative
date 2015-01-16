@@ -65,7 +65,7 @@ public class ServerManager extends GameManager {
 
     private void createPlanet() {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
-        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 384, 10, 10);
+        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 7, 7, 16, 10, 10);
     }
 
     @Override

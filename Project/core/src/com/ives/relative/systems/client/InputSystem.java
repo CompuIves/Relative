@@ -80,7 +80,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
             ClickCommand c = getClickCommand(e);
-            c.setWorldPosClicked(new Vector2(gamePos.x, gamePos.y));
+            c.setWorldPosClicked(new Vector2(gamePos.x + 0.5f, gamePos.y + 0.5f)); //offset
             commandSystem.commandDown(c, e);
             clientNetworkSystem.sendClickCommand(c);
         }
@@ -92,7 +92,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
             ClickCommand c = getClickCommand(e);
-            c.setWorldPosClicked(new Vector2(gamePos.x, gamePos.y));
+            c.setWorldPosClicked(new Vector2(gamePos.x + 0.5f, gamePos.y + 0.5f)); //offset
             commandSystem.commandUp(commandManager.getID(c), e);
             clientNetworkSystem.sendUnClickCommand(c);
         }

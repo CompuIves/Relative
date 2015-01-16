@@ -181,7 +181,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 physics = mPhysics.get(entity);
                 velocity = mVelocity.get(entity);
                 position = mPosition.get(entity);
-                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, 0.9f, planet);
+                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, planet);
 
                 processBody(entity);
                 Authority authority = mAuthority.get(entity);

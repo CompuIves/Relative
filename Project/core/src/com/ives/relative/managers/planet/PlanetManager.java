@@ -82,19 +82,21 @@ public class PlanetManager extends Manager {
      * @param name               The name of the planet, the players will see this name.
      * @param seed               A seed which determines how the planet will look like. Purely a random value would suffice.
      * @param gravity            Gravity on the planet.
-     * @param size               Size over x-axis of the planet in tiles
+     * @param width              The width in chunks of the planet
+     * @param height             The height in chunks of the planet
+     * @param chunkSize          The size of a chunk
      * @param velocityIterations This value is used for the physics, it will determine how many times each step the velocity is updated
      * @param positionIterations Same as velocityIterations, but for position.
      * @return Return the entity of the planet
      */
-    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int size, int velocityIterations, int positionIterations) {
+    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int width, int height, int chunkSize, int velocityIterations, int positionIterations) {
         //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new PGravity(gravity.x, gravity.y),
                 new WorldC(new World(new Vector2(0, 0), true), velocityIterations, positionIterations),
-                new ChunkC(),
-                new Size(size / ChunkManager.CHUNK_SIZE))
+                new ChunkC(chunkSize),
+                new Size(width, height))
                 .group("planets")
                 .build();
 

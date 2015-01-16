@@ -6,8 +6,8 @@ package com.ives.relative.utils;
 public class RelativeMath {
 
     // This method is a *lot* faster than using (int)Math.floor(x)
-    public static int fastfloor(double x) {
-        int xi = (int) x;
-        return x < xi ? xi - 1 : xi;
+    public static int fastfloor(double a) {
+        int xi = (int) a;
+        return a < xi ? xi - 1 : xi;
     }
 }

@@ -7,14 +7,19 @@ import com.artemis.Component;
  */
 public class Size extends Component {
     /**
-     * planetSize in chunks
+     * Width in chunks
      */
-    public int planetSize;
+    public int width;
+    /**
+     * Height in chunks
+     */
+    public int height;
 
     public Size() {
     }
 
-    public Size(int planetSize) {
-        this.planetSize = planetSize;
+    public Size(int width, int height) {
+        this.height = height;
+        this.width = width;
     }
 }

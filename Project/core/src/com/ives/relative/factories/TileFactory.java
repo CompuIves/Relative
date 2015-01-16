@@ -26,7 +26,7 @@ public class TileFactory {
         bodyDef.type = gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody;
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
-        PolygonShape shape = TileManager.getCube(tile.width, tile.height);
+        PolygonShape shape = TileManager.createCubeShape(tile.width, tile.height);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;
