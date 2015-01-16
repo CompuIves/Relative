@@ -2,7 +2,7 @@ package com.ives.relative.entities.components.body;
 
 import com.artemis.Component;
 import com.ives.relative.entities.components.network.Networkable;
-import com.ives.relative.managers.planet.Chunk;
+import com.ives.relative.managers.planet.chunks.Chunk;
 
 /**
  * Created by Ives on 12/12/2014.

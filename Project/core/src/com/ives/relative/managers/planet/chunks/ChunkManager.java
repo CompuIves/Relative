@@ -1,4 +1,4 @@
-package com.ives.relative.managers.planet;
+package com.ives.relative.managers.planet.chunks;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -8,19 +8,22 @@ import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Authority;
+import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
-import com.ives.relative.entities.components.planet.PGravity;
 import com.ives.relative.entities.components.planet.Size;
 import com.ives.relative.entities.events.*;
 import com.ives.relative.entities.events.creation.NetworkedEntityCreationEvent;
 import com.ives.relative.entities.events.creation.NetworkedEntityDeletionEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.chunkloaders.ChunkLoader;
+import com.ives.relative.managers.planet.PlanetGenerator;
+import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.managers.planet.chunks.chunkloaders.ChunkLoader;
 import com.ives.relative.utils.ComponentUtils;
 import com.ives.relative.utils.RelativeMath;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,9 +35,11 @@ import java.util.UUID;
 @Wire
 public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_LOAD = 5;
+    public static final int CHUNK_SIZE = 16;
+
+    public Map<Vector2, Chunk> registeredChunks;
     public Array<Chunk> loadedChunks;
 
-    protected PlanetManager planetManager;
     protected PlanetGenerator planetGenerator;
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
@@ -44,13 +49,14 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Authority> mAuthority;
     protected ComponentMapper<Size> mSize;
-    protected ComponentMapper<PGravity> mPGravity;
+    protected ComponentMapper<Name> mName;
 
     protected ChunkLoader chunkLoader;
 
     public ChunkManager(ChunkLoader chunkLoader) {
         this.chunkLoader = chunkLoader;
         loadedChunks = new Array<Chunk>();
+        registeredChunks = new HashMap<Vector2, Chunk>();
     }
 
     @Override
@@ -59,18 +65,29 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         eventManager.addObserver(this);
     }
 
+    public void generateChunkMap(Entity planet) {
+        Name name = mName.get(planet);
+        ChunkC chunkC = mChunkC.get(planet);
+        Size size = mSize.get(planet);
+
+        for (int i = 0; i < 4; i++) {
+            PlanetSide side = new PlanetSide(name.internalName, size.width, size.height, i * 90, 0, -10);
+            side.generateChunkMap();
+            chunkC.sides.add(side);
+            registeredChunks.putAll(side.chunks);
+        }
+    }
+
     /**
      *
      * @param x coordinate the chunk lies in
      * @param y coordinate the chunk lies in
-     * @param planet
      * @return
      */
-    public Chunk getChunk(float x, float y, String planet) {
-        int chunkSize = mChunkC.get(planetManager.getPlanet(planet)).chunkSize;
-        int cx = RelativeMath.fastfloor(x / chunkSize);
-        int cy = RelativeMath.fastfloor(y / chunkSize);
-        return getChunk(cx, cy, planet);
+    public Chunk getChunk(float x, float y) {
+        int cx = RelativeMath.fastfloor(x / CHUNK_SIZE);
+        int cy = RelativeMath.fastfloor(y / CHUNK_SIZE);
+        return getChunk(cx, cy);
     }
 
     /**
@@ -78,41 +95,30 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      *
      * @param x the x index of the chunk
      * @param y the y index of the chunk
-     * @param planet the planet the chunk is on
      * @return the chunk
      */
-    public Chunk getChunk(int x, int y, String planet) {
-        Entity ePlanet = planetManager.getPlanet(planet);
-        ChunkC chunkC = mChunkC.get(ePlanet);
-        Map<Vector2, Chunk> chunks = chunkC.chunks;
-        PGravity gravity = mPGravity.get(ePlanet);
-
+    public Chunk getChunk(int x, int y) {
         Vector2 position = new Vector2(x, y);
 
-        if (chunks.containsKey(position)) {
-            return chunks.get(position);
+        if (registeredChunks.containsKey(position)) {
+            return registeredChunks.get(position);
         } else {
-            Chunk chunk = new Chunk(x, y, gravity.x, gravity.y, planet);
-            chunks.put(position, chunk);
+            //TODO fix gravity
+            Chunk chunk = new Chunk(x, y, 0, 0, 0);
+            registeredChunks.put(position, chunk);
             return chunk;
         }
     }
 
-    /**
-     * Get all the chunks of the planet
-     *
-     * @param planet Planet of chunk
-     * @return All the chunks
-     */
-    public Map<Vector2, Chunk> getChunks(String planet) {
-        Entity ePlanet = planetManager.getPlanet(planet);
-        ChunkC chunkC = mChunkC.get(ePlanet);
-        return chunkC.chunks;
+    public void loadAllChunks() {
+        for (Chunk chunk : registeredChunks.values()) {
+            loadChunk(chunk);
+        }
     }
 
 
     /**
-     * Loads the chunks around the player based on a radius of {@link com.ives.relative.managers.planet.ChunkManager#CHUNK_LOAD}.
+     * Loads the chunks around the player based on a radius of {@link ChunkManager#CHUNK_LOAD}.
      * There is a check built in if the chunk is already loaded, there is no need to check for it again.
      *
      * @param player player to be based around
@@ -126,7 +132,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Returns the chunks surrounding the entity following a (square) radius of {@link com.ives.relative.managers.planet.ChunkManager#CHUNK_LOAD}
+     * Returns the chunks surrounding the entity following a (square) radius of {@link ChunkManager#CHUNK_LOAD}
      *
      * @param player
      * @return array of the chunks surrounding the player
@@ -135,19 +141,20 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Array<Chunk> chunkSurrounding = new Array<Chunk>(CHUNK_LOAD * CHUNK_LOAD);
 
         Position position = mPosition.get(player);
-        Entity planet = planetManager.getPlanet(position.planet);
-        int chunkSize = mChunkC.get(planet).chunkSize;
-
-        int playerChunkX = RelativeMath.fastfloor(position.x / chunkSize);
-        int playerChunkY = RelativeMath.fastfloor(position.y / chunkSize);
+        int playerChunkX = RelativeMath.fastfloor(position.x / CHUNK_SIZE);
+        int playerChunkY = RelativeMath.fastfloor(position.y / CHUNK_SIZE);
 
         for (int x = playerChunkX - (CHUNK_LOAD - 1) / 2; x < playerChunkX + (CHUNK_LOAD + 1) / 2; x++) {
             for (int y = playerChunkY - (CHUNK_LOAD - 1) / 2; y < playerChunkY + (CHUNK_LOAD + 1) / 2; y++) {
-                Chunk chunk = getChunk(x, y, position.planet);
+                Chunk chunk = getChunk(x, y);
                 chunkSurrounding.add(chunk);
             }
         }
         return chunkSurrounding;
+    }
+
+    public void loadChunk(float x, float y) {
+        loadChunk(getChunk(x, y));
     }
 
     /**
@@ -170,7 +177,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      */
     public void transferChunk(Chunk chunk) {
         if (chunk != null) {
-            Chunk localChunk = getChunk(chunk.x, chunk.y, chunk.planet);
+            Chunk localChunk = getChunk(chunk.x, chunk.y);
             if (chunk.getChangedTiles() != null) {
                 localChunk.setChangedTiles(chunk.getChangedTiles());
                 updateTiles(localChunk);
@@ -180,7 +187,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     public void unLoadChunk(Chunk chunk) {
         chunk.dispose();
-        mChunkC.get(planetManager.getPlanet(chunk.planet)).chunks.remove(new Vector2(chunk.x, chunk.y));
         loadedChunks.removeValue(chunk, false);
     }
 
@@ -192,7 +198,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void addEntity(Entity e) {
         Position position = mPosition.get(e);
         if (position != null) {
-            addEntity(e, position.x, position.y, position.planet);
+            addEntity(e, position.x, position.y);
         }
     }
 
@@ -201,10 +207,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      *
      * @param e
      * @param x
-     * @param world
      */
-    public void addEntity(Entity e, float x, float y, String world) {
-        Chunk chunk = getChunk(x, y, world);
+    public void addEntity(Entity e, float x, float y) {
+        Chunk chunk = getChunk(x, y);
         UUID entityID = uuidEntityManager.getUuid(e);
         if (!chunk.entities.contains(entityID, false)) {
             chunk.addEntity(entityID);
@@ -229,15 +234,15 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void removeEntity(Entity e) {
         Position position = mPosition.get(e);
         if (position != null) {
-            removeEntity(e, position.x, position.y, position.planet);
+            removeEntity(e, position.x, position.y);
         }
     }
 
     /**
      * Remove an entity from a chunk, this doesn't remove the entity itself. It only removes the pointer to the entity.
      */
-    public void removeEntity(Entity e, float x, float y, String world) {
-        Chunk chunk = getChunk(x, y, world);
+    public void removeEntity(Entity e, float x, float y) {
+        Chunk chunk = getChunk(x, y);
         UUID entityID = uuidEntityManager.getUuid(e);
         if (chunk.entities.contains(entityID, false)) {
             chunk.removeEntity(entityID);
@@ -250,11 +255,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      *
      * @param x      coord
      * @param y      coord
-     * @param planet name of the planet
      * @return the tile which was requested
      */
-    public Entity getTile(float x, float y, String planet) {
-        Chunk chunk = getChunk(x, y, planet);
+    public Entity getTile(float x, float y) {
+        Chunk chunk = getChunk(x, y);
         UUID uuid = chunk.getTile(x, y);
         if (uuid != null) {
             return uuidEntityManager.getEntity(uuid);
@@ -263,13 +267,13 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         }
     }
 
-    public void addTile(float x, float y, String planet, Entity tile) {
-        Chunk chunk = getChunk(x, y, planet);
+    public void addTile(float x, float y, Entity tile) {
+        Chunk chunk = getChunk(x, y);
         chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
     }
 
-    public void removeTile(Vector2 tilePos, String planet) {
-        Chunk chunk = getChunk(tilePos.x, tilePos.y, planet);
+    public void removeTile(Vector2 tilePos) {
+        Chunk chunk = getChunk(tilePos.x, tilePos.y);
         Entity tile = uuidEntityManager.getEntity(chunk.getTile(tilePos.x, tilePos.y));
         //-1 is the value for air.
         chunk.changedTiles.put(tilePos, -1);
@@ -298,9 +302,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     private void checkChunkChange(Entity e, Position position) {
-        if (position.chunk != getChunk(position.x, position.y, position.planet)) {
-            removeEntity(e, position.px, position.py, position.planet);
-            addEntity(e, position.x, position.y, position.planet);
+        if (position.chunk != getChunk(position.x, position.y)) {
+            removeEntity(e, position.px, position.py);
+            addEntity(e, position.x, position.y);
         }
     }
 

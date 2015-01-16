@@ -16,8 +16,8 @@ import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.CommandSystem;
+import com.ives.relative.systems.MovementSystem;
 import com.ives.relative.systems.planet.GravitySystem;
-import com.ives.relative.systems.planet.MovementSystem;
 import com.ives.relative.systems.planet.WorldSystem;
 
 /**

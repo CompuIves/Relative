@@ -25,8 +25,8 @@ import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 
 import java.util.HashMap;
 import java.util.Map;

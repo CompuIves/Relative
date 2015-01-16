@@ -14,7 +14,7 @@ import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

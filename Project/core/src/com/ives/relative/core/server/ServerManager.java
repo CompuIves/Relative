@@ -2,15 +2,18 @@ package com.ives.relative.core.server;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
-import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
-import com.ives.relative.managers.planet.chunkloaders.ServerChunkLoader;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
+import com.ives.relative.managers.planet.chunks.chunkloaders.ServerChunkLoader;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.server.NetworkSendSystem;
@@ -39,6 +42,7 @@ public class ServerManager extends GameManager {
             world.setManager(this);
             world.initialize();
             createPlanet();
+            createDebugInput();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,6 +70,60 @@ public class ServerManager extends GameManager {
     private void createPlanet() {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
         Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 7, 7, 16, 10, 10);
+    }
+
+    private void createDebugInput() {
+        Gdx.input.setInputProcessor(new InputProcessor() {
+            @Override
+            public boolean keyDown(int keycode) {
+                return false;
+            }
+
+            @Override
+            public boolean keyUp(int keycode) {
+                return false;
+            }
+
+            @Override
+            public boolean keyTyped(char character) {
+                return false;
+            }
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector3 pos = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+                world.getManager(ChunkManager.class).loadChunk(pos.x, pos.y);
+                return true;
+            }
+
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                if (button == Input.Buttons.RIGHT) {
+                    world.getManager(ChunkManager.class).loadAllChunks();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                camera.translate(-Gdx.input.getDeltaX() / 10, Gdx.input.getDeltaY() / 10);
+                camera.update();
+                return true;
+            }
+
+            @Override
+            public boolean mouseMoved(int screenX, int screenY) {
+                return false;
+            }
+
+            @Override
+            public boolean scrolled(int amount) {
+                camera.viewportHeight = camera.viewportHeight * (1 + amount / 10f);
+                camera.viewportWidth = camera.viewportWidth * (1 + amount / 10f);
+                camera.update();
+                return true;
+            }
+        });
     }
 
     @Override

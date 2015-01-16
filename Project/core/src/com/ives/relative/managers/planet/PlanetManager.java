@@ -14,6 +14,7 @@ import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.components.planet.*;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class PlanetManager extends Manager {
     protected CollisionManager collisionManager;
     protected NetworkManager networkManager;
     protected UuidEntityManager uuidEntityManager;
+    protected ChunkManager chunkManager;
 
     protected ComponentMapper<WorldC> mWorldC;
 
@@ -95,10 +97,12 @@ public class PlanetManager extends Manager {
                 new Seed(seed),
                 new PGravity(gravity.x, gravity.y),
                 new WorldC(new World(new Vector2(0, 0), true), velocityIterations, positionIterations),
-                new ChunkC(chunkSize),
+                new ChunkC(),
                 new Size(width, height))
                 .group("planets")
                 .build();
+
+        chunkManager.generateChunkMap(e);
 
         //Get the networkID from the networkmanager
         int networkID = networkManager.addEntity(e);

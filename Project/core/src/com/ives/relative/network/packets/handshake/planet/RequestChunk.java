@@ -1,8 +1,8 @@
 package com.ives.relative.network.packets.handshake.planet;
 
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.Chunk;
-import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunks.Chunk;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
 
@@ -29,7 +29,7 @@ public class RequestChunk extends ResponsePacket {
 
     @Override
     public void response(GameManager game) {
-        Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(x, y, planet);
+        Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(x, y);
         game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
 
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);

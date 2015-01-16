@@ -1,4 +1,4 @@
-package com.ives.relative.systems.planet;
+package com.ives.relative.systems;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -14,7 +14,7 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.events.MovementEvent;
 import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 
 /**
  * Created by Ives on 5/12/2014.

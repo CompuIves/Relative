@@ -1,7 +1,7 @@
-package com.ives.relative.managers.planet.chunkloaders;
+package com.ives.relative.managers.planet.chunks.chunkloaders;
 
 import com.ives.relative.core.client.ClientNetwork;
-import com.ives.relative.managers.planet.Chunk;
+import com.ives.relative.managers.planet.chunks.Chunk;
 import com.ives.relative.network.packets.handshake.planet.RequestChunk;
 
 /**

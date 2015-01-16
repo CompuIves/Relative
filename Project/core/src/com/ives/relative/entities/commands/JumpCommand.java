@@ -4,10 +4,8 @@ import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.managers.event.StateManager;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -32,7 +30,7 @@ public class JumpCommand extends Command {
      */
     @Override
     public void execute(Entity e, float delta) {
-        float jumpingSpeed = 300;
+        float jumpingSpeed = 20;
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
         body.applyLinearImpulse(new Vector2(0, jumpingSpeed), body.getPosition(), true);
 
@@ -67,7 +65,10 @@ public class JumpCommand extends Command {
 
     @Override
     public boolean canExecute(Entity e) {
+        /*
         State s = e.getWorld().getMapper(State.class).get(e);
         return s.entityState != StateManager.EntityState.AIRBORNE && accumulator == 0;
+        */
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-package com.ives.relative.managers.planet;
+package com.ives.relative.managers.planet.chunks;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -19,6 +19,11 @@ public class Chunk {
     public int x, y;
     public boolean loaded = false;
     public int z;
+
+    /**
+     * Chunks can be rotated (AWESOME!), this is the rotation of the chunk in degrees
+     */
+    public int rotation;
     public transient Vector2 gravity;
     public String planet;
     /**
@@ -43,11 +48,11 @@ public class Chunk {
     public Chunk() {
     }
 
-    public Chunk(int x, int y, float gravityX, float gravityY, String planet) {
+    public Chunk(int x, int y, float gravityX, float gravityY, int rotation) {
         this.x = x;
         this.y = y;
-        this.planet = planet;
         this.gravity = new Vector2(gravityX, gravityY);
+        this.rotation = rotation;
         initialize();
     }
 

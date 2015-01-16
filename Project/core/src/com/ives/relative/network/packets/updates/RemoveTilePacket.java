@@ -28,7 +28,7 @@ public class RemoveTilePacket extends ResponsePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                game.world.getManager(TileManager.class).removeTile(new Vector2(x, y), planet);
+                game.world.getManager(TileManager.class).removeTile(new Vector2(x, y));
             }
         });
     }

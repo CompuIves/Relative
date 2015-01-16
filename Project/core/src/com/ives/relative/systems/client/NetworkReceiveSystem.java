@@ -33,9 +33,9 @@ import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.ChunkManager;
 import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.network.packets.handshake.planet.ReceivedPlanet;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
@@ -210,6 +210,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 WorldC worldC = mWorldC.get(entity);
                 worldC.world = new World(new Vector2(0, 0), true);
                 planetManager.addPlanet(name.internalName, entity);
+                chunkManager.generateChunkMap(entity);
 
                 clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new ReceivedPlanet());
                 break;

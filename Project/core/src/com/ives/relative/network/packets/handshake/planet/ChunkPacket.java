@@ -2,8 +2,8 @@ package com.ives.relative.network.packets.handshake.planet;
 
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.Chunk;
-import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunks.Chunk;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.network.packets.ResponsePacket;
 
 /**

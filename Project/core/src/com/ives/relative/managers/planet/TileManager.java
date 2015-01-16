@@ -21,6 +21,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
@@ -102,15 +103,15 @@ public class TileManager extends Manager {
         solidTiles.put(id, tile);
     }
 
-    public void removeTile(Vector2 tilePos, String planet) {
-        chunkManager.removeTile(tilePos, planet);
+    public void removeTile(Vector2 tilePos) {
+        chunkManager.removeTile(tilePos);
     }
 
     public void removeTile(Entity tile) {
         ComponentUtils.removeEntity(tile);
     }
 
-    public Entity getTile(Vector2 tilePos, String planet) {
-        return chunkManager.getTile(tilePos.x, tilePos.y, planet);
+    public Entity getTile(Vector2 tilePos) {
+        return chunkManager.getTile(tilePos.x, tilePos.y);
     }
 }

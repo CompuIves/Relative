@@ -19,7 +19,7 @@ import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.modules.Module;
 import com.ives.relative.managers.event.StateManager;
-import com.ives.relative.managers.planet.Chunk;
+import com.ives.relative.managers.planet.chunks.Chunk;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.modules.notice.CompleteFileNotice;
 import com.ives.relative.network.packets.handshake.modules.notice.FinishFileTransferNotice;

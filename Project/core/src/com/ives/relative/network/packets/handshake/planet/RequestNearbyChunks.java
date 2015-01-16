@@ -3,8 +3,8 @@ package com.ives.relative.network.packets.handshake.planet;
 import com.artemis.Entity;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.Chunk;
-import com.ives.relative.managers.planet.ChunkManager;
+import com.ives.relative.managers.planet.chunks.Chunk;
+import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 
