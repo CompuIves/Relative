@@ -27,29 +27,27 @@ public class PlanetSide {
         this.rotation = rotation;
         this.gravityX = MathUtils.round((float) (gravityX * Math.cos(rotation * MathUtils.degreesToRadians) - gravityY * Math.sin(rotation * MathUtils.degreesToRadians)));
         this.gravityY = MathUtils.round((float) (gravityX * Math.sin(rotation * MathUtils.degreesToRadians) + gravityY * Math.cos(rotation * MathUtils.degreesToRadians)));
-
-        System.out.println(this.gravityX + ", " + this.gravityY);
     }
 
     /**
-     * Generates a chunkmap for this side, a chunk map is an predefined allocation of chunks. These chunks are not loaded.
+     * Generates a chunkmap for this side, a chunk map is a predefined allocation of chunks. These chunks are not loaded.
      */
     public void generateChunkMap() {
         //Richtingscoefficient van chunkbreedte
         int chunkRC = width / height;
         float maxDistX = width - 1;
         float maxDistY = height - 1;
-        for (int y = 0; y <= (height + 1) / 2 + 3; y++) {
+        for (int y = 0; y <= (height + 1) / 2; y++) {
             for (int x = y * -chunkRC; x <= y * chunkRC; x++) {
+                //Rotate chunks to new position
                 int newX = MathUtils.round((float) (x * Math.cos(rotation * MathUtils.degreesToRadians) - y * Math.sin(rotation * MathUtils.degreesToRadians)));
                 int newY = MathUtils.round((float) (x * Math.sin(rotation * MathUtils.degreesToRadians) + y * Math.cos(rotation * MathUtils.degreesToRadians)));
+
 
                 float gravityReductionMultiplierX = newX / maxDistX * -(float) Math.sin(rotation * MathUtils.degreesToRadians);
                 float gravityReductionMultiplierY = newY / maxDistY * (float) Math.cos(rotation * MathUtils.degreesToRadians);
                 Chunk chunk = new Chunk(newX, newY, gravityX * gravityReductionMultiplierX, gravityY * gravityReductionMultiplierY, rotation);
-                if (y <= (height + 1) / 2) {
-                    chunk.planet = planet;
-                }
+                chunk.planet = planet;
                 chunks.put(new Vector2(newX, newY), chunk);
             }
         }

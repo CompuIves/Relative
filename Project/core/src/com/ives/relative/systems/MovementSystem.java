@@ -14,7 +14,6 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.events.MovementEvent;
 import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -26,7 +25,6 @@ public class MovementSystem extends EntityProcessingSystem {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
 
-    protected ChunkManager chunkManager;
     protected EventManager eventManager;
     protected UuidEntityManager uuidEntityManager;
 
@@ -53,6 +51,7 @@ public class MovementSystem extends EntityProcessingSystem {
             position.y = bodyPosition.y;
             position.protation = position.rotation;
             position.rotation = physics.body.getTransform().getRotation();
+
             Vector2 vel = entityBody.getLinearVelocity();
             velocity.vx = vel.x;
             velocity.vy = vel.y;

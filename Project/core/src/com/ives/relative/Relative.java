@@ -11,9 +11,9 @@ public class Relative extends Game {
 
     /**
      * Sets the mode for the game, 3 modes available:
-     * <p>1: CLIENT </p>
-     * <p>2: SERVER </p>
-     * <p>ELSE: BOTH </p>
+     * <li>1: CLIENT</li>
+     * <li>2: SERVER </li>
+     * <li>ELSE: BOTH </li>
      */
     public static Mode MODE;
     float fpsAccumulator = 0;

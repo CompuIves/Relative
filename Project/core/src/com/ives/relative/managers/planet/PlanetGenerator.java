@@ -1,11 +1,9 @@
 package com.ives.relative.managers.planet;
 
-import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
-import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.managers.planet.chunks.Chunk;
 import com.ives.relative.managers.planet.chunks.ChunkManager;
 
@@ -18,8 +16,6 @@ import com.ives.relative.managers.planet.chunks.ChunkManager;
 public class PlanetGenerator extends Manager {
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
-
-    protected ComponentMapper<ChunkC> mChunkC;
 
     public void generateTerrain(Chunk chunk) {
         int chunkSize = ChunkManager.CHUNK_SIZE;
@@ -40,9 +36,9 @@ public class PlanetGenerator extends Manager {
             }
 
             chunk.addTile(startX, startY, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, startY, 0, "bedrock", false)));
-            chunk.addTile(startX, endY, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, endY, 0, "bedrock", false)));
+            chunk.addTile(startX, endY - 1, uuidEntityManager.getUuid(tileManager.createTile(planet, startX, endY - 1, 0, "bedrock", false)));
             chunk.addTile(endX, startY, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, startY, 0, "bedrock", false)));
-            chunk.addTile(endX, endY, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, endY, 0, "bedrock", false)));
+            chunk.addTile(endX, endY - 1, uuidEntityManager.getUuid(tileManager.createTile(planet, endX, endY - 1, 0, "bedrock", false)));
         }
     }
 }

@@ -56,6 +56,7 @@ public class ServerPlayerManager extends PlayerManager {
     /**
      * Creates a player
      *
+     * @param connection   the connection the player connects with (every player has a unique connection), purely used for finding the player by connection.
      * @param internalName local name
      * @param realName     name visible to other players
      * @param planet       the entity of the world the player is in

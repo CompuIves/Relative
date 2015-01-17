@@ -47,6 +47,14 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         return mAuthority.has(e);
     }
 
+    public boolean isEntityTemporaryAuthorized(Entity e) {
+        if (isEntityAuthorized(e)) {
+            return mAuthority.get(e).type == AuthorityType.PERMANENT;
+        } else {
+            return false;
+        }
+    }
+
     public boolean isEntityAuthorizedByPlayer(int connection, @NotNull Entity e) {
         if (mAuthority.has(e)) {
             Authority authority = mAuthority.get(e);

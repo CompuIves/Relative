@@ -32,25 +32,26 @@ public class GravitySystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        Array<Chunk> chunks = chunkManager.loadedChunks;
+        Array<Chunk> chunks = chunkManager.getLoadedChunks();
         for (Chunk chunk : chunks) {
             for (UUID eUUID : chunk.entities) {
                 Entity e = uuidEntityManager.getEntity(eUUID);
+                if (e != null) {
+                    Physics physics = mPhysics.get(e);
+                    if (physics != null) {
+                        float gX, gY;
+                        //If the entity has a custom gravity assigned
+                        if (mGravity.has(e)) {
+                            Gravity gravity = mGravity.get(e);
+                            gX = gravity.gX;
+                            gY = gravity.gY;
+                        } else {
+                            gX = chunk.gravity.x;
+                            gY = chunk.gravity.y;
+                        }
 
-                Physics physics = mPhysics.get(e);
-                if (physics != null) {
-                    float gX, gY;
-                    //If the entity has a custom gravity assigned
-                    if (mGravity.has(e)) {
-                        Gravity gravity = mGravity.get(e);
-                        gX = gravity.gX;
-                        gY = gravity.gY;
-                    } else {
-                        gX = chunk.gravity.x;
-                        gY = chunk.gravity.y;
+                        physics.body.applyForceToCenter(gX * physics.body.getMass(), gY * physics.body.getMass(), false);
                     }
-
-                    physics.body.applyForceToCenter(gX * physics.body.getMass(), gY * physics.body.getMass(), false);
                 }
             }
         }

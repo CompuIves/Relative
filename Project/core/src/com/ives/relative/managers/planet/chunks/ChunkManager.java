@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Authority;
 import com.ives.relative.entities.components.Name;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.planet.ChunkC;
 import com.ives.relative.entities.components.planet.Size;
@@ -38,16 +39,17 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_SIZE = 16;
 
     public Map<Vector2, Chunk> registeredChunks;
-    public Array<Chunk> loadedChunks;
 
     protected PlanetGenerator planetGenerator;
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
+    protected AuthorityManager authorityManager;
 
     protected ComponentMapper<ChunkC> mChunkC;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Authority> mAuthority;
+    protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<Size> mSize;
     protected ComponentMapper<Name> mName;
 
@@ -55,7 +57,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
     public ChunkManager(ChunkLoader chunkLoader) {
         this.chunkLoader = chunkLoader;
-        loadedChunks = new Array<Chunk>();
         registeredChunks = new HashMap<Vector2, Chunk>();
     }
 
@@ -71,7 +72,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Size size = mSize.get(planet);
 
         for (int i = 0; i < 4; i++) {
-            PlanetSide side = new PlanetSide(name.internalName, size.width, size.height, i * 90, 0, -10);
+            PlanetSide side = new PlanetSide(name.internalName, size.width, size.height, 90 * i, 0, -10);
             side.generateChunkMap();
             chunkC.sides.add(side);
             registeredChunks.putAll(side.chunks);
@@ -103,11 +104,15 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         if (registeredChunks.containsKey(position)) {
             return registeredChunks.get(position);
         } else {
-            //TODO fix gravity
-            Chunk chunk = new Chunk(x, y, 0, 0, 0);
-            registeredChunks.put(position, chunk);
-            return chunk;
+            return generateChunk(position);
         }
+    }
+
+    public Chunk generateChunk(Vector2 pos) {
+        //TODO fix gravity
+        Chunk chunk = new Chunk((int) pos.x, (int) pos.y, 0, 0, 0);
+        registeredChunks.put(pos, chunk);
+        return chunk;
     }
 
     public void loadAllChunks() {
@@ -123,11 +128,19 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      *
      * @param player player to be based around
      */
-    public void loadChunksAroundEntity(Entity player) {
-        for (Chunk chunk : getChunksSurroundingEntity(player)) {
-            if (!chunk.loaded) {
-                loadChunk(chunk);
-            }
+    public void refreshChunksAroundEntity(Entity player) {
+        Array<Chunk> chunks = getChunksSurroundingEntity(player);
+        Array<Chunk> tempChunks = new Array<Chunk>();
+        tempChunks.addAll(chunkLoader.loadedChunks);
+        //Loads every chunk around the player
+        for (Chunk chunk : chunks) {
+            loadChunk(chunk);
+            tempChunks.removeValue(chunk, false);
+        }
+
+        //Removes every chunk which the player doesn't need.
+        for (Chunk chunk : tempChunks) {
+            unLoadChunk(chunk);
         }
     }
 
@@ -163,11 +176,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param chunk chunk which has to be loaded
      */
     public void loadChunk(Chunk chunk) {
-        chunk.initialize();
-        planetGenerator.generateTerrain(chunk);
-        chunkLoader.loadChunkInfo(chunk);
-        chunk.loaded = true;
-        loadedChunks.add(chunk);
+        if (!chunk.loaded)
+            chunkLoader.loadChunk(chunk, planetGenerator);
     }
 
     /**
@@ -186,8 +196,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     public void unLoadChunk(Chunk chunk) {
-        chunk.dispose();
-        loadedChunks.removeValue(chunk, false);
+        chunkLoader.unLoadChunk(chunk, uuidEntityManager);
     }
 
     /**
@@ -207,6 +216,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      *
      * @param e
      * @param x
+     * @param y
      */
     public void addEntity(Entity e, float x, float y) {
         Chunk chunk = getChunk(x, y);
@@ -217,10 +227,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
             //A check if the entity has permanent authority, if it has permanent authority it has to load the chunks
             //surrounding it
-            if (mAuthority.has(e)) {
-                if (mAuthority.get(e).type == AuthorityManager.AuthorityType.PERMANENT) {
-                    loadChunksAroundEntity(e);
-                }
+            if (authorityManager.isEntityTemporaryAuthorized(e)) {
+                chunk.players++;
+                refreshChunksAroundEntity(e);
             }
             eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
         }
@@ -246,6 +255,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         UUID entityID = uuidEntityManager.getUuid(e);
         if (chunk.entities.contains(entityID, false)) {
             chunk.removeEntity(entityID);
+            if (authorityManager.isEntityTemporaryAuthorized(e)) {
+                chunk.players--;
+            }
             eventManager.notifyEvent(new LeaveChunkEvent(e, chunk));
         }
     }
@@ -318,5 +330,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             MovementEvent movementEvent = (MovementEvent) event;
             checkChunkChange(movementEvent.entity, movementEvent.position);
         }
+    }
+
+    public Array<Chunk> getLoadedChunks() {
+        return chunkLoader.loadedChunks;
     }
 }

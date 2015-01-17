@@ -10,4 +10,8 @@ public class RelativeMath {
         int xi = (int) a;
         return a < xi ? xi - 1 : xi;
     }
+
+    public static boolean isInBounds(int i, int startI, int endI) {
+        return Math.abs(i) >= Math.abs(startI) && Math.abs(i) < endI;
+    }
 }

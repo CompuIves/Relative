@@ -40,28 +40,20 @@ public class RenderSystem extends EntityProcessingSystem {
         positionCamera();
 
         batch.setProjectionMatrix(camera.combined);
+
         batch.begin();
     }
 
     @Override
     protected void process(Entity entity) {
         Position position = mPosition.get(entity);
-
-        float startX = camera.position.x - camera.viewportWidth / 2 - 2;
-        float endX = camera.position.x + camera.viewportWidth / 2 + 2;
-        float startY = camera.position.y - camera.viewportHeight / 2 - 2;
-        float endY = camera.position.y + camera.viewportHeight / 2 + 2;
-
-        if (position.x > startX && position.x < endX
-                && position.y > startY && position.y < endY) {
-            Visual visual = visualMapper.get(entity);
-            batch.draw(visual.texture,
-                    position.x - visual.width / 2, position.y - visual.height / 2,
-                    visual.width / 2, visual.height / 2,
-                    visual.width, visual.height,
-                    1.02f, 1.02f,
-                    position.rotation * MathUtils.radiansToDegrees);
-        }
+        Visual visual = visualMapper.get(entity);
+        batch.draw(visual.texture,
+                position.x - visual.width / 2, position.y - visual.height / 2,
+                visual.width / 2, visual.height / 2,
+                visual.width, visual.height,
+                1.02f, 1.02f,
+                position.rotation * MathUtils.radiansToDegrees);
     }
 
     @Override
@@ -78,8 +70,16 @@ public class RenderSystem extends EntityProcessingSystem {
             Position playerPosition = mPosition.get(player);
             camera.position.x = playerPosition.x;
             camera.position.y = playerPosition.y + 4;
+
+            float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
+            float camrotation = -getCurrentCameraRotation() + 180;
+            camera.rotate(camrotation - rotation + 180);
             camera.update();
             batch.setProjectionMatrix(camera.combined);
         }
+    }
+
+    private float getCurrentCameraRotation() {
+        return (float) Math.atan2(camera.up.x, camera.up.y) * MathUtils.radiansToDegrees;
     }
 }

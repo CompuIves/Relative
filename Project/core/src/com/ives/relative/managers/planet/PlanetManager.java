@@ -15,6 +15,7 @@ import com.ives.relative.entities.components.planet.*;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.planet.chunks.ChunkManager;
+import com.ives.relative.utils.RelativeMath;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,15 +39,12 @@ public class PlanetManager extends Manager {
     protected ChunkManager chunkManager;
 
     protected ComponentMapper<WorldC> mWorldC;
+    protected ComponentMapper<PPosition> mPPosition;
+    protected ComponentMapper<Size> mSize;
 
     public PlanetManager() {
         entitiesByPlanet = new HashMap<String, UUID>();
         planetsByEntity = new HashMap<UUID, String>();
-    }
-
-    @Override
-    protected void initialize() {
-        super.initialize();
     }
 
     public void addPlanet(String name, Entity e) {
@@ -71,6 +69,22 @@ public class PlanetManager extends Manager {
             return null;
     }
 
+    public Entity getPlanet(int x, int y) {
+        //TODO dynamic planet loading
+        for (UUID planetUUID : planetsByEntity.keySet()) {
+            Entity planet = uuidEntityManager.getEntity(planetUUID);
+            PPosition position = mPPosition.get(planet);
+            Size size = mSize.get(planet);
+
+            int startX = RelativeMath.fastfloor(position.x - size.width / 2);
+            int startY = RelativeMath.fastfloor(position.y - size.height / 2);
+            if (RelativeMath.isInBounds(x, startX, startX + size.width) && RelativeMath.isInBounds(y, startY, startY + size.height)) {
+                return planet;
+            }
+        }
+        return null;
+    }
+
     public String getPlanetID(Entity planet) {
         return planetsByEntity.get(planet.getUuid());
     }
@@ -86,18 +100,18 @@ public class PlanetManager extends Manager {
      * @param gravity            Gravity on the planet.
      * @param width              The width in chunks of the planet
      * @param height             The height in chunks of the planet
-     * @param chunkSize          The size of a chunk
      * @param velocityIterations This value is used for the physics, it will determine how many times each step the velocity is updated
      * @param positionIterations Same as velocityIterations, but for position.
      * @return Return the entity of the planet
      */
-    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int width, int height, int chunkSize, int velocityIterations, int positionIterations) {
+    public Entity createNewPlanet(String id, String name, String seed, Vector2 gravity, int width, int height, int velocityIterations, int positionIterations) {
         //Create the planet
         Entity e = new EntityBuilder(world).with(new Name(id, name),
                 new Seed(seed),
                 new PGravity(gravity.x, gravity.y),
                 new WorldC(new World(new Vector2(0, 0), true), velocityIterations, positionIterations),
                 new ChunkC(),
+                new PPosition(0, 0),
                 new Size(width, height))
                 .group("planets")
                 .build();

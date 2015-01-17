@@ -1,11 +1,11 @@
 package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
+import com.ives.relative.managers.planet.chunks.RelativePhysicsResolver;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -51,7 +51,7 @@ public class MoveLeftCommand extends Command {
         //TODO acceleration component
         if (body.getLinearVelocity().x > vx) {
             float impulse = body.getMass() * vx * 8;
-            body.applyForce(new Vector2(impulse, 0), body.getWorldCenter(), true);
+            RelativePhysicsResolver.applyForce(impulse, 0, body.getTransform().getRotation(), body);
         }
     }
 }

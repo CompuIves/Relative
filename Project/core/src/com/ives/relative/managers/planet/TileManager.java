@@ -73,7 +73,6 @@ public class TileManager extends Manager {
      */
     public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
-
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),

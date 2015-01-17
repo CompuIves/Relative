@@ -18,6 +18,7 @@ import java.util.UUID;
 public class Chunk {
     public int x, y;
     public boolean loaded = false;
+    public int players = 0;
     public int z;
 
     /**
@@ -42,8 +43,8 @@ public class Chunk {
      */
     public Map<Vector2, Integer> changedTiles;
 
-
     public transient Array<UUID> entities;
+
 
     public Chunk() {
     }
@@ -74,7 +75,7 @@ public class Chunk {
     }
 
     public void addTile(float x, float y, UUID tile) {
-        this.addTile((int) x, (int) y, tile);
+        addTile((int) x, (int) y, tile);
     }
 
     public void addTile(int x, int y, UUID tile) {
@@ -83,6 +84,11 @@ public class Chunk {
 
     public void addChangedTile(int x, int y, int tile) {
         changedTiles.put(new Vector2(x, y), tile);
+    }
+
+    public boolean isInsideChunk(int x, int y) {
+        return Math.abs(x) >= Math.abs(this.x * ChunkManager.CHUNK_SIZE) && Math.abs(x) < Math.abs(this.x * ChunkManager.CHUNK_SIZE + ChunkManager.CHUNK_SIZE)
+                && Math.abs(y) >= Math.abs(this.y * ChunkManager.CHUNK_SIZE) && Math.abs(y) < Math.abs(this.y * ChunkManager.CHUNK_SIZE + ChunkManager.CHUNK_SIZE);
     }
 
     /**
@@ -112,6 +118,7 @@ public class Chunk {
         tiles.clear();
         entities.clear();
         changedTiles.clear();
+        players = 0;
         loaded = false;
     }
 }
