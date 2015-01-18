@@ -3,7 +3,7 @@ package com.ives.relative.factories;
 import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.universe.planets.TileManager;
 
 /**
  * Created by Ives on 13/12/2014.

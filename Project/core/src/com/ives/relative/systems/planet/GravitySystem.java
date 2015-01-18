@@ -8,8 +8,8 @@ import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Gravity;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.managers.planet.chunks.Chunk;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
+import com.ives.relative.universe.chunks.Chunk;
+import com.ives.relative.universe.chunks.ChunkManager;
 
 import java.util.UUID;
 

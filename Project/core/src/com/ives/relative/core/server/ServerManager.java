@@ -11,13 +11,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
-import com.ives.relative.managers.planet.PlanetManager;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
-import com.ives.relative.managers.planet.chunks.chunkloaders.ServerChunkLoader;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.Box2DDebugRendererSystem;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
+import com.ives.relative.universe.chunks.ChunkManager;
+import com.ives.relative.universe.chunks.chunkloaders.ServerChunkLoader;
+import com.ives.relative.universe.planets.PlanetManager;
 
 import java.io.IOException;
 
@@ -69,7 +69,7 @@ public class ServerManager extends GameManager {
 
     private void createPlanet() {
         PlanetManager planetManager = world.getManager(PlanetManager.class);
-        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 7, 7, 10, 10);
+        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 7, 7);
     }
 
     private void createDebugInput() {

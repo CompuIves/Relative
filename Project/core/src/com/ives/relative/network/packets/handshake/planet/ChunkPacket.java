@@ -2,9 +2,9 @@ package com.ives.relative.network.packets.handshake.planet;
 
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.chunks.Chunk;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.universe.chunks.Chunk;
+import com.ives.relative.universe.chunks.ChunkManager;
 
 /**
  * Created by Ives on 7/1/2015.

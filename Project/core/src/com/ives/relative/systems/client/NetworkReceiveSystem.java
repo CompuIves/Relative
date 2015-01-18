@@ -10,7 +10,6 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -18,27 +17,24 @@ import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.entities.components.Authority;
-import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.planet.PGravity;
-import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.PlanetManager;
-import com.ives.relative.managers.planet.TileManager;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
-import com.ives.relative.network.packets.handshake.planet.ReceivedPlanet;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
+import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.chunks.ChunkManager;
+import com.ives.relative.universe.planets.PlanetManager;
+import com.ives.relative.universe.planets.TileManager;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
@@ -61,11 +57,10 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ClientNetworkSystem clientNetworkSystem;
     protected TagManager tagManager;
     protected ChunkManager chunkManager;
+    protected WorldSystem worldSystem;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
-    protected ComponentMapper<WorldC> mWorldC;
-    protected ComponentMapper<PGravity> mGravity;
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<Visual> mVisual;
     protected ComponentMapper<TileC> mTileC;
@@ -173,15 +168,13 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         Visual visual;
         switch (type) {
             case PLAYER:
-                position = mPosition.get(entity);
                 visual = mVisual.get(entity);
                 visual.texture = new TextureRegion(new Texture("player.png"));
-                Entity planet = planetManager.getPlanet(position.planet);
 
                 physics = mPhysics.get(entity);
                 velocity = mVelocity.get(entity);
                 position = mPosition.get(entity);
-                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, planet);
+                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, worldSystem.physicsWorld);
 
                 processBody(entity);
                 Authority authority = mAuthority.get(entity);
@@ -196,7 +189,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 position = mPosition.get(entity);
                 TileC tileC = mTileC.get(entity);
                 SolidTile tile = tileManager.solidTiles.get(tileC.id);
-                World physicsWorld = mWorldC.get(planetManager.getPlanet(position.planet)).world;
+                World physicsWorld = worldSystem.physicsWorld;
 
                 physics.body = TileFactory.createBody(entity, tile, position.x, position.y, true, physicsWorld);
 
@@ -204,15 +197,6 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     processBody(entity);
                 }
                 visual.texture = tile.textureRegion;
-                break;
-            case PLANET:
-                Name name = world.getMapper(Name.class).get(entity);
-                WorldC worldC = mWorldC.get(entity);
-                worldC.world = new World(new Vector2(0, 0), true);
-                planetManager.addPlanet(name.internalName, entity);
-                chunkManager.generateChunkMap(entity);
-
-                clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new ReceivedPlanet());
                 break;
             case OTHER:
                 break;

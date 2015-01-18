@@ -1,7 +1,7 @@
 package com.ives.relative.entities.events;
 
 import com.artemis.Entity;
-import com.ives.relative.managers.planet.chunks.Chunk;
+import com.ives.relative.universe.chunks.Chunk;
 
 /**
  * Created by Ives on 6/1/2015.

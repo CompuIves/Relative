@@ -1,8 +1,7 @@
-package com.ives.relative.managers.planet.chunks.chunkloaders;
+package com.ives.relative.universe.chunks.chunkloaders;
 
 import com.artemis.managers.UuidEntityManager;
-import com.ives.relative.managers.planet.PlanetGenerator;
-import com.ives.relative.managers.planet.chunks.Chunk;
+import com.ives.relative.universe.chunks.Chunk;
 
 /**
  * Created by Ives on 7/1/2015.
@@ -10,15 +9,15 @@ import com.ives.relative.managers.planet.chunks.Chunk;
 public class ServerChunkLoader extends ChunkLoader {
 
     @Override
-    public void loadChunk(Chunk chunk, PlanetGenerator planetGenerator) {
-        super.commonLoad(chunk, planetGenerator);
+    public void loadChunk(Chunk chunk) {
+        super.commonLoad(chunk);
         //Reading from file
     }
 
     @Override
     public void unLoadChunk(Chunk chunk, UuidEntityManager uuidEntityManager) {
         //if there are no players in the chunk left.
-        if (chunk.players == 0) {
+        if (chunk.getPlayerAmount() == 0) {
             super.commonUnLoad(chunk, uuidEntityManager);
         }
     }

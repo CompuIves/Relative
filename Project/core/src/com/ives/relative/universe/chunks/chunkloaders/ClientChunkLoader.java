@@ -1,10 +1,9 @@
-package com.ives.relative.managers.planet.chunks.chunkloaders;
+package com.ives.relative.universe.chunks.chunkloaders;
 
 import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.core.client.ClientNetwork;
-import com.ives.relative.managers.planet.PlanetGenerator;
-import com.ives.relative.managers.planet.chunks.Chunk;
 import com.ives.relative.network.packets.handshake.planet.RequestChunk;
+import com.ives.relative.universe.chunks.Chunk;
 
 /**
  * Created by Ives on 7/1/2015.
@@ -17,9 +16,9 @@ public class ClientChunkLoader extends ChunkLoader {
     }
 
     @Override
-    public void loadChunk(Chunk chunk, PlanetGenerator planetGenerator) {
-        super.commonLoad(chunk, planetGenerator);
-        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(chunk.x, chunk.y, chunk.planet));
+    public void loadChunk(Chunk chunk) {
+        super.commonLoad(chunk);
+        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(chunk.x, chunk.y));
     }
 
     @Override

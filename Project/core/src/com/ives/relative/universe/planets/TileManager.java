@@ -1,6 +1,5 @@
-package com.ives.relative.managers.planet;
+package com.ives.relative.universe.planets;
 
-import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -10,18 +9,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.planet.WorldC;
 import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
+import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
@@ -33,13 +31,10 @@ import java.util.HashMap;
 @Wire
 public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
-    protected ComponentMapper<WorldC> mWorldComponent;
-    protected ComponentMapper<Name> mName;
-    protected ComponentMapper<Position> mPosition;
 
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
-    protected PlanetManager planetManager;
+    protected WorldSystem worldSystem;
 
     public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
@@ -64,22 +59,21 @@ public class TileManager extends Manager {
     /**
      * Creates a tile at the given coordinates
      *
-     * @param planet  which planet it needs to place the tile
      * @param x       x coord
      * @param y       y coord
      * @param z       z coord
      * @param tileID  name of tile
      * @return the entity of the tile created
      */
-    public Entity createTile(String planet, float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
-                    new Position(x, y, z, 0, planet)).group("tile").build();
+                    new Position(x, y, z, 0)).group("tile").build();
 
-            Body body = TileFactory.createBody(e, solidTile, x, y, gravity, mWorldComponent.get(planetManager.getPlanet(planet)).world);
+            Body body = TileFactory.createBody(e, solidTile, x, y, gravity, worldSystem.physicsWorld);
             e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
 
             if (gravity) {

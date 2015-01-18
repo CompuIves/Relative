@@ -8,12 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
-import com.ives.relative.managers.planet.chunks.chunkloaders.ClientChunkLoader;
 import com.ives.relative.systems.client.ClientNetworkSystem;
 import com.ives.relative.systems.client.InputSystem;
 import com.ives.relative.systems.client.NetworkReceiveSystem;
 import com.ives.relative.systems.client.RenderSystem;
+import com.ives.relative.universe.chunks.ChunkManager;
+import com.ives.relative.universe.chunks.chunkloaders.ClientChunkLoader;
 
 import java.io.IOException;
 

@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.State;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.living.MovementSpeed;
-import com.ives.relative.managers.planet.chunks.RelativePhysicsResolver;
+import com.ives.relative.utils.RelativePhysicsResolver;
 
 /**
  * Created by Ives on 5/12/2014.

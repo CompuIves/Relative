@@ -1,10 +1,10 @@
 package com.ives.relative.network.packets.handshake.planet;
 
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.chunks.Chunk;
-import com.ives.relative.managers.planet.chunks.ChunkManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
+import com.ives.relative.universe.chunks.Chunk;
+import com.ives.relative.universe.chunks.ChunkManager;
 
 import java.util.UUID;
 
@@ -16,15 +16,13 @@ import java.util.UUID;
  */
 public class RequestChunk extends ResponsePacket {
     int x, y;
-    String planet;
 
     public RequestChunk() {
     }
 
-    public RequestChunk(int x, int y, String planet) {
+    public RequestChunk(int x, int y) {
         this.x = x;
         this.y = y;
-        this.planet = planet;
     }
 
     @Override

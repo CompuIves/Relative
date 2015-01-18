@@ -4,7 +4,6 @@ import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.body.FootC;
-import com.ives.relative.entities.components.planet.WorldC;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -19,18 +18,15 @@ public class PlayerFactory {
      * @param y
      * @param vx
      * @param vy
-     * @param planet
      * @return
      */
-    public static Body createBody(Entity e, float x, float y, float vx, float vy, Entity planet) {
+    public static Body createBody(Entity e, float x, float y, float vx, float vy, World world) {
         BodyDef bodyDef = new BodyDef();
         float height = 1.8f;
         float width = 0.9f;
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
         bodyDef.linearVelocity.set(vx, vy);
-
-        World world = e.getWorld().getMapper(WorldC.class).get(planet).world;
 
         Body body = world.createBody(bodyDef);
         body.setFixedRotation(true);

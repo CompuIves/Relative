@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.ives.relative.managers.assets.AssetsDB;
 import com.ives.relative.managers.assets.modules.json.TileReader;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.universe.planets.TileManager;
 
 import java.io.*;
 import java.net.URI;

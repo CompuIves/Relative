@@ -3,8 +3,8 @@ package com.ives.relative.network.packets.updates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.managers.planet.TileManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.universe.planets.TileManager;
 
 /**
  * Created by Ives on 3/1/2015.

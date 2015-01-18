@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.managers.planet.PlanetManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
@@ -30,7 +28,7 @@ public class RequestWorld extends ResponsePacket {
             public void run() {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
-                Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player", game.world.getManager(PlanetManager.class).getPlanet("earth"),
+                Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player",
                         new Vector2(70, 70), 0);
 
 
@@ -43,8 +41,7 @@ public class RequestWorld extends ResponsePacket {
                 //Finally adds the player to the list of connections.
                 serverPlayerManager.addConnection(connection, player);
 
-                Entity planet = game.world.getManager(PlanetManager.class).getPlanet(game.world.getMapper(Position.class).get(player).planet);
-                game.world.getSystem(NetworkSendSystem.class).sendEntity(connection, planet);
+                //TODO planet send code
             }
         });
 

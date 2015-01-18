@@ -52,10 +52,12 @@ public class CommandSystem extends VoidEntitySystem {
         }
     }
 
-    public void commandDown(byte command, Entity e) {
-        commandDown(commandManager.getCommand(command), e);
-    }
-
+    /**
+     * Add the command to the system, until te up command is activated this command will be executed every frame.
+     *
+     * @param command
+     * @param e
+     */
     public void commandDown(Command command, Entity e) {
         if (e == null)
             return;

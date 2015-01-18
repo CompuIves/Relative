@@ -35,7 +35,6 @@ public class ConnectPacket extends ResponsePacket {
         System.out.println("Got a connectpacket, checking for version and player...");
         if (Relative.VERSION.equals(version)) {
             //Check for players on the server
-            //TODO watch for get(0)
             if (game.world.getManager(ServerPlayerManager.class).getPlayerByConnection(connection) != null) {
                 System.out.println("Kicking client, player already connected.");
                 connectionDenied(game.network, "Player already in the server");

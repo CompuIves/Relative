@@ -3,7 +3,7 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.managers.planet.TileManager;
+import com.ives.relative.universe.planets.TileManager;
 
 /**
  * Created by Ives on 1/1/2015.
@@ -26,7 +26,6 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
-        String planet = e.getWorld().getMapper(Position.class).get(e).planet;
         if (worldPosClicked != null)
             e.getWorld().getManager(TileManager.class).removeTile(worldPosClicked);
     }
