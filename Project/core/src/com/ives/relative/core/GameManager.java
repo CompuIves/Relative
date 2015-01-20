@@ -17,6 +17,7 @@ import com.ives.relative.systems.CommandSystem;
 import com.ives.relative.systems.MovementSystem;
 import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.planet.GravitySystem;
+import com.ives.relative.universe.UniverseManager;
 import com.ives.relative.universe.planets.PlanetGenerator;
 import com.ives.relative.universe.planets.PlanetManager;
 import com.ives.relative.universe.planets.TileManager;
@@ -70,6 +71,7 @@ public class GameManager extends Manager {
         world.setManager(new StateManager());
         world.setManager(new TileManager());
         world.setManager(new AuthorityManager());
+        world.setManager(new UniverseManager("ivesiscool"));
     }
 
     public boolean isServer() {

@@ -1,5 +1,6 @@
 package com.ives.relative.universe;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.builders.ChunkBuilder;
 import com.ives.relative.universe.chunks.builders.EmptyChunk;
@@ -13,13 +14,17 @@ import java.util.Iterator;
  * All objects having this contain a position in the universe. It has a width and a height and coordinates (which are
  * aligned to the middle).
  */
-public class UniverseBody {
+public class UniverseBody<T> {
     protected final int x, y;
     protected final int width, height;
 
     protected final UniverseBody parent;
     protected final Array<UniverseBody> children;
 
+    /**
+     * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
+     * SquarePlanet
+     */
     public ChunkBuilder chunkBuilder;
 
     public UniverseBody(UniverseBody parent, int x, int y, int width, int height) {
@@ -31,7 +36,7 @@ public class UniverseBody {
         this.parent = parent;
         this.children = new Array<UniverseBody>();
 
-        this.chunkBuilder = new EmptyChunk(this);
+        this.chunkBuilder = new EmptyChunk(this, null, null);
     }
 
     public void setChunkBuilder(ChunkBuilder chunkBuilder) {
@@ -59,6 +64,23 @@ public class UniverseBody {
         }
 
         return lowestUniverseBody;
+    }
+
+    /**
+     * Adds a child to this universebody
+     *
+     * @param universeBody
+     * @return the child given for chaining
+     */
+    public UniverseBody addChild(UniverseBody universeBody) {
+        if (isInBody(universeBody.x - universeBody.width / 2, universeBody.y - universeBody.height / 2) &&
+                isInBody(universeBody.x + universeBody.width / 2, universeBody.y + universeBody.height / 2)) {
+            children.add(universeBody);
+            return universeBody;
+        } else {
+            Gdx.app.error("UniverseCreator", "Couldn't add " + universeBody.toString() + " + to " + this.toString());
+            return null;
+        }
     }
 
     public boolean isInBody(int x, int y) {

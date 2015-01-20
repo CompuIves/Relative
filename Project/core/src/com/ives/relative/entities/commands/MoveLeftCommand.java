@@ -48,7 +48,6 @@ public class MoveLeftCommand extends Command {
 
     private void moveEntity(Entity e, float vx) {
         Body body = e.getWorld().getMapper(Physics.class).get(e).body;
-        //TODO acceleration component
         if (body.getLinearVelocity().x > vx) {
             float impulse = body.getMass() * vx * 8;
             RelativePhysicsResolver.applyForce(impulse, 0, body.getTransform().getRotation(), body);

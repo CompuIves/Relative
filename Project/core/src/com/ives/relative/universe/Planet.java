@@ -1,16 +1,15 @@
 package com.ives.relative.universe;
 
 import com.badlogic.gdx.math.Vector2;
-import com.ives.relative.universe.chunks.builders.ChunkBuilder;
 
 /**
  * Created by Ives on 18/1/2015.
  */
 public class Planet extends UniverseBody {
-    private final String name;
-    private final String seed;
+    public final String name;
+    public final String seed;
 
-    private Vector2 gravity;
+    public final Vector2 gravity;
     private float mass;
 
     private Planet(Builder builder) {
@@ -19,7 +18,6 @@ public class Planet extends UniverseBody {
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;
-        setChunkBuilder(builder.chunkBuilder);
     }
 
     /**
@@ -29,16 +27,14 @@ public class Planet extends UniverseBody {
         private final String name;
         private final String seed;
 
-        private final PlanetarySystem planetarySystem;
+        private final UniverseBody planetarySystem;
         private final int x, y;
         private final int width, height;
-
-        private final ChunkBuilder chunkBuilder;
 
         private Vector2 gravity;
         private float mass;
 
-        public Builder(String name, String seed, PlanetarySystem planetarySystem, int x, int y, int width, int height, ChunkBuilder chunkBuilder) {
+        public Builder(String name, String seed, UniverseBody planetarySystem, int x, int y, int width, int height, Vector2 gravity) {
             this.name = name;
             this.seed = seed;
             this.planetarySystem = planetarySystem;
@@ -46,16 +42,11 @@ public class Planet extends UniverseBody {
             this.y = y;
             this.width = width;
             this.height = height;
-            this.chunkBuilder = chunkBuilder;
+            this.gravity = gravity;
         }
 
         public Builder setMass(float mass) {
             this.mass = mass;
-            return this;
-        }
-
-        public Builder setGravity(Vector2 gravity) {
-            this.gravity = gravity;
             return this;
         }
 

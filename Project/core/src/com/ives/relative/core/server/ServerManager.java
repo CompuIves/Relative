@@ -1,12 +1,10 @@
 package com.ives.relative.core.server;
 
-import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Server;
 import com.ives.relative.core.GameManager;
@@ -17,7 +15,6 @@ import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.universe.chunks.chunkloaders.ServerChunkLoader;
-import com.ives.relative.universe.planets.PlanetManager;
 
 import java.io.IOException;
 
@@ -41,7 +38,6 @@ public class ServerManager extends GameManager {
             registerManagers();
             world.setManager(this);
             world.initialize();
-            createPlanet();
             createDebugInput();
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,11 +63,6 @@ public class ServerManager extends GameManager {
         moduleManager.zipAllModules();
     }
 
-    private void createPlanet() {
-        PlanetManager planetManager = world.getManager(PlanetManager.class);
-        Entity planet = planetManager.createNewPlanet("earth", "Earth", "ivesiscool", new Vector2(0, -10), 7, 7);
-    }
-
     private void createDebugInput() {
         Gdx.input.setInputProcessor(new InputProcessor() {
             @Override
@@ -92,14 +83,14 @@ public class ServerManager extends GameManager {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 Vector3 pos = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-                world.getManager(ChunkManager.class).loadChunk(pos.x, pos.y);
+                world.getManager(ChunkManager.class).loadChunk(world.getManager(ChunkManager.class).getChunk(pos.x, pos.y));
                 return true;
             }
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 if (button == Input.Buttons.RIGHT) {
-                    world.getManager(ChunkManager.class).loadAllChunks();
+                    //world.getManager(ChunkManager.class).loadAllChunks();
                 }
                 return false;
             }

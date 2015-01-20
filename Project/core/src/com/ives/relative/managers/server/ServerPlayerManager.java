@@ -87,7 +87,7 @@ public class ServerPlayerManager extends PlayerManager {
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));
 
-        chunkManager.addEntity(e);
+        chunkManager.addEntityToChunk(e);
         return e;
     }
 

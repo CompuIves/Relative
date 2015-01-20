@@ -1,6 +1,5 @@
 package com.ives.relative.universe.chunks.chunkloaders;
 
-import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.network.packets.handshake.planet.RequestChunk;
 import com.ives.relative.universe.chunks.Chunk;
@@ -16,13 +15,12 @@ public class ClientChunkLoader extends ChunkLoader {
     }
 
     @Override
-    public void loadChunk(Chunk chunk) {
-        super.commonLoad(chunk);
+    public void requestChunk(Chunk chunk) {
         clientNetwork.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestChunk(chunk.x, chunk.y));
     }
 
     @Override
-    public void unLoadChunk(Chunk chunk, UuidEntityManager uuidEntityManager) {
-        super.commonUnLoad(chunk, uuidEntityManager);
+    void loadTileLegend() {
+
     }
 }

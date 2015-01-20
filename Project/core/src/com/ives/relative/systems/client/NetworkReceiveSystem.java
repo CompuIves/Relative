@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
+import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -29,11 +30,13 @@ import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.network.packets.BasePacket;
+import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
-import com.ives.relative.universe.planets.PlanetManager;
 import com.ives.relative.universe.planets.TileManager;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -52,12 +55,12 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
     protected AuthorityManager authorityManager;
     protected TileManager tileManager;
-    protected PlanetManager planetManager;
     protected ClientManager clientManager;
     protected ClientNetworkSystem clientNetworkSystem;
     protected TagManager tagManager;
     protected ChunkManager chunkManager;
     protected WorldSystem worldSystem;
+    protected UuidEntityManager uuidEntityManager;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
@@ -68,11 +71,11 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ComponentMapper<NetworkC> mNetworkC;
 
     Map<Integer, Array<Component>> changedEntities;
-    BlockingQueue<CreateEntityPacket> queue;
+    BlockingQueue<BasePacket> queue;
 
     public NetworkReceiveSystem() {
         changedEntities = new HashMap<Integer, Array<Component>>();
-        queue = new LinkedBlockingQueue<CreateEntityPacket>();
+        queue = new LinkedBlockingQueue<BasePacket>();
     }
 
     @Override
@@ -83,20 +86,21 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     @Override
     protected void begin() {
         try {
-            Array<Component> componentArray = new Array<Component>();
             for (int i = 0; i < queue.size(); i++) {
-                CreateEntityPacket packet = queue.take();
-                int id = packet.entityID;
-                boolean delta = packet.delta;
+                BasePacket p = queue.take();
 
-                componentArray.addAll(packet.components);
+                if (p instanceof CreateEntityPacket) {
+                    CreateEntityPacket packet = (CreateEntityPacket) p;
+                    processEntityPacket(packet);
+                } else if (p instanceof ChunkPacket) {
+                    ChunkPacket packet = (ChunkPacket) p;
+                    Chunk chunk = chunkManager.getChunk(packet.x, packet.y);
+                    chunk.changedTiles.putAll(packet.changedTiles);
+                    chunkManager.chunkLoader.loadChunk(chunk);
 
-                Entity e = addEntity(id, componentArray, delta);
-                componentArray.clear();
-
-                int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerNetworkID();
-                if (id == playerID) {
-                    e.edit().add(new InputC());
+                    for (CreateEntityPacket createEntityPacket : packet.entities) {
+                        processEntityPacket(createEntityPacket);
+                    }
                 }
 
                 //This prevents from this thread taking too long, it will continue next loop.
@@ -108,8 +112,24 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         }
     }
 
-    public void addDataForProcessing(CreateEntityPacket createEntityPacket) {
-        queue.add(createEntityPacket);
+    private void processEntityPacket(CreateEntityPacket packet) {
+        Array<Component> componentArray = new Array<Component>();
+        int id = packet.entityID;
+        boolean delta = packet.delta;
+
+        componentArray.addAll(packet.components);
+
+        Entity e = addEntity(id, componentArray, delta);
+        componentArray.clear();
+
+        int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerNetworkID();
+        if (id == playerID) {
+            e.edit().add(new InputC());
+        }
+    }
+
+    public void addDataForProcessing(BasePacket packet) {
+        queue.add(packet);
     }
 
     /**
@@ -158,7 +178,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
      * @param entity The entity to be finished
      * @param type   The type of the entity
      */
-    //TODO move this overly coupled method to a nice handler.
+    //TODO move this overly coupled method to a nice handler. Use interface for different kinds of entities
     private void finishEntity(Entity entity, NetworkManager.Type type) {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.app.log("EntityReceived", "Received entity with type: " + type);
@@ -209,7 +229,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         Body body = mPhysics.get(e).body;
         body.setType(BodyDef.BodyType.DynamicBody);
         body.getFixtureList().get(0).setSensor(false);
-        chunkManager.addEntity(e);
+        chunkManager.addEntityToChunk(e);
     }
 
     public void requestEntity(int id) {

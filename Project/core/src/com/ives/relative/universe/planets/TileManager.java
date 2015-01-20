@@ -3,6 +3,7 @@ package com.ives.relative.universe.planets;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.UuidEntityManager;
 import com.artemis.utils.EntityBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -19,10 +20,12 @@ import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by Ives on 11/12/2014.
@@ -35,6 +38,7 @@ public class TileManager extends Manager {
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
     protected WorldSystem worldSystem;
+    protected UuidEntityManager uuidEntityManager;
 
     public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
@@ -81,7 +85,7 @@ public class TileManager extends Manager {
                 int networkID = networkManager.addEntity(e);
                 e.edit().add(new NetworkC(networkID, 1, NetworkManager.Type.TILE));
 
-                chunkManager.addEntity(e);
+                chunkManager.addEntityToChunk(e);
             }
 
             return e;
@@ -97,14 +101,19 @@ public class TileManager extends Manager {
     }
 
     public void removeTile(Vector2 tilePos) {
-        chunkManager.removeTile(tilePos);
-    }
-
-    public void removeTile(Entity tile) {
-        ComponentUtils.removeEntity(tile);
+        Chunk chunk = chunkManager.getChunk(tilePos.x, tilePos.y);
+        UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
+        ComponentUtils.removeEntity(uuidEntityManager.getEntity(tile));
+        chunk.removeTile(tilePos);
     }
 
     public Entity getTile(Vector2 tilePos) {
-        return chunkManager.getTile(tilePos.x, tilePos.y);
+        Chunk chunk = chunkManager.getChunk(tilePos.x, tilePos.y);
+        UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
+        if (tile != null) {
+            return uuidEntityManager.getEntity(tile);
+        }
+
+        return null;
     }
 }

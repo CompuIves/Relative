@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.utils.ComponentUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,22 +16,31 @@ import java.util.UUID;
  */
 public abstract class ChunkLoader {
     public Array<Chunk> loadedChunks;
+    private Map<String, Integer> tileLegend;
 
     public ChunkLoader() {
         loadedChunks = new Array<Chunk>();
+        tileLegend = new HashMap<String, Integer>();
+        loadTileLegend();
     }
 
-    public abstract void loadChunk(Chunk chunk);
+    /**
+     * This starts preparation of getting a chunk, like loading the file from a disk or sending a requestpacket.
+     *
+     * @param chunk
+     */
+    public abstract void requestChunk(Chunk chunk);
 
-    public abstract void unLoadChunk(Chunk chunk, UuidEntityManager uuidEntityManager);
+    abstract void loadTileLegend();
 
-    protected void commonLoad(Chunk chunk) {
+    public void loadChunk(Chunk chunk) {
+        System.out.println("Loading chunk with: " + chunk.universeBody.chunkBuilder.getClass().getSimpleName());
         chunk.universeBody.chunkBuilder.generateTerrain(chunk);
         chunk.loaded = true;
         loadedChunks.add(chunk);
     }
 
-    protected void commonUnLoad(Chunk chunk, UuidEntityManager uuidEntityManager) {
+    public void unloadChunk(Chunk chunk, UuidEntityManager uuidEntityManager) {
         for (UUID tile : chunk.tiles.values()) {
             Entity eTile = uuidEntityManager.getEntity(tile);
             ComponentUtils.removeEntity(eTile);

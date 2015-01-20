@@ -1,14 +1,17 @@
 package com.ives.relative.universe.chunks.builders;
 
+import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
+import com.ives.relative.universe.planets.TileManager;
 
 /**
  * Created by Ives on 18/1/2015.
  */
 public class EmptyChunk extends ChunkBuilder {
-    public EmptyChunk(UniverseBody universeBody) {
-        super(universeBody);
+
+    public EmptyChunk(UniverseBody universeBody, TileManager tileManager, UuidEntityManager uuidEntityManager) {
+        super(universeBody, tileManager, uuidEntityManager);
     }
 
     @Override

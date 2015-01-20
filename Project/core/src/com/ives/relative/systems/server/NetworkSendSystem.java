@@ -6,17 +6,17 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.utils.ComponentUtils;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -69,6 +69,16 @@ public class NetworkSendSystem extends VoidEntitySystem {
         int id = networkManager.getNetworkID(e);
         //TODO fix sequence = -1
         return new CreateEntityPacket(components, id, false, -1);
+    }
+
+    public ChunkPacket generateFullChunkPacket(Chunk chunk) {
+        List<CreateEntityPacket> entities = new ArrayList<CreateEntityPacket>(chunk.entities.size);
+        for (UUID entity : chunk.entities) {
+            Entity e = uuidEntityManager.getEntity(entity);
+            entities.add(generateFullComponentPacket(e));
+        }
+
+        return new ChunkPacket(chunk.x, chunk.y, entities, (HashMap<Vector2, Integer>) chunk.changedTiles);
     }
 
     public void sendEntityToAll(UUID entity) {

@@ -23,9 +23,9 @@ public class Chunk {
     public final Array<UUID> entities;
     public final Map<Vector2, UUID> tiles;
     public final Map<Vector2, Integer> changedTiles;
+    public final Vector2 gravity;
     public boolean loaded = false;
     private int playerAmount = 0;
-    private Vector2 gravity;
     /**
      * Is this chunk part of a planet (ex: should there be dirt?)
      */
@@ -73,6 +73,10 @@ public class Chunk {
         }
     }
 
+    public void removeTile(Vector2 tile) {
+        tiles.remove(tile);
+    }
+
     /**
      * This adds the specified tile to changedTiles.
      * <p>REMEMBER, THIS ONLY ADDS A TILE TO MAP, YOU HAVE TO REMOVE THE OLD TILE MANUALLY</p>
@@ -108,5 +112,25 @@ public class Chunk {
         playerAmount = 0;
         tiles.clear();
         loaded = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Chunk chunk = (Chunk) o;
+
+        if (x != chunk.x) return false;
+        if (y != chunk.y) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
     }
 }

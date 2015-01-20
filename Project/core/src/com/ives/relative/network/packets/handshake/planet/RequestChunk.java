@@ -6,8 +6,6 @@ import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 
-import java.util.UUID;
-
 /**
  * Created by Ives on 7/1/2015.
  * Sends the information of a chunk to the client.
@@ -28,11 +26,9 @@ public class RequestChunk extends ResponsePacket {
     @Override
     public void response(GameManager game) {
         Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(x, y);
-        game.network.sendObjectTCP(connection, new ChunkPacket(chunk));
-
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);
-        for (UUID eUUID : chunk.entities) {
-            networkSendSystem.sendEntity(connection, eUUID);
-        }
+
+        ChunkPacket packet = networkSendSystem.generateFullChunkPacket(chunk);
+        game.network.sendObjectTCP(connection, packet);
     }
 }

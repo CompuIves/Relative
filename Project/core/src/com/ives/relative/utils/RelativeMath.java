@@ -12,6 +12,6 @@ public class RelativeMath {
     }
 
     public static boolean isInBounds(int i, int startI, int endI) {
-        return Math.abs(i) >= Math.abs(startI) && Math.abs(i) < endI;
+        return i >= startI && i <= endI;
     }
 }

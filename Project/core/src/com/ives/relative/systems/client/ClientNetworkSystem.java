@@ -30,7 +30,9 @@ import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.network.Network;
+import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.UpdatePacket;
+import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.input.CommandClickPacket;
 import com.ives.relative.network.packets.input.CommandPressPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
@@ -175,6 +177,11 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                         requestedEntities.removeValue(packet.entityID, true);
                     }
                 }
+
+                if (object instanceof ChunkPacket) {
+                    networkReceiveSystem.addDataForProcessing((BasePacket) object);
+                }
+
                 if (object instanceof GrantEntityAuthority) {
                     //If the entity isn't loaded yet
                     processAuthority((GrantEntityAuthority) object);
