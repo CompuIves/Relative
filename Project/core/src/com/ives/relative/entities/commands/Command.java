@@ -28,7 +28,6 @@ public abstract class Command {
      * Methods which will be called from other classes
      *
      * @param e entity
-     * @return if the command can get executed
      */
     public void keyDown(Entity e) {
         startTime = System.nanoTime();

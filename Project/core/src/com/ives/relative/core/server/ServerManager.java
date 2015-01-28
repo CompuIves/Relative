@@ -83,7 +83,7 @@ public class ServerManager extends GameManager {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 Vector3 pos = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-                world.getManager(ChunkManager.class).loadChunk(world.getManager(ChunkManager.class).getChunk(pos.x, pos.y));
+                //world.getManager(ChunkManager.class).loadChunk(world.getManager(ChunkManager.class).getChunk(pos.x, pos.y));
                 return true;
             }
 

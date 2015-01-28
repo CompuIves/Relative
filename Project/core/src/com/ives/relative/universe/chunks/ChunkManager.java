@@ -5,7 +5,6 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.events.*;
@@ -16,30 +15,25 @@ import com.ives.relative.universe.UniverseManager;
 import com.ives.relative.universe.chunks.chunkloaders.ChunkLoader;
 import com.ives.relative.utils.RelativeMath;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by Ives on 4/1/2015.
  * <p></p>
- * This manager manages every chunk. It keeps track of the registered chunks ({@link com.ives.relative.universe.chunks.ChunkManager#chunkMap}) and handles loading and unloading
- * chunks.
+ * This manager manages every chunk ({@link com.ives.relative.universe.chunks.Chunk}). Chunks are stored in a {@link com.ives.relative.universe.UniverseBody},
+ * this manager serves as a central manager for chunk related algorithms and loading.
  */
 @Wire
 public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_SIZE = 16;
     public static final int CHUNK_LOAD = 5;
     public final ChunkLoader chunkLoader;
-    private final Map<Vector2, Chunk> chunkMap;
     protected ComponentMapper<Position> mPosition;
-    protected UniverseManager universeManager;
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
     protected AuthorityManager authorityManager;
+    protected UniverseManager universeManager;
 
     public ChunkManager(ChunkLoader chunkLoader) {
         this.chunkLoader = chunkLoader;
-        chunkMap = new HashMap<Vector2, Chunk>();
     }
 
     @Override
@@ -47,53 +41,25 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         eventManager.addObserver(this);
     }
 
-    private UniverseBody findHighestUniverseBody(int x, int y) {
-        UniverseBody galaxy = universeManager.getGalaxy(x, y);
-        if (galaxy != null) {
-            return galaxy.getChild(x, y);
-        } else {
-            return null;
-        }
-    }
-
-    private Chunk createChunk(int x, int y) {
-        Chunk chunk;
-        UniverseBody universeBody = findHighestUniverseBody(x, y);
-        chunk = universeBody.chunkBuilder.buildChunk(x, y);
-        chunkMap.put(new Vector2(x, y), chunk);
-        return chunk;
-    }
-
     public Array<Chunk> getChunksAroundChunk(Chunk chunk) {
         Array<Chunk> chunks = new Array<Chunk>(CHUNK_LOAD * CHUNK_LOAD);
+        UniverseBody universeBody = chunk.universeBody;
 
         int deviation = (CHUNK_LOAD - 1) / 2;
         int posDeviation = deviation * 16;
 
         for (int x = chunk.x - posDeviation; x <= chunk.x + posDeviation; x += CHUNK_SIZE) {
             for (int y = chunk.y - posDeviation; y <= chunk.y + posDeviation; y += CHUNK_SIZE) {
-                chunks.add(getChunk(x, y));
+                chunks.add(universeBody.getChunk(x, y));
             }
         }
         return chunks;
     }
 
-    public Chunk getChunk(float x, float y) {
-        return getChunk(RelativeMath.fastfloor(x / CHUNK_SIZE) * CHUNK_SIZE, RelativeMath.fastfloor(y / CHUNK_SIZE) * CHUNK_SIZE);
-    }
-
-    public Chunk getChunk(int x, int y) {
-        Vector2 pos = new Vector2(x, y);
-        if (chunkMap.containsKey(pos)) {
-            return chunkMap.get(pos);
-        } else {
-            return createChunk(x, y);
-        }
-    }
-
     public void addEntityToChunk(Entity e) {
         Position position = mPosition.get(e);
-        Chunk chunk = getChunk(position.x, position.y);
+        UniverseBody universeBody = universeManager.findHighestUniverseBody(position.x, position.y);
+        Chunk chunk = universeBody.getChunk(position.x, position.y);
         chunk.addEntity(uuidEntityManager.getUuid(e));
         position.chunk = chunk;
 

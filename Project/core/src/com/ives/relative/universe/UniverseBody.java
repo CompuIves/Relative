@@ -1,11 +1,15 @@
 package com.ives.relative.universe;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.builders.ChunkBuilder;
 import com.ives.relative.universe.chunks.builders.EmptyChunk;
 import com.ives.relative.utils.RelativeMath;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -14,27 +18,36 @@ import java.util.Iterator;
  * All objects having this contain a position in the universe. It has a width and a height and coordinates (which are
  * aligned to the middle).
  */
-public class UniverseBody<T> {
+public class UniverseBody {
+    public final String id;
     protected final int x, y;
     protected final int width, height;
-
     protected final UniverseBody parent;
     protected final Array<UniverseBody> children;
-
+    private final World world;
+    private final HashMap<Vector2, Chunk> chunks;
+    public String name;
+    public int chunkSize;
     /**
      * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
      * SquarePlanet
      */
     public ChunkBuilder chunkBuilder;
 
-    public UniverseBody(UniverseBody parent, int x, int y, int width, int height) {
+    public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height) {
+        this.id = id;
+        this.parent = parent;
+
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.parent = parent;
         this.children = new Array<UniverseBody>();
+
+        world = new World(new Vector2(0, 0), true);
+        chunks = new HashMap<Vector2, Chunk>();
+        chunkSize = 16;
 
         this.chunkBuilder = new EmptyChunk(this, null, null);
     }
@@ -50,7 +63,7 @@ public class UniverseBody<T> {
      * @param y
      * @return
      */
-    public UniverseBody getChild(int x, int y) {
+    public UniverseBody getChild(float x, float y) {
         Iterator<UniverseBody> it = children.iterator();
         UniverseBody lowestUniverseBody = null;
 
@@ -83,7 +96,27 @@ public class UniverseBody<T> {
         }
     }
 
-    public boolean isInBody(int x, int y) {
+    public Chunk createChunk(int x, int y) {
+        Chunk chunk;
+        chunk = chunkBuilder.buildChunk(x, y);
+        chunks.put(new Vector2(x, y), chunk);
+        return chunk;
+    }
+
+    public Chunk getChunk(float x, float y) {
+        return getChunk(RelativeMath.fastfloor(x / chunkSize) * chunkSize, RelativeMath.fastfloor(y / chunkSize) * chunkSize);
+    }
+
+    public Chunk getChunk(int x, int y) {
+        Vector2 pos = new Vector2(x, y);
+        if (chunks.containsKey(pos)) {
+            return chunks.get(pos);
+        } else {
+            return createChunk(x, y);
+        }
+    }
+
+    public boolean isInBody(float x, float y) {
         return RelativeMath.isInBounds(x, this.x - width / 2, this.x + width / 2)
                 && RelativeMath.isInBounds(y, this.y - height / 2, this.y + height / 2);
     }
@@ -114,6 +147,8 @@ public class UniverseBody<T> {
 
     @Override
     public String toString() {
-        return "UniverseBody at x: " + x + ", y: " + y + ", with width: " + width + ", height: " + height;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("UniverseBody at x: ").append(x).append(", y: ").append(", with width: ").append(width).append(", height: ").append(height);
+        return stringBuilder.toString();
     }
 }

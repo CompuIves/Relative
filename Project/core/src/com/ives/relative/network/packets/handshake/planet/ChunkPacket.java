@@ -16,13 +16,16 @@ public class ChunkPacket extends BasePacket {
     public HashMap<Vector2, Integer> changedTiles;
     public int x, y;
 
+    public String universeBody;
+
     public ChunkPacket() {
     }
 
-    public ChunkPacket(int x, int y, List<CreateEntityPacket> entities, HashMap<Vector2, Integer> changedTiles) {
+    public ChunkPacket(int x, int y, String universeBody, List<CreateEntityPacket> entities, HashMap<Vector2, Integer> changedTiles) {
         this.x = x;
         this.y = y;
         this.entities = entities;
         this.changedTiles = changedTiles;
+        this.universeBody = universeBody;
     }
 }

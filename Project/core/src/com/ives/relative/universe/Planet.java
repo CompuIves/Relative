@@ -6,15 +6,13 @@ import com.badlogic.gdx.math.Vector2;
  * Created by Ives on 18/1/2015.
  */
 public class Planet extends UniverseBody {
-    public final String name;
     public final String seed;
 
     public final Vector2 gravity;
     private float mass;
 
     private Planet(Builder builder) {
-        super(builder.planetarySystem, builder.x, builder.y, builder.width, builder.height);
-        this.name = builder.name;
+        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height);
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;

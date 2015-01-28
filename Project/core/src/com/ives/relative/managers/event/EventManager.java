@@ -21,7 +21,6 @@ public class EventManager extends Manager {
      * @param event
      */
     public void notifyEvent(EntityEvent event) {
-        //Gdx.app.setLogLevel(Application.LOG_DEBUG);
         //Gdx.app.log("EntityEvent", "Received event: " + event.getClass().getSimpleName() + " for entity: " + event.entity.getId());
         for (int i = 0; i < eventObservers.size; i++) {
             eventObservers.get(i).onNotify(event);

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
 import com.ives.relative.network.packets.ResponsePacket;
+import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
 
 /**
@@ -11,16 +13,16 @@ import com.ives.relative.universe.planets.TileManager;
  */
 public class RemoveTilePacket extends ResponsePacket {
     float x, y;
-    String planet;
+    String universeBody;
 
     public RemoveTilePacket() {
         super();
     }
 
-    public RemoveTilePacket(float x, float y, String planet) {
+    public RemoveTilePacket(float x, float y, String universeBody) {
         this.x = x;
         this.y = y;
-        this.planet = planet;
+        this.universeBody = universeBody;
     }
 
     @Override
@@ -28,7 +30,8 @@ public class RemoveTilePacket extends ResponsePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                game.world.getManager(TileManager.class).removeTile(new Vector2(x, y));
+                Chunk chunk = game.world.getManager(UniverseManager.class).getUniverseBody(universeBody).getChunk(x, y);
+                game.world.getManager(TileManager.class).removeTile(chunk, new Vector2(x, y));
             }
         });
     }

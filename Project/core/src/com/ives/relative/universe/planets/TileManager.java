@@ -100,15 +100,13 @@ public class TileManager extends Manager {
         solidTiles.put(id, tile);
     }
 
-    public void removeTile(Vector2 tilePos) {
-        Chunk chunk = chunkManager.getChunk(tilePos.x, tilePos.y);
+    public void removeTile(Chunk chunk, Vector2 tilePos) {
         UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
         ComponentUtils.removeEntity(uuidEntityManager.getEntity(tile));
         chunk.removeTile(tilePos);
     }
 
-    public Entity getTile(Vector2 tilePos) {
-        Chunk chunk = chunkManager.getChunk(tilePos.x, tilePos.y);
+    public Entity getTile(Chunk chunk, Vector2 tilePos) {
         UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
         if (tile != null) {
             return uuidEntityManager.getEntity(tile);

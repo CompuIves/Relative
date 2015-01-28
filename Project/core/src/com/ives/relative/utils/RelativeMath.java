@@ -11,7 +11,7 @@ public class RelativeMath {
         return a < xi ? xi - 1 : xi;
     }
 
-    public static boolean isInBounds(int i, int startI, int endI) {
+    public static boolean isInBounds(float i, float startI, float endI) {
         return i >= startI && i <= endI;
     }
 }

@@ -8,16 +8,15 @@ import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.builders.SquarePlanet;
 import com.ives.relative.universe.planets.TileManager;
 
+import java.util.HashMap;
+
 /**
  * Created by Ives on 18/1/2015.
  */
 @Wire
 public class UniverseManager extends Manager {
     private final Array<UniverseBody> galaxies;
-    private final Array<UniverseBody> starSystems;
-    private final Array<UniverseBody> solarSystems;
-    private final Array<UniverseBody> planetarySystems;
-    private final Array<UniverseBody> planets;
+    private final HashMap<String, UniverseBody> universeBodiesByID;
     private final String seed;
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
@@ -25,11 +24,7 @@ public class UniverseManager extends Manager {
     public UniverseManager(String seed) {
         this.seed = seed;
         galaxies = new Array<UniverseBody>();
-
-        starSystems = new Array<UniverseBody>();
-        solarSystems = new Array<UniverseBody>();
-        planetarySystems = new Array<UniverseBody>();
-        planets = new Array<UniverseBody>();
+        universeBodiesByID = new HashMap<String, UniverseBody>();
     }
 
     @Override
@@ -37,7 +32,7 @@ public class UniverseManager extends Manager {
         createTemporaryGalaxy();
     }
 
-    public UniverseBody getGalaxy(int x, int y) {
+    public UniverseBody getGalaxy(float x, float y) {
         for (UniverseBody galaxy : galaxies) {
             if (galaxy.isInBody(x, y)) {
                 return galaxy;
@@ -46,23 +41,43 @@ public class UniverseManager extends Manager {
         return null;
     }
 
+    public UniverseBody findHighestUniverseBody(float x, float y) {
+        UniverseBody galaxy = getGalaxy(x, y);
+        if (galaxy != null) {
+            return galaxy.getChild(x, y);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get an universebody by ID.
+     *
+     * @param id id of the universebody
+     * @return return the universebody
+     */
+    public UniverseBody getUniverseBody(String id) {
+        return universeBodiesByID.get(id);
+    }
+
     public void createTemporaryGalaxy() {
         //Create a simple galaxy before generating this is handled
-        UniverseBody galaxy = new UniverseBody(null, 0, 0, 100000, 100000);
+        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000);
+        universeBodiesByID.put("andromeda", galaxy);
         galaxies.add(galaxy);
 
-        UniverseBody starSystem = new UniverseBody(galaxy, 0, 0, 50000, 50000);
+        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000);
+        universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody(starSystem, 0, 0, 10000, 10000);
+        UniverseBody solarSystem = new UniverseBody("ivusolaria", null, 0, 0, 10000, 10000);
+        universeBodiesByID.put("ivusolaria", solarSystem);
         starSystem.addChild(solarSystem);
 
-        UniverseBody planetarySystem = new UniverseBody(solarSystem, 0, 0, 5000, 5000);
-        solarSystem.addChild(planetarySystem);
-
-        Planet.Builder planetBuilder = new Planet.Builder("earth", "ivesiscool", planetarySystem, 0, 0, 200, 200, new Vector2(-10, 0));
+        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 0, 0, 200, 200, new Vector2(-10, 0));
         Planet earth = planetBuilder.build();
+        universeBodiesByID.put("ives", earth);
         earth.setChunkBuilder(new SquarePlanet(earth, tileManager, uuidEntityManager, earth.gravity));
-        planetarySystem.addChild(earth);
+        solarSystem.addChild(earth);
     }
 }

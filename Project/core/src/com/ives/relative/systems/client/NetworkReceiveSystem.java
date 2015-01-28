@@ -7,7 +7,6 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -35,6 +34,8 @@ import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.UniverseManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.universe.planets.TileManager;
@@ -61,6 +62,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ChunkManager chunkManager;
     protected WorldSystem worldSystem;
     protected UuidEntityManager uuidEntityManager;
+    protected UniverseManager universeManager;
 
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Position> mPosition;
@@ -94,7 +96,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     processEntityPacket(packet);
                 } else if (p instanceof ChunkPacket) {
                     ChunkPacket packet = (ChunkPacket) p;
-                    Chunk chunk = chunkManager.getChunk(packet.x, packet.y);
+                    UniverseBody ub = universeManager.getUniverseBody(((ChunkPacket) p).universeBody);
+                    Chunk chunk = ub.getChunk(packet.x, packet.y);
                     chunk.changedTiles.putAll(packet.changedTiles);
                     chunkManager.chunkLoader.loadChunk(chunk);
 
@@ -180,8 +183,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
      */
     //TODO move this overly coupled method to a nice handler. Use interface for different kinds of entities
     private void finishEntity(Entity entity, NetworkManager.Type type) {
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.app.log("EntityReceived", "Received entity with type: " + type);
+        Gdx.app.debug("EntityReceived", "Received entity with type: " + type);
         Physics physics;
         Position position;
         Velocity velocity;

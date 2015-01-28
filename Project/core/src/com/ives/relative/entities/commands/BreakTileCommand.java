@@ -3,6 +3,7 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
 
 /**
@@ -26,8 +27,9 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
+        Chunk chunk = e.getWorld().getMapper(Position.class).get(e).chunk;
         if (worldPosClicked != null)
-            e.getWorld().getManager(TileManager.class).removeTile(worldPosClicked);
+            e.getWorld().getManager(TileManager.class).removeTile(chunk, worldPosClicked);
     }
 
     @Override

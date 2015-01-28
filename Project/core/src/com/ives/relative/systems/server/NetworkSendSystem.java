@@ -78,7 +78,7 @@ public class NetworkSendSystem extends VoidEntitySystem {
             entities.add(generateFullComponentPacket(e));
         }
 
-        return new ChunkPacket(chunk.x, chunk.y, entities, (HashMap<Vector2, Integer>) chunk.changedTiles);
+        return new ChunkPacket(chunk.x, chunk.y, chunk.universeBody.id, entities, (HashMap<Vector2, Integer>) chunk.changedTiles);
     }
 
     public void sendEntityToAll(UUID entity) {
