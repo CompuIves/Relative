@@ -34,7 +34,7 @@ public class UniverseManager extends Manager {
 
     public UniverseBody getGalaxy(float x, float y) {
         for (UniverseBody galaxy : galaxies) {
-            if (galaxy.isInBody(x, y)) {
+            if (galaxy.isInBody(new Vector2(x, y))) {
                 return galaxy;
             }
         }
@@ -62,15 +62,15 @@ public class UniverseManager extends Manager {
 
     public void createTemporaryGalaxy() {
         //Create a simple galaxy before generating this is handled
-        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000);
+        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000, 0, new Vector2(1, 1));
         universeBodiesByID.put("andromeda", galaxy);
         galaxies.add(galaxy);
 
-        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000);
+        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1));
         universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody("ivusolaria", null, 0, 0, 10000, 10000);
+        UniverseBody solarSystem = new UniverseBody("ivusolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1));
         universeBodiesByID.put("ivusolaria", solarSystem);
         starSystem.addChild(solarSystem);
 

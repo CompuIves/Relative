@@ -12,7 +12,7 @@ public class Planet extends UniverseBody {
     private float mass;
 
     private Planet(Builder builder) {
-        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height);
+        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height, builder.rotation, builder.scale);
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;
@@ -28,6 +28,8 @@ public class Planet extends UniverseBody {
         private final UniverseBody planetarySystem;
         private final int x, y;
         private final int width, height;
+        private float rotation;
+        private Vector2 scale;
 
         private Vector2 gravity;
         private float mass;
@@ -41,10 +43,22 @@ public class Planet extends UniverseBody {
             this.width = width;
             this.height = height;
             this.gravity = gravity;
+
+            scale = new Vector2(1, 1);
         }
 
         public Builder setMass(float mass) {
             this.mass = mass;
+            return this;
+        }
+
+        public Builder setRotation(float rotation) {
+            this.rotation = rotation;
+            return this;
+        }
+
+        public Builder setScale(Vector2 scale) {
+            this.scale = scale;
             return this;
         }
 

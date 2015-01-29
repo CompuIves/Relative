@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.events.*;
@@ -50,16 +51,46 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
         for (int x = chunk.x - posDeviation; x <= chunk.x + posDeviation; x += CHUNK_SIZE) {
             for (int y = chunk.y - posDeviation; y <= chunk.y + posDeviation; y += CHUNK_SIZE) {
-                chunks.add(universeBody.getChunk(x, y));
+                chunks.add(getChunk(universeBody, x, y));
             }
         }
         return chunks;
     }
 
+    public Chunk getChunk(UniverseBody universeBody, float x, float y) {
+        Chunk chunk = getChunk(universeBody, RelativeMath.fastfloor(x / universeBody.chunkSize) * universeBody.chunkSize,
+                RelativeMath.fastfloor(y / universeBody.chunkSize) * universeBody.chunkSize);
+
+        if (chunk == null) {
+            return getChunk(universeManager.findHighestUniverseBody(x, y), x, y);
+        } else {
+            return chunk;
+        }
+    }
+
+    /**
+     * Gets the chunk at the x index and y index in specified universebody.
+     *
+     * @param universeBody the body the chunk is in
+     * @param x            index of the chunk. NOT THE COORDINATE
+     * @param y            index of the chunk. NOT THE COORDINATE
+     * @return the chunk, null if the chunk is out of bounds (not in this universebody).
+     */
+    public Chunk getChunk(UniverseBody universeBody, int x, int y) {
+        Vector2 pos = new Vector2(x, y);
+        if (universeBody.chunks.containsKey(pos)) {
+            return universeBody.chunks.get(pos);
+        } else {
+            Chunk chunk = universeBody.createChunk(x, y);
+            return chunk;
+        }
+    }
+
     public void addEntityToChunk(Entity e) {
         Position position = mPosition.get(e);
-        UniverseBody universeBody = universeManager.findHighestUniverseBody(position.x, position.y);
-        Chunk chunk = universeBody.getChunk(position.x, position.y);
+        UniverseBody universeBody = position.chunk == null ? universeManager.findHighestUniverseBody(position.x, position.y) : position.chunk.universeBody;
+
+        Chunk chunk = getChunk(universeBody, position.x, position.y);
         chunk.addEntity(uuidEntityManager.getUuid(e));
         position.chunk = chunk;
 

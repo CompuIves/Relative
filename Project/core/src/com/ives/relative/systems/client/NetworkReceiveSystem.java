@@ -97,7 +97,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 } else if (p instanceof ChunkPacket) {
                     ChunkPacket packet = (ChunkPacket) p;
                     UniverseBody ub = universeManager.getUniverseBody(((ChunkPacket) p).universeBody);
-                    Chunk chunk = ub.getChunk(packet.x, packet.y);
+                    Chunk chunk = chunkManager.getChunk(ub, packet.x, packet.y);
                     chunk.changedTiles.putAll(packet.changedTiles);
                     chunkManager.chunkLoader.loadChunk(chunk);
 
