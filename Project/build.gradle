@@ -70,7 +70,6 @@ project(":android") {
         compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
     }
 }
 
@@ -108,7 +107,6 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion:sources"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion:sources"
-        compile "com.badlogicgames.ashley:ashley:$ashleyVersion:sources"
     }
 }
 
@@ -130,11 +128,11 @@ project(":core") {
         // Support for artemis-odb
         compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
         compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
-        compile 'net.onedaybeard.artemis:artemis-odb-cli:0.8.1'
+        //compile 'net.onedaybeard.artemis:artemis-odb-cli:0.8.1'
 
         //Annotation support
-        // ProjectSettings->CodeStyle->Java->CodeGeneration->use external annotations
-        compile 'com.intellij:annotations:12.0'
+        //ProjectSettings->CodeStyle->Java->CodeGeneration->use external annotations
+        //compile 'com.intellij:annotations:12.0'
     }
 
 

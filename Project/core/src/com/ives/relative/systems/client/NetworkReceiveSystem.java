@@ -10,6 +10,7 @@ import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -97,7 +98,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 } else if (p instanceof ChunkPacket) {
                     ChunkPacket packet = (ChunkPacket) p;
                     UniverseBody ub = universeManager.getUniverseBody(((ChunkPacket) p).universeBody);
-                    Chunk chunk = chunkManager.getChunk(ub, packet.x, packet.y);
+                    Chunk chunk = chunkManager.getChunk(ub, new Vector2(packet.x, packet.y));
                     chunk.changedTiles.putAll(packet.changedTiles);
                     chunkManager.chunkLoader.loadChunk(chunk);
 

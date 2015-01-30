@@ -33,7 +33,7 @@ public class RemoveTilePacket extends ResponsePacket {
             @Override
             public void run() {
                 UniverseBody u = game.world.getManager(UniverseManager.class).getUniverseBody(universeBody);
-                Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, x, y);
+                Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, new Vector2(x, y));
                 game.world.getManager(TileManager.class).removeTile(chunk, new Vector2(x, y));
             }
         });

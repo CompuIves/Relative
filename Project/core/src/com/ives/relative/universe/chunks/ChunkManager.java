@@ -49,48 +49,58 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         int deviation = (CHUNK_LOAD - 1) / 2;
         int posDeviation = deviation * 16;
 
+        //Temporary vector
+        Vector2 v = new Vector2();
         for (int x = chunk.x - posDeviation; x <= chunk.x + posDeviation; x += CHUNK_SIZE) {
             for (int y = chunk.y - posDeviation; y <= chunk.y + posDeviation; y += CHUNK_SIZE) {
-                chunks.add(getChunk(universeBody, x, y));
+                chunks.add(getChunk(universeBody, v.set(x, y)));
+                Chunk childChunk = getLowestChunk(universeBody, v);
+                if(childChunk != null)
+                    chunks.add(childChunk);
             }
         }
         return chunks;
     }
 
-    public Chunk getChunk(UniverseBody universeBody, float x, float y) {
-        Chunk chunk = getChunk(universeBody, RelativeMath.fastfloor(x / universeBody.chunkSize) * universeBody.chunkSize,
-                RelativeMath.fastfloor(y / universeBody.chunkSize) * universeBody.chunkSize);
-
-        if (chunk == null) {
-            return getChunk(universeManager.findHighestUniverseBody(x, y), x, y);
+    /**
+     * Gets the chunk at the x coordinate and y coordinate.
+     *
+     * @param universeBody the body the chunk is in
+     * @param pos
+     * @return the chunk, null if the chunk is out of bounds (not in this universebody).
+     */
+    public Chunk getChunk(UniverseBody universeBody, Vector2 pos) {
+        //Get the chunk coordinate
+        pos.x = RelativeMath.fastfloor(pos.x/universeBody.chunkSize) * universeBody.chunkSize;
+        pos.y = RelativeMath.fastfloor(pos.y/universeBody.chunkSize) * universeBody.chunkSize;
+        if (universeBody.chunks.containsKey(pos)) {
+            return universeBody.chunks.get(pos);
         } else {
-            return chunk;
+            return createChunk(universeBody, (int) pos.x, (int) pos.y);
         }
     }
 
     /**
-     * Gets the chunk at the x index and y index in specified universebody.
-     *
-     * @param universeBody the body the chunk is in
-     * @param x            index of the chunk. NOT THE COORDINATE
-     * @param y            index of the chunk. NOT THE COORDINATE
-     * @return the chunk, null if the chunk is out of bounds (not in this universebody).
+     * Gets the chunk of the lowest child of the universebody at that position. This is relative to the
+     * child.
+     * @param universeBody parent universebody
+     * @param pos POSITION!
+     * @return null if there was no child there, the chunk if there was indeed a child.
      */
-    public Chunk getChunk(UniverseBody universeBody, int x, int y) {
-        Vector2 pos = new Vector2(x, y);
-        if (universeBody.chunks.containsKey(pos)) {
-            return universeBody.chunks.get(pos);
-        } else {
-            Chunk chunk = universeBody.createChunk(x, y);
-            return chunk;
+    public Chunk getLowestChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody child = universeBody.getLowestChild(pos, true);
+        if(!child.equals(universeBody)) {
+            return getChunk(child, pos);
         }
+
+        return null;
     }
 
     public void addEntityToChunk(Entity e) {
         Position position = mPosition.get(e);
-        UniverseBody universeBody = position.chunk == null ? universeManager.findHighestUniverseBody(position.x, position.y) : position.chunk.universeBody;
+        UniverseBody universeBody = universeManager.findHighestUniverseBody(position.x, position.y);
 
-        Chunk chunk = getChunk(universeBody, position.x, position.y);
+        Chunk chunk = getLowestChunk(universeBody, new Vector2(position.x, position.y));
         chunk.addEntity(uuidEntityManager.getUuid(e));
         position.chunk = chunk;
 
@@ -121,6 +131,25 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         if (chunkLoader.loadedChunks.contains(chunk, false))
             chunkLoader.unloadChunk(chunk, uuidEntityManager);
     }
+
+
+    /**
+     * Creates a chunk at specified indexes
+     * @param x index of first chunk
+     * @param y index of second chunk
+     * @return
+     */
+    public Chunk createChunk(UniverseBody universeBody, int x, int y) {
+        Vector2 chunkLoc = new Vector2(x, y);
+        if (universeBody.isInBody(chunkLoc)) {
+            Chunk chunk;
+            chunk = universeBody.chunkBuilder.buildChunk(x, y);
+            universeBody.chunks.put(new Vector2(x, y), chunk);
+            return chunk;
+        } else
+            return null;
+    }
+
 
     public Array<Chunk> getLoadedChunks() {
         return chunkLoader.loadedChunks;

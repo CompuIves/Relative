@@ -3,7 +3,7 @@ package com.ives.relative.universe;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.builders.ChunkBuilder;
@@ -11,7 +11,6 @@ import com.ives.relative.universe.chunks.builders.EmptyChunk;
 import com.ives.relative.utils.RelativeMath;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by Ives on 18/1/2015.
@@ -20,7 +19,9 @@ import java.util.Iterator;
  * aligned to the middle).
  */
 public class UniverseBody {
+    public String name;
     public final String id;
+
     /**
      * Transformation matrix relative to the parent it is in.
      */
@@ -29,28 +30,32 @@ public class UniverseBody {
      * Inversed transformation matrix relative to parent
      */
     public final Matrix3 mInverseTransform;
-    public final HashMap<Vector2, Chunk> chunks;
-    public final int chunkSize;
-    protected final int width, height;
-    protected final float rotation;
-    protected final Vector2 scale;
-    protected final UniverseBody parent;
-    protected final Array<UniverseBody> children;
-    private final World world;
-    public String name;
-    /**
-     * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
-     * SquarePlanet
-     */
-    public ChunkBuilder chunkBuilder;
-    protected int x, y;
-    private float aabbWidth, aabbHeight;
     private Matrix3 mScale;
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
     private Matrix3 mInverseScale;
     private Matrix3 mInverseRotation;
     private Matrix3 mInverseTranslation;
+
+    /**
+     * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
+     * SquarePlanet
+     */
+    public ChunkBuilder chunkBuilder;
+    public final HashMap<Vector2, Chunk> chunks;
+    public final int chunkSize;
+
+    protected int x, y;
+    protected final int width, height;
+    /** rotation in radians */
+    protected final float rotation;
+    protected final Vector2 scale;
+
+    protected final UniverseBody parent;
+    protected final Array<UniverseBody> children;
+    private final Array<Body> childrenBodies;
+
+    private final World world;
 
     public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale) {
         this.id = id;
@@ -64,6 +69,7 @@ public class UniverseBody {
         this.height = height;
 
         this.children = new Array<UniverseBody>();
+        childrenBodies = new Array<Body>();
 
         mTransform = new Matrix3();
         mInverseTransform = new Matrix3();
@@ -86,31 +92,42 @@ public class UniverseBody {
         this.chunkBuilder = chunkBuilder;
     }
 
+
     /**
-     * Gets the lowest child in the UniverseBody hierarchy, lowest possibility is planet.
-     *
-     * @param x x pos
-     * @param y y pos
-     * @return
+     * Gets child at specified position
+     * @param pos
+     * @return true/false
      */
-    public UniverseBody getChild(float x, float y) {
-        Iterator<UniverseBody> it = children.iterator();
-        UniverseBody lowestUniverseBody = null;
-
-        while (it.hasNext()) {
-            UniverseBody universeBody = it.next();
-            if (universeBody.isInBody(new Vector2(x, y))) {
-                //starts the loop from the beginning with the new UniverseBody
-                lowestUniverseBody = universeBody;
-                it = universeBody.children.iterator();
-            }
+    public UniverseBody getChild(Vector2 pos) {
+        //Check if another body is in there
+        for(Body body : childrenBodies) {
+            if(body.getFixtureList().first().testPoint(pos))
+                return (UniverseBody) body.getUserData();
         }
-
-        return lowestUniverseBody;
+        return null;
     }
 
     /**
-     * Adds a child to this universebody
+     * Finds the lowest child at the given position
+     * @param pos
+     * @param createVectorCopy should the vector given be transformed to the coordinatesystem of the child given?
+     * @return child
+     */
+    public UniverseBody getLowestChild(Vector2 pos, boolean createVectorCopy) {
+        //Prevent changing the original position vector
+        Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
+        UniverseBody universeBody = getChild(rPos);
+        if(universeBody != null) {
+            universeBody.inverseTransformVector(rPos);
+            return universeBody.getLowestChild(rPos, createVectorCopy);
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Adds a child to this universebody, this UniverseBody also adds a Box2D sensor to its own world for collision
+     * detection with the body.
      *
      * @param universeBody
      * @return the child given for chaining
@@ -119,9 +136,9 @@ public class UniverseBody {
         Vector2 min = new Vector2(universeBody.x - universeBody.width / 2, universeBody.y - universeBody.height / 2);
         Vector2 max = new Vector2(universeBody.x + universeBody.width / 2, universeBody.y + universeBody.height / 2);
 
-        if (isInBody(min) &&
-                isInBody(max)) {
+        if (isInBody(min) && isInBody(max)) {
             children.add(universeBody);
+            childrenBodies.add(createChildBody(universeBody));
             return universeBody;
         } else {
             Gdx.app.error("UniverseCreator", "Couldn't add " + universeBody.toString() + " + to " + this.toString());
@@ -129,21 +146,25 @@ public class UniverseBody {
         }
     }
 
-    /**
-     * Creates a chunk at specified indexes
-     * @param x index of first chunk
-     * @param y index of second chunk
-     * @return
-     */
-    public Chunk createChunk(int x, int y) {
-        Vector2 chunkLoc = new Vector2(x, y);
-        if (isInBody(chunkLoc)) {
-            Chunk chunk;
-            chunk = chunkBuilder.buildChunk(x, y);
-            chunks.put(new Vector2(x, y), chunk);
-            return chunk;
-        } else
-            return null;
+    private Body createChildBody(UniverseBody universeBody) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.allowSleep = true;
+        bodyDef.position.set(universeBody.x, universeBody.y);
+        bodyDef.angle = universeBody.rotation;
+
+        Body body = world.createBody(bodyDef);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(universeBody.width / 2, universeBody.height / 2);
+        fixtureDef.shape = shape;
+        fixtureDef.isSensor = true;
+
+        body.setUserData(universeBody);
+        body.createFixture(fixtureDef);
+
+        return body;
     }
 
     /**
@@ -153,31 +174,30 @@ public class UniverseBody {
      * @return
      */
     public boolean isInBody(Vector2 pos) {
-        pos.mul(mInverseTransform);
-        if (isInRange(pos)) {
-            return RelativeMath.isInBounds(pos.x, this.x - width / 2, this.x + width / 2)
-                    && RelativeMath.isInBounds(pos.y, this.y - height / 2, this.y + height / 2);
-        }
-
-        return false;
-
+        return RelativeMath.isInBounds(pos.x, this.x - width / 2, this.x + width / 2)
+                && RelativeMath.isInBounds(pos.y, this.y - height / 2, this.y + height / 2);
     }
 
     /**
-     * Checks if the specified position is in the AABB of the universebody
-     *
-     * @param pos
-     * @return
+     * Transforms a vector from the local coordinate system to the coordinate system of the parent
+     * @param vector
      */
-    private boolean isInRange(Vector2 pos) {
-        return RelativeMath.isInBounds(pos.x, this.x - aabbWidth / 2, this.x + aabbWidth / 2)
-                && RelativeMath.isInBounds(pos.y, this.y - aabbHeight / 2, this.y + aabbHeight / 2);
+    public void transformVector(Vector2 vector) {
+        vector.mul(mTransform);
+    }
+
+    /**
+     * Transforms a vector from the coordinate system of a parent to the local coordinate system
+     * @param vector
+     */
+    public void inverseTransformVector(Vector2 vector) {
+        vector.mul(mInverseTransform);
     }
 
     /**
      * Sets the transformation matrices according to the positions it has.
      */
-    private void setTransform() {
+    void setTransform() {
         //Set matrices
         mTranslation.setToTranslation(x, y);
         mRotation.setToRotation(rotation);
@@ -191,11 +211,8 @@ public class UniverseBody {
         //transpose mRotation again to get it to the old state
         mRotation.transpose();
 
-        mTransform.set(mTranslation.mul(mRotation).mul(mScale));
-        mInverseTransform.set(mInverseScale.mul(mInverseRotation).mul(mInverseTranslation));
-
-        aabbWidth = (float) (width * Math.cos(rotation) - height * Math.sin(rotation));
-        aabbHeight = (float) (width * Math.sin(rotation) + height*Math.cos(rotation));
+        mTransform.idt().mul(mTranslation).mul(mRotation).mul(mScale);
+        mInverseTransform.idt().mul(mScale).mul(mRotation).mul(mTranslation);
     }
 
     @Override
@@ -224,6 +241,6 @@ public class UniverseBody {
 
     @Override
     public String toString() {
-        return "UniverseBody at x: " + x + ", y: " + ", with width: " + width + ", height: " + height;
+        return "UniverseBody with id: " + id + " at x: " + x + ", y: " + y + ", with width: " + width + ", height: " + height;
     }
 }

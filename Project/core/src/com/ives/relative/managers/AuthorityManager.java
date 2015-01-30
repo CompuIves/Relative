@@ -15,7 +15,6 @@ import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.StoppedMovementEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.chunks.ChunkManager;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -55,7 +54,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
         }
     }
 
-    public boolean isEntityAuthorizedByPlayer(int connection, @NotNull Entity e) {
+    public boolean isEntityAuthorizedByPlayer(int connection, Entity e) {
         if (mAuthority.has(e)) {
             Authority authority = mAuthority.get(e);
             return authority.getOwner() == connection;
