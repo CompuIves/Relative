@@ -22,7 +22,7 @@ public class CreateBodyCommand extends Command {
     @Override
     public void executeDown(final Entity entity) {
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
-        body = entity.getWorld().getManager(TileManager.class).createTile(position.x, position.y + 4, 0, "dirt", true);
+        body = entity.getWorld().getManager(TileManager.class).createTile(position.universeBody, position.x, position.y + 4, 0, "dirt", true);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

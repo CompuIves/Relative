@@ -5,7 +5,7 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 
@@ -30,7 +30,7 @@ public class RequestChunk extends ResponsePacket {
 
     @Override
     public void response(GameManager game) {
-        UniverseBody u = game.world.getManager(UniverseManager.class).getUniverseBody(universeBody);
+        UniverseBody u = game.world.getSystem(UniverseSystem.class).getUniverseBody(universeBody);
         Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, new Vector2(x, y));
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);
 

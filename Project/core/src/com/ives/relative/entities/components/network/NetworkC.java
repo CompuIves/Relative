@@ -7,7 +7,7 @@ import com.ives.relative.managers.NetworkManager;
  * Created by Ives on 13/12/2014.
  * This makes an entity networkable, it can be sent over the network to other clients or to the server.
  */
-public class NetworkC extends Component implements Networkable {
+public class NetworkC extends Component {
     public int id;
     public NetworkManager.Type type;
 

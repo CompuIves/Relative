@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
  */
 @Wire
 public class Box2DDebugRendererSystem extends VoidEntitySystem {
-    protected WorldSystem worldSystem;
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthographicCamera camera;
 
@@ -23,6 +22,6 @@ public class Box2DDebugRendererSystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        box2DDebugRenderer.render(worldSystem.physicsWorld, camera.combined);
+        //box2DDebugRenderer.render(worldSystem.physicsWorld, camera.combined);
     }
 }

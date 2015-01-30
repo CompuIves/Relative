@@ -1,5 +1,6 @@
 package com.ives.relative;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.client.ClientManager;
@@ -34,6 +35,7 @@ public class Relative extends Game {
         Gdx.graphics.setDisplayMode(1280, 720, false);
         //MODE = Mode.Client;
         //Log.DEBUG();
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         //Creates two instances, an internal server and a client which connects to the server.
         //Add the server first, otherwise the client starts searching for a server while the server hasn't even started yet.
         switch (MODE) {

@@ -24,7 +24,8 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y) {
-        return new Chunk(universeBody, x, y, 0, true, 0, -10);
+        boolean isLand = x < universeBody.width / 4 && y < universeBody.height / 4;
+        return new Chunk(universeBody, x, y, 0, isLand, 0, -10);
     }
 
     @Override
@@ -39,15 +40,15 @@ public class SquarePlanet extends ChunkBuilder {
         if (chunk.isLand()) {
             for (int x = startX; x < endX; x++) {
                 for (int y = startY; y < endY; y++) {
-                    Entity tile = tileManager.createTile(x, y, 0, "dirt", false);
+                    Entity tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }
             }
         }
 
-        chunk.addTile(startX, startY, uuidEntityManager.getUuid(tileManager.createTile(startX, startY, 0, "bedrock", false)));
-        chunk.addTile(startX, endY, uuidEntityManager.getUuid(tileManager.createTile(startX, endY, 0, "bedrock", false)));
-        chunk.addTile(endX, startY, uuidEntityManager.getUuid(tileManager.createTile(endX, startY, 0, "bedrock", false)));
-        chunk.addTile(endX, endY, uuidEntityManager.getUuid(tileManager.createTile(endX, endY, 0, "bedrock", false)));
+        chunk.addTile(startX, startY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, startX, startY, 0, "bedrock", false)));
+        chunk.addTile(startX, endY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, startX, endY, 0, "bedrock", false)));
+        chunk.addTile(endX, startY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, endX, startY, 0, "bedrock", false)));
+        chunk.addTile(endX, endY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, endX, endY, 0, "bedrock", false)));
     }
 }

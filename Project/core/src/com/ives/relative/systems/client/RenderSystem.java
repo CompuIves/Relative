@@ -71,9 +71,9 @@ public class RenderSystem extends EntityProcessingSystem {
             camera.position.x = playerPosition.x;
             camera.position.y = playerPosition.y + 4;
 
-            float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
-            float camrotation = -getCurrentCameraRotation() + 180;
-            camera.rotate(camrotation - rotation + 180);
+            //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
+            //float camrotation = -getCurrentCameraRotation() + 180;
+            //camera.rotate(camrotation - rotation + 180);
             camera.update();
             batch.setProjectionMatrix(camera.combined);
         }

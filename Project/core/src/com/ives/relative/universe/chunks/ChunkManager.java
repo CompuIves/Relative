@@ -12,7 +12,7 @@ import com.ives.relative.entities.events.*;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.chunks.chunkloaders.ChunkLoader;
 import com.ives.relative.utils.RelativeMath;
 
@@ -31,7 +31,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
     protected AuthorityManager authorityManager;
-    protected UniverseManager universeManager;
+    protected UniverseSystem universeSystem;
 
     public ChunkManager(ChunkLoader chunkLoader) {
         this.chunkLoader = chunkLoader;
@@ -54,7 +54,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         for (int x = chunk.x - posDeviation; x <= chunk.x + posDeviation; x += CHUNK_SIZE) {
             for (int y = chunk.y - posDeviation; y <= chunk.y + posDeviation; y += CHUNK_SIZE) {
                 chunks.add(getChunk(universeBody, v.set(x, y)));
-                Chunk childChunk = getLowestChunk(universeBody, v);
+                Chunk childChunk = getTopChunk(universeBody, v);
                 if(childChunk != null)
                     chunks.add(childChunk);
             }
@@ -87,20 +87,19 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param pos POSITION!
      * @return null if there was no child there, the chunk if there was indeed a child.
      */
-    public Chunk getLowestChunk(UniverseBody universeBody, Vector2 pos) {
-        UniverseBody child = universeBody.getLowestChild(pos, true);
-        if(!child.equals(universeBody)) {
-            return getChunk(child, pos);
-        }
-
-        return null;
+    public Chunk getTopChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody child = universeBody.getLowestChild(pos, false);
+        return getChunk(child, pos);
     }
 
     public void addEntityToChunk(Entity e) {
         Position position = mPosition.get(e);
-        UniverseBody universeBody = universeManager.findHighestUniverseBody(position.x, position.y);
+        //If the entity already has a position it just gets the universebody of its position, otherwise FIND IT!
+        UniverseBody universeBody = position.universeBody;
 
-        Chunk chunk = getLowestChunk(universeBody, new Vector2(position.x, position.y));
+        //Chunk coordinate system doesn't get transformed
+        Vector2 pos = new Vector2(position.x, position.y);
+        Chunk chunk = getTopChunk(universeBody, pos);
         chunk.addEntity(uuidEntityManager.getUuid(e));
         position.chunk = chunk;
 

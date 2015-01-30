@@ -18,6 +18,7 @@ import java.io.IOException;
  */
 public class ClientNetwork extends Network {
     public static int CONNECTIONID;
+    public static int PLAYERNETWORKID;
     private static Client client;
     private ClientManager game;
 
@@ -39,8 +40,8 @@ public class ClientNetwork extends Network {
     public void connected(Connection connection) {
         CONNECTIONID = connection.getID();
         //Send a connect packet with player name + version number + connection id
-        game.playerID = "Player" + MathUtils.random(0, 32);
-        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, game.playerID));
+        ClientManager.PLAYERID = "Player" + MathUtils.random(0, 32);
+        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, ClientManager.PLAYERID));
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.artemis.Manager;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.UuidEntityManager;
-import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.CommandManager;
@@ -15,9 +14,8 @@ import com.ives.relative.managers.event.StateManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.CommandSystem;
 import com.ives.relative.systems.MovementSystem;
-import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.systems.planet.GravitySystem;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.planets.PlanetGenerator;
 import com.ives.relative.universe.planets.PlanetManager;
 import com.ives.relative.universe.planets.TileManager;
@@ -47,8 +45,8 @@ public class GameManager extends Manager {
      * Register common systems between client and server.
      */
     public void registerSystems() {
+        world.setSystem(new UniverseSystem("ivesiscool"));
         world.setSystem(new GravitySystem(), true);
-        world.setSystem(new WorldSystem(new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true)));
         world.setSystem(new MovementSystem());
         world.setSystem(new CommandSystem());
     }
@@ -71,7 +69,6 @@ public class GameManager extends Manager {
         world.setManager(new StateManager());
         world.setManager(new TileManager());
         world.setManager(new AuthorityManager());
-        world.setManager(new UniverseManager("ivesiscool"));
     }
 
     public boolean isServer() {

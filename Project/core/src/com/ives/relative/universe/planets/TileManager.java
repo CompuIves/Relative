@@ -19,7 +19,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.systems.WorldSystem;
+import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
@@ -37,7 +37,6 @@ public class TileManager extends Manager {
 
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
-    protected WorldSystem worldSystem;
     protected UuidEntityManager uuidEntityManager;
 
     public TileManager() {
@@ -69,15 +68,15 @@ public class TileManager extends Manager {
      * @param tileID  name of tile
      * @return the entity of the tile created
      */
-    public Entity createTile(float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(UniverseBody ub, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
-                    new Position(x, y, z, 0)).group("tile").build();
+                    new Position(x, y, z, 0, ub)).group("tile").build();
 
-            Body body = TileFactory.createBody(e, solidTile, x, y, gravity, worldSystem.physicsWorld);
+            Body body = TileFactory.createBody(ub, e, solidTile, x, y, gravity);
             e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
 
             if (gravity) {

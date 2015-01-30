@@ -3,6 +3,7 @@ package com.ives.relative.factories;
 import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.managers.assets.tiles.SolidTile;
+import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.planets.TileManager;
 
 /**
@@ -18,10 +19,10 @@ public class TileFactory {
      * @param x
      * @param y
      * @param gravity      if this tile should be affected by gravity (when the tile itself can also be affected by gravity)
-     * @param physicsWorld
      * @return
      */
-    public static Body createBody(Entity e, SolidTile tile, float x, float y, boolean gravity, World physicsWorld) {
+    public static Body createBody(UniverseBody universeBody, Entity e, SolidTile tile, float x, float y, boolean gravity) {
+        World physicsWorld = universeBody.world;
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody;
         bodyDef.position.set(x, y);

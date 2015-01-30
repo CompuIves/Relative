@@ -28,6 +28,7 @@ public class GravitySystem extends VoidEntitySystem {
      * Creates a new EntityProcessingSystem.
      */
     public GravitySystem() {
+        this.setPassive(true);
     }
 
     @Override

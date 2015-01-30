@@ -1,6 +1,7 @@
 package com.ives.relative.universe;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -19,9 +20,7 @@ import java.util.HashMap;
  * aligned to the middle).
  */
 public class UniverseBody {
-    public String name;
     public final String id;
-
     /**
      * Transformation matrix relative to the parent it is in.
      */
@@ -30,32 +29,29 @@ public class UniverseBody {
      * Inversed transformation matrix relative to parent
      */
     public final Matrix3 mInverseTransform;
+    public final HashMap<Vector2, Chunk> chunks;
+    public final int chunkSize;
+    public final int width, height;
+    public final World world;
+    /** rotation in radians */
+    protected final float rotation;
+    protected final Vector2 scale;
+    protected final UniverseBody parent;
+    protected final Array<UniverseBody> children;
+    private final Array<Body> childrenBodies;
+    public String name;
+    /**
+     * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
+     * SquarePlanet
+     */
+    public ChunkBuilder chunkBuilder;
+    protected int x, y;
     private Matrix3 mScale;
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
     private Matrix3 mInverseScale;
     private Matrix3 mInverseRotation;
     private Matrix3 mInverseTranslation;
-
-    /**
-     * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
-     * SquarePlanet
-     */
-    public ChunkBuilder chunkBuilder;
-    public final HashMap<Vector2, Chunk> chunks;
-    public final int chunkSize;
-
-    protected int x, y;
-    protected final int width, height;
-    /** rotation in radians */
-    protected final float rotation;
-    protected final Vector2 scale;
-
-    protected final UniverseBody parent;
-    protected final Array<UniverseBody> children;
-    private final Array<Body> childrenBodies;
-
-    private final World world;
 
     public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale) {
         this.id = id;
@@ -92,6 +88,15 @@ public class UniverseBody {
         this.chunkBuilder = chunkBuilder;
     }
 
+    /**
+     * Gets called every {@link com.ives.relative.universe.UniverseSystem#ITERATIONS}
+     */
+    protected void update() {
+        for (UniverseBody universeBody : children) {
+            universeBody.update();
+        }
+        world.step(UniverseSystem.ITERATIONS, 10, 10);
+    }
 
     /**
      * Gets child at specified position
@@ -200,7 +205,7 @@ public class UniverseBody {
     void setTransform() {
         //Set matrices
         mTranslation.setToTranslation(x, y);
-        mRotation.setToRotation(rotation);
+        mRotation.setToRotation(rotation * MathUtils.radiansToDegrees);
         mScale.setToScaling(scale);
 
         //Set inversion matrices

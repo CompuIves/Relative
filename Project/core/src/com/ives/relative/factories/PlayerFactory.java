@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.entities.components.body.FootC;
+import com.ives.relative.universe.UniverseBody;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -20,8 +21,9 @@ public class PlayerFactory {
      * @param vy
      * @return
      */
-    public static Body createBody(Entity e, float x, float y, float vx, float vy, World world) {
+    public static Body createBody(UniverseBody universeBody, Entity e, float x, float y, float vx, float vy) {
         BodyDef bodyDef = new BodyDef();
+        World world = universeBody.world;
         float height = 1.8f;
         float width = 0.9f;
         bodyDef.type = BodyDef.BodyType.DynamicBody;

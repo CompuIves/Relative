@@ -8,40 +8,26 @@ import com.artemis.managers.TagManager;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
-import com.ives.relative.entities.components.Authority;
-import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.entities.components.body.Velocity;
+import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.client.InputC;
-import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.components.network.CustomNetworkComponent;
 import com.ives.relative.entities.components.network.NetworkC;
-import com.ives.relative.entities.components.tile.TileC;
-import com.ives.relative.factories.PlayerFactory;
-import com.ives.relative.factories.TileFactory;
-import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
-import com.ives.relative.systems.WorldSystem;
 import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
-import com.ives.relative.universe.planets.TileManager;
 import com.ives.relative.utils.ComponentUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -55,23 +41,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Wire
 public class NetworkReceiveSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
-    protected AuthorityManager authorityManager;
-    protected TileManager tileManager;
     protected ClientManager clientManager;
-    protected ClientNetworkSystem clientNetworkSystem;
-    protected TagManager tagManager;
     protected ChunkManager chunkManager;
-    protected WorldSystem worldSystem;
     protected UuidEntityManager uuidEntityManager;
-    protected UniverseManager universeManager;
+    protected UniverseSystem universeSystem;
+    protected TagManager tagManager;
 
-    protected ComponentMapper<Velocity> mVelocity;
-    protected ComponentMapper<Position> mPosition;
-    protected ComponentMapper<Physics> mPhysics;
-    protected ComponentMapper<Visual> mVisual;
-    protected ComponentMapper<TileC> mTileC;
-    protected ComponentMapper<Authority> mAuthority;
-    protected ComponentMapper<NetworkC> mNetworkC;
+    protected ComponentMapper<Name> mName;
 
     Map<Integer, Array<Component>> changedEntities;
     BlockingQueue<BasePacket> queue;
@@ -97,7 +73,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     processEntityPacket(packet);
                 } else if (p instanceof ChunkPacket) {
                     ChunkPacket packet = (ChunkPacket) p;
-                    UniverseBody ub = universeManager.getUniverseBody(((ChunkPacket) p).universeBody);
+                    UniverseBody ub = universeSystem.getUniverseBody(((ChunkPacket) p).universeBody);
                     Chunk chunk = chunkManager.getChunk(ub, new Vector2(packet.x, packet.y));
                     chunk.changedTiles.putAll(packet.changedTiles);
                     chunkManager.chunkLoader.loadChunk(chunk);
@@ -123,13 +99,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
 
         componentArray.addAll(packet.components);
 
-        Entity e = addEntity(id, componentArray, delta);
+        addEntity(id, componentArray, delta);
         componentArray.clear();
-
-        int playerID = world.getSystem(ClientNetworkSystem.class).getPlayerNetworkID();
-        if (id == playerID) {
-            e.edit().add(new InputC());
-        }
     }
 
     public void addDataForProcessing(BasePacket packet) {
@@ -154,9 +125,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
             e = networkManager.getEntity(id);
             addComponentsToEntity(e, components, delta);
         }
-
-        NetworkC networkC = mNetworkC.get(e);
-        finishEntity(e, networkC.type);
+        postProcessEntity(e, components);
         return e;
     }
 
@@ -177,61 +146,69 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     }
 
     /**
-     * This finishes a special entity by type. It creates a special body for example for tiles and for players.
-     *
-     * @param entity The entity to be finished
-     * @param type   The type of the entity
+     * Converts the components from networkable components to usable components again
+     * @param e
+     * @param components
      */
-    //TODO move this overly coupled method to a nice handler. Use interface for different kinds of entities
-    private void finishEntity(Entity entity, NetworkManager.Type type) {
-        Gdx.app.debug("EntityReceived", "Received entity with type: " + type);
-        Physics physics;
-        Position position;
-        Velocity velocity;
-        Visual visual;
-        switch (type) {
-            case PLAYER:
-                visual = mVisual.get(entity);
-                visual.texture = new TextureRegion(new Texture("player.png"));
+    private void postProcessEntity(Entity e, Array<Component> components) {
+        NetworkC networkC = world.getMapper(NetworkC.class).get(e);
 
-                physics = mPhysics.get(entity);
-                velocity = mVelocity.get(entity);
-                position = mPosition.get(entity);
-                physics.body = PlayerFactory.createBody(entity, position.x, position.y, velocity.vx, velocity.vy, worldSystem.physicsWorld);
+        Array<String> loadedComponents = new Array<String>();
+        ArrayList<CustomNetworkComponent> customNetworkComponents = new ArrayList<CustomNetworkComponent>();
 
-                processBody(entity);
-                Authority authority = mAuthority.get(entity);
-                authorityManager.authorizeEntity(authority.getOwner(), entity, authority.type);
-
-                tagManager.register("player", entity);
-                clientNetworkSystem.registerPlayer(mNetworkC.get(entity).id);
-                break;
-            case TILE:
-                physics = mPhysics.get(entity);
-                visual = mVisual.get(entity);
-                position = mPosition.get(entity);
-                TileC tileC = mTileC.get(entity);
-                SolidTile tile = tileManager.solidTiles.get(tileC.id);
-                World physicsWorld = worldSystem.physicsWorld;
-
-                physics.body = TileFactory.createBody(entity, tile, position.x, position.y, true, physicsWorld);
-
-                if (physics.bodyType == BodyDef.BodyType.DynamicBody) {
-                    processBody(entity);
-                }
-                visual.texture = tile.textureRegion;
-                break;
-            case OTHER:
-                break;
-            default:
-                break;
+        for (Component c : components) {
+            if (c instanceof CustomNetworkComponent)
+                customNetworkComponents.add((CustomNetworkComponent) c);
         }
+
+        try {
+            LinkedBlockingQueue<CustomNetworkComponent> queue = new LinkedBlockingQueue();
+            queue.addAll(customNetworkComponents);
+
+            CustomNetworkComponent ce;
+            int tries = 0;
+
+            //This can be called more times since sometimes a component can't be loaded because its dependants aren't loaded
+            //yet, this means that that component will be skipped one time. Then the loop gets called for a second time etc.
+            queueLoop:
+            while ((ce = queue.poll()) != null) {
+                for (String k : ce.dependants) {
+                    if (!loadedComponents.contains(k, false)) {
+                        //Dependents are not yet loaded, add this at the end of the queue for processing.
+                        queue.add(ce);
+                        continue queueLoop;
+                    }
+                }
+
+                ce.convertForReceiving(e, world, networkC.type);
+                loadedComponents.add(ce.getClass().getSimpleName());
+
+                tries++;
+                if (tries > 20)
+                    throw new StackOverflowError();
+            }
+        } catch (StackOverflowError ex) {
+            Gdx.app.error("EntityReceive", "Couldn't add entity: " + e.toString() + " because its components have wrong dependants");
+            ComponentUtils.removeEntity(e);
+            return;
+        }
+
+        finalProcess(e, networkC);
+        Gdx.app.debug("EntityReceive", "Received entity with type: " + networkC.type);
     }
 
-    private void processBody(Entity e) {
-        Body body = mPhysics.get(e).body;
-        body.setType(BodyDef.BodyType.DynamicBody);
-        body.getFixtureList().get(0).setSensor(false);
+    private void finalProcess(Entity e, NetworkC networkC) {
+        switch (networkC.type) {
+            case PLAYER:
+                tagManager.register("player", e);
+
+                if (mName.get(e).internalName.equals(ClientManager.PLAYERID)) {
+                    e.edit().add(new InputC());
+                    ClientNetwork.PLAYERNETWORKID = networkC.id;
+                }
+                break;
+        }
+
         chunkManager.addEntityToChunk(e);
     }
 

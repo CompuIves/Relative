@@ -1,11 +1,12 @@
 package com.ives.relative.universe;
 
-import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
+import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.systems.planet.GravitySystem;
 import com.ives.relative.universe.chunks.builders.SquarePlanet;
 import com.ives.relative.universe.planets.TileManager;
 
@@ -15,14 +16,17 @@ import java.util.HashMap;
  * Created by Ives on 18/1/2015.
  */
 @Wire
-public class UniverseManager extends Manager {
+public class UniverseSystem extends VoidEntitySystem {
+    public static final float ITERATIONS = 1 / 60f;
     private final Array<UniverseBody> galaxies;
     private final HashMap<String, UniverseBody> universeBodiesByID;
     private final String seed;
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
+    protected GravitySystem gravitySystem;
+    private float accumulator;
 
-    public UniverseManager(String seed) {
+    public UniverseSystem(String seed) {
         this.seed = seed;
         galaxies = new Array<UniverseBody>();
         universeBodiesByID = new HashMap<String, UniverseBody>();
@@ -48,6 +52,18 @@ public class UniverseManager extends Manager {
             return galaxy.getLowestChild(new Vector2(x, y), false);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    protected void processSystem() {
+        accumulator += world.getDelta();
+        while (accumulator >= ITERATIONS) {
+            accumulator -= ITERATIONS;
+            gravitySystem.process();
+            for (UniverseBody universeBody : galaxies) {
+                universeBody.update();
+            }
         }
     }
 

@@ -23,7 +23,7 @@ import java.io.IOException;
  * The official manager of the client, adds client specific systems and managers to the world.
  */
 public class ClientManager extends GameManager implements Screen {
-    public String playerID;
+    public static String PLAYERID;
     SpriteBatch batch;
     OrthographicCamera camera;
 

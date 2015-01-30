@@ -37,6 +37,7 @@ public abstract class ChunkLoader {
         System.out.println("Loading chunk with: " + chunk.universeBody.chunkBuilder.getClass().getSimpleName());
         chunk.universeBody.chunkBuilder.generateTerrain(chunk);
         chunk.loaded = true;
+        if (!loadedChunks.contains(chunk, false))
         loadedChunks.add(chunk);
     }
 

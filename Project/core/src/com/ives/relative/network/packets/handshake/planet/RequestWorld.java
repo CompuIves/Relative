@@ -7,7 +7,7 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
-import com.ives.relative.universe.chunks.ChunkManager;
+import com.ives.relative.universe.UniverseSystem;
 
 /**
  * Created by Ives on 10/12/2014.
@@ -29,7 +29,7 @@ public class RequestWorld extends ResponsePacket {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
                 Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player",
-                        new Vector2(0, 100 + ChunkManager.CHUNK_SIZE), 0);
+                        game.world.getSystem(UniverseSystem.class).getUniverseBody("ives"), new Vector2(0, 75), 0);
 
                 //Finally adds the player to the list of connections.
                 serverPlayerManager.addConnection(connection, player);

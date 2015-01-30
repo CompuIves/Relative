@@ -14,7 +14,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = '1.0'
+    version = '1.0-build-' + getDate()
     ext {
         appName = 'Relative'
         gdxVersion = '1.5.3'
@@ -127,7 +127,7 @@ project(":core") {
 
         // Support for artemis-odb
         compile "net.onedaybeard.artemis:artemis-odb:0.8.1"
-        compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
+        //compile "net.onedaybeard.artemis:artemis-odb-processor:0.8.1"
         //compile 'net.onedaybeard.artemis:artemis-odb-cli:0.8.1'
 
         //Annotation support
@@ -136,6 +136,12 @@ project(":core") {
     }
 
 
+}
+
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
 }
 
 tasks.eclipse.doLast {

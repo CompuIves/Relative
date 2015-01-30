@@ -2,13 +2,12 @@ package com.ives.relative.entities.components.living;
 
 
 import com.artemis.Component;
-import com.ives.relative.entities.components.network.Networkable;
 
 /**
  * Created by Ives on 2/12/2014.
  * Defines the health of an entity.
  */
-public class Health extends Component implements Networkable {
+public class Health extends Component {
     public int health;
 
     public Health() {

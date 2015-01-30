@@ -62,7 +62,6 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
 
     int sequence;
     int frame = 0;
-    private int playerNetworkId;
     private Array<Integer> requestedEntities;
     private Array<Integer> grantedEntities;
     private Array<Integer> entitiesToSend;
@@ -86,12 +85,12 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         if (command instanceof DoNothingCommand)
             return;
 
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), true));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(command), true));
         sequence++;
     }
 
     public void sendClickCommand(ClickCommand clickCommand) {
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, playerNetworkId, commandManager.getID(clickCommand), true, clickCommand.getWorldPosClicked()));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(clickCommand), true, clickCommand.getWorldPosClicked()));
         sequence++;
     }
 
@@ -103,24 +102,16 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     public void sendUpCommand(Command command) {
         if (command instanceof DoNothingCommand)
             return;
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, playerNetworkId, commandManager.getID(command), false));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(command), false));
         sequence++;
     }
 
     public void sendUnClickCommand(ClickCommand clickCommand) {
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, playerNetworkId, commandManager.getID(clickCommand), false, clickCommand.getWorldPosClicked()));
-    }
-
-    public void registerPlayer(int playerNetworkId) {
-        this.playerNetworkId = playerNetworkId;
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(clickCommand), false, clickCommand.getWorldPosClicked()));
     }
 
     public Entity getPlayer() {
-        return networkManager.getEntity(playerNetworkId);
-    }
-
-    public int getPlayerNetworkID() {
-        return playerNetworkId;
+        return networkManager.getEntity(ClientNetwork.PLAYERNETWORKID);
     }
 
     /**
@@ -136,7 +127,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         Iterator<Integer> it = entitiesToSend.iterator();
         while (it.hasNext()) {
             int id = it.next();
-            if (id == playerNetworkId || frame % 10 == 0) {
+            if (id == ClientNetwork.PLAYERNETWORKID || frame % 10 == 0) {
                 Entity e = networkManager.getEntity(id);
                 PositionPacket positionPacket = new PositionPacket(e, sequence, id);
                 clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);

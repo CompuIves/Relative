@@ -9,6 +9,7 @@ import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.server.ServerNetwork;
+import com.ives.relative.entities.components.network.CustomNetworkComponent;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
@@ -57,6 +58,15 @@ public class NetworkSendSystem extends VoidEntitySystem {
         }
     }
 
+    private void preProcessEntity(Entity e, Array<Component> components) {
+        NetworkManager.Type type = mNetworkC.get(e).type;
+        for (Component c : components) {
+            if (c instanceof CustomNetworkComponent) {
+                ((CustomNetworkComponent) c).convertForSending(e, world, type);
+            }
+        }
+    }
+
     /**
      * This generates a full packet of the desired entity, this packet can be sent to the client or server and the client/
      * server will add this entity to it.
@@ -67,6 +77,7 @@ public class NetworkSendSystem extends VoidEntitySystem {
     public CreateEntityPacket generateFullComponentPacket(Entity e) {
         Array<Component> components = ComponentUtils.getComponents(e);
         int id = networkManager.getNetworkID(e);
+        preProcessEntity(e, components);
         //TODO fix sequence = -1
         return new CreateEntityPacket(components, id, false, -1);
     }
