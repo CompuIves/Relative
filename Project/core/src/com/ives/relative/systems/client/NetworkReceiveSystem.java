@@ -12,11 +12,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.core.client.Player;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.client.InputC;
 import com.ives.relative.entities.components.network.CustomNetworkComponent;
 import com.ives.relative.entities.components.network.NetworkC;
+import com.ives.relative.entities.events.client.PlayerConnectedEvent;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
@@ -46,6 +49,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected UuidEntityManager uuidEntityManager;
     protected UniverseSystem universeSystem;
     protected TagManager tagManager;
+    protected EventManager eventManager;
 
     protected ComponentMapper<Name> mName;
 
@@ -200,11 +204,12 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     private void finalProcess(Entity e, NetworkC networkC) {
         switch (networkC.type) {
             case PLAYER:
-                tagManager.register("player", e);
-
-                if (mName.get(e).internalName.equals(ClientManager.PLAYERID)) {
+                if (mName.get(e).internalName.equals(Player.ID)) {
+                    tagManager.register("player", e);
                     e.edit().add(new InputC());
-                    ClientNetwork.PLAYERNETWORKID = networkC.id;
+                    Player.NETWORK_ID = networkC.id;
+
+                    eventManager.notifyEvent(new PlayerConnectedEvent(e));
                 }
                 break;
         }
@@ -213,6 +218,6 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     }
 
     public void requestEntity(int id) {
-        clientManager.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(id));
+        clientManager.network.sendObjectTCP(ClientNetwork.CONNECTION_ID, new RequestEntity(id));
     }
 }

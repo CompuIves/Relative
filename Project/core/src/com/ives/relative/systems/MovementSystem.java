@@ -19,7 +19,7 @@ import com.ives.relative.managers.event.EventManager;
  * Created by Ives on 5/12/2014.
  * This system syncs the movements of a entity with its body
  */
-@Wire()
+@Wire
 public class MovementSystem extends EntityProcessingSystem {
     protected ComponentMapper<Physics> mBodyComponent;
     protected ComponentMapper<Position> mPosition;
@@ -56,7 +56,7 @@ public class MovementSystem extends EntityProcessingSystem {
             velocity.vx = vel.x;
             velocity.vy = vel.y;
 
-            if (isMoving(velocity)) {
+            if (entityBody.isAwake()) {
                 sendMovementEvent(e, position, velocity);
                 velocity.isMoving = true;
             } else {
@@ -66,10 +66,6 @@ public class MovementSystem extends EntityProcessingSystem {
                 }
             }
         }
-    }
-
-    public boolean isMoving(Velocity v) {
-        return Math.abs(v.vx) + Math.abs(v.vy) + Math.abs(v.vr) > 0;
     }
 
     public void sendMovementEvent(Entity e, Position p, Velocity v) {

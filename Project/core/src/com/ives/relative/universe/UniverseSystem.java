@@ -36,24 +36,6 @@ public class UniverseSystem extends VoidEntitySystem {
         createTemporaryGalaxy();
     }
 
-    public UniverseBody getGalaxy(float x, float y) {
-        for (UniverseBody galaxy : galaxies) {
-            if (galaxy.isInBody(new Vector2(x, y))) {
-                return galaxy;
-            }
-        }
-        return null;
-    }
-
-    public UniverseBody findHighestUniverseBody(float x, float y) {
-        UniverseBody galaxy = getGalaxy(x, y);
-        if (galaxy != null) {
-            return galaxy.getBottomUniverseBody(new Vector2(x, y), false);
-        } else {
-            return null;
-        }
-    }
-
     @Override
     protected void processSystem() {
         accumulator += world.getDelta();

@@ -19,6 +19,9 @@ public class Position extends CustomNetworkComponent {
     public int z;
     public int pz;
 
+    /**
+     * rotation in radians
+     */
     public float rotation;
     public float protation;
 

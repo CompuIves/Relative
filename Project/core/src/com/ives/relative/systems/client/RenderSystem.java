@@ -15,6 +15,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.client.PlayerConnectedEvent;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 
@@ -23,10 +27,13 @@ import com.ives.relative.universe.chunks.ChunkManager;
  * This system renders every entity
  */
 @Wire
-public class RenderSystem extends EntityProcessingSystem {
+public class RenderSystem extends EntityProcessingSystem implements EntityEventObserver {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Visual> visualMapper;
+
     protected ChunkManager chunkManager;
+    protected EventManager eventManager;
+
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
@@ -37,6 +44,14 @@ public class RenderSystem extends EntityProcessingSystem {
         this.batch = batch;
         this.camera = camera;
         this.shapeRenderer = new ShapeRenderer();
+
+        //Wait until player connected and loaded
+        setEnabled(false);
+    }
+
+    @Override
+    protected void initialize() {
+        eventManager.addObserver(this);
     }
 
     @Override
@@ -72,18 +87,15 @@ public class RenderSystem extends EntityProcessingSystem {
     private void positionCamera() {
         Entity player = world.getManager(TagManager.class).getEntity("player");
 
-        //If player has spawned
-        if (player != null) {
-            Position playerPosition = mPosition.get(player);
-            camera.position.x = playerPosition.x;
-            camera.position.y = playerPosition.y + 4;
+        Position playerPosition = mPosition.get(player);
+        camera.position.x = playerPosition.x;
+        camera.position.y = playerPosition.y + 4;
 
-            //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
-            //float camrotation = -getCurrentCameraRotation() + 180;
-            //camera.rotate(camrotation - rotation + 180);
-            camera.update();
-            batch.setProjectionMatrix(camera.combined);
-        }
+        //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
+        //float camrotation = -getCurrentCameraRotation() + 180;
+        //camera.rotate(camrotation - rotation + 180);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
     }
 
     private void renderBackground() {
@@ -100,5 +112,11 @@ public class RenderSystem extends EntityProcessingSystem {
 
     private float getCurrentCameraRotation() {
         return (float) Math.atan2(camera.up.x, camera.up.y) * MathUtils.radiansToDegrees;
+    }
+
+    @Override
+    public void onNotify(EntityEvent event) {
+        if (event instanceof PlayerConnectedEvent)
+            this.setEnabled(true);
     }
 }

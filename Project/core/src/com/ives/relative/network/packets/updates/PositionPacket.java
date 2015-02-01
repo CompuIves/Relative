@@ -11,6 +11,7 @@ import com.ives.relative.network.packets.UpdatePacket;
  * HANDLED BY CLIENT
  */
 public class PositionPacket extends UpdatePacket {
+    public String universeBody;
     public float x, y, rotation;
     public float vx, vy;
 
@@ -24,6 +25,7 @@ public class PositionPacket extends UpdatePacket {
         super(sequence, entityID);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
         Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
+        this.universeBody = position.universeBody.id;
         this.x = position.x;
         this.y = position.y;
         this.rotation = position.rotation;

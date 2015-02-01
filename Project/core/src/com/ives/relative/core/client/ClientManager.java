@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.systems.client.ClientNetworkSystem;
-import com.ives.relative.systems.client.InputSystem;
-import com.ives.relative.systems.client.NetworkReceiveSystem;
-import com.ives.relative.systems.client.RenderSystem;
+import com.ives.relative.systems.client.*;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.universe.chunks.chunkloaders.ClientChunkLoader;
 
@@ -23,7 +20,6 @@ import java.io.IOException;
  * The official manager of the client, adds client specific systems and managers to the world.
  */
 public class ClientManager extends GameManager implements Screen {
-    public static String PLAYERID;
     SpriteBatch batch;
     OrthographicCamera camera;
 
@@ -49,6 +45,7 @@ public class ClientManager extends GameManager implements Screen {
     @Override
     public void registerSystems() {
         super.registerSystems();
+        world.setSystem(new UniverseTransformSystem());
         InputSystem inputSystem = new InputSystem(camera);
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);

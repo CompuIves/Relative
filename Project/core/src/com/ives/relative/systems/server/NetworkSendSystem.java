@@ -82,11 +82,13 @@ public class NetworkSendSystem extends VoidEntitySystem {
         return new CreateEntityPacket(components, id, false, -1);
     }
 
-    public ChunkPacket generateFullChunkPacket(Chunk chunk) {
+    public ChunkPacket generateFullChunkPacket(Entity player, Chunk chunk) {
         List<CreateEntityPacket> entities = new ArrayList<CreateEntityPacket>(chunk.entities.size);
         for (UUID entity : chunk.entities) {
             Entity e = uuidEntityManager.getEntity(entity);
-            entities.add(generateFullComponentPacket(e));
+            //Don't add the player which requested the chunk to the chunk.
+            if (!e.equals(player))
+                entities.add(generateFullComponentPacket(e));
         }
 
         return new ChunkPacket(chunk.x, chunk.y, chunk.universeBody.id, entities, (HashMap<Vector2, Integer>) chunk.changedTiles);

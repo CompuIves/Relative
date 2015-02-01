@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.Chunk;
@@ -16,8 +17,10 @@ import java.util.HashMap;
 /**
  * Created by Ives on 18/1/2015.
  * <p/>
- * All objects having this contain a position in the universe. It has a width and a height and coordinates (which are
- * aligned to the middle).
+ * All objects having this contain a position and a transform in the universe. It has a width, height, rotation and coordinates (which are
+ * aligned to the middle). Every UserBody contains its own world, this means that each body has an own Box2D world and their own chunks. This
+ * opens up the possibility to rotate and move the UniverseBody independently from its parent. UniverseBodies have children and parents (like
+ * a solar system has planets).
  */
 public class UniverseBody {
     public final String id;
@@ -52,9 +55,6 @@ public class UniverseBody {
     private Matrix3 mScale;
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
-    private Matrix3 mInverseScale;
-    private Matrix3 mInverseRotation;
-    private Matrix3 mInverseTranslation;
 
     public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale) {
         this.id = id;
@@ -75,9 +75,6 @@ public class UniverseBody {
         mScale = new Matrix3();
         mRotation = new Matrix3();
         mTranslation = new Matrix3();
-        mInverseScale = new Matrix3();
-        mInverseRotation = new Matrix3();
-        mInverseTranslation = new Matrix3();
         setTransform();
 
         world = new World(new Vector2(0, 0), true);
@@ -229,6 +226,26 @@ public class UniverseBody {
     }
 
     /**
+     * Recursively transforms the vector until it is the transformation to the lowest child.
+     * For example I have an object in a starsystem and I want it to be converted to the position of a planet.
+     *
+     * @param uBod child to convert it to
+     * @param vec position to be transformed
+     *
+     * @return Vector3 with (x, y, rotation (degrees))
+     */
+    public Vector3 transformPositionParentToChild(UniverseBody uBod, Vector2 vec) {
+        Vector2 pos = vec.cpy();
+        float rotation = 0;
+        while (uBod != this && uBod != null) {
+            rotation += uBod.rotation;
+            uBod.inverseTransformVector(pos);
+            uBod = uBod.getChild(pos);
+        }
+        return new Vector3(pos.x, pos.y, rotation);
+    }
+
+    /**
      * Sets the transformation matrices according to the positions it has.
      */
     void setTransform() {
@@ -237,16 +254,12 @@ public class UniverseBody {
         mRotation.setToRotation(rotation);
         mScale.setToScaling(scale);
 
-        //Set inversion matrices
-        mInverseTranslation.setToTranslation(-x, -y);
-        mInverseScale.setToScaling(1 / scale.x, 1 / scale.y);
-        mInverseRotation.set(mRotation.transpose());
-
         //transpose mRotation again to get it to the old state
         mRotation.transpose();
 
         mTransform.idt().mul(mTranslation).mul(mRotation).mul(mScale);
         mInverseTransform.idt().mul(mTransform).inv();
+
     }
 
     protected void updateBody() {
@@ -268,12 +281,7 @@ public class UniverseBody {
 
         UniverseBody that = (UniverseBody) o;
 
-        if (height != that.height) return false;
-        if (width != that.width) return false;
-        if (x != that.x) return false;
-        if (y != that.y) return false;
-
-        return true;
+        return id.equals(that.id);
     }
 
     @Override

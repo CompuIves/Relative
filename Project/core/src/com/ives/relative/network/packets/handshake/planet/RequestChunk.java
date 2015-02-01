@@ -2,6 +2,7 @@ package com.ives.relative.network.packets.handshake.planet;
 
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.core.GameManager;
+import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.network.packets.ResponsePacket;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.universe.UniverseBody;
@@ -34,7 +35,8 @@ public class RequestChunk extends ResponsePacket {
         Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, new Vector2(x, y));
         NetworkSendSystem networkSendSystem = game.world.getSystem(NetworkSendSystem.class);
 
-        ChunkPacket packet = networkSendSystem.generateFullChunkPacket(chunk);
+        ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
+        ChunkPacket packet = networkSendSystem.generateFullChunkPacket(serverPlayerManager.getPlayerByConnection(connection), chunk);
         game.network.sendObjectTCP(connection, packet);
     }
 }

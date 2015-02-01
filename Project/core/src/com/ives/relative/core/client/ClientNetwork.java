@@ -17,8 +17,7 @@ import java.io.IOException;
  * A network handler for the client.
  */
 public class ClientNetwork extends Network {
-    public static int CONNECTIONID;
-    public static int PLAYERNETWORKID;
+    public static int CONNECTION_ID;
     private static Client client;
     private ClientManager game;
 
@@ -38,10 +37,10 @@ public class ClientNetwork extends Network {
 
     @Override
     public void connected(Connection connection) {
-        CONNECTIONID = connection.getID();
+        CONNECTION_ID = connection.getID();
         //Send a connect packet with player name + version number + connection id
-        ClientManager.PLAYERID = "Player" + MathUtils.random(0, 32);
-        sendObjectTCP(CONNECTIONID, new ConnectPacket(Relative.VERSION, ClientManager.PLAYERID));
+        Player.ID = "Player" + MathUtils.random(0, 32);
+        sendObjectTCP(CONNECTION_ID, new ConnectPacket(Relative.VERSION, Player.ID));
     }
 
     @Override
@@ -71,7 +70,7 @@ public class ClientNetwork extends Network {
     /**
      * This SHOULD send a UDP packet, now it sends TCP
      *
-     * @param connectionID connectionID to send to, which you can get with ClientNetwork.CONNECTIONID
+     * @param connectionID connectionID to send to, which you can get with ClientNetwork.CONNECTION_ID
      * @param o            packet to be sent
      */
     @Override

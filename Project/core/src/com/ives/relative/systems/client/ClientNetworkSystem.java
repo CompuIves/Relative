@@ -14,6 +14,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.ives.relative.core.client.ClientManager;
 import com.ives.relative.core.client.ClientNetwork;
+import com.ives.relative.core.client.Player;
 import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.commands.DoNothingCommand;
@@ -40,6 +41,7 @@ import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
 import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
+import com.ives.relative.universe.UniverseSystem;
 
 import java.util.Iterator;
 
@@ -54,8 +56,11 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     protected ClientManager clientManager;
     protected CommandManager commandManager;
     protected NetworkManager networkManager;
-    protected NetworkReceiveSystem networkReceiveSystem;
     protected AuthorityManager authorityManager;
+
+    protected NetworkReceiveSystem networkReceiveSystem;
+    protected UniverseSystem universeSystem;
+
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
@@ -85,12 +90,12 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         if (command instanceof DoNothingCommand)
             return;
 
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(command), true));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTION_ID, new CommandPressPacket(sequence, Player.NETWORK_ID, commandManager.getID(command), true));
         sequence++;
     }
 
     public void sendClickCommand(ClickCommand clickCommand) {
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(clickCommand), true, clickCommand.getWorldPosClicked()));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTION_ID, new CommandClickPacket(sequence, Player.NETWORK_ID, commandManager.getID(clickCommand), true, clickCommand.getWorldPosClicked()));
         sequence++;
     }
 
@@ -102,16 +107,16 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     public void sendUpCommand(Command command) {
         if (command instanceof DoNothingCommand)
             return;
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandPressPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(command), false));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTION_ID, new CommandPressPacket(sequence, Player.NETWORK_ID, commandManager.getID(command), false));
         sequence++;
     }
 
     public void sendUnClickCommand(ClickCommand clickCommand) {
-        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, new CommandClickPacket(sequence, ClientNetwork.PLAYERNETWORKID, commandManager.getID(clickCommand), false, clickCommand.getWorldPosClicked()));
+        clientManager.network.sendObjectUDP(ClientNetwork.CONNECTION_ID, new CommandClickPacket(sequence, Player.NETWORK_ID, commandManager.getID(clickCommand), false, clickCommand.getWorldPosClicked()));
     }
 
     public Entity getPlayer() {
-        return networkManager.getEntity(ClientNetwork.PLAYERNETWORKID);
+        return networkManager.getEntity(Player.NETWORK_ID);
     }
 
     /**
@@ -127,10 +132,10 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
         Iterator<Integer> it = entitiesToSend.iterator();
         while (it.hasNext()) {
             int id = it.next();
-            if (id == ClientNetwork.PLAYERNETWORKID || frame % 10 == 0) {
+            if (id == Player.NETWORK_ID || frame % 10 == 0) {
                 Entity e = networkManager.getEntity(id);
                 PositionPacket positionPacket = new PositionPacket(e, sequence, id);
-                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTIONID, positionPacket);
+                clientManager.network.sendObjectUDP(ClientNetwork.CONNECTION_ID, positionPacket);
                 it.remove();
             }
         }
@@ -147,7 +152,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                             public void run() {
                                 PositionPacket packet = (PositionPacket) object;
                                 if (!processPosition(packet)) {
-                                    network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestEntity(packet.entityID));
+                                    network.sendObjectTCP(ClientNetwork.CONNECTION_ID, new RequestEntity(packet.entityID));
                                     requestedEntities.add(packet.entityID);
                                 }
                             }
@@ -210,6 +215,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                 body.setTransform(x, y, rotation);
                 localPosition.x = x;
                 localPosition.y = y;
+                localPosition.universeBody = universeSystem.getUniverseBody(packet.universeBody);
             }
 
             Vector2 bodyVel = body.getLinearVelocity();
@@ -246,14 +252,14 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     public void onNotify(EntityEvent event) {
         if (event instanceof MovementEvent) {
             int id = networkManager.getNetworkID(event.entity);
-            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, event.entity)) {
+            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTION_ID, event.entity)) {
                 if (!entitiesToSend.contains(id, true)) {
                     entitiesToSend.add(id);
                 }
             }
         } else if (event instanceof StoppedMovementEvent) {
             int id = networkManager.getNetworkID(event.entity);
-            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTIONID, event.entity)) {
+            if (authorityManager.isEntityAuthorizedByPlayer(ClientNetwork.CONNECTION_ID, event.entity)) {
                 if (!entitiesToSend.contains(id, true)) {
                     entitiesToSend.add(id);
                 }

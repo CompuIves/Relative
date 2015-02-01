@@ -1,6 +1,5 @@
 package com.ives.relative.universe;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -22,7 +21,7 @@ public class Planet extends UniverseBody {
     @Override
     protected void update() {
         super.update();
-        this.rotation += Gdx.graphics.getDeltaTime() * 10;
+        this.rotation += 10 * (1 / 60f);
         setTransform();
         updateBody();
     }

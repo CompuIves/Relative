@@ -2,7 +2,6 @@ package com.ives.relative.network.packets.handshake.modules;
 
 import com.badlogic.gdx.Gdx;
 import com.ives.relative.core.GameManager;
-import com.ives.relative.core.client.ClientNetwork;
 import com.ives.relative.managers.assets.modules.Module;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.network.packets.ResponsePacket;
@@ -28,7 +27,7 @@ public class GetInstalledModules extends ResponsePacket {
             @Override
             public void run() {
                 modules = game.world.getManager(ModuleManager.class).getModules();
-                game.network.sendObjectTCP(ClientNetwork.CONNECTIONID, new RequestModules(modules));
+                game.network.sendObjectTCP(connection, new RequestModules(modules));
             }
         });
     }
