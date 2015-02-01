@@ -34,7 +34,7 @@ public abstract class ChunkLoader {
     abstract void loadTileLegend();
 
     public void loadChunk(Chunk chunk) {
-        System.out.println("Loading chunk with: " + chunk.universeBody.chunkBuilder.getClass().getSimpleName());
+        System.out.println("Loading chunk: " + chunk.toString());
         chunk.universeBody.chunkBuilder.generateTerrain(chunk);
         chunk.loaded = true;
         if (!loadedChunks.contains(chunk, false))

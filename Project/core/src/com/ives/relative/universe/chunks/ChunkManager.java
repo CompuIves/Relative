@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Position;
@@ -53,10 +54,19 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Vector2 v = new Vector2();
         for (int x = chunk.x - posDeviation; x <= chunk.x + posDeviation; x += CHUNK_SIZE) {
             for (int y = chunk.y - posDeviation; y <= chunk.y + posDeviation; y += CHUNK_SIZE) {
-                chunks.add(getChunk(universeBody, v.set(x, y)));
-                Chunk childChunk = getTopChunk(universeBody, v);
-                if(childChunk != null)
+                Chunk nearChunk = getChunk(universeBody, v.set(x, y));
+                if (nearChunk != null) {
+                    chunks.add(nearChunk);
+                } else {
+                    //If there is no chunk we should look at the chunks of the parent.
+                    Chunk parentChunk = getParentChunk(universeBody, v);
+                    chunks.add(parentChunk);
+                }
+
+                Chunk childChunk = getChildChunk(universeBody, v);
+                if (childChunk != null) {
                     chunks.add(childChunk);
+                }
             }
         }
         return chunks;
@@ -81,20 +91,44 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Gets the chunk of the lowest child of the universebody at that position. This is relative to the
-     * child.
-     * @param universeBody parent universebody
+     * Gets the chunk of the lowest (childest) child of the universebody at that position. The pos given will also
+     * be converted to the child coordinate system.
+     * @param universeBody universebody to start searching
      * @param pos POSITION!
      * @return null if there was no child there, the chunk if there was indeed a child.
      */
     public Chunk getTopChunk(UniverseBody universeBody, Vector2 pos) {
-        UniverseBody child = universeBody.getLowestChild(pos, false);
+        UniverseBody ub = universeBody.getBottomUniverseBody(pos, false);
+        return getChunk(ub, pos);
+    }
+
+    /**
+     * Gets the chunk of the parent at that given position
+     *
+     * @param universeBody
+     * @param pos
+     * @return
+     */
+    public Chunk getParentChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody parent = universeBody.getParent();
+        universeBody.transformVector(pos);
+        return getChunk(parent, pos);
+    }
+
+    /**
+     * Gets the chunk of the child of the universebody (if there is a child)
+     *
+     * @param universeBody
+     * @param pos
+     * @return
+     */
+    public Chunk getChildChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody child = universeBody.getBottomChild(pos, false);
         return getChunk(child, pos);
     }
 
     public void addEntityToChunk(Entity e) {
         Position position = mPosition.get(e);
-        //If the entity already has a position it just gets the universebody of its position, otherwise FIND IT!
         UniverseBody universeBody = position.universeBody;
 
         //Chunk coordinate system doesn't get transformed
@@ -102,6 +136,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Chunk chunk = getTopChunk(universeBody, pos);
         chunk.addEntity(uuidEntityManager.getUuid(e));
         position.chunk = chunk;
+
+        Gdx.app.debug("ChunkManager", "Entity " + e.toString() + " added to chunk " + chunk.toString());
 
         if (authorityManager.isEntityTemporaryAuthorized(e)) {
             for (Chunk lChunk : getChunksAroundChunk(chunk)) {
@@ -140,13 +176,14 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      */
     public Chunk createChunk(UniverseBody universeBody, int x, int y) {
         Vector2 chunkLoc = new Vector2(x, y);
-        if (universeBody.isInBody(chunkLoc)) {
+        if (universeBody.isInBody(chunkLoc) && universeBody.isInBody(chunkLoc.cpy().add(universeBody.chunkSize, universeBody.chunkSize))) {
             Chunk chunk;
             chunk = universeBody.chunkBuilder.buildChunk(x, y);
             universeBody.chunks.put(new Vector2(x, y), chunk);
             return chunk;
-        } else
+        } else {
             return null;
+        }
     }
 
 

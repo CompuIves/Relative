@@ -2,8 +2,11 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.systems.server.NetworkSendSystem;
+import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.planets.TileManager;
 import com.ives.relative.utils.ComponentUtils;
 
@@ -22,7 +25,11 @@ public class CreateBodyCommand extends Command {
     @Override
     public void executeDown(final Entity entity) {
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
-        body = entity.getWorld().getManager(TileManager.class).createTile(position.universeBody, position.x, position.y + 4, 0, "dirt", true);
+        UniverseSystem universeSystem = entity.getWorld().getSystem(UniverseSystem.class);
+        UniverseBody ub = universeSystem.getUniverseBody("ivesolaria");
+        Vector2 pos = new Vector2(position.x, position.y + 4);
+        position.universeBody.transformVector(pos);
+        body = entity.getWorld().getManager(TileManager.class).createTile(ub, pos.x, pos.y, 0, "dirt", true);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

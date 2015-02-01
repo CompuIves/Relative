@@ -3,7 +3,6 @@ package com.ives.relative.universe;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.systems.planet.GravitySystem;
@@ -49,7 +48,7 @@ public class UniverseSystem extends VoidEntitySystem {
     public UniverseBody findHighestUniverseBody(float x, float y) {
         UniverseBody galaxy = getGalaxy(x, y);
         if (galaxy != null) {
-            return galaxy.getLowestChild(new Vector2(x, y), false);
+            return galaxy.getBottomUniverseBody(new Vector2(x, y), false);
         } else {
             return null;
         }
@@ -87,12 +86,11 @@ public class UniverseSystem extends VoidEntitySystem {
         universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody("ivusolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1));
-        universeBodiesByID.put("ivusolaria", solarSystem);
+        UniverseBody solarSystem = new UniverseBody("ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1));
+        universeBodiesByID.put("ivesolaria", solarSystem);
         starSystem.addChild(solarSystem);
 
-        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 0, 0, 200, 200, new Vector2(-10, 0));
-        planetBuilder.setRotation(45 * MathUtils.degreesToRadians);
+        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 300, 300, 64, 64, new Vector2(-10, 0));
         Planet earth = planetBuilder.build();
         universeBodiesByID.put("ives", earth);
         earth.setChunkBuilder(new SquarePlanet(earth, tileManager, uuidEntityManager, earth.gravity));

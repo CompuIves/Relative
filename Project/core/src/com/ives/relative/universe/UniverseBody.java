@@ -33,8 +33,6 @@ public class UniverseBody {
     public final int chunkSize;
     public final int width, height;
     public final World world;
-    /** rotation in radians */
-    protected final float rotation;
     protected final Vector2 scale;
     protected final UniverseBody parent;
     protected final Array<UniverseBody> children;
@@ -45,7 +43,12 @@ public class UniverseBody {
      * SquarePlanet
      */
     public ChunkBuilder chunkBuilder;
+    /**
+     * rotation in degrees
+     */
+    protected float rotation;
     protected int x, y;
+    private Body body;
     private Matrix3 mScale;
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
@@ -98,6 +101,10 @@ public class UniverseBody {
         world.step(UniverseSystem.ITERATIONS, 10, 10);
     }
 
+    public UniverseBody getParent() {
+        return parent;
+    }
+
     /**
      * Gets child at specified position
      * @param pos
@@ -118,13 +125,34 @@ public class UniverseBody {
      * @param createVectorCopy should the vector given be transformed to the coordinatesystem of the child given?
      * @return child
      */
-    public UniverseBody getLowestChild(Vector2 pos, boolean createVectorCopy) {
+    public UniverseBody getBottomUniverseBody(Vector2 pos, boolean createVectorCopy) {
         //Prevent changing the original position vector
         Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
+
+        //If outside, use parent.
+        if (!isInBody(rPos)) {
+            transformVector(rPos);
+            return parent;
+        }
+
+        return getBottomChild(pos, createVectorCopy);
+    }
+
+    /**
+     * Gets the lowest child at that pos
+     *
+     * @param pos
+     * @param createVectorCopy
+     * @return
+     */
+    public UniverseBody getBottomChild(Vector2 pos, boolean createVectorCopy) {
+        //Prevent changing the original position vector
+        Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
+
         UniverseBody universeBody = getChild(rPos);
-        if(universeBody != null) {
+        if (universeBody != null) {
             universeBody.inverseTransformVector(rPos);
-            return universeBody.getLowestChild(rPos, createVectorCopy);
+            return universeBody.getBottomChild(rPos, createVectorCopy);
         } else {
             return this;
         }
@@ -156,7 +184,7 @@ public class UniverseBody {
         bodyDef.type = BodyDef.BodyType.KinematicBody;
         bodyDef.allowSleep = true;
         bodyDef.position.set(universeBody.x, universeBody.y);
-        bodyDef.angle = universeBody.rotation;
+        bodyDef.angle = universeBody.rotation * MathUtils.degreesToRadians;
 
         Body body = world.createBody(bodyDef);
 
@@ -169,18 +197,19 @@ public class UniverseBody {
         body.setUserData(universeBody);
         body.createFixture(fixtureDef);
 
+        universeBody.body = body;
         return body;
     }
 
     /**
      * Checks if the specified position is in this universebody
      *
-     * @param pos position which should be transformed
+     * @param pos position in transformation of universebody
      * @return
      */
     public boolean isInBody(Vector2 pos) {
-        return RelativeMath.isInBounds(pos.x, this.x - width / 2, this.x + width / 2)
-                && RelativeMath.isInBounds(pos.y, this.y - height / 2, this.y + height / 2);
+        return RelativeMath.isInBounds(pos.x, -width / 2, width / 2)
+                && RelativeMath.isInBounds(pos.y, -height / 2, height / 2);
     }
 
     /**
@@ -205,7 +234,7 @@ public class UniverseBody {
     void setTransform() {
         //Set matrices
         mTranslation.setToTranslation(x, y);
-        mRotation.setToRotation(rotation * MathUtils.radiansToDegrees);
+        mRotation.setToRotation(rotation);
         mScale.setToScaling(scale);
 
         //Set inversion matrices
@@ -217,7 +246,19 @@ public class UniverseBody {
         mRotation.transpose();
 
         mTransform.idt().mul(mTranslation).mul(mRotation).mul(mScale);
-        mInverseTransform.idt().mul(mScale).mul(mRotation).mul(mTranslation);
+        mInverseTransform.idt().mul(mTransform).inv();
+    }
+
+    protected void updateBody() {
+        body.setTransform(x, y, rotation * MathUtils.degreesToRadians);
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public Vector2 getPosition() {
+        return new Vector2(x, y);
     }
 
     @Override

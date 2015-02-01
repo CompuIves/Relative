@@ -1,5 +1,6 @@
 package com.ives.relative.universe;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -16,6 +17,14 @@ public class Planet extends UniverseBody {
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;
+    }
+
+    @Override
+    protected void update() {
+        super.update();
+        this.rotation += Gdx.graphics.getDeltaTime() * 10;
+        setTransform();
+        updateBody();
     }
 
     /**
@@ -52,6 +61,12 @@ public class Planet extends UniverseBody {
             return this;
         }
 
+        /**
+         * Set rotation
+         *
+         * @param rotation rotation in degrees
+         * @return this builder for chaining.
+         */
         public Builder setRotation(float rotation) {
             this.rotation = rotation;
             return this;

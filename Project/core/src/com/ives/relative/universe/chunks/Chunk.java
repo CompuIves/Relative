@@ -1,5 +1,6 @@
 package com.ives.relative.universe.chunks;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.UniverseBody;
@@ -25,6 +26,7 @@ public class Chunk {
     public final Map<Vector2, Integer> changedTiles;
     public final Vector2 gravity;
     public boolean loaded = false;
+    public Color backgroundColor;
     private int playerAmount = 0;
     /**
      * Is this chunk part of a planet (ex: should there be dirt?)
@@ -51,6 +53,7 @@ public class Chunk {
         entities = new Array<UUID>();
         changedTiles = new HashMap<Vector2, Integer>();
         tiles = new HashMap<Vector2, UUID>();
+        backgroundColor = Color.BLACK;
     }
 
     public void addEntity(UUID e) {
@@ -112,6 +115,11 @@ public class Chunk {
         playerAmount = 0;
         tiles.clear();
         loaded = false;
+    }
+
+    @Override
+    public String toString() {
+        return "Chunk from UniverseBody " + universeBody.id + " with x " + x + " and y " + y;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.ives.relative.universe.chunks.builders;
 
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
@@ -24,8 +25,7 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y) {
-        boolean isLand = x < universeBody.width / 4 && y < universeBody.height / 4;
-        return new Chunk(universeBody, x, y, 0, isLand, 0, -10);
+        return new Chunk(universeBody, x, y, 0, true, 0, -10);
     }
 
     @Override
@@ -36,10 +36,10 @@ public class SquarePlanet extends ChunkBuilder {
         int startY = chunk.y;
         int endX = startX + chunkSize;
         int endY = startY + chunkSize;
-
-        if (chunk.isLand()) {
-            for (int x = startX; x < endX; x++) {
-                for (int y = startY; y < endY; y++) {
+        chunk.backgroundColor = (new Color(0.5f, 0.9f, 1f, 1f));
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
                     Entity tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }
