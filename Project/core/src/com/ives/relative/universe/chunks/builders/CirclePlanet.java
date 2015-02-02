@@ -6,24 +6,21 @@ import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
 
 /**
- * Created by Ives on 18/1/2015.
- *
- * 'Builder' for an empty chunk
+ * Created by Ives on 2/2/2015.
  */
-public class EmptyChunk extends ChunkBuilder {
+public class CirclePlanet extends ChunkBuilder {
 
-    public EmptyChunk(UniverseBody universeBody, TileManager tileManager, UuidEntityManager uuidEntityManager) {
+    public CirclePlanet(UniverseBody universeBody, TileManager tileManager, UuidEntityManager uuidEntityManager) {
         super(universeBody, tileManager, uuidEntityManager);
     }
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        //TODO gravity setting
-        return new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, 0);
+        return new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
     }
 
     @Override
     public void generateTerrain(Chunk chunk) {
-        //Do nothing, chunk empty
+        //TODO write round code
     }
 }

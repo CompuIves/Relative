@@ -104,7 +104,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         for (Chunk chunk : chunkManager.getLoadedChunks()) {
             if (chunk.backgroundColor != Color.BLACK) {
                 Color color = chunk.backgroundColor;
-                shapeRenderer.rect(chunk.x, chunk.y, chunk.universeBody.chunkSize, chunk.universeBody.chunkSize, color, color, color, color);
+                shapeRenderer.rect(chunk.x, chunk.y, chunk.width, chunk.height, color, color, color, color);
             }
         }
         shapeRenderer.end();

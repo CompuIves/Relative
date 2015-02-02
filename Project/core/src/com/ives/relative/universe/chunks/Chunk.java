@@ -19,41 +19,49 @@ import java.util.UUID;
  */
 public class Chunk {
     public final int x, y;
+    public final int width, height;
     public final UniverseBody universeBody;
     public final int rotation;
     public final Array<UUID> entities;
     public final Map<Vector2, UUID> tiles;
     public final Map<Vector2, Integer> changedTiles;
     public final Vector2 gravity;
+    public final boolean edge;
     public boolean loaded = false;
     public Color backgroundColor;
     private int playerAmount = 0;
-    /**
-     * Is this chunk part of a planet (ex: should there be dirt?)
-     */
-    private boolean isLand = false;
 
     /**
      * @param x
      * @param y
      * @param universeBody
      * @param rotation     rotation in degrees
-     * @param isLand
      * @param gravityX
      * @param gravityY
      */
-    public Chunk(UniverseBody universeBody, int x, int y, int rotation, boolean isLand, float gravityX, float gravityY) {
+    public Chunk(UniverseBody universeBody, int x, int y, int width, int height, int rotation, boolean edge, float gravityX, float gravityY) {
         this.x = x;
         this.y = y;
         this.universeBody = universeBody;
         this.rotation = rotation;
         this.gravity = new Vector2(gravityX, gravityY);
-        this.isLand = isLand;
+        this.edge = edge;
 
         entities = new Array<UUID>();
         changedTiles = new HashMap<Vector2, Integer>();
         tiles = new HashMap<Vector2, UUID>();
         backgroundColor = Color.BLACK;
+
+        this.width = width;
+        this.height = height;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void addEntity(UUID e) {
@@ -94,10 +102,6 @@ public class Chunk {
         }
     }
 
-    public boolean isLand() {
-        return isLand;
-    }
-
     public void addOnePlayer() {
         playerAmount++;
     }
@@ -107,8 +111,8 @@ public class Chunk {
     }
 
     private boolean isInChunk(int x, int y) {
-        return RelativeMath.isInBounds(x, this.x, this.x + ChunkManager.CHUNK_SIZE)
-                && RelativeMath.isInBounds(y, this.y, this.y + ChunkManager.CHUNK_SIZE);
+        return RelativeMath.isInBounds(x, this.x, this.x + width)
+                && RelativeMath.isInBounds(y, this.y, this.y + height);
     }
 
     public void dispose() {
@@ -128,17 +132,14 @@ public class Chunk {
         if (o == null || getClass() != o.getClass()) return false;
 
         Chunk chunk = (Chunk) o;
-
-        if (x != chunk.x) return false;
-        if (y != chunk.y) return false;
-
-        return true;
+        return universeBody.equals(chunk.universeBody) && x == chunk.x && y == chunk.y;
     }
 
     @Override
     public int hashCode() {
         int result = x;
         result = 31 * result + y;
+        result = 31 * result + universeBody.hashCode();
         return result;
     }
 }

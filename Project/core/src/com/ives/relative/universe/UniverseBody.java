@@ -117,7 +117,7 @@ public class UniverseBody {
     }
 
     /**
-     * Finds the lowest child at the given position
+     * Finds the lowest UniverseBody at given position
      * @param pos
      * @param createVectorCopy should the vector given be transformed to the coordinatesystem of the child given?
      * @return child
@@ -136,11 +136,11 @@ public class UniverseBody {
     }
 
     /**
-     * Gets the lowest child at that pos
+     * Gets the lowest child at that pos (so no parents)
      *
      * @param pos
      * @param createVectorCopy
-     * @return
+     * @return lowest child
      */
     public UniverseBody getBottomChild(Vector2 pos, boolean createVectorCopy) {
         //Prevent changing the original position vector
@@ -259,7 +259,6 @@ public class UniverseBody {
 
         mTransform.idt().mul(mTranslation).mul(mRotation).mul(mScale);
         mInverseTransform.idt().mul(mTransform).inv();
-
     }
 
     protected void updateBody() {
@@ -274,6 +273,10 @@ public class UniverseBody {
         return new Vector2(x, y);
     }
 
+    public boolean hasChildren() {
+        return children.size != 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -286,11 +289,7 @@ public class UniverseBody {
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
-        result = 31 * result + width;
-        result = 31 * result + height;
-        return result;
+        return id.hashCode();
     }
 
     @Override

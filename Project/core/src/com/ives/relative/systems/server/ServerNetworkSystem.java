@@ -128,12 +128,13 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
         Command c;
         if (packet.pressed) {
             if (packet instanceof CommandClickPacket) {
+                Position p = mPosition.get(e);
                 CommandClickPacket clickPacket = (CommandClickPacket) packet;
                 c = commandManager.getCommand(packet.command);
                 ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
                 if (c.canExecute(e)) {
                     //TODO change the hardcoded earth
-                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y, "earth"));
+                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y, p.universeBody.id));
                 }
             } else {
                 c = commandManager.getCommand(packet.command);

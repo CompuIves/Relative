@@ -72,7 +72,7 @@ public class UniverseSystem extends VoidEntitySystem {
         universeBodiesByID.put("ivesolaria", solarSystem);
         starSystem.addChild(solarSystem);
 
-        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 300, 300, 64, 64, new Vector2(-10, 0));
+        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 300, 300, 70, 70, new Vector2(-10, 0));
         Planet earth = planetBuilder.build();
         universeBodiesByID.put("ives", earth);
         earth.setChunkBuilder(new SquarePlanet(earth, tileManager, uuidEntityManager, earth.gravity));
