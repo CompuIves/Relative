@@ -25,9 +25,8 @@ import com.ives.relative.utils.RelativeMath;
  */
 @Wire
 public class ChunkManager extends Manager implements EntityEventObserver {
-    public static final int CHUNK_RADIUS = 3;
-    public static final int SMALLEST_CHUNK_SIZE = 16;
-
+    public static final int CHUNK_RADIUS = 40;
+    static Vector2 newVec = new Vector2();
     public final ChunkLoader chunkLoader;
     protected ComponentMapper<Position> mPosition;
     protected UuidEntityManager uuidEntityManager;
@@ -43,281 +42,23 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         eventManager.addObserver(this);
     }
 
-
     /**
-     * Returns all chunks in a chunkradius around the chunk using neighbours, beautiful image to illustrate: <p></p>
-     * <p/>
-     * ######### <br></br>
-     * ######### <br></br>
-     * ####*#### <br></br>
-     * ######### <br></br>
-     * ######### <br></br>
-     * * is paramater
-     * <p></p>
-     * Which will return this with chunkRadius 1: <p></p>
-     * ######### <br></br>
-     * ###***### <br></br>
-     * ###*#*### <br></br>
-     * ###***### <br></br>
-     * ######### <br></br>
-     * <p/>
-     * <p></p>
-     * This method does it a little bit different, but the result is the same.
-     *
-     * @param chunk       Initial chunk
-     * @param chunkRadius Amount of iterations to process
-     * @return the chunks excluding the chunk given as parameter
-     */
-    public Array<Chunk> getChunksAroundChunkg(Chunk chunk, int chunkRadius) {
-        Array<Chunk> chunks = new Array<Chunk>(chunkRadius * chunkRadius);
-
-        Vector2 rightVector = new Vector2(1, 0);
-        Vector2 leftVector = new Vector2(-1, 0);
-        Vector2 downVector = new Vector2(0, -1);
-        Vector2 upVector = new Vector2(0, 1);
-
-        //Get every chunks left and right
-        chunks.addAll(getNeighbourChunks(chunk, chunkRadius, rightVector));
-        chunks.addAll(getNeighbourChunks(chunk, chunkRadius, leftVector));
-
-        int chunkAmount = chunks.size;
-        //Get chunks down and up of the chunk
-        for (int i = 0; i < chunkAmount; i++) {
-            Chunk nChunk = chunks.get(i);
-            chunks.addAll(getNeighbourChunks(nChunk, chunkRadius, downVector));
-            chunks.addAll(getNeighbourChunks(nChunk, chunkRadius, upVector));
-        }
-
-        if (chunk.universeBody.hasChildren())
-            loadChildrenAroundChunk(chunk, chunkRadius);
-        return chunks;
-    }
-
-    public Array<Chunk> getChunksAroundChunk(Chunk chunk, int chunkRadius) {
-        Array<Chunk> chunks = new Array<Chunk>(chunkRadius * chunkRadius);
-        int startX = chunk.x - chunkRadius * SMALLEST_CHUNK_SIZE;
-        int endX = chunk.x + chunkRadius * SMALLEST_CHUNK_SIZE;
-        int startY = chunk.y - chunkRadius * SMALLEST_CHUNK_SIZE;
-        int endY = chunk.y + chunkRadius * SMALLEST_CHUNK_SIZE;
-
-        Vector2 v = new Vector2();
-        for (int x = startX; x < endX; x += SMALLEST_CHUNK_SIZE) {
-            System.out.println(x);
-            for (int y = startY; y < endY; y += SMALLEST_CHUNK_SIZE) {
-                Chunk c = getTopChunk(chunk.universeBody, v.set(x, y));
-                if (c != null) {
-                    if (c.edge && c.universeBody != chunk.universeBody) {
-                        //Load parent too, this is an edge case
-                        Chunk pChunk = getChunk(chunk.universeBody, v.set(x, y));
-                        if (pChunk != null)
-                            chunks.add(pChunk);
-                    }
-                    System.out.println("STARTED LOADING WITH X: " + c.x);
-                    chunks.add(c);
-                }
-            }
-        }
-
-        return chunks;
-    }
-
-    /**
-     * Loads all the children around the chunk
-     *
-     * @param chunk
-     * @param chunkRadius
-     */
-    private void loadChildrenAroundChunk(Chunk chunk, int chunkRadius) {
-        Vector2 pos = new Vector2(chunk.x, chunk.y);
-        pos.x -= SMALLEST_CHUNK_SIZE * chunkRadius / 2 - 1;
-        pos.y -= SMALLEST_CHUNK_SIZE * chunkRadius / 2 - 1;
-
-        Vector2 v = new Vector2();
-        for (int x = (int) pos.x; x < pos.x + chunkRadius * SMALLEST_CHUNK_SIZE; x++) {
-            for (int y = (int) pos.y; y < pos.y + chunkRadius * SMALLEST_CHUNK_SIZE; y++) {
-                Chunk nChunk = getChildChunk(chunk.universeBody, v.set(x, y));
-                if (nChunk != null) {
-                    loadChunk(nChunk);
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the chunk at the x coordinate and y coordinate.
-     *
-     * @param universeBody the body the chunk is in
-     * @param pos
-     * @return the chunk, null if the chunk is out of bounds (not in this universebody).
-     */
-    public Chunk getChunk(UniverseBody universeBody, Vector2 pos) {
-        //Get the chunk coordinate
-        pos.x = RelativeMath.fastfloor(pos.x/universeBody.chunkSize) * universeBody.chunkSize;
-        pos.y = RelativeMath.fastfloor(pos.y/universeBody.chunkSize) * universeBody.chunkSize;
-        //TODO why aren't chunks loading perfectly? Will have to fix this.
-        MathUtils.clamp(pos.x, -universeBody.width / 2, universeBody.width / 2);
-        MathUtils.clamp(pos.y, -universeBody.height / 2, universeBody.height / 2);
-
-        if (universeBody.chunks.containsKey(pos)) {
-            return universeBody.chunks.get(pos);
-        } else {
-            return createChunk(universeBody, (int) pos.x, (int) pos.y);
-        }
-    }
-
-    /**
-     * Gets the neighbour chunk
-     *
-     * @param chunk chunk to search around
-     * @param dir   direction of the chunk, which means a vector without magnitude: (1,0) is right - (-1,0) is left - (0,1) is up etc. etc.
-     * @return The neighbour chunk, null if there is no chunk found at pos (for example when neighbour is outside of UniverseBody).
-     */
-    private Chunk getNeighbourChunk(Chunk chunk, Vector2 dir) {
-        int x = (int) (chunk.getX() + chunk.width * dir.x);
-        int y = (int) (chunk.getY() + chunk.height * dir.y);
-        return getChunk(chunk.universeBody, new Vector2(x, y));
-    }
-
-    /**
-     * Gets a chunk which is distance chunks in direction, for example.
-     * <p></p>
-     * ####*####<br></br>
-     * * is chunk given, distance is for example 3, direction is left <p></p>
-     * <p/>
-     * #*#######<br></br>
-     * * is returned chunk
-     *
-     * @param chunk
-     * @param distance
-     * @param dir
-     * @return
-     */
-    private Chunk getChunkInDirection(Chunk chunk, int distance, Vector2 dir) {
-        Array<Chunk> chunks = getNeighbourChunks(chunk, distance, dir);
-        return chunks.get(chunks.size - 1);
-    }
-
-    /**
-     * Gets chunks in a specified direction and distance using {@link #getNeighbourChunk(Chunk, Vector2)}
-     *
-     * @param chunk
-     * @param distance
-     * @param dir      direction vector
-     * @return
-     */
-    private Array<Chunk> getNeighbourChunks(Chunk chunk, int distance, Vector2 dir) {
-        Array<Chunk> chunks = new Array<Chunk>(distance);
-        Chunk startChunk = chunk;
-        for (int i = 0; i < distance; i++) {
-            Chunk iChunk = getNeighbourChunk(startChunk, dir);
-            if (iChunk == null)
-                break;
-
-            chunks.add(iChunk);
-            startChunk = iChunk;
-        }
-        return chunks;
-    }
-
-    /**
-     * Gets the chunk of the lowest (childest) child of the universebody at that position. The pos given will also
-     * be converted to the child coordinate system.
-     * @param universeBody universebody to start searching
-     * @param pos POSITION!
-     * @return null if there was no child there, the chunk if there was indeed a child.
-     */
-    public Chunk getTopChunk(UniverseBody universeBody, Vector2 pos) {
-        UniverseBody ub = universeBody.getBottomUniverseBody(pos, false);
-        return getChunk(ub, pos);
-    }
-
-    /**
-     * Gets the chunk of the parent at that given position
-     *
+     * Converts coordinate to chunk coordinate (or not when the coords are out of bound)
      * @param universeBody
      * @param pos
-     * @return
      */
-    public Chunk getParentChunk(UniverseBody universeBody, Vector2 pos) {
-        UniverseBody parent = universeBody.getParent();
-        universeBody.transformVector(pos);
-        return getChunk(parent, pos);
-    }
+    public void convertToChunkCoord(UniverseBody universeBody, Vector2 pos) {
+        //If the position is in in bounds for clamping
+        if(pos.x > -universeBody.width / 2 - universeBody.chunkSize && pos.y > -universeBody.height / 2 - universeBody.chunkSize) {
+            //Get the chunk coordinate
+            pos.x = RelativeMath.fastfloor(pos.x / universeBody.chunkSize) * universeBody.chunkSize;
+            pos.y = RelativeMath.fastfloor(pos.y / universeBody.chunkSize) * universeBody.chunkSize;
 
-    /**
-     * Gets the chunk of the lowest child of the universebody, if there is no child, return null
-     *
-     * @param universeBody parent
-     * @param pos position relative to parent
-     * @return chunk
-     */
-    public Chunk getChildChunk(UniverseBody universeBody, Vector2 pos) {
-        if (universeBody.hasChildren()) {
-            if (universeBody.getChild(pos) != null) {
-                UniverseBody child = universeBody.getBottomChild(pos, false);
-                return getChunk(child, pos);
-            }
-        }
 
-        return null;
-    }
-
-    /**
-     * Add an entity to a chunk
-     * @param e
-     */
-    public void addEntityToChunk(Entity e) {
-        Position position = mPosition.get(e);
-        UniverseBody universeBody = position.universeBody;
-
-        //Chunk coordinate system doesn't get transformed
-        Vector2 pos = new Vector2(position.x, position.y);
-        Chunk chunk = getTopChunk(universeBody, pos);
-        chunk.addEntity(uuidEntityManager.getUuid(e));
-        position.chunk = chunk;
-
-        Gdx.app.debug("ChunkManager", "Entity " + e.toString() + " added to chunk " + chunk.toString());
-
-        if (authorityManager.isEntityTemporaryAuthorized(e)) {
-            for (Chunk lChunk : getChunksAroundChunk(chunk, CHUNK_RADIUS)) {
-                loadChunk(lChunk);
-            }
-        }
-
-        eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
-    }
-
-    /**
-     * Removes an entity from a chunk
-     * @param e
-     */
-    public void removeEntityFromChunk(Entity e) {
-        Position position = mPosition.get(e);
-        position.chunk.removeEntity(uuidEntityManager.getUuid(e));
-
-        eventManager.notifyEvent(new LeaveChunkEvent(e, position.chunk));
-        position.chunk = null;
-    }
-
-    /**
-     * Loads the chunk
-     * @param chunk
-     */
-    public void loadChunk(Chunk chunk) {
-        if (!chunkLoader.loadedChunks.contains(chunk, false)) {
-            chunkLoader.requestChunk(chunk);
+            MathUtils.clamp(pos.x, -universeBody.width / 2, universeBody.width / 2);
+            MathUtils.clamp(pos.y, -universeBody.height / 2, universeBody.height / 2);
         }
     }
-
-    /**
-     * Unloads the chunk
-     * @param chunk
-     */
-    public void unloadChunk(Chunk chunk) {
-        if (chunkLoader.loadedChunks.contains(chunk, false))
-            chunkLoader.unloadChunk(chunk, uuidEntityManager);
-    }
-
 
     /**
      * Creates a chunk at specified indexes
@@ -352,6 +93,174 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
+     * Gets the chunk at the x coordinate and y coordinate.
+     *
+     * @param universeBody the body the chunk is in
+     * @param pos
+     * @return the chunk, null if the chunk is out of bounds (not in this universebody).
+     */
+    public Chunk getChunk(UniverseBody universeBody, Vector2 pos) {
+        convertToChunkCoord(universeBody, pos);
+
+        if (universeBody.chunks.containsKey(pos)) {
+            return universeBody.chunks.get(pos);
+        } else {
+            return createChunk(universeBody, (int) pos.x, (int) pos.y);
+        }
+    }
+
+    /**
+     * Gets the chunk of the lowest (childest) child of the universebody at that position. The pos given will also
+     * be converted to the child coordinate system.
+     * @param universeBody universebody to start searching
+     * @param pos POSITION!
+     * @return null if there was no child there, the chunk if there was indeed a child.
+     */
+    public Chunk getTopChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody ub = universeBody.getTopUniverseBody(pos, false);
+        return getChunk(ub, pos);
+    }
+
+    /**
+     * Gets the chunk of the parent at that given position
+     *
+     * @param universeBody
+     * @param pos
+     * @return
+     */
+    public Chunk getParentChunk(UniverseBody universeBody, Vector2 pos) {
+        UniverseBody parent = universeBody.getParent();
+        universeBody.transformVector(pos);
+        return getChunk(parent, pos);
+    }
+
+    /**
+     * Gets the chunk of the lowest child of the universebody, if there is no child, return null
+     *
+     * @param universeBody parent
+     * @param pos position relative to parent
+     * @return chunk
+     */
+    public Chunk getChildChunk(UniverseBody universeBody, Vector2 pos) {
+        if (universeBody.hasChildren()) {
+            if (universeBody.getChild(pos) != null) {
+                UniverseBody child = universeBody.getBottomChild(pos, false);
+                return getChunk(child, pos);
+            }
+        }
+
+        return null;
+    }
+
+    public void addEntityToChunk(Entity e) {
+        Position p = mPosition.get(e);
+        Chunk chunk = getTopChunk(p.universeBody, new Vector2(p.x, p.y));
+        addEntityToChunk(e, chunk);
+    }
+
+    /**
+     * Add an entity to a chunk
+     * @param e
+     */
+    public void addEntityToChunk(Entity e, Chunk chunk) {
+        Position p = mPosition.get(e);
+        chunk.addEntity(uuidEntityManager.getUuid(e));
+        p.chunk = chunk;
+
+        Gdx.app.debug("ChunkManager", "Entity " + e.toString() + " added to chunk " + chunk.toString());
+        eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
+    }
+
+    /**
+     * Removes an entity from a chunk
+     * @param e
+     */
+    public void removeEntityFromChunk(Entity e) {
+        Position position = mPosition.get(e);
+
+        position.chunk.removeEntity(uuidEntityManager.getUuid(e));
+
+        eventManager.notifyEvent(new LeaveChunkEvent(e, position.chunk));
+        position.chunk = null;
+    }
+
+    /**
+     * Loads chunks around a chunk, this includes chunks of children and parents.
+     * @param centerChunk
+     * @param radius radius in blocks
+     * @return
+     */
+    private Array<Chunk> getChunksAroundChunk(Chunk centerChunk, int radius) {
+        Array<Chunk> chunks = new Array<Chunk>(radius / centerChunk.universeBody.chunkSize * radius / centerChunk.universeBody.chunkSize);
+        int startX = centerChunk.x - radius;
+        int endX = centerChunk.x + radius;
+        int startY = centerChunk.y - radius;
+        int endY = centerChunk.y + radius;
+
+        Vector2 v = new Vector2();
+        for (int x = startX; x < endX; x += 2) {
+            for (int y = startY; y < endY; y += 2) {
+                Chunk c = getTopChunk(centerChunk.universeBody, v.set(x, y));
+                if (c != null) {
+                    if (c.edge && c.universeBody != centerChunk.universeBody) {
+                        //Load parent too, this is an edge case
+                        Chunk pChunk = getChunk(centerChunk.universeBody, v.set(x, y));
+                        if (pChunk != null) {
+                            if (!chunks.contains(pChunk, false))
+                                chunks.add(pChunk);
+                        }
+                    }
+                    if (!chunks.contains(c, false))
+                        chunks.add(c);
+                }
+            }
+        }
+
+        return chunks;
+    }
+
+    private void loadChunksAroundEntity(Chunk chunk, Entity e) {
+        Array<Chunk> chunks = getChunksAroundChunk(chunk, CHUNK_RADIUS);
+        Array<Chunk> loadedChunks = new Array<Chunk>();
+        loadedChunks.addAll(chunkLoader.loadedChunks);
+
+        for (Chunk loadedChunk : loadedChunks) {
+            loadedChunk.removeLoadedByPlayer(e.getUuid());
+        }
+        loadedChunks.removeAll(chunks, false);
+
+        for (Chunk newChunk : chunks) {
+            //Add the 'player' to the chunk as loaded
+            newChunk.addLoadedByPlayer(e.getUuid());
+            loadChunk(newChunk);
+        }
+
+        for (Chunk oldChunk : loadedChunks) {
+            //Removes the 'player' from every chunk as loader
+            unloadChunk(oldChunk);
+        }
+    }
+
+    /**
+     * Loads the chunk
+     * @param chunk
+     */
+    public void loadChunk(Chunk chunk) {
+        if (!chunkLoader.loadedChunks.contains(chunk, false) && !chunkLoader.requestedChunks.contains(chunk, false)) {
+            chunkLoader.preLoadChunk(chunk);
+        }
+    }
+
+    /**
+     * Unloads the chunk
+     * @param chunk
+     */
+    public void unloadChunk(Chunk chunk) {
+        if (chunkLoader.loadedChunks.contains(chunk, false))
+            chunkLoader.unloadChunk(chunk, uuidEntityManager);
+    }
+
+    /**
      * Checks if the given position (x or y) is out of bounds the UniverseBody when the chunkSize is added.
      *
      * @param pos       x or y, depends if you want to know the horizontal edge or vertical edge.
@@ -376,8 +285,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @return A Vector with values (newPos, newSize)
      */
     private Vector2 sliceEdge(int pos, int uBodSize, int chunkSize) {
-        int newPos = 0;
-        int newSize = 0;
+        int newPos;
+        int newSize;
         if (pos > 0) {
             newPos = pos;
             newSize = uBodSize / 2 - pos;
@@ -388,7 +297,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         return new Vector2(newPos, newSize);
     }
 
-
     public Array<Chunk> getLoadedChunks() {
         return chunkLoader.loadedChunks;
     }
@@ -397,12 +305,20 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void onNotify(EntityEvent event) {
         if (event instanceof MovementEvent) {
             Entity e = event.entity;
-            Position p = mPosition.get(e);
+            Position p = ((MovementEvent) event).position;
+            newVec.set(p.x, p.y);
 
-            if (RelativeMath.fastfloor(p.px / p.universeBody.chunkSize) != RelativeMath.fastfloor(p.x / p.universeBody.chunkSize) ||
-                    RelativeMath.fastfloor(p.py / p.universeBody.chunkSize) != RelativeMath.fastfloor(p.y / p.universeBody.chunkSize)) {
+            Chunk chunk = getTopChunk(p.universeBody, newVec);
+            if (chunk != p.chunk) {
+                System.out.println(chunk);
+                System.out.println(p.chunk);
                 removeEntityFromChunk(e);
-                addEntityToChunk(e);
+                addEntityToChunk(e, chunk);
+            }
+
+            if (authorityManager.isEntityTemporaryAuthorized(e)) {
+                //TODO could have optimization?
+                loadChunksAroundEntity(p.chunk, e);
             }
         }
     }

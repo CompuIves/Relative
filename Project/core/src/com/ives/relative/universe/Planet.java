@@ -12,7 +12,7 @@ public class Planet extends UniverseBody {
     private float mass;
 
     private Planet(Builder builder) {
-        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height, builder.rotation, builder.scale);
+        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height, builder.rotation, builder.scale, 32);
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;

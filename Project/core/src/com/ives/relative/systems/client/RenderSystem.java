@@ -7,11 +7,11 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
@@ -36,14 +36,12 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private ShapeRenderer shapeRenderer;
 
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
         //noinspection unchecked
         super(Aspect.getAspectForAll(Visual.class, Position.class));
         this.batch = batch;
         this.camera = camera;
-        this.shapeRenderer = new ShapeRenderer();
 
         //Wait until player connected and loaded
         setEnabled(false);
@@ -60,10 +58,9 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         positionCamera();
-        renderBackground();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
+        renderBackground();
     }
 
     @Override
@@ -99,15 +96,17 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     }
 
     private void renderBackground() {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
         for (Chunk chunk : chunkManager.getLoadedChunks()) {
-            if (chunk.backgroundColor != Color.BLACK) {
-                Color color = chunk.backgroundColor;
-                shapeRenderer.rect(chunk.x, chunk.y, chunk.width, chunk.height, color, color, color, color);
+            if (chunk.bgColor != null && chunk.texture == null) {
+                chunk.texture = new Texture(chunk.bgColor);
+            }
+
+            if (chunk.texture != null) {
+                batch.draw(chunk.texture, chunk.x, chunk.y, chunk.width, chunk.height);
             }
         }
-        shapeRenderer.end();
+        pixmap.dispose();
     }
 
     private float getCurrentCameraRotation() {

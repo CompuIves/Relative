@@ -56,7 +56,7 @@ public class UniverseBody {
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
 
-    public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale) {
+    public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale, int chunkSize) {
         this.id = id;
         this.parent = parent;
 
@@ -79,7 +79,7 @@ public class UniverseBody {
 
         world = new World(new Vector2(0, 0), true);
         chunks = new HashMap<Vector2, Chunk>();
-        chunkSize = 16;
+        this.chunkSize = chunkSize;
 
         this.chunkBuilder = new EmptyChunk(this, null, null);
     }
@@ -117,12 +117,12 @@ public class UniverseBody {
     }
 
     /**
-     * Finds the lowest UniverseBody at given position
+     * Finds the highest universebody on the map (children are higher)
      * @param pos
      * @param createVectorCopy should the vector given be transformed to the coordinatesystem of the child given?
      * @return child
      */
-    public UniverseBody getBottomUniverseBody(Vector2 pos, boolean createVectorCopy) {
+    public UniverseBody getTopUniverseBody(Vector2 pos, boolean createVectorCopy) {
         //Prevent changing the original position vector
         Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
 

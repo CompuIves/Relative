@@ -17,7 +17,7 @@ public class ServerChunkLoader extends ChunkLoader {
     @Override
     public void unloadChunk(Chunk chunk, UuidEntityManager uuidEntityManager) {
         //if there are no players in the chunk left.
-        if (chunk.getPlayerAmount() == 0) {
+        if (chunk.getLoadedByPlayersSize() == 0) {
             super.unloadChunk(chunk, uuidEntityManager);
         }
     }

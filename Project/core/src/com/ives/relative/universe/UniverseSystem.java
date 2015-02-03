@@ -60,15 +60,15 @@ public class UniverseSystem extends VoidEntitySystem {
 
     public void createTemporaryGalaxy() {
         //Create a simple galaxy before generating this is handled
-        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000, 0, new Vector2(1, 1));
+        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000, 0, new Vector2(1, 1), 512);
         universeBodiesByID.put("andromeda", galaxy);
         galaxies.add(galaxy);
 
-        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1));
+        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1), 256);
         universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody("ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1));
+        UniverseBody solarSystem = new UniverseBody("ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1), 32);
         universeBodiesByID.put("ivesolaria", solarSystem);
         starSystem.addChild(solarSystem);
 

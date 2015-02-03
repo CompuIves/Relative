@@ -1,6 +1,7 @@
 package com.ives.relative.universe.chunks;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.UniverseBody;
@@ -28,8 +29,10 @@ public class Chunk {
     public final Vector2 gravity;
     public final boolean edge;
     public boolean loaded = false;
-    public Color backgroundColor;
-    private int playerAmount = 0;
+    public Pixmap bgColor;
+    public Texture texture;
+
+    private Array<UUID> loadedByPlayers;
 
     /**
      * @param x
@@ -50,18 +53,11 @@ public class Chunk {
         entities = new Array<UUID>();
         changedTiles = new HashMap<Vector2, Integer>();
         tiles = new HashMap<Vector2, UUID>();
-        backgroundColor = Color.BLACK;
+
+        loadedByPlayers = new Array<UUID>();
 
         this.width = width;
         this.height = height;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public void addEntity(UUID e) {
@@ -102,12 +98,30 @@ public class Chunk {
         }
     }
 
-    public void addOnePlayer() {
-        playerAmount++;
+    /**
+     * Adds a player to the loaded list. This list keeps track of who loaded this chunk. Is used for unloading.
+     *
+     * @param e
+     */
+    public void addLoadedByPlayer(UUID e) {
+        if (!loadedByPlayers.contains(e, false))
+            loadedByPlayers.add(e);
     }
 
-    public int getPlayerAmount() {
-        return playerAmount;
+    /**
+     * Removes a player of the loaded list. See {@link #addLoadedByPlayer(UUID)} for more info about the list.
+     *
+     * @param e
+     */
+    public void removeLoadedByPlayer(UUID e) {
+        loadedByPlayers.removeValue(e, false);
+    }
+
+    /**
+     * @return amount of players currently having this chunk loaded
+     */
+    public int getLoadedByPlayersSize() {
+        return loadedByPlayers.size;
     }
 
     private boolean isInChunk(int x, int y) {
@@ -116,7 +130,8 @@ public class Chunk {
     }
 
     public void dispose() {
-        playerAmount = 0;
+        loadedByPlayers.clear();
+        entities.clear();
         tiles.clear();
         loaded = false;
     }
@@ -132,7 +147,12 @@ public class Chunk {
         if (o == null || getClass() != o.getClass()) return false;
 
         Chunk chunk = (Chunk) o;
-        return universeBody.equals(chunk.universeBody) && x == chunk.x && y == chunk.y;
+
+        if (x != chunk.x) return false;
+        if (y != chunk.y) return false;
+        if (!universeBody.equals(chunk.universeBody)) return false;
+
+        return true;
     }
 
     @Override

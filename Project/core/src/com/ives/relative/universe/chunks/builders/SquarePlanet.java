@@ -3,6 +3,7 @@ package com.ives.relative.universe.chunks.builders;
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
@@ -24,7 +25,12 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        return new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
+        Chunk chunk = new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
+        Pixmap bg = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
+        bg.setColor(new Color(0.5f, 0.9f, 1f, 1f));
+        bg.fill();
+        chunk.bgColor = bg;
+        return chunk;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class SquarePlanet extends ChunkBuilder {
         int startY = chunk.y;
         int endX = startX + chunk.width;
         int endY = startY + chunk.height;
-        chunk.backgroundColor = (new Color(0.5f, 0.9f, 1f, 1f));
+
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
@@ -42,10 +48,5 @@ public class SquarePlanet extends ChunkBuilder {
                 }
             }
         }
-
-        chunk.addTile(startX, startY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, startX, startY, 0, "bedrock", false)));
-        chunk.addTile(startX, endY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, startX, endY, 0, "bedrock", false)));
-        chunk.addTile(endX, startY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, endX, startY, 0, "bedrock", false)));
-        chunk.addTile(endX, endY, uuidEntityManager.getUuid(tileManager.createTile(chunk.universeBody, endX, endY, 0, "bedrock", false)));
     }
 }
