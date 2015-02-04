@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.events.CollisionEvent;
+import com.ives.relative.entities.events.position.CollisionEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
 
@@ -47,8 +47,12 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.entitiesInContact.add(e1.getUuid());
 
         checkHitGround(contact, true);
-        eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
-        eventManager.notifyEvent(new CollisionEvent(true, contact, e1, e2));
+
+        CollisionEvent collisionEvent = (CollisionEvent) eventManager.getEvent(CollisionEvent.class, e1);
+        collisionEvent.start = true;
+        collisionEvent.c = contact;
+        collisionEvent.e1 = e1;
+        collisionEvent.e2 = e2;
     }
 
     @Override
@@ -65,8 +69,13 @@ public class CollisionManager extends Manager implements ContactListener {
         p2.entitiesInContact.removeValue(e1.getUuid(), true);
 
         checkHitGround(contact, false);
-        eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
-        eventManager.notifyEvent(new CollisionEvent(false, contact, e1, e2));
+        //Maybe I have to call CollisionEvent two times
+        CollisionEvent collisionEvent = (CollisionEvent) eventManager.getEvent(CollisionEvent.class, e1);
+        collisionEvent.start = false;
+        collisionEvent.c = contact;
+        collisionEvent.e1 = e1;
+        collisionEvent.e2 = e2;
+        eventManager.notifyEvent(collisionEvent);
     }
 
     @Override

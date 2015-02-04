@@ -5,6 +5,9 @@ import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.systems.planet.GravitySystem;
 import com.ives.relative.universe.chunks.builders.SquarePlanet;
 import com.ives.relative.universe.planets.TileManager;
@@ -15,11 +18,13 @@ import java.util.HashMap;
  * Created by Ives on 18/1/2015.
  */
 @Wire
-public class UniverseSystem extends VoidEntitySystem {
+public class UniverseSystem extends VoidEntitySystem implements EntityEventObserver {
     public static final float ITERATIONS = 1 / 60f;
     private final Array<UniverseBody> galaxies;
     private final HashMap<String, UniverseBody> universeBodiesByID;
     private final String seed;
+
+    protected EventManager eventManager;
     protected TileManager tileManager;
     protected UuidEntityManager uuidEntityManager;
     protected GravitySystem gravitySystem;
@@ -34,6 +39,7 @@ public class UniverseSystem extends VoidEntitySystem {
     @Override
     protected void initialize() {
         createTemporaryGalaxy();
+        eventManager.addObserver(this);
     }
 
     @Override
@@ -77,5 +83,10 @@ public class UniverseSystem extends VoidEntitySystem {
         universeBodiesByID.put("ives", earth);
         earth.setChunkBuilder(new SquarePlanet(earth, tileManager, uuidEntityManager, earth.gravity));
         solarSystem.addChild(earth);
+    }
+
+    @Override
+    public void onNotify(EntityEvent event) {
+
     }
 }

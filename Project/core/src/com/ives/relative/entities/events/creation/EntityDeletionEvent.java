@@ -1,6 +1,5 @@
 package com.ives.relative.entities.events.creation;
 
-import com.artemis.Entity;
 import com.ives.relative.entities.events.EntityEvent;
 
 /**
@@ -9,7 +8,8 @@ import com.ives.relative.entities.events.EntityEvent;
  */
 public class EntityDeletionEvent extends EntityEvent {
 
-    public EntityDeletionEvent(Entity entity) {
-        super(entity);
+    @Override
+    public void reset() {
+
     }
 }

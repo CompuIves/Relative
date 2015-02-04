@@ -23,7 +23,7 @@ public class ServerChunkLoader extends ChunkLoader {
     }
 
     @Override
-    void loadTileLegend() {
+    protected void loadTileLegend() {
 
     }
 }

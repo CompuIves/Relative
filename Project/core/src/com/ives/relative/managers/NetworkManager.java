@@ -65,7 +65,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
             networkEntities.put(id, uuidEntityManager.getUuid(e));
             networkIDs.put(uuidEntityManager.getUuid(e), id);
 
-            eventManager.notifyEvent(new NetworkedEntityCreationEvent(e));
+            eventManager.notifyEvent(eventManager.getEvent(NetworkedEntityCreationEvent.class, e));
         }
     }
 
@@ -81,7 +81,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
             networkEntities.remove(id);
             networkIDs.remove(uuidEntityManager.getUuid(e));
 
-            eventManager.notifyEvent(new NetworkedEntityDeletionEvent(e));
+            eventManager.notifyEvent(eventManager.getEvent(NetworkedEntityDeletionEvent.class, e));
         }
     }
 

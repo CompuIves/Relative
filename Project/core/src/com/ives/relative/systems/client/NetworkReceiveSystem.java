@@ -80,7 +80,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     UniverseBody ub = universeSystem.getUniverseBody(((ChunkPacket) p).universeBody);
                     Chunk chunk = chunkManager.getChunk(ub, new Vector2(packet.x, packet.y));
                     chunk.changedTiles.putAll(packet.changedTiles);
-                    chunkManager.chunkLoader.loadChunk(chunk);
+                    chunkManager.loadChunk(chunk);
 
                     for (CreateEntityPacket createEntityPacket : packet.entities) {
                         processEntityPacket(createEntityPacket);
@@ -209,7 +209,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     e.edit().add(new InputC());
                     Player.NETWORK_ID = networkC.id;
 
-                    eventManager.notifyEvent(new PlayerConnectedEvent(e));
+                    eventManager.notifyEvent(eventManager.getEvent(PlayerConnectedEvent.class, e));
                 }
                 break;
         }

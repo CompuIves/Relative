@@ -1,7 +1,7 @@
-package com.ives.relative.entities.events;
+package com.ives.relative.entities.events.position;
 
-import com.artemis.Entity;
 import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.events.EntityEvent;
 
 /**
  * Created by Ives on 9/1/2015.
@@ -10,8 +10,12 @@ import com.ives.relative.entities.components.body.Position;
 public class StoppedMovementEvent extends EntityEvent {
     public Position position;
 
-    public StoppedMovementEvent(Entity entity, Position p) {
-        super(entity);
-        this.position = p;
+    public StoppedMovementEvent() {
     }
+
+    @Override
+    public void reset() {
+        position = null;
+    }
+
 }

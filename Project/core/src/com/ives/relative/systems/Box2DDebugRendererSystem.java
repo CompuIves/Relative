@@ -48,7 +48,7 @@ public class Box2DDebugRendererSystem extends VoidEntitySystem {
         box2DDebugRenderer.render(earth.world, newCamera);
     }
 
-    private void drawChunks(UniverseBody universeBody, Matrix4 projection, Color color) {
+    private synchronized void drawChunks(UniverseBody universeBody, Matrix4 projection, Color color) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(color);
         shapeRenderer.setProjectionMatrix(projection);

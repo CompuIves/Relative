@@ -37,9 +37,9 @@ public abstract class ChunkLoader {
      *
      * @param chunk
      */
-    public abstract void requestChunk(Chunk chunk);
+    protected abstract void requestChunk(Chunk chunk);
 
-    abstract void loadTileLegend();
+    protected abstract void loadTileLegend();
 
     public void loadChunk(Chunk chunk) {
         Gdx.app.debug("ChunkLoader", "Loading chunk: " + chunk.toString());

@@ -1,6 +1,6 @@
-package com.ives.relative.entities.events;
+package com.ives.relative.entities.events.position;
 
-import com.artemis.Entity;
+import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.universe.chunks.Chunk;
 
 /**
@@ -10,8 +10,11 @@ import com.ives.relative.universe.chunks.Chunk;
 public class JoinChunkEvent extends EntityEvent {
     public Chunk chunk;
 
-    public JoinChunkEvent(Entity entity, Chunk chunk) {
-        super(entity);
-        this.chunk = chunk;
+    public JoinChunkEvent() {
+    }
+
+    @Override
+    public void reset() {
+        chunk = null;
     }
 }

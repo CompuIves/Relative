@@ -81,7 +81,8 @@ public class ServerPlayerManager extends PlayerManager {
         setPlayer(e, internalName);
 
         authorityManager.authorizeEntity(connection, e, AuthorityManager.AuthorityType.PERMANENT);
-        world.getManager(EventManager.class).notifyEvent(new CreatePlayerEvent(e));
+        EventManager eventManager = world.getManager(EventManager.class);
+        eventManager.notifyEvent(eventManager.getEvent(CreatePlayerEvent.class, e));
 
         int id = networkManager.addEntity(e);
         e.edit().add(new NetworkC(id, 0, NetworkManager.Type.PLAYER));

@@ -210,6 +210,16 @@ public class UniverseBody {
     }
 
     /**
+     * Returns false is there is a child at pos, returns false if out of body, return true of the point is truly in body
+     *
+     * @param pos
+     * @return
+     */
+    public boolean isAtPoint(Vector2 pos) {
+        return getChild(pos) == null && isInBody(pos);
+    }
+
+    /**
      * Transforms a vector from the local coordinate system to the coordinate system of the parent
      * @param vector
      */

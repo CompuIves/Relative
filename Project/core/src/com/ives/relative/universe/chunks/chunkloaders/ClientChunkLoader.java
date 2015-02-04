@@ -20,7 +20,7 @@ public class ClientChunkLoader extends ChunkLoader {
     }
 
     @Override
-    void loadTileLegend() {
+    protected void loadTileLegend() {
 
     }
 }

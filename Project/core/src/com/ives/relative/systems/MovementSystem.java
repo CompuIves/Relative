@@ -11,9 +11,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
-import com.ives.relative.entities.events.MovementEvent;
-import com.ives.relative.entities.events.StoppedMovementEvent;
+import com.ives.relative.entities.events.position.MovementEvent;
+import com.ives.relative.entities.events.position.NearUniverseBorderEvent;
+import com.ives.relative.entities.events.position.StoppedMovementEvent;
+import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
+import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.chunks.ChunkManager;
 
 /**
  * Created by Ives on 5/12/2014.
@@ -21,12 +25,15 @@ import com.ives.relative.managers.event.EventManager;
  */
 @Wire
 public class MovementSystem extends EntityProcessingSystem {
+    private static Vector2 tempVec = new Vector2();
+
     protected ComponentMapper<Physics> mBodyComponent;
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
 
     protected EventManager eventManager;
     protected UuidEntityManager uuidEntityManager;
+    protected AuthorityManager authorityManager;
 
     /**
      * Creates a new EntityProcessingSystem.
@@ -56,6 +63,12 @@ public class MovementSystem extends EntityProcessingSystem {
             velocity.vx = vel.x;
             velocity.vy = vel.y;
 
+            if (authorityManager.isEntityTemporaryAuthorized(e)) {
+                if (isNearBorder(position.universeBody, tempVec.set(position.x, position.y))) {
+                    sendBorderEvent(e);
+                }
+            }
+
             if (entityBody.isAwake()) {
                 sendMovementEvent(e, position, velocity);
                 velocity.isMoving = true;
@@ -69,11 +82,25 @@ public class MovementSystem extends EntityProcessingSystem {
     }
 
     public void sendMovementEvent(Entity e, Position p, Velocity v) {
-        MovementEvent movementEvent = new MovementEvent(e, p, v);
+        MovementEvent movementEvent = (MovementEvent) eventManager.getEvent(MovementEvent.class, e);
+        movementEvent.position = p;
+        movementEvent.velocity = v;
         eventManager.notifyEvent(movementEvent);
     }
 
+    public void sendBorderEvent(Entity e) {
+        eventManager.notifyEvent(eventManager.getEvent(NearUniverseBorderEvent.class, e));
+    }
+
+    private boolean isNearBorder(UniverseBody uBod, Vector2 pos) {
+        return pos.x > uBod.width / 2 - ChunkManager.CHUNK_RADIUS || pos.x < -uBod.width / 2 + ChunkManager.CHUNK_RADIUS
+                || pos.y > uBod.height / 2 - ChunkManager.CHUNK_RADIUS || pos.y < -uBod.width / 2 + ChunkManager.CHUNK_RADIUS;
+    }
+
+
     public void sendNoMovementEvent(Entity e, Position p) {
-        eventManager.notifyEvent(new StoppedMovementEvent(e, p));
+        StoppedMovementEvent event = (StoppedMovementEvent) eventManager.getEvent(StoppedMovementEvent.class, e);
+        event.position = p;
+        eventManager.notifyEvent(event);
     }
 }

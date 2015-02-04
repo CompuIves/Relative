@@ -10,7 +10,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.entities.events.*;
+import com.ives.relative.entities.events.EntityEvent;
+import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.creation.EntityDeletionEvent;
+import com.ives.relative.entities.events.position.JoinChunkEvent;
+import com.ives.relative.entities.events.position.LeaveChunkEvent;
+import com.ives.relative.entities.events.position.MovementEvent;
+import com.ives.relative.entities.events.position.NearUniverseBorderEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.UniverseBody;
@@ -26,8 +32,12 @@ import com.ives.relative.utils.RelativeMath;
 @Wire
 public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_RADIUS = 40;
-    static Vector2 newVec = new Vector2();
-    public final ChunkLoader chunkLoader;
+    /**
+     * use only synchronous!
+     */
+    private static Vector2 tempVec1 = new Vector2();
+    private static Vector2 tempVec2 = new Vector2();
+    private final ChunkLoader chunkLoader;
     protected ComponentMapper<Position> mPosition;
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
@@ -48,9 +58,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param pos
      */
     public void convertToChunkCoord(UniverseBody universeBody, Vector2 pos) {
-        //If the pos is out of uBody size within chunk reach
-
-
         pos.x = RelativeMath.fastfloor(pos.x / universeBody.chunkSize) * universeBody.chunkSize;
         pos.y = RelativeMath.fastfloor(pos.y / universeBody.chunkSize) * universeBody.chunkSize;
         pos.x = MathUtils.clamp(pos.x, -universeBody.width / 2, universeBody.width / 2);
@@ -165,7 +172,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         p.chunk = chunk;
 
         Gdx.app.debug("ChunkManager", "Entity " + e.toString() + " added to chunk " + chunk.toString());
-        eventManager.notifyEvent(new JoinChunkEvent(e, chunk));
+        JoinChunkEvent event = (JoinChunkEvent) eventManager.getEvent(JoinChunkEvent.class, e);
+        event.chunk = p.chunk;
+        eventManager.notifyEvent(event);
     }
 
     /**
@@ -173,19 +182,24 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param e
      */
     public void removeEntityFromChunk(Entity e) {
-        Position position = mPosition.get(e);
+        if (mPosition.has(e)) {
+            Position position = mPosition.get(e);
+            if (position.chunk != null) {
+                position.chunk.removeEntity(uuidEntityManager.getUuid(e));
 
-        position.chunk.removeEntity(uuidEntityManager.getUuid(e));
-
-        eventManager.notifyEvent(new LeaveChunkEvent(e, position.chunk));
-        position.chunk = null;
+                LeaveChunkEvent event = (LeaveChunkEvent) eventManager.getEvent(LeaveChunkEvent.class, e);
+                event.chunk = position.chunk;
+                eventManager.notifyEvent(event);
+                position.chunk = null;
+            }
+        }
     }
 
     /**
-     * Loads chunks around a chunk, this includes chunks of children and parents.
-     * @param centerChunk
+     * Returns chunks around a chunk, this includes chunks of children and parents.
+     * @param centerChunk the center of the search
      * @param radius radius in blocks
-     * @return
+     * @return Array of chunks around the given chunks, including the centerchunk
      */
     private Array<Chunk> getChunksAroundChunk(Chunk centerChunk, int radius) {
         Array<Chunk> chunks = new Array<Chunk>(radius / centerChunk.universeBody.chunkSize * radius / centerChunk.universeBody.chunkSize);
@@ -207,8 +221,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
                                 chunks.add(pChunk);
                         }
                     }
-                    if (!chunks.contains(c, false))
+
+                    if (!chunks.contains(c, false)) {
                         chunks.add(c);
+                    }
                 }
             }
         }
@@ -229,7 +245,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         for (Chunk newChunk : chunks) {
             //Add the 'player' to the chunk as loaded
             newChunk.addLoadedByPlayer(e.getUuid());
-            loadChunk(newChunk);
+            preLoadChunk(newChunk);
         }
 
         for (Chunk oldChunk : loadedChunks) {
@@ -239,12 +255,23 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Loads the chunk
+     * preloads the chunk, this means loading the chunk from disc or requesting the chunk over the network
+     * @param chunk
+     */
+    public void preLoadChunk(Chunk chunk) {
+        if (!chunkLoader.loadedChunks.contains(chunk, false) && !chunkLoader.requestedChunks.contains(chunk, false)) {
+            chunkLoader.preLoadChunk(chunk);
+        }
+    }
+
+    /**
+     * When the chunk is requested and the info is put into the chunk the chunk can be loaded
+     *
      * @param chunk
      */
     public void loadChunk(Chunk chunk) {
-        if (!chunkLoader.loadedChunks.contains(chunk, false) && !chunkLoader.requestedChunks.contains(chunk, false)) {
-            chunkLoader.preLoadChunk(chunk);
+        if (chunkLoader.requestedChunks.contains(chunk, false)) {
+            chunkLoader.loadChunk(chunk);
         }
     }
 
@@ -303,18 +330,32 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         if (event instanceof MovementEvent) {
             Entity e = event.entity;
             Position p = ((MovementEvent) event).position;
-            newVec.set(p.x, p.y);
 
-            Chunk chunk = getChunk(p.universeBody, newVec);
-            if (!chunk.equals(p.chunk)) {
+            tempVec1.set(p.px, p.py);
+            tempVec2.set(p.x, p.y);
+
+            if (p.universeBody.isAtPoint(tempVec2)) {
+                convertToChunkCoord(p.universeBody, tempVec1);
+                convertToChunkCoord(p.universeBody, tempVec2);
+                if (!tempVec1.equals(tempVec2)) {
+                    removeEntityFromChunk(e);
+                    addEntityToChunk(e, getTopChunk(p.universeBody, tempVec1));
+
+                    if (authorityManager.isEntityTemporaryAuthorized(e))
+                        loadChunksAroundEntity(p.chunk, e);
+                }
+            } else {
                 removeEntityFromChunk(e);
-                addEntityToChunk(e, getTopChunk(p.universeBody, newVec));
-            }
+                addEntityToChunk(e, getTopChunk(p.universeBody, tempVec1));
 
-            if (authorityManager.isEntityTemporaryAuthorized(e)) {
-                //TODO could have optimization?
-                loadChunksAroundEntity(p.chunk, e);
+                if (authorityManager.isEntityTemporaryAuthorized(e))
+                    loadChunksAroundEntity(p.chunk, e);
             }
+        } else if (event instanceof EntityDeletionEvent) {
+            removeEntityFromChunk(event.entity);
+        } else if (event instanceof NearUniverseBorderEvent) {
+            Position p = mPosition.get(event.entity);
+            loadChunksAroundEntity(p.chunk, event.entity);
         }
     }
 }

@@ -85,7 +85,8 @@ public class ComponentUtils {
 
     public static void removeEntity(Entity e) {
         if (e != null) {
-            e.getWorld().getManager(EventManager.class).notifyEvent(new EntityDeletionEvent(e));
+            EventManager eventManager = e.getWorld().getManager(EventManager.class);
+            eventManager.notifyEvent(eventManager.getEvent(EntityDeletionEvent.class, e));
             removeAllSpecialComponents(e);
             System.out.println("Removed entity: " + e.getId());
             e.deleteFromWorld();

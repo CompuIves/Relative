@@ -1,8 +1,8 @@
-package com.ives.relative.entities.events;
+package com.ives.relative.entities.events.position;
 
-import com.artemis.Entity;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
+import com.ives.relative.entities.events.EntityEvent;
 
 /**
  * Created by Ives on 5/1/2015.
@@ -13,9 +13,12 @@ public class MovementEvent extends EntityEvent {
     public Position position;
     public Velocity velocity;
 
-    public MovementEvent(Entity entity, Position position, Velocity velocity) {
-        super(entity);
-        this.position = position;
-        this.velocity = velocity;
+    public MovementEvent() {
+    }
+
+    @Override
+    public void reset() {
+        position = null;
+        velocity = null;
     }
 }

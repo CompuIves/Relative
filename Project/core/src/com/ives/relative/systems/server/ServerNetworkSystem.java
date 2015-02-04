@@ -20,7 +20,7 @@ import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
-import com.ives.relative.entities.events.MovementEvent;
+import com.ives.relative.entities.events.position.MovementEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.CommandManager;
 import com.ives.relative.managers.NetworkManager;
