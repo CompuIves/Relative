@@ -309,7 +309,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             newVec.set(p.x, p.y);
 
             Chunk chunk = getTopChunk(p.universeBody, newVec);
-            if (chunk != p.chunk) {
+            if (!chunk.equals(p.chunk)) {
                 System.out.println(chunk);
                 System.out.println(p.chunk);
                 removeEntityFromChunk(e);
