@@ -48,16 +48,13 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * @param pos
      */
     public void convertToChunkCoord(UniverseBody universeBody, Vector2 pos) {
-        //If the position is in in bounds for clamping
-        if(pos.x > -universeBody.width / 2 - universeBody.chunkSize && pos.y > -universeBody.height / 2 - universeBody.chunkSize) {
-            //Get the chunk coordinate
-            pos.x = RelativeMath.fastfloor(pos.x / universeBody.chunkSize) * universeBody.chunkSize;
-            pos.y = RelativeMath.fastfloor(pos.y / universeBody.chunkSize) * universeBody.chunkSize;
+        //If the pos is out of uBody size within chunk reach
 
 
-            MathUtils.clamp(pos.x, -universeBody.width / 2, universeBody.width / 2);
-            MathUtils.clamp(pos.y, -universeBody.height / 2, universeBody.height / 2);
-        }
+        pos.x = RelativeMath.fastfloor(pos.x / universeBody.chunkSize) * universeBody.chunkSize;
+        pos.y = RelativeMath.fastfloor(pos.y / universeBody.chunkSize) * universeBody.chunkSize;
+        pos.x = MathUtils.clamp(pos.x, -universeBody.width / 2, universeBody.width / 2);
+        pos.y = MathUtils.clamp(pos.y, -universeBody.height / 2, universeBody.height / 2);
     }
 
     /**
@@ -308,12 +305,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             Position p = ((MovementEvent) event).position;
             newVec.set(p.x, p.y);
 
-            Chunk chunk = getTopChunk(p.universeBody, newVec);
+            Chunk chunk = getChunk(p.universeBody, newVec);
             if (!chunk.equals(p.chunk)) {
-                System.out.println(chunk);
-                System.out.println(p.chunk);
                 removeEntityFromChunk(e);
-                addEntityToChunk(e, chunk);
+                addEntityToChunk(e, getTopChunk(p.universeBody, newVec));
             }
 
             if (authorityManager.isEntityTemporaryAuthorized(e)) {
