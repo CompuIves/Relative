@@ -9,7 +9,6 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -96,7 +95,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     }
 
     private void renderBackground() {
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
         for (Chunk chunk : chunkManager.getLoadedChunks()) {
             if (chunk.bgColor != null && chunk.texture == null) {
                 chunk.texture = new Texture(chunk.bgColor);
@@ -106,7 +104,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
                 batch.draw(chunk.texture, chunk.x, chunk.y, chunk.width, chunk.height);
             }
         }
-        pixmap.dispose();
     }
 
     private float getCurrentCameraRotation() {

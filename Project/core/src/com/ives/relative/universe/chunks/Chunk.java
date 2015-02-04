@@ -18,7 +18,7 @@ import java.util.UUID;
  * the advantage of this is that if I have to check for entities near a player I don't have to search the whole world,
  * I can just search in the nearby chunks for entities.
  */
-public class Chunk {
+public class Chunk implements Comparable<Chunk> {
     public final int x, y;
     public final int width, height;
     public final UniverseBody universeBody;
@@ -161,5 +161,10 @@ public class Chunk {
         result = 31 * result + y;
         result = 31 * result + universeBody.hashCode();
         return result;
+    }
+
+    @Override
+    public int compareTo(Chunk o) {
+        return universeBody.depth - o.universeBody.depth;
     }
 }

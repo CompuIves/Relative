@@ -11,14 +11,21 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
+import com.ives.relative.universe.UniverseBody;
 
 import java.util.UUID;
 
 /**
  * Created by Ives on 2/12/2014.
+ *
+ * This component contains everything about the Box2D physics, this means that it has the bodies, contacts, entities in contacts
+ * etc.
+ * There is a secondBody, sometimes an entity needs 2 bodies to be in 2 UniverseBodies.
  */
 public class Physics extends CustomNetworkComponent {
     public transient Body body = null;
+    public transient Body secondBody = null;
+    public transient UniverseBody secondUniverseBody = null;
     public transient Array<Contact> contacts;
     public transient Array<UUID> entitiesInContact;
     public BodyDef.BodyType bodyType;

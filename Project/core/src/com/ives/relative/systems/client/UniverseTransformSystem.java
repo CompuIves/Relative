@@ -7,7 +7,6 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.events.EntityEvent;
@@ -52,11 +51,11 @@ public class UniverseTransformSystem extends EntityProcessingSystem implements E
     protected void process(Entity e) {
         Position position = mPosition.get(e);
         if (!position.universeBody.equals(playerUBody)) {
-            Vector2 pos = new Vector2(position.x, position.y);
-            Vector3 transform = position.universeBody.transformPositionParentToChild(playerUBody, pos);
+            Vector3 transform = new Vector3(position.x, position.y, position.rotation);
+            position.universeBody.transformVectorToUniverseBody(playerUBody, transform);
             position.x = transform.x;
             position.y = transform.y;
-            position.rotation += transform.z * MathUtils.degreesToRadians;
+            position.rotation = position.z * MathUtils.degreesToRadians;
         }
     }
 

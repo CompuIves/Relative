@@ -12,7 +12,7 @@ public class Planet extends UniverseBody {
     private float mass;
 
     private Planet(Builder builder) {
-        super(builder.name, builder.planetarySystem, builder.x, builder.y, builder.width, builder.height, builder.rotation, builder.scale, 32);
+        super(builder.name, builder.solarSystem, builder.x, builder.y, builder.width, builder.height, builder.rotation, builder.scale, 32);
         this.seed = builder.seed;
 
         this.gravity = builder.gravity;
@@ -21,7 +21,7 @@ public class Planet extends UniverseBody {
     @Override
     protected void update() {
         super.update();
-        this.rotation += 10 * (1 / 60f);
+        //this.rotation = 45;
         setTransform();
         updateBody();
     }
@@ -33,7 +33,7 @@ public class Planet extends UniverseBody {
         private final String name;
         private final String seed;
 
-        private final UniverseBody planetarySystem;
+        private final UniverseBody solarSystem;
         private final int x, y;
         private final int width, height;
         private float rotation;
@@ -42,10 +42,10 @@ public class Planet extends UniverseBody {
         private Vector2 gravity;
         private float mass;
 
-        public Builder(String name, String seed, UniverseBody planetarySystem, int x, int y, int width, int height, Vector2 gravity) {
+        public Builder(String name, String seed, UniverseBody solarSystem, int x, int y, int width, int height, Vector2 gravity) {
             this.name = name;
             this.seed = seed;
-            this.planetarySystem = planetarySystem;
+            this.solarSystem = solarSystem;
             this.x = x;
             this.y = y;
             this.width = width;

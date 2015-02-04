@@ -23,6 +23,7 @@ import java.util.HashMap;
  * a solar system has planets).
  */
 public class UniverseBody {
+    public final int depth;
     public final String id;
     /**
      * Transformation matrix relative to the parent it is in.
@@ -51,12 +52,18 @@ public class UniverseBody {
      */
     protected float rotation;
     protected int x, y;
+    protected int vx, vy;
     private Body body;
     private Matrix3 mScale;
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
 
     public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale, int chunkSize) {
+        if (parent != null) {
+            this.depth = parent.depth + 1;
+        } else {
+            this.depth = 0;
+        }
         this.id = id;
         this.parent = parent;
 
@@ -117,39 +124,61 @@ public class UniverseBody {
     }
 
     /**
-     * Finds the highest universebody on the map (children are higher)
-     * @param pos
-     * @param createVectorCopy should the vector given be transformed to the coordinatesystem of the child given?
-     * @return child
+     * Finds the highest universebody on the map (children are higher), also transforms the vector to the universebody (if boolean is set to false)
+     * @param pos A vector with three values: x, y, and rotation
+     * @param createVectorCopy if false the vector will be transformed to the coordinatesystem of returning universebody
+     * @return universebody at pos
      */
-    public UniverseBody getTopUniverseBody(Vector2 pos, boolean createVectorCopy) {
+    public UniverseBody getTopUniverseBody(Vector3 pos, boolean createVectorCopy) {
         //Prevent changing the original position vector
-        Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
+        Vector3 rPos = createVectorCopy ? pos.cpy() : pos;
+        Vector2 xyPos = new Vector2(rPos.x, rPos.y);
 
-        //If outside, use parent.
-        if (!isInBody(rPos)) {
-            transformVector(rPos);
-            return parent;
+        UniverseBody u = this;
+
+        //If outside, get parent first.
+        if (!isInBody(xyPos)) {
+            u = getHighestParent(rPos, createVectorCopy);
         }
 
-        return getBottomChild(pos, createVectorCopy);
+        return u.getBottomChild(rPos, createVectorCopy);
     }
 
     /**
      * Gets the lowest child at that pos (so no parents)
      *
-     * @param pos
-     * @param createVectorCopy
+     * @param pos A vector with three values: x, y, and rotation
+     * @param createVectorCopy if false the vector will be transformed to the coordinatesystem of the child
      * @return lowest child
      */
-    public UniverseBody getBottomChild(Vector2 pos, boolean createVectorCopy) {
+    public UniverseBody getBottomChild(Vector3 pos, boolean createVectorCopy) {
         //Prevent changing the original position vector
-        Vector2 rPos = createVectorCopy ? pos.cpy() : pos;
+        Vector3 rPos = createVectorCopy ? pos.cpy() : pos;
+        Vector2 xyPos = new Vector2(rPos.x, rPos.y);
 
-        UniverseBody universeBody = getChild(rPos);
+        UniverseBody universeBody = getChild(xyPos);
         if (universeBody != null) {
             universeBody.inverseTransformVector(rPos);
             return universeBody.getBottomChild(rPos, createVectorCopy);
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Gets the highest parent at this point
+     * @param pos A Vector with three values; x, y and rotation.
+     * @param createVectorCopy If this is set to false the vector3 will be altered to the coordinatesystem of the returning parent
+     * @return body
+     */
+    public UniverseBody getHighestParent(Vector3 pos, boolean createVectorCopy) {
+        //Prevent changing the original position vector
+        Vector3 rPos = createVectorCopy ? pos.cpy() : pos;
+        Vector2 xyPos = new Vector2(rPos.x, rPos.y);
+        if (!isInBody(xyPos)) {
+            UniverseBody universeBody = parent;
+            transformVector(rPos);
+            return universeBody.getHighestParent(rPos, createVectorCopy);
         } else {
             return this;
         }
@@ -219,40 +248,55 @@ public class UniverseBody {
         return getChild(pos) == null && isInBody(pos);
     }
 
+
+    public void transformVectorToUniverseBody(UniverseBody universeBody, Vector3 vec) {
+        if (this.depth > universeBody.depth) {
+            transformVector(vec);
+            UniverseBody uBod = parent;
+            uBod.transformVectorToUniverseBody(universeBody, vec);
+        } else if (this.depth < universeBody.depth) {
+            inverseTransformVector(vec);
+            UniverseBody uBod = getChild(new Vector2(vec.x, vec.y));
+            uBod.transformVectorToUniverseBody(universeBody, vec);
+        }
+    }
+
     /**
      * Transforms a vector from the local coordinate system to the coordinate system of the parent
      * @param vector
      */
-    public void transformVector(Vector2 vector) {
-        vector.mul(mTransform);
+    public void transformVector(Vector3 vector) {
+        Vector2 v2 = new Vector2(vector.x, vector.y);
+        transformVector(v2);
+        vector.set(v2.x, v2.y, vector.z + rotation);
+    }
+
+    /**
+     * Transforms a vector from the local coordinate system to the coordinate system of the parent
+     *
+     * @param pos
+     */
+    public void transformVector(Vector2 pos) {
+        pos.mul(mTransform);
     }
 
     /**
      * Transforms a vector from the coordinate system of a parent to the local coordinate system
-     * @param vector
+     * @param vector vector with x,y,rotation (degrees)
      */
-    public void inverseTransformVector(Vector2 vector) {
-        vector.mul(mInverseTransform);
+    public void inverseTransformVector(Vector3 vector) {
+        Vector2 v2 = new Vector2(vector.x, vector.y);
+        inverseTransformVector(v2);
+        vector.set(v2.x, v2.y, vector.z - rotation);
     }
 
     /**
-     * Recursively transforms the vector until it is the transformation to the lowest child.
-     * For example I have an object in a starsystem and I want it to be converted to the position of a planet.
+     * Transforms a vector from the coordinate system of a parent to the local coordinate system
      *
-     * @param uBod child to convert it to
-     * @param vec position to be transformed
-     *
-     * @return Vector3 with (x, y, rotation (degrees))
+     * @param pos
      */
-    public Vector3 transformPositionParentToChild(UniverseBody uBod, Vector2 vec) {
-        Vector2 pos = vec.cpy();
-        float rotation = 0;
-        while (uBod != this && uBod != null) {
-            rotation += uBod.rotation;
-            uBod.inverseTransformVector(pos);
-            uBod = uBod.getChild(pos);
-        }
-        return new Vector3(pos.x, pos.y, rotation);
+    public void inverseTransformVector(Vector2 pos) {
+        pos.mul(mInverseTransform);
     }
 
     /**
@@ -263,9 +307,6 @@ public class UniverseBody {
         mTranslation.setToTranslation(x, y);
         mRotation.setToRotation(rotation);
         mScale.setToScaling(scale);
-
-        //transpose mRotation again to get it to the old state
-        mRotation.transpose();
 
         mTransform.idt().mul(mTranslation).mul(mRotation).mul(mScale);
         mInverseTransform.idt().mul(mTransform).inv();

@@ -40,15 +40,25 @@ public class MovementSystem extends EntityProcessingSystem {
      */
     public MovementSystem() {
         //noinspection unchecked
-        super(Aspect.getAspectForAll(Physics.class, Position.class, Velocity.class));
+        super(Aspect.getAspectForAll(Physics.class, Position.class));
     }
 
     @Override
     protected void process(Entity e) {
         Physics physics = mBodyComponent.get(e);
-        Position position = mPosition.get(e);
-        Velocity velocity = mVelocity.get(e);
+        Position p = mPosition.get(e);
 
+        updatePos(p, physics);
+
+        if (mVelocity.has(e)) {
+            Velocity v = mVelocity.get(e);
+            updateVelocity(v, physics);
+            movementCheck(e, v, p, physics);
+            checkBorderEvent(e, p);
+        }
+    }
+
+    private void updatePos(Position position, Physics physics) {
         Body entityBody = physics.body;
         if (entityBody != null) {
             Vector2 bodyPosition = entityBody.getPosition();
@@ -58,25 +68,32 @@ public class MovementSystem extends EntityProcessingSystem {
             position.y = bodyPosition.y;
             position.protation = position.rotation;
             position.rotation = physics.body.getTransform().getRotation();
+        }
+    }
 
-            Vector2 vel = entityBody.getLinearVelocity();
-            velocity.vx = vel.x;
-            velocity.vy = vel.y;
+    private void updateVelocity(Velocity velocity, Physics physics) {
+        Body entityBody = physics.body;
+        Vector2 vel = entityBody.getLinearVelocity();
+        velocity.vx = vel.x;
+        velocity.vy = vel.y;
+    }
 
-            if (authorityManager.isEntityTemporaryAuthorized(e)) {
-                if (isNearBorder(position.universeBody, tempVec.set(position.x, position.y))) {
-                    sendBorderEvent(e);
-                }
+    private void movementCheck(Entity e, Velocity v, Position p, Physics physics) {
+        if (physics.body.isAwake()) {
+            sendMovementEvent(e, p, v);
+            v.isMoving = true;
+        } else {
+            if (v.isMoving) {
+                sendNoMovementEvent(e, p);
+                v.isMoving = false;
             }
+        }
+    }
 
-            if (entityBody.isAwake()) {
-                sendMovementEvent(e, position, velocity);
-                velocity.isMoving = true;
-            } else {
-                if (velocity.isMoving) {
-                    sendNoMovementEvent(e, position);
-                    velocity.isMoving = false;
-                }
+    private void checkBorderEvent(Entity e, Position p) {
+        if (authorityManager.isEntityTemporaryAuthorized(e)) {
+            if (isNearBorder(p.universeBody, tempVec.set(p.x, p.y))) {
+                sendBorderEvent(e);
             }
         }
     }
