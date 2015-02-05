@@ -20,21 +20,37 @@ import com.ives.relative.managers.event.StateManager;
  */
 @Wire
 public class CollisionManager extends Manager implements ContactListener {
-
     protected StateManager stateManager;
     protected EventManager eventManager;
 
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<FootC> mFootC;
 
-    /**
-     * Creates a new EntityProcessingSystem.
-     */
-    public CollisionManager() {
+    @Override
+    public void beginContact(Contact contact) {
+        if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
+            handleEntityStart(contact);
+        }
     }
 
     @Override
-    public void beginContact(Contact contact) {
+    public void endContact(Contact contact) {
+        if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
+            handleEntityEnd(contact);
+        }
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+
+    }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+
+    }
+
+    private void handleEntityStart(Contact contact) {
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
@@ -55,8 +71,7 @@ public class CollisionManager extends Manager implements ContactListener {
         collisionEvent.e2 = e2;
     }
 
-    @Override
-    public void endContact(Contact contact) {
+    private void handleEntityEnd(Contact contact) {
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
@@ -76,16 +91,6 @@ public class CollisionManager extends Manager implements ContactListener {
         collisionEvent.e1 = e1;
         collisionEvent.e2 = e2;
         eventManager.notifyEvent(collisionEvent);
-    }
-
-    @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
-
-    }
-
-    @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-
     }
 
     private void checkHitGround(Contact contact, boolean beginContact) {

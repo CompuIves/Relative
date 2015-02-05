@@ -45,7 +45,6 @@ public class ClientManager extends GameManager implements Screen {
     @Override
     public void registerSystems() {
         super.registerSystems();
-        world.setSystem(new UniverseTransformSystem());
         InputSystem inputSystem = new InputSystem(camera);
         Gdx.input.setInputProcessor(inputSystem);
         world.setSystem(inputSystem);

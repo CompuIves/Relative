@@ -43,7 +43,12 @@ public class SquarePlanet extends ChunkBuilder {
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
-                    Entity tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
+                    Entity tile;
+                    if(Math.abs(y) + 1 > universeBody.height / 4) {
+                        tile = tileManager.createTile(chunk.universeBody, x, y, 0, "grass", false);
+                    } else {
+                        tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
+                    }
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }
             }

@@ -1,7 +1,0 @@
-{
-	"id": "ives",
-	"name": "Ives",
-	"durability": 1000,
-	"gravity": true,
-	"texture": "tiles/bedrock.png"
-}

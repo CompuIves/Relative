@@ -1,0 +1,7 @@
+{
+	"id": "grass",
+	"name": "Grass",
+	"durability": 10,
+	"gravity": true,
+	"texture": "tiles/textures/grass.png"
+}

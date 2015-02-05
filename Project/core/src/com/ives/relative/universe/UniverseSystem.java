@@ -19,6 +19,7 @@ import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.systems.planet.GravitySystem;
 import com.ives.relative.universe.chunks.builders.SquarePlanet;
@@ -179,20 +180,22 @@ public class UniverseSystem extends EntityProcessingSystem implements EntityEven
     }
 
     public void createTemporaryGalaxy() {
+        CollisionManager collisionManager = world.getManager(CollisionManager.class);
+
         //Create a simple galaxy before generating this is handled
-        UniverseBody galaxy = new UniverseBody("andromeda", null, 0, 0, 100000, 100000, 0, new Vector2(1, 1), 512);
+        UniverseBody galaxy = new UniverseBody(collisionManager, "andromeda", null, 0, 0, 100000, 100000, 0, new Vector2(1, 1), 512);
         universeBodiesByID.put("andromeda", galaxy);
         galaxies.add(galaxy);
 
-        UniverseBody starSystem = new UniverseBody("starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1), 256);
+        UniverseBody starSystem = new UniverseBody(collisionManager, "starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1), 256);
         universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody("ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1), 32);
+        UniverseBody solarSystem = new UniverseBody(collisionManager, "ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1), 32);
         universeBodiesByID.put("ivesolaria", solarSystem);
         starSystem.addChild(solarSystem);
 
-        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 300, 300, 140, 140, new Vector2(-10, 0));
+        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", solarSystem, 300, 300, 140, 140, new Vector2(-10, 0), collisionManager);
         Planet earth = planetBuilder.build();
         universeBodiesByID.put("ives", earth);
         earth.setChunkBuilder(new SquarePlanet(earth, tileManager, uuidEntityManager, earth.gravity));

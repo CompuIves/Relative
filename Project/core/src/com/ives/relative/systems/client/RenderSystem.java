@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.events.EntityEvent;
@@ -32,9 +33,13 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
     protected ChunkManager chunkManager;
     protected EventManager eventManager;
+    protected TagManager tagManager;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
+
+    private Entity player;
+    private Position playerPos;
 
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
         //noinspection unchecked
@@ -54,6 +59,11 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     @Override
     protected void begin() {
         super.begin();
+        //Gets the player info
+        getPlayer();
+        //Transforms every position outside player uBody (relative!)
+        transformPositions();
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         positionCamera();
@@ -80,6 +90,11 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         batch.end();
     }
 
+    private void getPlayer() {
+        player = tagManager.getEntity("player");
+        playerPos = mPosition.get(player);
+    }
+
     private void positionCamera() {
         Entity player = world.getManager(TagManager.class).getEntity("player");
 
@@ -95,19 +110,40 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     }
 
     private void renderBackground() {
+        Vector3 pos = new Vector3();
         for (Chunk chunk : chunkManager.getLoadedChunks()) {
             if (chunk.bgColor != null && chunk.texture == null) {
                 chunk.texture = new Texture(chunk.bgColor);
             }
 
             if (chunk.texture != null) {
-                batch.draw(chunk.texture, chunk.x, chunk.y, chunk.width, chunk.height);
+                pos.x = chunk.x;
+                pos.y = chunk.y;
+                if(!chunk.universeBody.equals(playerPos.universeBody)) {
+                    chunk.universeBody.transformVectorToUniverseBody(playerPos.universeBody, pos);
+                }
+
+                batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
             }
         }
     }
 
-    private float getCurrentCameraRotation() {
-        return (float) Math.atan2(camera.up.x, camera.up.y) * MathUtils.radiansToDegrees;
+    private void transformPositions() {
+        for(Entity e : getActives()) {
+            transformPosition(e);
+        }
+    }
+
+    private void transformPosition(Entity e) {
+        Vector3 transform = new Vector3();
+        Position position = mPosition.get(e);
+        if (!position.universeBody.equals(playerPos.universeBody)) {
+            transform.set(position.x, position.y, position.rotation);
+            position.universeBody.transformVectorToUniverseBody(playerPos.universeBody, transform);
+            position.x = transform.x;
+            position.y = transform.y;
+            position.rotation = position.z * MathUtils.degreesToRadians;
+        }
     }
 
     @Override

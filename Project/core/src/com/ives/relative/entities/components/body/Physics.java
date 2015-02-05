@@ -46,7 +46,9 @@ public class Physics extends CustomNetworkComponent {
 
     @Override
     public void convertForSending(Entity e, World world, NetworkManager.Type type) {
-
+        if(type == NetworkManager.Type.TILE) {
+            dependants.add(TileC.class.getSimpleName());
+        }
     }
 
     @Override

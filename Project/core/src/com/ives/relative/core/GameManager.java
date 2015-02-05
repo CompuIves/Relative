@@ -59,9 +59,11 @@ public class GameManager extends Manager {
         world.setManager(new PlanetGenerator());
         world.setManager(new EventManager());
         world.setManager(new CollisionManager());
+
         ModuleManager moduleManager = new ModuleManager();
         world.setManager(moduleManager);
         moduleManager.indexModules();
+
         world.setManager(new CommandManager());
         world.setManager(new GroupManager());
         world.setManager(new NetworkManager());

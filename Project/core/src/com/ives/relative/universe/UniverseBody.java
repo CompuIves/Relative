@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.builders.ChunkBuilder;
 import com.ives.relative.universe.chunks.builders.EmptyChunk;
@@ -58,7 +59,7 @@ public class UniverseBody {
     private Matrix3 mTranslation;
     private Matrix3 mRotation;
 
-    public UniverseBody(String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale, int chunkSize) {
+    public UniverseBody(CollisionManager collisionManager, String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale, int chunkSize) {
         if (parent != null) {
             this.depth = parent.depth + 1;
         } else {
@@ -85,6 +86,7 @@ public class UniverseBody {
         setTransform();
 
         world = new World(new Vector2(0, 0), true);
+        world.setContactListener(collisionManager);
         chunks = new HashMap<Vector2, Chunk>();
         this.chunkSize = chunkSize;
 
