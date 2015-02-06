@@ -1,4 +1,4 @@
-package com.ives.relative.systems;
+package com.ives.relative.systems.server;
 
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
@@ -16,14 +16,14 @@ import com.ives.relative.universe.chunks.Chunk;
  * Created by Ives on 5/12/2014.
  */
 @Wire
-public class Box2DDebugRendererSystem extends VoidEntitySystem {
+public class ServerDebugSystem extends VoidEntitySystem {
     protected UniverseSystem universeSystem;
     private ShapeRenderer shapeRenderer;
 
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthographicCamera camera;
 
-    public Box2DDebugRendererSystem(OrthographicCamera camera) {
+    public ServerDebugSystem(OrthographicCamera camera) {
         super();
         box2DDebugRenderer = new Box2DDebugRenderer();
         shapeRenderer = new ShapeRenderer();

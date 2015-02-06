@@ -11,8 +11,10 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.events.position.CollisionEvent;
+import com.ives.relative.entities.events.position.UniverseBodyCollisionEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
+import com.ives.relative.universe.UniverseBody;
 
 /**
  * Created by Ives on 31/12/2014.
@@ -30,6 +32,14 @@ public class CollisionManager extends Manager implements ContactListener {
     public void beginContact(Contact contact) {
         if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
             handleEntityStart(contact);
+        } else if (contact.getFixtureA().getBody().getUserData() instanceof UniverseBody) {
+            if (contact.getFixtureB().getBody().getUserData() instanceof Entity) {
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureB().getBody().getUserData(), (UniverseBody) contact.getFixtureA().getBody().getUserData(), true);
+            }
+        } else if (contact.getFixtureB().getBody().getUserData() instanceof UniverseBody) {
+            if (contact.getFixtureA().getBody().getUserData() instanceof Entity) {
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureA().getBody().getUserData(), (UniverseBody) contact.getFixtureB().getBody().getUserData(), true);
+            }
         }
     }
 
@@ -37,6 +47,12 @@ public class CollisionManager extends Manager implements ContactListener {
     public void endContact(Contact contact) {
         if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
             handleEntityEnd(contact);
+        } else if (contact.getFixtureA().getBody().getUserData() instanceof UniverseBody) {
+            if (contact.getFixtureB().getBody().getUserData() instanceof Entity)
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureB().getBody().getUserData(), (UniverseBody) contact.getFixtureA().getBody().getUserData(), false);
+        } else if (contact.getFixtureB().getBody().getUserData() instanceof UniverseBody) {
+            if (contact.getFixtureA().getBody().getUserData() instanceof Entity)
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureA().getBody().getUserData(), (UniverseBody) contact.getFixtureB().getBody().getUserData(), false);
         }
     }
 
@@ -114,6 +130,13 @@ public class CollisionManager extends Manager implements ContactListener {
                 }
             }
         }
+    }
+
+    private void sendUniverseBodyCollisionEvent(Entity e, UniverseBody u, boolean start) {
+        UniverseBodyCollisionEvent event = (UniverseBodyCollisionEvent) eventManager.getEvent(UniverseBodyCollisionEvent.class, e);
+        event.universeBody = u;
+        event.start = start;
+        eventManager.notifyEvent(event);
     }
 
     private void addFootC(Contact contact, Entity e, Entity eStanding) {

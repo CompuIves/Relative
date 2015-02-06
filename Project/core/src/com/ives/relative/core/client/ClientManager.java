@@ -52,7 +52,7 @@ public class ClientManager extends GameManager implements Screen {
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
 
         world.setSystem(new RenderSystem(batch, camera));
-        //world.setSystem(new Box2DDebugRendererSystem(camera));
+        world.setSystem(new ClientDebugSystem(camera));
     }
 
     @Override

@@ -37,10 +37,12 @@ public class UniverseBody {
     public final HashMap<Vector2, Chunk> chunks;
     public final int chunkSize;
     public final int width, height;
+
     public final World world;
     protected final Vector2 scale;
     protected final UniverseBody parent;
     protected final Array<UniverseBody> children;
+    private final Array<Body> bodiesToRemove;
     private final Array<Body> childrenBodies;
     public String name;
     /**
@@ -60,13 +62,14 @@ public class UniverseBody {
     private Matrix3 mRotation;
 
     public UniverseBody(CollisionManager collisionManager, String id, UniverseBody parent, int x, int y, int width, int height, float rotation, Vector2 scale, int chunkSize) {
+        this.id = id;
+        this.parent = parent;
+
         if (parent != null) {
             this.depth = parent.depth + 1;
         } else {
             this.depth = 0;
         }
-        this.id = id;
-        this.parent = parent;
 
         this.x = x;
         this.y = y;
@@ -87,10 +90,13 @@ public class UniverseBody {
 
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(collisionManager);
+        createEdgeLines();
         chunks = new HashMap<Vector2, Chunk>();
         this.chunkSize = chunkSize;
 
         this.chunkBuilder = new EmptyChunk(this, null, null);
+
+        bodiesToRemove = new Array<Body>(10);
     }
 
     public void setChunkBuilder(ChunkBuilder chunkBuilder) {
@@ -101,14 +107,42 @@ public class UniverseBody {
      * Gets called every {@link com.ives.relative.universe.UniverseSystem#ITERATIONS}
      */
     protected void update() {
+        for (Body body : bodiesToRemove) {
+            world.destroyBody(body);
+        }
+        bodiesToRemove.clear();
+        world.step(UniverseSystem.ITERATIONS, 6, 6);
         for (UniverseBody universeBody : children) {
             universeBody.update();
         }
-        world.step(UniverseSystem.ITERATIONS, 10, 10);
+
     }
 
     public UniverseBody getParent() {
         return parent;
+    }
+
+    /**
+     * Creates a body around the universebody for collision detection
+     */
+    private void createEdgeLines() {
+        BodyDef bodyDefEdge = new BodyDef();
+        Body edge = world.createBody(bodyDefEdge);
+        edge.setUserData(parent); //Parent is bound to this body, since when you enter that place you also enter the parent
+
+        FixtureDef fixtureDef = new FixtureDef();
+        ChainShape shapeEdge = new ChainShape();
+
+        float[] vertexes = new float[]{-width / 2, height / 2, //Top left
+                width / 2, height / 2, //Top right
+                width / 2, -height / 2, //Bottom right
+                -width / 2, -height / 2}; //Bottom left
+        shapeEdge.createLoop(vertexes);
+
+        fixtureDef.shape = shapeEdge;
+        fixtureDef.isSensor = true;
+        edge.createFixture(fixtureDef).setUserData("edge");
+
     }
 
     /**
@@ -123,6 +157,18 @@ public class UniverseBody {
                 return (UniverseBody) body.getUserData();
         }
         return null;
+    }
+
+    public UniverseBody getChild(String id) {
+        for (UniverseBody universeBody : children) {
+            if (universeBody.id.equals(id))
+                return universeBody;
+        }
+        return null;
+    }
+
+    public UniverseBody getTopUniverseBody(Vector2 pos, boolean createVectorCopy) {
+        return getTopUniverseBody(new Vector3(pos, 0), createVectorCopy);
     }
 
     /**
@@ -250,6 +296,9 @@ public class UniverseBody {
         return getChild(pos) == null && isInBody(pos);
     }
 
+    public void transformVectorToUniverseBody(UniverseBody universeBody, Vector2 vec) {
+        transformVectorToUniverseBody(universeBody, new Vector3(vec, 0));
+    }
 
     public void transformVectorToUniverseBody(UniverseBody universeBody, Vector3 vec) {
         if (this.depth > universeBody.depth) {
@@ -259,6 +308,10 @@ public class UniverseBody {
         } else if (this.depth < universeBody.depth) {
             inverseTransformVector(vec);
             UniverseBody uBod = getChild(new Vector2(vec.x, vec.y));
+            //TODO find nicer way to fix this
+            if (uBod == null) {
+                uBod = getChild(universeBody.id);
+            }
             uBod.transformVectorToUniverseBody(universeBody, vec);
         }
     }
@@ -328,6 +381,14 @@ public class UniverseBody {
 
     public boolean hasChildren() {
         return children.size != 0;
+    }
+
+    /**
+     * This method removes the body from the world while the world isn't stepping.<br> <b>USE THIS METHOD
+     * ONLY TO REMOVE BODIES</b></br>.
+     */
+    public void removeBody(Body body) {
+        bodiesToRemove.add(body);
     }
 
     @Override

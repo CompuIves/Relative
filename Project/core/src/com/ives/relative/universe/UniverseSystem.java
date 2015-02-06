@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.EntityProcessingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -19,6 +20,7 @@ import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
+import com.ives.relative.entities.events.position.UniverseBodyCollisionEvent;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.systems.planet.GravitySystem;
@@ -74,80 +76,81 @@ public class UniverseSystem extends EntityProcessingSystem implements EntityEven
 
     @Override
     protected void process(Entity e) {
-        Transform t = mTransform.get(e);
-        Position p = mPosition.get(e);
         Physics physics = mPhysics.get(e);
-        UniverseBody u = p.universeBody;
+        if (physics.secondBody != null) {
+            transformSecondBody(e, physics);
+        }
+    }
 
-        if (physics.secondBody == null) {
-            if (Math.abs(p.x) + t.width / 2 > Math.abs(u.width / 2)) {
-                createSecondBody(e, p, true);
-            } else if (Math.abs(p.y) + t.height / 2 > Math.abs(u.height / 2)) {
-                createSecondBody(e, p, false);
+    private void createSecondBody(Entity e, UniverseBody ub) {
+        Physics physics = mPhysics.get(e);
+        if (physics.secondBody == null && physics.body.getType() == BodyDef.BodyType.DynamicBody) {
+            Gdx.app.log("UniverseSystem", "Creating second body for " + e + " in " + ub);
+
+            Position p = mPosition.get(e);
+            BodyDef bodyDef = new BodyDef();
+
+            //Transform position + velocity to new universebody
+            Vector3 transform = new Vector3(p.x, p.y, p.rotation);
+            p.universeBody.transformVectorToUniverseBody(ub, transform);
+            bodyDef.position.set(transform.x, transform.y);
+            bodyDef.angle -= transform.z;
+            Vector2 vel = physics.body.getLinearVelocity();
+            transform.set(vel, 0);
+            p.universeBody.transformVectorToUniverseBody(ub, transform);
+            vel.x += p.universeBody.vx;
+            vel.y += p.universeBody.vy;
+            bodyDef.linearVelocity.set(vel);
+
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            bodyDef.linearDamping = physics.body.getLinearDamping();
+            bodyDef.fixedRotation = false;
+
+            physics.secondBody = ub.world.createBody(bodyDef);
+            for (Fixture fixture : physics.body.getFixtureList()) {
+                copyFixture(fixture, physics.secondBody);
             }
-        } else {
-            transferPosition(p, physics);
+            physics.secondUniverseBody = ub;
+        }
+    }
 
-            if (Math.abs(p.x) - t.width / 2 > u.width / 2 || Math.abs(p.y) - t.height / 2 > u.height / 2) {
-                if (p.universeBody.getTopUniverseBody(new Vector3(p.x, p.y, p.rotation), false).equals(p.universeBody)) {
-                    physics.secondUniverseBody.world.destroyBody(physics.secondBody);
-                    physics.secondUniverseBody = null;
-                    physics.secondBody = null;
-                } else {
-                    Vector3 pos = new Vector3(p.x, p.y, p.rotation);
-                    p.universeBody.transformVectorToUniverseBody(physics.secondUniverseBody, pos);
-                    p.x = pos.x;
-                    p.y = pos.y;
-                    p.rotation = pos.z;
+    private void removeSecondaryBody(Entity e) {
+        Physics physics = mPhysics.get(e);
+        if (physics.secondBody != null) {
+            Position p = mPosition.get(e);
+            UniverseBody newUniverseBody = p.universeBody.getTopUniverseBody(new Vector2(p.x, p.y), true);
+            Gdx.app.log("UniverseSystem", "Removing " + e + " from UniverseBody");
+            if (p.universeBody.equals(newUniverseBody)) {
+                //This means the player is back in its previous body
+                physics.secondUniverseBody.removeBody(physics.secondBody);
+                physics.secondUniverseBody = null;
+                physics.secondBody = null;
+            } else {
+                Vector3 pos = new Vector3(p.x, p.y, p.rotation);
+                p.universeBody.transformVectorToUniverseBody(newUniverseBody, pos);
+                p.x = pos.x;
+                p.y = pos.y;
+                p.rotation = pos.z;
 
-                    p.universeBody.world.destroyBody(physics.body);
-                    p.universeBody = physics.secondUniverseBody;
-                    physics.secondUniverseBody = null;
-                    physics.body = physics.secondBody;
-                    physics.secondBody = null;
-                }
+                p.universeBody.removeBody(physics.body);
+                p.universeBody = newUniverseBody;
+                physics.secondUniverseBody = null;
+                physics.body = physics.secondBody;
+                physics.secondBody = null;
             }
         }
     }
 
-    private void createSecondBody(Entity e, Position p, boolean x) {
-        Physics physics = mPhysics.get(e);
-        Vector3 transform = new Vector3(p.x, p.y, p.rotation);
+    private void transformSecondBody(Entity e, Physics physics) {
+        Position p = mPosition.get(e);
+        Vector3 pos = new Vector3(p.x, p.y, p.rotation);
+        p.universeBody.transformVectorToUniverseBody(physics.secondUniverseBody, pos);
 
-        if (x) {
-            if (transform.x > 0) {
-                transform.x++;
-            } else {
-                transform.x--;
-            }
-        } else {
-            if (transform.y > 0) {
-                transform.y++;
-            } else {
-                transform.y--;
-            }
-        }
-
-        UniverseBody ub = p.universeBody.getTopUniverseBody(transform, false);
-
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(transform.x, transform.y);
-        bodyDef.angle -= transform.z;
-
-        Vector2 vel = new Vector2(physics.body.getLinearVelocity());
-        vel.x += p.universeBody.vx;
-        vel.y += p.universeBody.vy;
-        bodyDef.linearVelocity.set(vel);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.linearDamping = physics.body.getLinearDamping();
-        bodyDef.fixedRotation = false;
-
-        physics.secondBody = ub.world.createBody(bodyDef);
-        for (Fixture fixture : physics.body.getFixtureList()) {
-            copyFixture(fixture, physics.secondBody);
-        }
-        physics.secondUniverseBody = ub;
+        Vector2 vel = physics.body.getLinearVelocity();
+        p.universeBody.transformVectorToUniverseBody(physics.secondUniverseBody, vel);
+        physics.secondBody.setLinearVelocity(vel);
+        physics.secondBody.setTransform(pos.x, pos.y, pos.z * MathUtils.degreesToRadians);
+        physics.secondBody.setUserData(e);
     }
 
     private void copyFixture(Fixture fixture, Body body2) {
@@ -160,17 +163,8 @@ public class UniverseSystem extends EntityProcessingSystem implements EntityEven
         body2.createFixture(fixtureDef);
     }
 
-    private void transferPosition(Position p, Physics physics) {
-        Vector3 pos = new Vector3(p.x, p.y, p.rotation);
-        p.universeBody.transformVectorToUniverseBody(physics.secondUniverseBody, pos);
-
-        Vector2 vel = physics.body.getLinearVelocity();
-        physics.secondBody.setLinearVelocity(vel);
-        physics.secondBody.setTransform(pos.x, pos.y, pos.z * MathUtils.degreesToRadians);
-    }
-
     /**
-     * Get an universebody by ID.
+     * Get a universebody by ID.
      *
      * @param id id of the universebody
      * @return return the universebody
@@ -187,11 +181,11 @@ public class UniverseSystem extends EntityProcessingSystem implements EntityEven
         universeBodiesByID.put("andromeda", galaxy);
         galaxies.add(galaxy);
 
-        UniverseBody starSystem = new UniverseBody(collisionManager, "starsystem101", null, 0, 0, 50000, 50000, 0, new Vector2(1, 1), 256);
+        UniverseBody starSystem = new UniverseBody(collisionManager, "starsystem101", galaxy, 0, 0, 50000, 50000, 0, new Vector2(1, 1), 256);
         universeBodiesByID.put("starsystem101", starSystem);
         galaxy.addChild(starSystem);
 
-        UniverseBody solarSystem = new UniverseBody(collisionManager, "ivesolaria", null, 0, 0, 10000, 10000, 0, new Vector2(1, 1), 32);
+        UniverseBody solarSystem = new UniverseBody(collisionManager, "ivesolaria", starSystem, 0, 0, 10000, 10000, 0, new Vector2(1, 1), 32);
         universeBodiesByID.put("ivesolaria", solarSystem);
         starSystem.addChild(solarSystem);
 
@@ -204,6 +198,13 @@ public class UniverseSystem extends EntityProcessingSystem implements EntityEven
 
     @Override
     public void onNotify(EntityEvent event) {
-
+        if (event instanceof UniverseBodyCollisionEvent) {
+            UniverseBodyCollisionEvent universeBodyCollisionEvent = (UniverseBodyCollisionEvent) event;
+            if (universeBodyCollisionEvent.start) {
+                createSecondBody(event.entity, universeBodyCollisionEvent.universeBody);
+            } else {
+                removeSecondaryBody(event.entity);
+            }
+        }
     }
 }

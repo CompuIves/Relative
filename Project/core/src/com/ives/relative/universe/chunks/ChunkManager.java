@@ -211,8 +211,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         int endY = centerChunk.y + radius;
 
         Vector2 v = new Vector2();
-        for (int x = startX; x < endX; x += 2) {
-            for (int y = startY; y < endY; y += 2) {
+        for (int x = startX; x < endX; x += 1) {
+            for (int y = startY; y < endY; y += 1) {
                 Chunk c = getTopChunk(centerChunk.universeBody, v.set(x, y));
                 if (c != null) {
                     if (c.edge && c.universeBody != centerChunk.universeBody) {
