@@ -69,6 +69,7 @@ public class ServerPlayerManager extends PlayerManager {
                 new MovementSpeed(5f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 0.9f, 1.8f),
+                new Transform(0.9f, 2f, null),
                 new Position(position.x, position.y, z, 0, universeBody),
                 new Velocity(0, 0, 0),
                 new State()).
@@ -76,7 +77,7 @@ public class ServerPlayerManager extends PlayerManager {
                 build();
 
         Body body = PlayerFactory.createBody(universeBody, e, position.x, position.y, 0, 0);
-        e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody)).add(new Transform(1, 1, null));
+        e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody));
 
         setPlayer(e, internalName);
 

@@ -26,6 +26,7 @@ public class Position extends CustomNetworkComponent {
     public float protation;
 
     public transient UniverseBody universeBody;
+
     public String universeBodyID;
     public transient Chunk chunk;
 

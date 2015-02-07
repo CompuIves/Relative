@@ -3,11 +3,11 @@ package com.ives.relative.systems.server;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.chunks.Chunk;
@@ -20,32 +20,37 @@ public class ServerDebugSystem extends VoidEntitySystem {
     protected UniverseSystem universeSystem;
     private ShapeRenderer shapeRenderer;
 
-    private Box2DDebugRenderer box2DDebugRenderer;
+    private ServerBox2DDebugRenderer serverBox2DDebugRenderer;
     private OrthographicCamera camera;
 
     public ServerDebugSystem(OrthographicCamera camera) {
         super();
-        box2DDebugRenderer = new Box2DDebugRenderer();
+        serverBox2DDebugRenderer = new ServerBox2DDebugRenderer();
         shapeRenderer = new ShapeRenderer();
         this.camera = camera;
     }
 
     @Override
-    protected void begin() {
-        super.begin();
-
+    protected void processSystem() {
+        UniverseBody ubody = universeSystem.getUniverseBody("andromeda");
+        drawUniverseBody(ubody, camera.combined);
     }
 
-    @Override
-    protected void processSystem() {
-        UniverseBody ubody = universeSystem.getUniverseBody("ivesolaria");
-        drawChunks(ubody, camera.combined, Color.LIGHT_GRAY);
-        box2DDebugRenderer.render(ubody.world, camera.combined);
-        UniverseBody earth = universeSystem.getUniverseBody("ives");
-        Vector3 translation = new Vector3(earth.getPosition().x, earth.getPosition().y, 0);
-        Matrix4 newCamera = camera.combined.cpy().translate(translation).rotate(new Vector3(0, 0, 1), earth.getRotation());
-        drawChunks(earth, newCamera, Color.PINK);
-        box2DDebugRenderer.render(earth.world, newCamera);
+    private void drawUniverseBody(UniverseBody universeBody, Matrix4 viewport) {
+        Color color = Colors.getColors().values().toArray().get(universeBody.depth);
+        drawChunks(universeBody, viewport, color);
+
+        serverBox2DDebugRenderer.UNIVERSE_BODY_COLOR.set((universeBody.depth / 5f), 0, (1 - (universeBody.depth / 5f)), 1);
+        serverBox2DDebugRenderer.render(universeBody, viewport);
+        drawChildren(universeBody, viewport);
+    }
+
+    private void drawChildren(UniverseBody universeBody, Matrix4 initialViewport) {
+        for (UniverseBody child : universeBody.getChildren()) {
+            Vector3 translation = new Vector3(child.getPosition().x, child.getPosition().y, 0);
+            Matrix4 newViewport = initialViewport.cpy().translate(translation).rotate(new Vector3(0, 0, 1), child.getRotation());
+            drawUniverseBody(child, newViewport);
+        }
     }
 
     private synchronized void drawChunks(UniverseBody universeBody, Matrix4 projection, Color color) {
@@ -57,11 +62,5 @@ public class ServerDebugSystem extends VoidEntitySystem {
                 shapeRenderer.rect(chunk.x, chunk.y, chunk.width, chunk.height);
         }
         shapeRenderer.end();
-    }
-
-    @Override
-    protected void end() {
-        super.end();
-
     }
 }

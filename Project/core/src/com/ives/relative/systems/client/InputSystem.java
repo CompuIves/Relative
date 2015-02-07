@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.commands.*;
@@ -26,13 +26,13 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     protected CommandSystem commandSystem;
     protected ClientNetworkSystem clientNetworkSystem;
 
-    Camera camera;
+    OrthographicCamera camera;
 
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
      */
-    public InputSystem(Camera camera) {
+    public InputSystem(OrthographicCamera camera) {
         super(Aspect.getAspectForAll(InputC.class));
         this.camera = camera;
     }
@@ -111,6 +111,9 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
     @Override
     public boolean scrolled(int amount) {
+        camera.viewportHeight = camera.viewportHeight * (1 + amount / 10f);
+        camera.viewportWidth = camera.viewportWidth * (1 + amount / 10f);
+        camera.update();
         return false;
     }
 

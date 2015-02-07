@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
@@ -81,7 +80,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
                 visual.width / 2, visual.height / 2,
                 visual.width, visual.height,
                 1.02f, 1.02f,
-                position.rotation * MathUtils.radiansToDegrees);
+                position.rotation);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
             position.universeBody.transformVectorToUniverseBody(playerPos.universeBody, transform);
             position.x = transform.x;
             position.y = transform.y;
-            position.rotation = position.z * MathUtils.degreesToRadians;
+            position.rotation = position.z;
         }
     }
 

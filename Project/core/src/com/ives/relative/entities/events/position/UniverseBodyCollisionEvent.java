@@ -5,10 +5,11 @@ import com.ives.relative.universe.UniverseBody;
 
 /**
  * Created by Ives on 5/2/2015.
+ *
+ * When an Entity hits the border of a UniverseBody
  */
 public class UniverseBodyCollisionEvent extends EntityEvent {
     public UniverseBody universeBody;
-    public boolean start;
 
     @Override
     public void reset() {

@@ -14,6 +14,7 @@ import com.ives.relative.managers.event.StateManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.CommandSystem;
 import com.ives.relative.systems.MovementSystem;
+import com.ives.relative.systems.UniverseTransformSystem;
 import com.ives.relative.systems.planet.GravitySystem;
 import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.planets.PlanetGenerator;
@@ -49,6 +50,7 @@ public class GameManager extends Manager {
         world.setSystem(new GravitySystem(), true);
         world.setSystem(new MovementSystem());
         world.setSystem(new CommandSystem());
+        world.setSystem(new UniverseTransformSystem());
     }
 
     /**

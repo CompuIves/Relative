@@ -14,6 +14,8 @@ import com.ives.relative.universe.chunks.builders.EmptyChunk;
 import com.ives.relative.utils.RelativeMath;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Ives on 18/1/2015.
@@ -41,9 +43,8 @@ public class UniverseBody {
     public final World world;
     protected final Vector2 scale;
     protected final UniverseBody parent;
-    protected final Array<UniverseBody> children;
+    protected final Map<UniverseBody, Body> children;
     private final Array<Body> bodiesToRemove;
-    private final Array<Body> childrenBodies;
     public String name;
     /**
      * Determines how chunks should be generated in this UniverseBody, for example on planets there exists a
@@ -65,12 +66,6 @@ public class UniverseBody {
         this.id = id;
         this.parent = parent;
 
-        if (parent != null) {
-            this.depth = parent.depth + 1;
-        } else {
-            this.depth = 0;
-        }
-
         this.x = x;
         this.y = y;
         this.rotation = rotation;
@@ -78,8 +73,7 @@ public class UniverseBody {
         this.width = width;
         this.height = height;
 
-        this.children = new Array<UniverseBody>();
-        childrenBodies = new Array<Body>();
+        this.children = new HashMap<UniverseBody, Body>(16);
 
         mTransform = new Matrix3();
         mInverseTransform = new Matrix3();
@@ -96,6 +90,13 @@ public class UniverseBody {
 
         this.chunkBuilder = new EmptyChunk(this, null, null);
 
+        if (parent != null) {
+            this.depth = parent.depth + 1;
+            parent.addChild(this);
+        } else {
+            this.depth = 0;
+        }
+
         bodiesToRemove = new Array<Body>(10);
     }
 
@@ -111,38 +112,15 @@ public class UniverseBody {
             world.destroyBody(body);
         }
         bodiesToRemove.clear();
+
         world.step(UniverseSystem.ITERATIONS, 6, 6);
-        for (UniverseBody universeBody : children) {
+        for (UniverseBody universeBody : children.keySet()) {
             universeBody.update();
         }
-
     }
 
     public UniverseBody getParent() {
         return parent;
-    }
-
-    /**
-     * Creates a body around the universebody for collision detection
-     */
-    private void createEdgeLines() {
-        BodyDef bodyDefEdge = new BodyDef();
-        Body edge = world.createBody(bodyDefEdge);
-        edge.setUserData(parent); //Parent is bound to this body, since when you enter that place you also enter the parent
-
-        FixtureDef fixtureDef = new FixtureDef();
-        ChainShape shapeEdge = new ChainShape();
-
-        float[] vertexes = new float[]{-width / 2, height / 2, //Top left
-                width / 2, height / 2, //Top right
-                width / 2, -height / 2, //Bottom right
-                -width / 2, -height / 2}; //Bottom left
-        shapeEdge.createLoop(vertexes);
-
-        fixtureDef.shape = shapeEdge;
-        fixtureDef.isSensor = true;
-        edge.createFixture(fixtureDef).setUserData("edge");
-
     }
 
     /**
@@ -152,7 +130,7 @@ public class UniverseBody {
      */
     public UniverseBody getChild(Vector2 pos) {
         //Check if another body is in there
-        for(Body body : childrenBodies) {
+        for (Body body : children.values()) {
             if(body.getFixtureList().first().testPoint(pos))
                 return (UniverseBody) body.getUserData();
         }
@@ -160,7 +138,7 @@ public class UniverseBody {
     }
 
     public UniverseBody getChild(String id) {
-        for (UniverseBody universeBody : children) {
+        for (UniverseBody universeBody : children.keySet()) {
             if (universeBody.id.equals(id))
                 return universeBody;
         }
@@ -244,18 +222,17 @@ public class UniverseBody {
         Vector2 max = new Vector2(universeBody.x + universeBody.width / 2, universeBody.y + universeBody.height / 2);
 
         if (isInBody(min) && isInBody(max)) {
-            children.add(universeBody);
-            childrenBodies.add(createChildBody(universeBody));
+            children.put(universeBody, createChildBody(universeBody));
             return universeBody;
         } else {
-            Gdx.app.error("UniverseCreator", "Couldn't add " + universeBody.toString() + " + to " + this.toString());
+            Gdx.app.error("UniverseCreator", "Couldn't add " + universeBody.toString() + " + to " + this.toString() + ", body is out of bounds.");
             return null;
         }
     }
 
     private Body createChildBody(UniverseBody universeBody) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
+
         bodyDef.allowSleep = true;
         bodyDef.position.set(universeBody.x, universeBody.y);
         bodyDef.angle = universeBody.rotation * MathUtils.degreesToRadians;
@@ -271,8 +248,33 @@ public class UniverseBody {
         body.setUserData(universeBody);
         body.createFixture(fixtureDef);
 
-        universeBody.body = body;
+        shape.dispose();
         return body;
+    }
+
+    /**
+     * Creates a body around the universebody for collision detection
+     */
+    private void createEdgeLines() {
+        BodyDef bodyDefEdge = new BodyDef();
+        Body edge = world.createBody(bodyDefEdge);
+        edge.setUserData(parent); //Parent is bound to this body, since when you enter that place you also enter the parent
+
+        FixtureDef fixtureDef = new FixtureDef();
+        ChainShape shapeEdge = new ChainShape();
+
+        float[] vertexes = new float[]{-width / 2, height / 2, //Top left
+                width / 2, height / 2, //Top right
+                width / 2, -height / 2, //Bottom right
+                -width / 2, -height / 2}; //Bottom left
+        shapeEdge.createLoop(vertexes);
+
+        fixtureDef.shape = shapeEdge;
+        fixtureDef.isSensor = true;
+        edge.createFixture(fixtureDef).setUserData("edge");
+
+        this.body = edge;
+        shapeEdge.dispose();
     }
 
     /**
@@ -300,19 +302,23 @@ public class UniverseBody {
         transformVectorToUniverseBody(universeBody, new Vector3(vec, 0));
     }
 
+    /**
+     * Transforms a vector to the given UniverseBody. <br></br>
+     * <b>THIS CAN ONLY BE USED IF THE CHILD IS DIRECTLY ABOVE THE PARENT, OTHERWISE THERE ARE TOO MANY PERFORMANCE
+     * PROBLEMS</b>
+     *
+     * @param universeBody
+     * @param vec
+     */
     public void transformVectorToUniverseBody(UniverseBody universeBody, Vector3 vec) {
         if (this.depth > universeBody.depth) {
             transformVector(vec);
             UniverseBody uBod = parent;
             uBod.transformVectorToUniverseBody(universeBody, vec);
         } else if (this.depth < universeBody.depth) {
-            inverseTransformVector(vec);
-            UniverseBody uBod = getChild(new Vector2(vec.x, vec.y));
-            //TODO find nicer way to fix this
-            if (uBod == null) {
-                uBod = getChild(universeBody.id);
-            }
-            uBod.transformVectorToUniverseBody(universeBody, vec);
+            UniverseBody uBod = getChild(universeBody.id);
+            if (uBod != null)
+                uBod.inverseTransformVector(vec);
         }
     }
 
@@ -328,12 +334,12 @@ public class UniverseBody {
 
     /**
      * Transforms a vector from the local coordinate system to the coordinate system of the parent
-     *
      * @param pos
      */
     public void transformVector(Vector2 pos) {
         pos.mul(mTransform);
     }
+
 
     /**
      * Transforms a vector from the coordinate system of a parent to the local coordinate system
@@ -354,6 +360,7 @@ public class UniverseBody {
         pos.mul(mInverseTransform);
     }
 
+
     /**
      * Sets the transformation matrices according to the positions it has.
      */
@@ -367,8 +374,11 @@ public class UniverseBody {
         mInverseTransform.idt().mul(mTransform).inv();
     }
 
-    protected void updateBody() {
-        body.setTransform(x, y, rotation * MathUtils.degreesToRadians);
+    protected void updateChildBody(UniverseBody universeBody) {
+        Body body = children.get(universeBody);
+        if (body != null) {
+            body.setTransform(universeBody.x, universeBody.y, universeBody.rotation * MathUtils.degreesToRadians);
+        }
     }
 
     public float getRotation() {
@@ -379,8 +389,12 @@ public class UniverseBody {
         return new Vector2(x, y);
     }
 
+    public Set<UniverseBody> getChildren() {
+        return children.keySet();
+    }
+
     public boolean hasChildren() {
-        return children.size != 0;
+        return children.size() != 0;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.ives.relative.universe;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.managers.CollisionManager;
 
@@ -22,9 +23,9 @@ public class Planet extends UniverseBody {
     @Override
     protected void update() {
         super.update();
-        //this.rotation = 45;
+        this.rotation += 10 * Gdx.graphics.getDeltaTime();
         setTransform();
-        updateBody();
+        parent.updateChildBody(this);
     }
 
     /**
