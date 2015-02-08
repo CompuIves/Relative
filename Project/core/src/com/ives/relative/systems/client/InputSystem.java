@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.commands.*;
@@ -26,13 +26,13 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     protected CommandSystem commandSystem;
     protected ClientNetworkSystem clientNetworkSystem;
 
-    OrthographicCamera camera;
+    PerspectiveCamera camera;
 
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
      */
-    public InputSystem(OrthographicCamera camera) {
+    public InputSystem(PerspectiveCamera camera) {
         super(Aspect.getAspectForAll(InputC.class));
         this.camera = camera;
     }
@@ -77,6 +77,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
             ClickCommand c = getClickCommand(e);
@@ -84,11 +85,13 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             commandSystem.commandDown(c, e);
             clientNetworkSystem.sendClickCommand(c);
         }
+
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
             ClickCommand c = getClickCommand(e);
@@ -96,6 +99,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
             commandSystem.commandUp(commandManager.getID(c), e);
             clientNetworkSystem.sendUnClickCommand(c);
         }
+
         return true;
     }
 
@@ -111,8 +115,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
     @Override
     public boolean scrolled(int amount) {
-        camera.viewportHeight = camera.viewportHeight * (1 + amount / 10f);
-        camera.viewportWidth = camera.viewportWidth * (1 + amount / 10f);
+        camera.position.add(0, 0, amount);
         camera.update();
         return false;
     }

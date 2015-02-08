@@ -4,8 +4,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ives.relative.core.client.Player;
 import com.ives.relative.entities.components.body.Position;
@@ -18,10 +17,10 @@ import com.ives.relative.managers.NetworkManager;
 public class ClientDebugSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
     protected ComponentMapper<Position> mPosition;
-    Camera camera;
+    PerspectiveCamera camera;
     Box2DDebugRenderer box2DDebugRenderer;
 
-    public ClientDebugSystem(OrthographicCamera camera) {
+    public ClientDebugSystem(PerspectiveCamera camera) {
         this.camera = camera;
         box2DDebugRenderer = new Box2DDebugRenderer();
     }

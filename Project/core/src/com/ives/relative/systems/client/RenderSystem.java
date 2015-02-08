@@ -7,10 +7,12 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.client.Visual;
@@ -20,6 +22,9 @@ import com.ives.relative.entities.events.client.PlayerConnectedEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
+import com.ives.relative.universe.planets.TileManager;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ives on 3/12/2014.
@@ -33,19 +38,30 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     protected ChunkManager chunkManager;
     protected EventManager eventManager;
     protected TagManager tagManager;
+    protected TileManager tileManager;
 
-    private SpriteBatch batch;
-    private OrthographicCamera camera;
+    private ModelBuilder modelBuilder;
+    private Environment environment;
+    private ArrayList<ModelInstance> instances;
+
+    private ModelBatch batch;
+    private PerspectiveCamera camera;
 
     private Entity player;
     private Position playerPos;
 
-    public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
+    private Model block;
+
+    public RenderSystem(ModelBatch batch, PerspectiveCamera camera) {
         //noinspection unchecked
         super(Aspect.getAspectForAll(Visual.class, Position.class));
         this.batch = batch;
         this.camera = camera;
-
+        instances = new ArrayList<ModelInstance>();
+        modelBuilder = new ModelBuilder();
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environment.add(new DirectionalLight().set(1f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         //Wait until player connected and loaded
         setEnabled(false);
     }
@@ -53,39 +69,58 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     @Override
     protected void initialize() {
         eventManager.addObserver(this);
+        camera.position.z = 10;
+        camera.near = 1f;
+        camera.far = 300;
     }
 
     @Override
     protected void begin() {
         super.begin();
+
         //Gets the player info
         getPlayer();
         //Transforms every position outside player uBody (relative!)
         transformPositions();
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
         positionCamera();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        batch.begin(camera);
         renderBackground();
     }
 
     @Override
     protected void process(Entity entity) {
+
         Position position = mPosition.get(entity);
         Visual visual = visualMapper.get(entity);
+        if (visual.height == 1.8f)
+            block = modelBuilder.createBox(visual.width, visual.height, 0.5f, new Material(ColorAttribute.createAmbient(Color.RED), TextureAttribute.createDiffuse(visual.texture)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
+        else
+            block = modelBuilder.createBox(visual.width, visual.height, 1f, new Material(ColorAttribute.createAmbient(Color.RED), TextureAttribute.createDiffuse(visual.texture)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
+
+
+        ModelInstance instance = new ModelInstance(block, position.x, position.y, position.z);
+        instances.add(instance);
+
+        /*
         batch.draw(visual.texture,
                 position.x - visual.width / 2, position.y - visual.height / 2,
                 visual.width / 2, visual.height / 2,
                 visual.width, visual.height,
                 1.02f, 1.02f,
                 position.rotation);
+                */
     }
 
     @Override
     protected void end() {
         super.end();
+        batch.render(instances, environment);
+        instances.clear();
         batch.end();
     }
 
@@ -99,13 +134,12 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
         Position playerPosition = mPosition.get(player);
         camera.position.x = playerPosition.x;
-        camera.position.y = playerPosition.y + 4;
+        camera.position.y = playerPosition.y + 2;
 
         //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
         //float camrotation = -getCurrentCameraRotation() + 180;
         //camera.rotate(camrotation - rotation + 180);
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
     }
 
     private void renderBackground() {
@@ -122,7 +156,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
                     chunk.universeBody.transformVectorToUniverseBody(playerPos.universeBody, pos);
                 }
 
-                batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
+                //batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
             }
         }
     }
