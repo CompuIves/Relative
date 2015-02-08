@@ -3,7 +3,6 @@ package com.ives.relative.universe.chunks.chunkloaders;
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.utils.ComponentUtils;
@@ -51,18 +50,10 @@ public abstract class ChunkLoader {
 
     public void unloadChunk(Chunk chunk, UuidEntityManager uuidEntityManager) {
         Gdx.app.debug("ChunkLoader", "Unloading chunk: " + chunk.toString());
-        for (UUID tile : chunk.tiles.values()) {
-            Entity eTile = uuidEntityManager.getEntity(tile);
-            ComponentUtils.removeEntity(eTile);
-        }
-
-        for (Vector2 changedTile : chunk.changedTiles.keySet()) {
-            UUID tile = chunk.getTile((int) changedTile.x, (int) changedTile.y);
+        for (UUID tile : chunk.getTiles()) {
             if (tile != null) {
                 Entity eTile = uuidEntityManager.getEntity(tile);
-                if (eTile != null) {
-                    ComponentUtils.removeEntity(eTile);
-                }
+                ComponentUtils.removeEntity(eTile);
             }
         }
 

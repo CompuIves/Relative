@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
+import com.ives.relative.utils.RelativeMath;
 
 /**
  * Created by Ives on 1/1/2015.
@@ -29,7 +30,7 @@ public class BreakTileCommand extends ClickCommand {
     void executeDown(Entity e) {
         Chunk chunk = e.getWorld().getMapper(Position.class).get(e).chunk;
         if (worldPosClicked != null)
-            e.getWorld().getManager(TileManager.class).removeTile(chunk, worldPosClicked);
+            e.getWorld().getManager(TileManager.class).removeTile(chunk, RelativeMath.fastfloor(worldPosClicked.x), RelativeMath.fastfloor(worldPosClicked.y));
     }
 
     @Override

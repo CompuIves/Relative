@@ -79,7 +79,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     ChunkPacket packet = (ChunkPacket) p;
                     UniverseBody ub = universeSystem.getUniverseBody(((ChunkPacket) p).universeBody);
                     Chunk chunk = chunkManager.getChunk(ub, new Vector2(packet.x, packet.y));
-                    chunk.changedTiles.putAll(packet.changedTiles);
+
+                    chunk.setChangedTiles(packet.changedTiles);
                     chunkManager.loadChunk(chunk);
 
                     for (CreateEntityPacket createEntityPacket : packet.entities) {

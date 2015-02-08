@@ -1,10 +1,8 @@
 package com.ives.relative.network.packets.handshake.planet;
 
-import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ import java.util.List;
  */
 public class ChunkPacket extends BasePacket {
     public List<CreateEntityPacket> entities;
-    public HashMap<Vector2, Integer> changedTiles;
+    public int[] changedTiles;
     public int x, y;
 
     public String universeBody;
@@ -21,7 +19,7 @@ public class ChunkPacket extends BasePacket {
     public ChunkPacket() {
     }
 
-    public ChunkPacket(int x, int y, String universeBody, List<CreateEntityPacket> entities, HashMap<Vector2, Integer> changedTiles) {
+    public ChunkPacket(int x, int y, String universeBody, List<CreateEntityPacket> entities, int[] changedTiles) {
         this.x = x;
         this.y = y;
         this.entities = entities;

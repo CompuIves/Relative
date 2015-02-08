@@ -6,7 +6,6 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.components.network.CustomNetworkComponent;
@@ -91,7 +90,7 @@ public class NetworkSendSystem extends VoidEntitySystem {
                 entities.add(generateFullComponentPacket(e));
         }
 
-        return new ChunkPacket(chunk.x, chunk.y, chunk.universeBody.id, entities, (HashMap<Vector2, Integer>) chunk.changedTiles);
+        return new ChunkPacket(chunk.x, chunk.y, chunk.universeBody.id, entities, chunk.getChangedTiles());
     }
 
     public void sendEntityToAll(UUID entity) {

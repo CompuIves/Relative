@@ -14,14 +14,14 @@ import com.ives.relative.universe.planets.TileManager;
  * Created by Ives on 3/1/2015.
  */
 public class RemoveTilePacket extends ResponsePacket {
-    float x, y;
+    int x, y;
     String universeBody;
 
     public RemoveTilePacket() {
         super();
     }
 
-    public RemoveTilePacket(float x, float y, String universeBody) {
+    public RemoveTilePacket(int x, int y, String universeBody) {
         this.x = x;
         this.y = y;
         this.universeBody = universeBody;
@@ -34,7 +34,7 @@ public class RemoveTilePacket extends ResponsePacket {
             public void run() {
                 UniverseBody u = game.world.getSystem(UniverseSystem.class).getUniverseBody(universeBody);
                 Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, new Vector2(x, y));
-                game.world.getManager(TileManager.class).removeTile(chunk, new Vector2(x, y));
+                game.world.getManager(TileManager.class).removeTile(chunk, x, y);
             }
         });
     }

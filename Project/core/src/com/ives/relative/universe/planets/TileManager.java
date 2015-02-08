@@ -99,10 +99,11 @@ public class TileManager extends Manager {
         solidTiles.put(id, tile);
     }
 
-    public void removeTile(Chunk chunk, Vector2 tilePos) {
-        UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
-        ComponentUtils.removeEntity(uuidEntityManager.getEntity(tile));
-        chunk.removeTile(tilePos);
+    public void removeTile(Chunk chunk, int x, int y) {
+        UUID tile = chunk.getTile(x, y);
+        Entity eTile = uuidEntityManager.getEntity(tile);
+        ComponentUtils.removeEntity(eTile);
+        chunk.removeTile(x, y);
     }
 
     public Entity getTile(Chunk chunk, Vector2 tilePos) {

@@ -86,6 +86,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClearColor(0.5f, 0.9f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        block = modelBuilder.createBox(1, 1, 1f, new Material(ColorAttribute.createAmbient(Color.RED), TextureAttribute.createDiffuse(tileManager.solidTiles.get("dirt").textureRegion)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
 
         positionCamera();
         batch.begin(camera);
@@ -97,11 +98,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
         Position position = mPosition.get(entity);
         Visual visual = visualMapper.get(entity);
-        if (visual.height == 1.8f)
-            block = modelBuilder.createBox(visual.width, visual.height, 0.5f, new Material(ColorAttribute.createAmbient(Color.RED), TextureAttribute.createDiffuse(visual.texture)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
-        else
-            block = modelBuilder.createBox(visual.width, visual.height, 1f, new Material(ColorAttribute.createAmbient(Color.RED), TextureAttribute.createDiffuse(visual.texture)), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
-
 
         ModelInstance instance = new ModelInstance(block, position.x, position.y, position.z);
         instances.add(instance);

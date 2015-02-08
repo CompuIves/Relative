@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.utils.RelativeMath;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,14 +21,13 @@ public class Chunk implements Comparable<Chunk> {
     public final UniverseBody universeBody;
     public final int rotation;
     public final Array<UUID> entities;
-    public final Map<Vector2, UUID> tiles;
-    public final Map<Vector2, Integer> changedTiles;
     public final Vector2 gravity;
     public final boolean edge;
+    private final UUID[] tiles;
     public boolean loaded = false;
     public Pixmap bgColor;
     public Texture texture;
-
+    private int[] changedTiles;
     private Array<UUID> loadedByPlayers;
 
     /**
@@ -50,14 +46,14 @@ public class Chunk implements Comparable<Chunk> {
         this.gravity = new Vector2(gravityX, gravityY);
         this.edge = edge;
 
-        entities = new Array<UUID>();
-        changedTiles = new HashMap<Vector2, Integer>();
-        tiles = new HashMap<Vector2, UUID>();
-
         loadedByPlayers = new Array<UUID>();
 
         this.width = width;
         this.height = height;
+
+        entities = new Array<UUID>();
+        changedTiles = new int[width * height];
+        tiles = new UUID[width * height];
     }
 
     public void addEntity(UUID e) {
@@ -71,17 +67,32 @@ public class Chunk implements Comparable<Chunk> {
     }
 
     public UUID getTile(int x, int y) {
-        return tiles.get(new Vector2(x, y));
+        x -= this.x;
+        y -= this.y;
+
+        if (!isInChunk(x, y)) {
+            return null;
+        }
+
+        return tiles[x + y * height];
     }
 
     public void addTile(int x, int y, UUID tile) {
+        x -= this.x;
+        y -= this.y;
+
         if (isInChunk(x, y)) {
-            tiles.put(new Vector2(x, y), tile);
+            System.out.println(x + " " + y);
+            tiles[x + y * height] = tile;
         }
     }
 
-    public void removeTile(Vector2 tile) {
-        tiles.remove(tile);
+    public void removeTile(int x, int y) {
+        x -= this.x;
+        y -= this.y;
+        if (isInChunk(x, y)) {
+            tiles[x + y * height] = null;
+        }
     }
 
     /**
@@ -93,8 +104,8 @@ public class Chunk implements Comparable<Chunk> {
      * @param newTile
      */
     public void replaceTile(int x, int y, int newTile) {
-        if (isInChunk(x, y) && tiles.containsKey(new Vector2(x, y))) {
-            changedTiles.put(new Vector2(x, y), newTile);
+        if (isInChunk(x, y) && tiles[x + y * height] != null) {
+            changedTiles[x + y * height] = newTile;
         }
     }
 
@@ -125,14 +136,24 @@ public class Chunk implements Comparable<Chunk> {
     }
 
     private boolean isInChunk(int x, int y) {
-        return RelativeMath.isInBounds(x, this.x, this.x + width)
-                && RelativeMath.isInBounds(y, this.y, this.y + height);
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    public UUID[] getTiles() {
+        return tiles;
+    }
+
+    public int[] getChangedTiles() {
+        return changedTiles;
+    }
+
+    public void setChangedTiles(int[] changedTiles) {
+        this.changedTiles = changedTiles;
     }
 
     public void dispose() {
         loadedByPlayers.clear();
         entities.clear();
-        tiles.clear();
         loaded = false;
     }
 

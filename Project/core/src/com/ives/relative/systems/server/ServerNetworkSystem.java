@@ -31,6 +31,7 @@ import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
 import com.ives.relative.network.packets.updates.RemoveTilePacket;
 import com.ives.relative.systems.CommandSystem;
+import com.ives.relative.utils.RelativeMath;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -134,7 +135,9 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
                 ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
                 if (c.canExecute(e)) {
                     //TODO change the hardcoded earth
-                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y, p.universeBody.id));
+                    network.sendObjectUDPToAll(new RemoveTilePacket(RelativeMath.fastfloor(clickPacket.x),
+                            RelativeMath.fastfloor(clickPacket.y),
+                            p.universeBody.id));
                 }
             } else {
                 c = commandManager.getCommand(packet.command);
