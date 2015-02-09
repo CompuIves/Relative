@@ -16,7 +16,7 @@ import java.util.UUID;
  * I can just search in the nearby chunks for entities.
  */
 public class Chunk implements Comparable<Chunk> {
-    public final int x, y;
+    public final int x, y, z;
     public final int width, height;
     public final UniverseBody universeBody;
     public final int rotation;
@@ -38,7 +38,7 @@ public class Chunk implements Comparable<Chunk> {
      * @param gravityX
      * @param gravityY
      */
-    public Chunk(UniverseBody universeBody, int x, int y, int width, int height, int rotation, boolean edge, float gravityX, float gravityY) {
+    public Chunk(UniverseBody universeBody, int x, int y, int z, int width, int height, int rotation, boolean edge, float gravityX, float gravityY) {
         this.x = x;
         this.y = y;
         this.universeBody = universeBody;

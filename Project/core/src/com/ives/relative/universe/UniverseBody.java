@@ -1,12 +1,15 @@
 package com.ives.relative.universe;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.ives.relative.managers.CollisionManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.builders.ChunkBuilder;
@@ -25,7 +28,7 @@ import java.util.Set;
  * opens up the possibility to rotate and move the UniverseBody independently from its parent. UniverseBodies have children and parents (like
  * a solar system has planets).
  */
-public class UniverseBody {
+public class UniverseBody implements RenderableProvider {
     public final int depth;
     public final String id;
     /**
@@ -408,7 +411,7 @@ public class UniverseBody {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || ((Object) this).getClass() != o.getClass()) return false;
 
         UniverseBody that = (UniverseBody) o;
 
@@ -423,5 +426,10 @@ public class UniverseBody {
     @Override
     public String toString() {
         return "UniverseBody with id: " + id + " at x: " + x + ", y: " + y + ", with width: " + width + ", height: " + height;
+    }
+
+    @Override
+    public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
+
     }
 }

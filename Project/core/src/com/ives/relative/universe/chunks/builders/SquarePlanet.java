@@ -25,7 +25,7 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        Chunk chunk = new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
+        Chunk chunk = new Chunk(universeBody, x, y, 0, width, height, 0, isEdge, 0, -10);
         Pixmap bg = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
         bg.setColor(new Color(0.5f, 0.9f, 1f, 1f));
         bg.fill();

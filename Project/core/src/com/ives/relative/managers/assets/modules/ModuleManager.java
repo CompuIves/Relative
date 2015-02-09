@@ -202,6 +202,12 @@ public class ModuleManager extends Manager {
         return null;
     }
 
+    /**
+     * Adds a module to the index. The information is loaded from the file in the root of the module folder called:
+     * 'modname'.json.
+     *
+     * @param fileHandle Folder of the module
+     */
     public void addModule(FileHandle fileHandle) {
         String name = fileHandle.name();
         JsonReader reader = new JsonReader();

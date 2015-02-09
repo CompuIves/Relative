@@ -53,7 +53,7 @@ public class CommandSystem extends VoidEntitySystem {
     }
 
     /**
-     * Add the command to the system, until te up command is activated this command will be executed every frame.
+     * Add the command to the system, until the up command is activated this command will be executed every frame.
      *
      * @param command
      * @param e

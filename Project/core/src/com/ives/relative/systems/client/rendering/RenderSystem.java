@@ -1,4 +1,4 @@
-package com.ives.relative.systems.client;
+package com.ives.relative.systems.client.rendering;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
