@@ -1,5 +1,6 @@
 package com.ives.relative.universe.planets;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -9,7 +10,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
@@ -25,6 +25,7 @@ import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -35,28 +36,14 @@ import java.util.UUID;
 public class TileManager extends Manager {
     public HashMap<String, SolidTile> solidTiles;
 
+    protected ComponentMapper<TileC> mTileC;
+
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
     protected UuidEntityManager uuidEntityManager;
 
     public TileManager() {
         solidTiles = new HashMap<String, SolidTile>();
-    }
-
-    public static PolygonShape createCubeShape(float width, float height) {
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(width / 2f, height / 2f);
-        return polygonShape;
-    }
-
-    public static PolygonShape createTriangleShape(float width, float height) {
-        PolygonShape polygonShape = new PolygonShape();
-        Vector2[] vertices = new Vector2[3];
-        vertices[0] = new Vector2(-width / 2, -height / 2);
-        vertices[1] = new Vector2(width / 2, -height / 2);
-        vertices[2] = new Vector2(-width / 2, height / 2);
-        polygonShape.set(vertices);
-        return polygonShape;
     }
 
     /**
@@ -76,14 +63,11 @@ public class TileManager extends Manager {
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
                     new Position(x, y, z, 0, ub)).group("tile").build();
 
-            Body body = TileFactory.createBody(ub, e, solidTile, x, y, gravity);
-            e.edit().add(new Physics(body, gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody));
-
             if (gravity) {
-                e.edit().add(new Velocity());
+                Body body = TileFactory.createBody(ub, e, solidTile, 15, x, y, true);
+                e.edit().add(new Velocity()).add(new Physics(body, BodyDef.BodyType.DynamicBody));
                 int networkID = networkManager.addEntity(e);
                 e.edit().add(new NetworkC(networkID, 1, NetworkManager.Type.TILE));
-
                 chunkManager.addEntityToChunk(e);
             }
 
@@ -112,5 +96,33 @@ public class TileManager extends Manager {
         }
 
         return null;
+    }
+
+    public void generateTileBodies(Chunk chunk) {
+        for (Map.Entry t : chunk.tiles.entrySet()) {
+            Vector2 pos = (Vector2) t.getKey();
+            Entity tile = uuidEntityManager.getEntity((UUID) t.getValue());
+            int contour = 0;
+            if (chunk.isTile((int) pos.x, (int) pos.y + 1)) {
+                contour += 1;
+            }
+            if (chunk.isTile((int) pos.x + 1, (int) pos.y)) {
+                contour += 2;
+            }
+            if (chunk.isTile((int) pos.x, (int) pos.y - 1)) {
+                contour += 4;
+            }
+            if (chunk.isTile((int) pos.x - 1, (int) pos.y)) {
+                contour += 8;
+            }
+
+            if (contour == 0)
+                contour = 15;
+
+            TileC tileC = mTileC.get(tile);
+            Body body = TileFactory.createBody(chunk.universeBody, tile, tileC.tile, contour, pos.x, pos.y, false);
+
+            tile.edit().add(new Physics(body, BodyDef.BodyType.StaticBody));
+        }
     }
 }

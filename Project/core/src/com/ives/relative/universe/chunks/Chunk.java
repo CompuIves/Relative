@@ -74,6 +74,10 @@ public class Chunk implements Comparable<Chunk> {
         return tiles.get(new Vector2(x, y));
     }
 
+    public boolean isTile(int x, int y) {
+        return isInChunk(x, y) && getTile(x, y) != null;
+    }
+
     public void addTile(int x, int y, UUID tile) {
         if (isInChunk(x, y)) {
             tiles.put(new Vector2(x, y), tile);

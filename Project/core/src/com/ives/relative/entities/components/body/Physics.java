@@ -57,7 +57,7 @@ public class Physics extends CustomNetworkComponent {
         switch (type) {
             case TILE:
                 TileC tileC = world.getMapper(TileC.class).get(e);
-                body = TileFactory.createBody(position.universeBody, e, tileC.tile, position.x, position.y, true);
+                body = TileFactory.createBody(position.universeBody, e, tileC.tile, 15, position.x, position.y, true);
                 break;
             case PLAYER:
                 Velocity velocity = world.getMapper(Velocity.class).get(e);

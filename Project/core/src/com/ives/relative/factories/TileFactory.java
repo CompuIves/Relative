@@ -4,7 +4,7 @@ import com.artemis.Entity;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ives.relative.managers.assets.tiles.SolidTile;
 import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.planets.TileManager;
+import com.ives.relative.utils.ShapeUtils;
 
 /**
  * Created by Ives on 13/12/2014.
@@ -21,13 +21,14 @@ public class TileFactory {
      * @param gravity      if this tile should be affected by gravity (when the tile itself can also be affected by gravity)
      * @return
      */
-    public static Body createBody(UniverseBody universeBody, Entity e, SolidTile tile, float x, float y, boolean gravity) {
+    public static Body createBody(UniverseBody universeBody, Entity e, SolidTile tile, int contour, float x, float y, boolean gravity) {
         World physicsWorld = universeBody.world;
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = gravity ? BodyDef.BodyType.DynamicBody : BodyDef.BodyType.StaticBody;
         bodyDef.position.set(x, y);
         Body body = physicsWorld.createBody(bodyDef);
-        PolygonShape shape = TileManager.createCubeShape(tile.width, tile.height);
+        PolygonShape shape = new PolygonShape();
+        shape.set(ShapeUtils.getContourVertices(contour, tile.width, tile.height));
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.restitution = 0.0f;

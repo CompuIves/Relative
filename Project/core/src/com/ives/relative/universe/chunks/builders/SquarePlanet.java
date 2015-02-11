@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
@@ -43,15 +44,20 @@ public class SquarePlanet extends ChunkBuilder {
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
-                    Entity tile;
+                    Entity tile = null;
                     if(Math.abs(y) + 1 > universeBody.height / 4) {
+                        if (MathUtils.random() > 0.6f)
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "grass", false);
                     } else {
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
                     }
+                    if (tile != null)
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }
             }
         }
+
+
+        tileManager.generateTileBodies(chunk);
     }
 }
