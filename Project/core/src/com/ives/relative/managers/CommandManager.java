@@ -38,6 +38,7 @@ public class CommandManager extends Manager {
         addCommand(new JumpCommand());
         addCommand(new CreateBodyCommand());
         addCommand(new BreakTileCommand());
+        addCommand(new PlaceTileCommand());
     }
 
     /**

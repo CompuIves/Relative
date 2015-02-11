@@ -15,15 +15,9 @@ public class BreakTileCommand extends ClickCommand {
      * A empty constructor for cloning, the cursor position needs to be set afterwards however.
      */
     public BreakTileCommand() {
-        super(true, null);
+        super(true);
     }
 
-    /**
-     * Creates a new command
-     */
-    public BreakTileCommand(Vector2 worldPosClicked) {
-        super(true, worldPosClicked);
-    }
 
     @Override
     void executeDown(Entity e) {

@@ -13,9 +13,8 @@ public abstract class ClickCommand extends Command {
      *
      * @param simulate Should it be executed on the client before getting a reaction from the server?
      */
-    public ClickCommand(boolean simulate, Vector2 worldPosClicked) {
+    public ClickCommand(boolean simulate) {
         super(simulate);
-        this.worldPosClicked = worldPosClicked;
     }
 
     public Vector2 getWorldPosClicked() {

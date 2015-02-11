@@ -65,7 +65,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        positionCamera();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         renderBackground();
@@ -92,20 +91,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     private void getPlayer() {
         player = tagManager.getEntity("player");
         playerPos = mPosition.get(player);
-    }
-
-    private void positionCamera() {
-        Entity player = world.getManager(TagManager.class).getEntity("player");
-
-        Position playerPosition = mPosition.get(player);
-        camera.position.x = playerPosition.x;
-        camera.position.y = playerPosition.y + 4;
-
-        //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
-        //float camrotation = -getCurrentCameraRotation() + 180;
-        //camera.rotate(camrotation - rotation + 180);
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
     }
 
     private void renderBackground() {

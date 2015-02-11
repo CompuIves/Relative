@@ -51,6 +51,7 @@ public class ClientManager extends GameManager implements Screen {
         world.setSystem(new NetworkReceiveSystem());
         world.setSystem(new ClientNetworkSystem((ClientNetwork) network));
 
+        world.setSystem(new CameraPositionSystem(camera));
         world.setSystem(new RenderSystem(batch, camera));
         world.setSystem(new ClientDebugSystem(camera));
     }

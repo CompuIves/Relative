@@ -46,7 +46,7 @@ public class SquarePlanet extends ChunkBuilder {
                 if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
                     Entity tile = null;
                     if(Math.abs(y) + 1 > universeBody.height / 4) {
-                        if (MathUtils.random() > 0.6f)
+                        if (MathUtils.random() > 0.2f)
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "grass", false);
                     } else {
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
@@ -56,7 +56,6 @@ public class SquarePlanet extends ChunkBuilder {
                 }
             }
         }
-
 
         tileManager.generateTileBodies(chunk);
     }

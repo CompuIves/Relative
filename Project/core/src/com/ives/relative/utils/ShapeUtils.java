@@ -39,97 +39,47 @@ public class ShapeUtils {
         Array<Vector2> verticesArray = new Array<Vector2>();
 
         switch (contour) {
-            case 0:
-                break;
             case 1:
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(-hw, -hh));
-                verticesArray.add(new Vector2(0, -hh));
+                verticesArray.add(new Vector2(-hw, hh));
+                verticesArray.add(new Vector2(0, 0));
+                verticesArray.add(new Vector2(hw, hh));
                 break;
             case 2:
-                verticesArray.add(new Vector2(0, -hh));
+                verticesArray.add(new Vector2(hw, hh));
+                verticesArray.add(new Vector2(0, 0));
                 verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, 0));
                 break;
             case 3:
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(-hw, -hh));
+                verticesArray.add(new Vector2(-hw, hh));
                 verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, 0));
+                verticesArray.add(new Vector2(hw, hh));
                 break;
             case 4:
-                verticesArray.add(new Vector2(hw, hh));
-                verticesArray.add(new Vector2(0, hh));
-                verticesArray.add(new Vector2(hw, 0));
-                break;
-            case 5:
-                verticesArray.add(new Vector2(-hw, 0));
+                verticesArray.add(new Vector2(0, 0));
                 verticesArray.add(new Vector2(-hw, -hh));
-                verticesArray.add(new Vector2(0, -hh));
-                verticesArray.add(new Vector2(hw, 0));
-                verticesArray.add(new Vector2(hw, hh));
-                verticesArray.add(new Vector2(0, hh));
+                verticesArray.add(new Vector2(hw, -hh));
                 break;
             case 6:
-                verticesArray.add(new Vector2(0, hh));
-                verticesArray.add(new Vector2(0, -hh));
-                verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, hh));
-                break;
-            case 7:
-                verticesArray.add(new Vector2(0, hh));
-                verticesArray.add(new Vector2(-hw, 0));
                 verticesArray.add(new Vector2(-hw, -hh));
                 verticesArray.add(new Vector2(hw, -hh));
                 verticesArray.add(new Vector2(hw, hh));
                 break;
             case 8:
                 verticesArray.add(new Vector2(-hw, hh));
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(0, hh));
+                verticesArray.add(new Vector2(-hw, -hh));
+                verticesArray.add(new Vector2(0, 0));
                 break;
             case 9:
                 verticesArray.add(new Vector2(-hw, hh));
                 verticesArray.add(new Vector2(-hw, -hh));
-                verticesArray.add(new Vector2(0, -hh));
-                verticesArray.add(new Vector2(0, hh));
-                break;
-            case 10:
-                verticesArray.add(new Vector2(-hw, hh));
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(0, -hh));
-                verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, 0));
-                verticesArray.add(new Vector2(0, hh));
-                break;
-            case 11:
-                verticesArray.add(new Vector2(-hw, hh));
-                verticesArray.add(new Vector2(-hw, -hh));
-                verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, 0));
-                verticesArray.add(new Vector2(0, hh));
+                verticesArray.add(new Vector2(hw, hh));
                 break;
             case 12:
                 verticesArray.add(new Vector2(-hw, hh));
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(hw, 0));
-                verticesArray.add(new Vector2(hw, hh));
-                break;
-            case 13:
-                verticesArray.add(new Vector2(-hw, hh));
                 verticesArray.add(new Vector2(-hw, -hh));
-                verticesArray.add(new Vector2(0, -hh));
-                verticesArray.add(new Vector2(hw, 0));
-                verticesArray.add(new Vector2(hw, hh));
-                break;
-            case 14:
-                verticesArray.add(new Vector2(-hw, hh));
-                verticesArray.add(new Vector2(-hw, 0));
-                verticesArray.add(new Vector2(0, -hh));
                 verticesArray.add(new Vector2(hw, -hh));
-                verticesArray.add(new Vector2(hw, hh));
                 break;
-            case 15:
+            default:
                 verticesArray.add(new Vector2(-hw, hh));
                 verticesArray.add(new Vector2(-hw, -hh));
                 verticesArray.add(new Vector2(hw, -hh));

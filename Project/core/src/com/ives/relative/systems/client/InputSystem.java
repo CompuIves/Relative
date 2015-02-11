@@ -79,7 +79,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
-            ClickCommand c = getClickCommand(e);
+            ClickCommand c = getClickCommand(e, button);
             c.setWorldPosClicked(new Vector2(gamePos.x + 0.5f, gamePos.y + 0.5f)); //offset
             commandSystem.commandDown(c, e);
             clientNetworkSystem.sendClickCommand(c);
@@ -91,7 +91,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         Vector3 gamePos = camera.unproject(new Vector3(screenX, screenY, 0));
         for (Entity e : getActives()) {
-            ClickCommand c = getClickCommand(e);
+            ClickCommand c = getClickCommand(e, button);
             c.setWorldPosClicked(new Vector2(gamePos.x + 0.5f, gamePos.y + 0.5f)); //offset
             commandSystem.commandUp(commandManager.getID(c), e);
             clientNetworkSystem.sendUnClickCommand(c);
@@ -117,7 +117,10 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
         return false;
     }
 
-    public ClickCommand getClickCommand(Entity e) {
-        return (ClickCommand) commandManager.getCommand(BreakTileCommand.class);
+    public ClickCommand getClickCommand(Entity e, int button) {
+        if (button == 0)
+            return (ClickCommand) commandManager.getCommand(BreakTileCommand.class);
+        else
+            return (ClickCommand) commandManager.getCommand(PlaceTileCommand.class);
     }
 }
