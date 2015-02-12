@@ -41,11 +41,6 @@ public class CameraPositionSystem extends VoidEntitySystem implements EntityEven
         Position playerPosition = mPosition.get(player);
         camera.position.x = playerPosition.x;
         camera.position.y = playerPosition.y + 4;
-
-        //float rotation = playerPosition.rotation * MathUtils.radiansToDegrees;
-        //float camrotation = -getCurrentCameraRotation() + 180;
-        //camera.rotate(camrotation - rotation + 180);
-        camera.update();
     }
 
     @Override

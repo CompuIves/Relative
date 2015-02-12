@@ -5,9 +5,11 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.artemis.systems.VoidEntitySystem;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.body.Gravity;
 import com.ives.relative.entities.components.body.Physics;
+import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 
@@ -23,6 +25,7 @@ public class GravitySystem extends VoidEntitySystem {
 
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<Gravity> mGravity;
+    protected ComponentMapper<Position> mPosition;
 
     /**
      * Creates a new EntityProcessingSystem.
@@ -38,6 +41,7 @@ public class GravitySystem extends VoidEntitySystem {
                 Entity e = uuidEntityManager.getEntity(eUUID);
                 if (e != null) {
                     Physics physics = mPhysics.get(e);
+                    Position p = mPosition.get(e);
                     if (physics != null) {
                         float gX, gY;
                         //If the entity has a custom gravity assigned
@@ -46,8 +50,9 @@ public class GravitySystem extends VoidEntitySystem {
                             gX = gravity.gX;
                             gY = gravity.gY;
                         } else {
-                            gX = chunk.gravity.x;
-                            gY = chunk.gravity.y;
+                            Vector2 pos = new Vector2(p.x, p.y);
+                            gX = 0;
+                            gY = 0;
                         }
 
                         physics.body.applyForceToCenter(gX * physics.body.getMass(), gY * physics.body.getMass(), false);

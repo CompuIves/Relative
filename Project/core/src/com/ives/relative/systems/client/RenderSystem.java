@@ -38,7 +38,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     private OrthographicCamera camera;
 
     private Entity player;
-    private Position playerPos;
+    private Position p;
 
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
         //noinspection unchecked
@@ -90,7 +90,7 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
     private void getPlayer() {
         player = tagManager.getEntity("player");
-        playerPos = mPosition.get(player);
+        p = mPosition.get(player);
     }
 
     private void renderBackground() {
@@ -103,8 +103,8 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
             if (chunk.texture != null) {
                 pos.x = chunk.x;
                 pos.y = chunk.y;
-                if(!chunk.universeBody.equals(playerPos.universeBody)) {
-                    chunk.universeBody.transformVectorToUniverseBody(playerPos.universeBody, pos);
+                if (!chunk.universeBody.equals(p.universeBody)) {
+                    chunk.universeBody.transformVectorToUniverseBody(p.universeBody, pos);
                 }
 
                 batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
@@ -121,9 +121,9 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     private void transformPosition(Entity e) {
         Vector3 transform = new Vector3();
         Position position = mPosition.get(e);
-        if (!position.universeBody.equals(playerPos.universeBody)) {
+        if (!position.universeBody.equals(p.universeBody)) {
             transform.set(position.x, position.y, position.rotation);
-            position.universeBody.transformVectorToUniverseBody(playerPos.universeBody, transform);
+            position.universeBody.transformVectorToUniverseBody(p.universeBody, transform);
             position.x = transform.x;
             position.y = transform.y;
             position.rotation = position.z;

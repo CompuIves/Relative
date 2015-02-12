@@ -4,7 +4,6 @@ import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.UniverseBody;
 import com.ives.relative.universe.chunks.Chunk;
@@ -26,7 +25,7 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        Chunk chunk = new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
+        Chunk chunk = new Chunk(universeBody, x, y, width, height, 0, isEdge);
         Pixmap bg = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
         bg.setColor(new Color(0.5f, 0.9f, 1f, 1f));
         bg.fill();
@@ -43,15 +42,13 @@ public class SquarePlanet extends ChunkBuilder {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                if (Math.abs(x) <= universeBody.width / 4 && Math.abs(y) <= universeBody.height / 4) {
-                    Entity tile = null;
-                    if(Math.abs(y) + 1 > universeBody.height / 4) {
-                        if (MathUtils.random() > 0.2f)
+                if (Math.abs(x) <= universeBody.width / 3 && Math.abs(y) <= universeBody.height / 3) {
+                    Entity tile;
+                    if (y + 1 > universeBody.height / 3) {
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "grass", false);
                     } else {
                         tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
                     }
-                    if (tile != null)
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }
             }

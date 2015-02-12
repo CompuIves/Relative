@@ -39,6 +39,7 @@ public class TileManager extends Manager {
 
     protected ComponentMapper<TileC> mTileC;
     protected ComponentMapper<Physics> mPhysics;
+    protected ComponentMapper<Visual> mVisual;
 
     protected NetworkManager networkManager;
     protected ChunkManager chunkManager;
@@ -86,7 +87,7 @@ public class TileManager extends Manager {
     }
 
     public void removeTile(Chunk chunk, Vector2 tilePos) {
-        UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
+        UUID tile = chunk.getTile(RelativeMath.fastfloor(tilePos.x), RelativeMath.fastfloor(tilePos.y));
         ComponentUtils.removeEntity(uuidEntityManager.getEntity(tile));
         chunk.removeTile(new Vector2(RelativeMath.fastfloor(tilePos.x), RelativeMath.fastfloor(tilePos.y)));
 
@@ -94,7 +95,7 @@ public class TileManager extends Manager {
     }
 
     public Entity getTile(Chunk chunk, Vector2 tilePos) {
-        UUID tile = chunk.getTile((int) tilePos.x, (int) tilePos.y);
+        UUID tile = chunk.getTile(RelativeMath.fastfloor(tilePos.x), RelativeMath.fastfloor(tilePos.y));
         if (tile != null) {
             return uuidEntityManager.getEntity(tile);
         }
@@ -108,37 +109,21 @@ public class TileManager extends Manager {
             Entity tile = uuidEntityManager.getEntity((UUID) t.getValue());
 
             if (tile != null) {
-                if (mPhysics.has(tile)) {
-                    Physics p = mPhysics.get(tile);
-                    if (p.body != null)
-                        chunk.universeBody.removeBody(p.body);
-                }
-
-                int contour = 0;
-                Chunk c = chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(0, 1));
-                if (c.isTile((int) pos.x, (int) pos.y + 1)) {
-                    contour += 1;
-                }
-                c = chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(1, 0));
-                if (c.isTile((int) pos.x + 1, (int) pos.y)) {
-                    contour += 2;
-                }
-                c = chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(0, -1));
-                if (c.isTile((int) pos.x, (int) pos.y - 1)) {
-                    contour += 4;
-                }
-                c = chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(-1, 0));
-                if (c.isTile((int) pos.x - 1, (int) pos.y)) {
-                    contour += 8;
-                }
-
-                if (contour == 0)
-                    contour = 15;
-
                 TileC tileC = mTileC.get(tile);
-                Body body = TileFactory.createBody(chunk.universeBody, tile, tileC.tile, contour, pos.x, pos.y, false);
+                if (!mPhysics.has(tile)) {
+                    Body body = TileFactory.createBody(chunk.universeBody, tile, tileC.tile, 15, pos.x, pos.y, false);
+                    tile.edit().add(new Physics(body, BodyDef.BodyType.StaticBody));
+                }
 
-                tile.edit().add(new Physics(body, BodyDef.BodyType.StaticBody));
+
+                //TODO fix texture rendering
+                Visual visual = mVisual.get(tile);
+                if (!chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(0, 1)).isTile(RelativeMath.fastfloor(pos.x), RelativeMath.fastfloor(pos.y + 1))) {
+                    tileC.tile = solidTiles.get("grass");
+                    tileC.id = "grass";
+                    visual.texture = tileC.tile.textureRegion;
+                }
+
             }
         }
     }

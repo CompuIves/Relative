@@ -19,7 +19,7 @@ public class EmptyChunk extends ChunkBuilder {
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
         //TODO gravity setting
-        return new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, 0);
+        return new Chunk(universeBody, x, y, width, height, 0, isEdge);
     }
 
     @Override

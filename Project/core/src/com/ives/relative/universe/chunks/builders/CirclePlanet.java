@@ -16,7 +16,7 @@ public class CirclePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        return new Chunk(universeBody, x, y, width, height, 0, isEdge, 0, -10);
+        return new Chunk(universeBody, x, y, width, height, 0, isEdge);
     }
 
     @Override
