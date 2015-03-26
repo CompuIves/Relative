@@ -19,11 +19,12 @@ import java.util.Set;
 
 /**
  * Created by Ives on 18/1/2015.
- * <p/>
+ * <p>
  * All objects having this contain a position and a transform in the universe. It has a width, height, rotation and coordinates (which are
- * aligned to the middle). Every UserBody contains its own world, this means that each body has an own Box2D world and their own chunks. This
+ * aligned to the middle). Every UniverseBody contains its own world, this means that each body has an own Box2D world and their own chunks. This
  * opens up the possibility to rotate and move the UniverseBody independently from its parent. UniverseBodies have children and parents (like
  * a solar system has planets).
+ * </p>
  */
 public class UniverseBody {
     public final int depth;
@@ -306,7 +307,6 @@ public class UniverseBody {
      * Transforms a vector to the given UniverseBody. <br></br>
      * <b>THIS CAN ONLY BE USED IF THE CHILD IS DIRECTLY ABOVE THE PARENT, OTHERWISE THERE ARE TOO MANY PERFORMANCE
      * PROBLEMS</b>
-     *
      * @param universeBody
      * @param vec
      */

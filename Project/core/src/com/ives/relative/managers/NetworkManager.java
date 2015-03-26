@@ -117,8 +117,7 @@ public class NetworkManager extends Manager implements EntityEventObserver {
      */
     private int getFreeID() {
         if (removedIDs.size == 0) {
-            freeID++;
-            return freeID;
+            return freeID++;
         } else {
             return removedIDs.first();
         }

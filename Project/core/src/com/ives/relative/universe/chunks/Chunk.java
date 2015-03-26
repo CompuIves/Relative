@@ -21,8 +21,8 @@ import java.util.UUID;
 public class Chunk implements Comparable<Chunk> {
     public final int x, y;
     public final int width, height;
-    public final UniverseBody universeBody;
     public final int rotation;
+    public final UniverseBody universeBody;
     public final Array<UUID> entities;
     public final Map<Vector2, UUID> tiles;
     public final Map<Vector2, Integer> changedTiles;
