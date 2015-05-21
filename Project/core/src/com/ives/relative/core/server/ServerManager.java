@@ -11,7 +11,6 @@ import com.ives.relative.core.GameManager;
 import com.ives.relative.managers.assets.modules.ModuleManager;
 import com.ives.relative.managers.server.ServerPlayerManager;
 import com.ives.relative.systems.server.NetworkSendSystem;
-import com.ives.relative.systems.server.ServerDebugSystem;
 import com.ives.relative.systems.server.ServerNetworkSystem;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.universe.chunks.chunkloaders.ServerChunkLoader;
@@ -48,7 +47,6 @@ public class ServerManager extends GameManager {
     public void registerSystems() {
         super.registerSystems();
         world.setSystem(new ServerNetworkSystem((ServerNetwork) network));
-        world.setSystem(new ServerDebugSystem(camera));
         world.setSystem(new NetworkSendSystem((ServerNetwork) network));
     }
 

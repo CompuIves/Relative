@@ -16,7 +16,7 @@ import com.ives.relative.entities.events.position.NearUniverseBorderEvent;
 import com.ives.relative.entities.events.position.StoppedMovementEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.ChunkManager;
 
 /**
@@ -92,7 +92,7 @@ public class MovementSystem extends EntityProcessingSystem {
 
     private void checkBorderEvent(Entity e, Position p) {
         if (authorityManager.isEntityTemporaryAuthorized(e)) {
-            if (isNearBorder(p.universeBody, tempVec.set(p.x, p.y))) {
+            if (isNearBorder(p.space, tempVec.set(p.x, p.y))) {
                 sendBorderEvent(e);
             }
         }
@@ -109,7 +109,7 @@ public class MovementSystem extends EntityProcessingSystem {
         eventManager.notifyEvent(eventManager.getEvent(NearUniverseBorderEvent.class, e));
     }
 
-    private boolean isNearBorder(UniverseBody uBod, Vector2 pos) {
+    private boolean isNearBorder(Space uBod, Vector2 pos) {
         return pos.x > uBod.width / 2 - ChunkManager.CHUNK_RADIUS || pos.x < -uBod.width / 2 + ChunkManager.CHUNK_RADIUS
                 || pos.y > uBod.height / 2 - ChunkManager.CHUNK_RADIUS || pos.y < -uBod.width / 2 + ChunkManager.CHUNK_RADIUS;
     }

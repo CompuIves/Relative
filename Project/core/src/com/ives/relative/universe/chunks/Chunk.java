@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.utils.RelativeMath;
 
 import java.util.HashMap;
@@ -22,11 +22,10 @@ public class Chunk implements Comparable<Chunk> {
     public final int x, y;
     public final int width, height;
     public final int rotation;
-    public final UniverseBody universeBody;
+    public final Space space;
     public final Array<UUID> entities;
     public final Map<Vector2, UUID> tiles;
     public final Map<Vector2, Integer> changedTiles;
-    public final boolean edge;
     public boolean loaded = false;
     public Pixmap bgColor;
     public Texture texture;
@@ -36,15 +35,14 @@ public class Chunk implements Comparable<Chunk> {
     /**
      * @param x
      * @param y
-     * @param universeBody
+     * @param space
      * @param rotation     rotation in degrees
      */
-    public Chunk(UniverseBody universeBody, int x, int y, int width, int height, int rotation, boolean edge) {
+    public Chunk(Space space, int x, int y, int width, int height, int rotation) {
         this.x = x;
         this.y = y;
-        this.universeBody = universeBody;
+        this.space = space;
         this.rotation = rotation;
-        this.edge = edge;
 
         entities = new Array<UUID>();
         changedTiles = new HashMap<Vector2, Integer>();
@@ -138,7 +136,7 @@ public class Chunk implements Comparable<Chunk> {
 
     @Override
     public String toString() {
-        return "Chunk from UniverseBody " + universeBody.id + " with x " + x + " and y " + y;
+        return "Chunk from Space " + space.id + " with x " + x + " and y " + y;
     }
 
     @Override
@@ -150,7 +148,7 @@ public class Chunk implements Comparable<Chunk> {
 
         if (x != chunk.x) return false;
         if (y != chunk.y) return false;
-        if (!universeBody.equals(chunk.universeBody)) return false;
+        if (!space.equals(chunk.space)) return false;
 
         return true;
     }
@@ -159,12 +157,12 @@ public class Chunk implements Comparable<Chunk> {
     public int hashCode() {
         int result = x;
         result = 31 * result + y;
-        result = 31 * result + universeBody.hashCode();
+        result = 31 * result + space.hashCode();
         return result;
     }
 
     @Override
     public int compareTo(Chunk o) {
-        return universeBody.depth - o.universeBody.depth;
+        return space.depth - o.space.depth;
     }
 }

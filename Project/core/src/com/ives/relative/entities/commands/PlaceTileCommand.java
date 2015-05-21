@@ -3,7 +3,7 @@ package com.ives.relative.entities.commands;
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
 import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.universe.planets.TileManager;
@@ -21,12 +21,12 @@ public class PlaceTileCommand extends ClickCommand {
     @Override
     void executeDown(Entity e) {
 
-        UniverseBody ub = e.getWorld().getMapper(Position.class).get(e).universeBody;
+        Space ub = e.getWorld().getMapper(Position.class).get(e).space;
         Chunk chunk = e.getWorld().getManager(ChunkManager.class).getTopChunk(ub, worldPosClicked);
         if (worldPosClicked != null) {
             if (!chunk.isTile(RelativeMath.fastfloor(worldPosClicked.x), RelativeMath.fastfloor(worldPosClicked.y))) {
                 System.out.println("exec");
-                Entity t = e.getWorld().getManager(TileManager.class).createTile(chunk.universeBody,
+                Entity t = e.getWorld().getManager(TileManager.class).createTile(chunk.space,
                         RelativeMath.fastfloor(worldPosClicked.x),
                         RelativeMath.fastfloor(worldPosClicked.y),
                         0, "dirt", false);

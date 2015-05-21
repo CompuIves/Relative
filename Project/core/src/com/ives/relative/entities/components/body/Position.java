@@ -4,8 +4,8 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.ives.relative.entities.components.network.CustomNetworkComponent;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.UniverseSystem;
+import com.ives.relative.universe.Space;
+import com.ives.relative.universe.UniverseManager;
 import com.ives.relative.universe.chunks.Chunk;
 
 /**
@@ -25,7 +25,7 @@ public class Position extends CustomNetworkComponent {
     public float rotation;
     public float protation;
 
-    public transient UniverseBody universeBody;
+    public transient Space space;
 
     public String universeBodyID;
     public transient Chunk chunk;
@@ -33,21 +33,21 @@ public class Position extends CustomNetworkComponent {
     public Position() {
     }
 
-    public Position(float x, float y, int z, float rotation, UniverseBody universeBody) {
+    public Position(float x, float y, int z, float rotation, Space space) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.universeBody = universeBody;
+        this.space = space;
         this.rotation = rotation;
     }
 
     @Override
     public void convertForSending(Entity e, World world, NetworkManager.Type type) {
-        universeBodyID = universeBody.id;
+        universeBodyID = space.id;
     }
 
     @Override
     public void convertForReceiving(Entity e, World world, NetworkManager.Type type) {
-        universeBody = world.getSystem(UniverseSystem.class).getUniverseBody(universeBodyID);
+        space = world.getManager(UniverseManager.class).getSpace(universeBodyID);
     }
 }

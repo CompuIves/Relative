@@ -16,7 +16,7 @@ public class ClientChunkLoader extends ChunkLoader {
 
     @Override
     public void requestChunk(Chunk chunk) {
-        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTION_ID, new RequestChunk(chunk.universeBody.id, chunk.x, chunk.y));
+        clientNetwork.sendObjectTCP(ClientNetwork.CONNECTION_ID, new RequestChunk(chunk.space.id, chunk.x, chunk.y));
     }
 
     @Override

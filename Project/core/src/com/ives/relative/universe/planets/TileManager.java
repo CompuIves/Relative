@@ -19,7 +19,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.assets.tiles.SolidTile;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
@@ -58,7 +58,7 @@ public class TileManager extends Manager {
      * @param tileID  name of tile
      * @return the entity of the tile created
      */
-    public Entity createTile(UniverseBody ub, float x, float y, int z, String tileID, boolean gravity) {
+    public Entity createTile(Space ub, float x, float y, int z, String tileID, boolean gravity) {
         if (solidTiles.get(tileID) != null) {
             SolidTile solidTile = solidTiles.get(tileID);
             //TODO Look at factories
@@ -111,19 +111,9 @@ public class TileManager extends Manager {
             if (tile != null) {
                 TileC tileC = mTileC.get(tile);
                 if (!mPhysics.has(tile)) {
-                    Body body = TileFactory.createBody(chunk.universeBody, tile, tileC.tile, 15, pos.x, pos.y, false);
+                    Body body = TileFactory.createBody(chunk.space, tile, tileC.tile, 15, pos.x, pos.y, false);
                     tile.edit().add(new Physics(body, BodyDef.BodyType.StaticBody));
                 }
-
-
-                //TODO fix texture rendering
-                Visual visual = mVisual.get(tile);
-                if (!chunkManager.getTopChunk(chunk.universeBody, pos.cpy().add(0, 1)).isTile(RelativeMath.fastfloor(pos.x), RelativeMath.fastfloor(pos.y + 1))) {
-                    tileC.tile = solidTiles.get("grass");
-                    tileC.id = "grass";
-                    visual.texture = tileC.tile.textureRegion;
-                }
-
             }
         }
     }

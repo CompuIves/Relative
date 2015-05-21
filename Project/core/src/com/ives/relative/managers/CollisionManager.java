@@ -14,7 +14,7 @@ import com.ives.relative.entities.events.position.CollisionEvent;
 import com.ives.relative.entities.events.position.UniverseBodyCollisionEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 
 /**
  * Created by Ives on 31/12/2014.
@@ -32,13 +32,13 @@ public class CollisionManager extends Manager implements ContactListener {
     public void beginContact(Contact contact) {
         if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
             handleEntityStart(contact);
-        } else if (contact.getFixtureA().getBody().getUserData() instanceof UniverseBody) {
+        } else if (contact.getFixtureA().getBody().getUserData() instanceof Space) {
             if (contact.getFixtureB().getBody().getUserData() instanceof Entity) {
-                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureB().getBody().getUserData(), (UniverseBody) contact.getFixtureA().getBody().getUserData());
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureB().getBody().getUserData(), (Space) contact.getFixtureA().getBody().getUserData());
             }
-        } else if (contact.getFixtureB().getBody().getUserData() instanceof UniverseBody) {
+        } else if (contact.getFixtureB().getBody().getUserData() instanceof Space) {
             if (contact.getFixtureA().getBody().getUserData() instanceof Entity) {
-                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureA().getBody().getUserData(), (UniverseBody) contact.getFixtureB().getBody().getUserData());
+                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureA().getBody().getUserData(), (Space) contact.getFixtureB().getBody().getUserData());
             }
         }
     }
@@ -126,9 +126,9 @@ public class CollisionManager extends Manager implements ContactListener {
         }
     }
 
-    private void sendUniverseBodyCollisionEvent(Entity e, UniverseBody u) {
+    private void sendUniverseBodyCollisionEvent(Entity e, Space u) {
         UniverseBodyCollisionEvent event = (UniverseBodyCollisionEvent) eventManager.getEvent(UniverseBodyCollisionEvent.class, e);
-        event.universeBody = u;
+        event.space = u;
         eventManager.notifyEvent(event);
     }
 

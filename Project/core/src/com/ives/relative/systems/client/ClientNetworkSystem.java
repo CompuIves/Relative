@@ -41,7 +41,7 @@ import com.ives.relative.network.packets.updates.CreateEntityPacket;
 import com.ives.relative.network.packets.updates.DeltaPositionPacket;
 import com.ives.relative.network.packets.updates.GrantEntityAuthority;
 import com.ives.relative.network.packets.updates.PositionPacket;
-import com.ives.relative.universe.UniverseSystem;
+import com.ives.relative.universe.UniverseManager;
 
 import java.util.Iterator;
 
@@ -59,7 +59,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     protected AuthorityManager authorityManager;
 
     protected NetworkReceiveSystem networkReceiveSystem;
-    protected UniverseSystem universeSystem;
+    protected UniverseManager universeManager;
 
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
@@ -215,7 +215,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
                 body.setTransform(x, y, rotation);
                 localPosition.x = x;
                 localPosition.y = y;
-                localPosition.universeBody = universeSystem.getUniverseBody(packet.universeBody);
+                localPosition.space = universeManager.getSpace(packet.universeBody);
             }
 
             Vector2 bodyVel = body.getLinearVelocity();

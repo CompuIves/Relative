@@ -134,7 +134,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
                 ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
                 if (c.canExecute(e)) {
                     //TODO change the hardcoded earth
-                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y, p.universeBody.id));
+                    network.sendObjectUDPToAll(new RemoveTilePacket(clickPacket.x, clickPacket.y, p.space.id));
                 }
             } else {
                 c = commandManager.getCommand(packet.command);

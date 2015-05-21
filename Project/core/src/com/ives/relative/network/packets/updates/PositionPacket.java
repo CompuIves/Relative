@@ -25,7 +25,7 @@ public class PositionPacket extends UpdatePacket {
         super(sequence, entityID);
         Position position = entity.getWorld().getMapper(Position.class).get(entity);
         Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
-        this.universeBody = position.universeBody.id;
+        this.universeBody = position.space.id;
         this.x = position.x;
         this.y = position.y;
         this.rotation = position.rotation;

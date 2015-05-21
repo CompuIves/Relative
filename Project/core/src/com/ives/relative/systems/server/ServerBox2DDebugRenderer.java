@@ -28,7 +28,7 @@ import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.badlogic.gdx.physics.box2d.joints.PulleyJoint;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 
 import java.util.Iterator;
 
@@ -99,12 +99,12 @@ public class ServerBox2DDebugRenderer implements Disposable {
     /**
      * This assumes that the projection matrix has already been set.
      */
-    public void render(UniverseBody world, Matrix4 projMatrix) {
+    public void render(Space world, Matrix4 projMatrix) {
         renderer.setProjectionMatrix(projMatrix);
         renderBodies(world);
     }
 
-    private void renderBodies(UniverseBody ub) {
+    private void renderBodies(Space ub) {
         renderer.begin(ShapeType.Line);
         World world = ub.world;
 
@@ -150,7 +150,7 @@ public class ServerBox2DDebugRenderer implements Disposable {
     }
 
     private Color getColorByBody(Body body) {
-        if (body.getUserData() instanceof UniverseBody) {
+        if (body.getUserData() instanceof Space) {
             return UNIVERSE_BODY_COLOR;
         } else if (!body.isActive())
             return SHAPE_NOT_ACTIVE;

@@ -43,7 +43,7 @@ public abstract class ChunkLoader {
     public void loadChunk(Chunk chunk) {
         //Gdx.app.debug("ChunkLoader", "Loading chunk: " + chunk.toString());
         requestedChunks.removeValue(chunk, false);
-        chunk.universeBody.chunkBuilder.generateTerrain(chunk);
+        chunk.space.chunkBuilder.generateTerrain(chunk);
         chunk.loaded = true;
         loadedChunks.add(chunk);
     }

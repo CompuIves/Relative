@@ -32,7 +32,7 @@ public class ClientDebugSystem extends VoidEntitySystem {
             Entity player = networkManager.getEntity(Player.NETWORK_ID);
             Position pos = mPosition.get(player);
 
-            box2DDebugRenderer.render(pos.universeBody.world, camera.combined);
+            box2DDebugRenderer.render(pos.space.world, camera.combined);
         }
     }
 }

@@ -60,8 +60,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         super.begin();
         //Gets the player info
         getPlayer();
-        //Transforms every position outside player uBody (relative!)
-        transformPositions();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -103,30 +101,9 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
             if (chunk.texture != null) {
                 pos.x = chunk.x;
                 pos.y = chunk.y;
-                if (!chunk.universeBody.equals(p.universeBody)) {
-                    chunk.universeBody.transformVectorToUniverseBody(p.universeBody, pos);
-                }
 
                 batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
             }
-        }
-    }
-
-    private void transformPositions() {
-        for(Entity e : getActives()) {
-            transformPosition(e);
-        }
-    }
-
-    private void transformPosition(Entity e) {
-        Vector3 transform = new Vector3();
-        Position position = mPosition.get(e);
-        if (!position.universeBody.equals(p.universeBody)) {
-            transform.set(position.x, position.y, position.rotation);
-            position.universeBody.transformVectorToUniverseBody(p.universeBody, transform);
-            position.x = transform.x;
-            position.y = transform.y;
-            position.rotation = position.z;
         }
     }
 

@@ -11,7 +11,7 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class Physics extends CustomNetworkComponent {
     public transient Body body = null;
     public transient Body secondBody = null;
-    public transient UniverseBody secondUniverseBody = null;
+    public transient Space secondSpace = null;
     public transient Array<Contact> contacts;
     public transient Array<UUID> entitiesInContact;
     public BodyDef.BodyType bodyType;
@@ -57,11 +57,11 @@ public class Physics extends CustomNetworkComponent {
         switch (type) {
             case TILE:
                 TileC tileC = world.getMapper(TileC.class).get(e);
-                body = TileFactory.createBody(position.universeBody, e, tileC.tile, 15, position.x, position.y, true);
+                body = TileFactory.createBody(position.space, e, tileC.tile, 15, position.x, position.y, true);
                 break;
             case PLAYER:
                 Velocity velocity = world.getMapper(Velocity.class).get(e);
-                body = PlayerFactory.createBody(position.universeBody, e, position.x, position.y, velocity.vx, velocity.vy);
+                body = PlayerFactory.createBody(position.space, e, position.x, position.y, velocity.vx, velocity.vy);
                 break;
         }
     }

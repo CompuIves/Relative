@@ -25,7 +25,7 @@ import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.ChunkManager;
 
 import java.util.HashMap;
@@ -64,19 +64,19 @@ public class ServerPlayerManager extends PlayerManager {
      * @param z            depth
      * @return a new entity (player)
      */
-    public Entity createPlayer(int connection, String internalName, String realName, UniverseBody universeBody, Vector2 position, int z) {
+    public Entity createPlayer(int connection, String internalName, String realName, Space space, Vector2 position, int z) {
         Entity e = new EntityBuilder(world).with(new Health(100),
                 new MovementSpeed(5f),
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 0.9f, 1.8f),
                 new Transform(0.9f, 2f, null),
-                new Position(position.x, position.y, z, 0, universeBody),
+                new Position(position.x, position.y, z, 0, space),
                 new Velocity(0, 0, 0),
                 new State()).
                 group("players").
                 build();
 
-        Body body = PlayerFactory.createBody(universeBody, e, position.x, position.y, 0, 0);
+        Body body = PlayerFactory.createBody(space, e, position.x, position.y, 0, 0);
         e.edit().add(new Physics(body, BodyDef.BodyType.DynamicBody));
 
         setPlayer(e, internalName);

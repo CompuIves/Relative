@@ -24,8 +24,8 @@ import com.ives.relative.network.packets.BasePacket;
 import com.ives.relative.network.packets.handshake.planet.ChunkPacket;
 import com.ives.relative.network.packets.requests.RequestEntity;
 import com.ives.relative.network.packets.updates.CreateEntityPacket;
-import com.ives.relative.universe.UniverseBody;
-import com.ives.relative.universe.UniverseSystem;
+import com.ives.relative.universe.Space;
+import com.ives.relative.universe.UniverseManager;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
 import com.ives.relative.utils.ComponentUtils;
@@ -47,7 +47,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
     protected ClientManager clientManager;
     protected ChunkManager chunkManager;
     protected UuidEntityManager uuidEntityManager;
-    protected UniverseSystem universeSystem;
+    protected UniverseManager universeManager;
     protected TagManager tagManager;
     protected EventManager eventManager;
 
@@ -77,7 +77,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     processEntityPacket(packet);
                 } else if (p instanceof ChunkPacket) {
                     ChunkPacket packet = (ChunkPacket) p;
-                    UniverseBody ub = universeSystem.getUniverseBody(((ChunkPacket) p).universeBody);
+                    Space ub = universeManager.getSpace(((ChunkPacket) p).universeBody);
                     Chunk chunk = chunkManager.getChunk(ub, new Vector2(packet.x, packet.y));
                     chunk.changedTiles.putAll(packet.changedTiles);
                     chunkManager.loadChunk(chunk);

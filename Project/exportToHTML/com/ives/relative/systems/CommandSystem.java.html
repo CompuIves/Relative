@@ -1,0 +1,125 @@
+<html>
+<head>
+<title>CommandSystem.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(119,183,103); font-style: italic; }
+.s4 { color: rgb(98,151,85); font-weight: bold; font-style: italic; }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+CommandSystem.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">package </span><span class="s1">com.ives.relative.systems</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">com.artemis.Entity</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.artemis.annotations.Wire</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.artemis.managers.UuidEntityManager</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.artemis.systems.VoidEntitySystem</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.google.common.collect.ArrayListMultimap</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.google.common.collect.Multimap</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.ives.relative.entities.commands.Command</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">com.ives.relative.managers.CommandManager</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">java.util.Collection</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.Iterator</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.Map</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.UUID</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s2">/** 
+ * Created by Ives on 14/12/2014. 
+ * </span><span class="s3">&lt;p/&gt;</span><span class="s2"> 
+ * Since the client has an {</span><span class="s4">@link </span><span class="s2">com.ives.relative.entities.components.client.InputC} and the server hasn't the server 
+ * needs to have a database of which ID is bound to which command. Sending commands over the network has proven to produce 
+ * too much bandwidth so now we use IDs. 
+ */</span><span class="s1"> 
+@Wire 
+</span><span class="s0">public class </span><span class="s1">CommandSystem </span><span class="s0">extends </span><span class="s1">VoidEntitySystem { 
+    </span><span class="s0">protected </span><span class="s1">CommandManager commandManager</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">protected </span><span class="s1">UuidEntityManager uuidEntityManager</span><span class="s0">;</span><span class="s1"> 
+ 
+    Multimap&lt;UUID</span><span class="s0">, </span><span class="s1">Command&gt; hookedCommands</span><span class="s0">;</span><span class="s1"> 
+    Multimap&lt;Byte</span><span class="s0">, </span><span class="s1">UUID&gt; hookedEntities</span><span class="s0">;</span><span class="s1"> 
+ 
+    </span><span class="s0">public </span><span class="s1">CommandSystem() { 
+        hookedCommands = ArrayListMultimap.create()</span><span class="s0">;</span><span class="s1"> 
+        hookedEntities = ArrayListMultimap.create()</span><span class="s0">;</span><span class="s1"> 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">processSystem() { 
+        Iterator&lt;Map.Entry&lt;UUID</span><span class="s0">, </span><span class="s1">Command&gt;&gt; it = hookedCommands.entries().iterator()</span><span class="s0">;</span><span class="s1"> 
+        </span><span class="s0">while </span><span class="s1">(it.hasNext()) { 
+            Map.Entry entry = it.next()</span><span class="s0">;</span><span class="s1"> 
+            Entity e = uuidEntityManager.getEntity((UUID) entry.getKey())</span><span class="s0">;</span><span class="s1"> 
+ 
+            </span><span class="s0">if </span><span class="s1">(e != </span><span class="s0">null</span><span class="s1">) { 
+                Command command = (Command) entry.getValue()</span><span class="s0">;</span><span class="s1"> 
+                </span><span class="s0">if </span><span class="s1">(command.canExecute(e)) 
+                    command.whilePressed(e)</span><span class="s0">;</span><span class="s1"> 
+            } </span><span class="s0">else </span><span class="s1">{ 
+                hookedEntities.remove(entry.getValue()</span><span class="s0">, </span><span class="s1">entry.getKey())</span><span class="s0">;</span><span class="s1"> 
+                it.remove()</span><span class="s0">;</span><span class="s1"> 
+            } 
+        } 
+    } 
+ 
+    </span><span class="s2">/** 
+     * Add the command to the system, until te up command is activated this command will be executed every frame. 
+     * 
+     * </span><span class="s4">@param </span><span class="s2">command 
+     * </span><span class="s4">@param </span><span class="s2">e 
+     */</span><span class="s1"> 
+    </span><span class="s0">public void </span><span class="s1">commandDown(Command command</span><span class="s0">, </span><span class="s1">Entity e) { 
+        </span><span class="s0">if </span><span class="s1">(e == </span><span class="s0">null</span><span class="s1">) 
+            </span><span class="s0">return;</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">(hookedCommands.containsKey(uuidEntityManager.getUuid(e)) &amp;&amp; hookedEntities.containsKey(commandManager.getID(command))) 
+            </span><span class="s0">return;</span><span class="s1"> 
+ 
+        </span><span class="s5">//Always activate the command just in case it is allowed to be executed later, but check for keydown.</span><span class="s1"> 
+        hookedCommands.put(uuidEntityManager.getUuid(e)</span><span class="s0">, </span><span class="s1">command)</span><span class="s0">;</span><span class="s1"> 
+        hookedEntities.put(commandManager.getID(command)</span><span class="s0">, </span><span class="s1">uuidEntityManager.getUuid(e))</span><span class="s0">;</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">(command.canExecute(e)) { 
+            command.keyDown(e)</span><span class="s0">;</span><span class="s1"> 
+        } 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">commandUp(</span><span class="s0">byte </span><span class="s1">command</span><span class="s0">, </span><span class="s1">Entity e) { 
+        </span><span class="s0">if </span><span class="s1">(e == </span><span class="s0">null</span><span class="s1">) 
+            </span><span class="s0">return;</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">(hookedEntities.containsKey(command) &amp;&amp; hookedCommands.containsKey(uuidEntityManager.getUuid(e))) { 
+            Collection&lt;Command&gt; commands = hookedCommands.get(uuidEntityManager.getUuid(e))</span><span class="s0">;</span><span class="s1"> 
+ 
+            Command oldCommand = </span><span class="s0">null;</span><span class="s1"> 
+            </span><span class="s0">for </span><span class="s1">(Command c : commands) { 
+                </span><span class="s0">if </span><span class="s1">(commandManager.getID(c) == command) { 
+                    </span><span class="s0">if </span><span class="s1">(c.canExecute(e)) { 
+                        </span><span class="s5">//Always remove command, but check if up can be executed.</span><span class="s1"> 
+                        c.keyUp(e)</span><span class="s0">;</span><span class="s1"> 
+                    } 
+                    oldCommand = c</span><span class="s0">;</span><span class="s1"> 
+                    commandManager.freeCommand(oldCommand)</span><span class="s0">;</span><span class="s1"> 
+                } 
+            } 
+ 
+            hookedCommands.remove(uuidEntityManager.getUuid(e)</span><span class="s0">, </span><span class="s1">oldCommand)</span><span class="s0">;</span><span class="s1"> 
+            hookedEntities.remove(command</span><span class="s0">, </span><span class="s1">uuidEntityManager.getUuid(e))</span><span class="s0">;</span><span class="s1"> 
+        } 
+    } 
+} 
+</span></pre>
+</body>
+</html>

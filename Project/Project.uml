@@ -1,0 +1,1248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="2126.0" y="1792.0">proguard.SubclassedClassFilter</node>
+    <node x="156.0" y="2088.0">dalvik</node>
+    <node x="2215.5" y="1022.0">groovyjarjarantlr.LLkGrammarAnalyzer</node>
+    <node x="2203.41281512605" y="588.0">groovyjarjarantlr.ANTLRParser</node>
+    <node x="2432.5" y="1022.0">soot.Trap</node>
+    <node x="493.0" y="2014.0">themes</node>
+    <node x="1838.0" y="1570.0">soot.AbstractUnitBox</node>
+    <node x="1775.0" y="2162.0">java</node>
+    <node x="1622.0" y="2014.0">SQLite</node>
+    <node x="894.0" y="2162.0">proguard.OutputWriter</node>
+    <node x="1107.0" y="1866.0">groovyjarjarantlr.PreservingFileWriter</node>
+    <node x="311.0" y="2088.0">javafx</node>
+    <node x="1724.0" y="1940.0">.lombok</node>
+    <node x="1002.0" y="869.0">groovyjarjarantlr.MismatchedCharException</node>
+    <node x="1318.5883035714287" y="89.0">soot.ErroneousType</node>
+    <node x="2106.0" y="2236.0">groovyjarjarantlr.ASTFactory</node>
+    <node x="0.0" y="2162.0">soot.PhaseOptions</node>
+    <node x="2071.0" y="1718.0">groovyjarjarantlr.ParserSharedInputState</node>
+    <node x="165.0" y="2014.0">.groovy</node>
+    <node x="1041.0" y="2162.0">soot.TrapManager</node>
+    <node x="2210.0" y="2162.0">groovyjarjarcommonscli.TypeHandler</node>
+    <node x="0.0" y="1570.0">soot.UnknownMethodSource</node>
+    <node x="633.25" y="1022.0">groovyjarjarantlr.CommonToken</node>
+    <node x="0.0" y="1866.0">.box2dLight</node>
+    <node x="411.0" y="1570.0">proguard.KeepClassSpecification</node>
+    <node x="2192.25" y="1338.0">groovyjarjarantlr.InputBuffer</node>
+    <node x="1010.0" y="1264.0">groovyjarjarantlr.PythonCodeGenerator</node>
+    <node x="152.0000000000001" y="247.0">groovyjarjarantlr.StringLiteralElement</node>
+    <node x="1171.0" y="1491.0">soot.ClassProvider</node>
+    <node x="2242.0" y="2236.0">groovyjarjarantlr.ASTIterator</node>
+    <node x="2012.0" y="1866.0">META-INF</node>
+    <node x="1685.5089285714287" y="0.0">soot.Type</node>
+    <node x="0.0" y="1718.0">drawable-xxhdpi</node>
+    <node x="1471.0" y="1866.0">.META-INF</node>
+    <node x="80.75" y="1022.0">groovyjarjarantlr.ParseTree</node>
+    <node x="1684.2878151260504" y="400.0">groovyjarjarantlr.TokenStream</node>
+    <node x="915.0" y="2310.0">proguard.ProGuard</node>
+    <node x="2007.0" y="1022.0">groovyjarjarantlr.SimpleTokenManager</node>
+    <node x="1852.0" y="2088.0">proguard.Configuration</node>
+    <node x="2003.0" y="2088.0">groovyjarjarantlr.ASTNULLType</node>
+    <node x="1144.0" y="247.0">groovyjarjarantlr.SynPredBlock</node>
+    <node x="1760.001050420168" y="499.0">groovyjarjarantlr.CharScanner</node>
+    <node x="819.0" y="2014.0">.SQLite</node>
+    <node x="2226.0" y="1940.0">.themes</node>
+    <node x="871.0" y="1940.0">netscape</node>
+    <node x="1302.0" y="2014.0">libcore</node>
+    <node x="1602.7589285714287" y="89.0">soot.UnknownType</node>
+    <node x="0.0" y="869.0">groovyjarjarantlr.CharStreamIOException</node>
+    <node x="178.0" y="869.0">groovyjarjarantlr.TokenStreamRecognitionException</node>
+    <node x="1946.0000000000002" y="711.0">groovyjarjarcommonscli.CommandLineParser</node>
+    <node x="288.0" y="2236.0">sun</node>
+    <node x="334.0" y="1417.0">groovyjarjarantlr.JavaCharFormatter</node>
+    <node x="884.0" y="1101.0">proguard.FileWordReader</node>
+    <node x="1972.75" y="1417.0">soot.BodyTransformer</node>
+    <node x="2327.5" y="1570.0">soot.G</node>
+    <node x="1613.8214285714287" y="248.0">soot.NullType</node>
+    <node x="2047.0" y="869.0">groovyjarjarcommonscli.PosixParser</node>
+    <node x="741.0" y="1866.0">proguard.ConfigurationParser</node>
+    <node x="1780.0" y="2014.0">.dalvik</node>
+    <node x="1614.5" y="1101.0">soot.IdentityUnit</node>
+    <node x="2368.0" y="1866.0">groovyjarjarantlr.ANTLRStringBuffer</node>
+    <node x="752.0" y="1644.0">proguard.AssumeNoSideEffectsChecker</node>
+    <node x="252.0" y="558.0">soot.SootMethodHandle</node>
+    <node x="1414.8214285714287" y="248.0">soot.ArrayType</node>
+    <node x="1897.8214285714287" y="89.0">soot.IntegerType</node>
+    <node x="787.0" y="1792.0">proguard.ConfigurationChecker</node>
+    <node x="1332.0" y="1570.0">soot.AbstractValueBox</node>
+    <node x="226.20357142857154" y="168.0">groovyjarjarantlr.GrammarAtom</node>
+    <node x="1138.0" y="2236.0">jdk</node>
+    <node x="1467.0" y="1718.0">proguard.DataEntryReaderFactory</node>
+    <node x="596.0000000000001" y="247.0">groovyjarjarantlr.RuleEndElement</node>
+    <node x="531.0" y="2310.0">soot.Hierarchy</node>
+    <node x="225.0" y="1491.0">groovyjarjarantlr.ToolErrorHandler</node>
+    <node x="1324.75" y="1338.0">soot.ClassMember</node>
+    <node x="1769.0" y="1022.0">groovyjarjarantlr.DefineGrammarSymbols</node>
+    <node x="1558.0" y="1792.0">proguard.MemberSpecification</node>
+    <node x="1444.0" y="1644.0">groovyjarjarantlr.TreeParserSharedInputState</node>
+    <node x="1217.0" y="1101.0">groovyjarjarantlr.StringLiteralSymbol</node>
+    <node x="1883.0" y="1644.0">soot.ResolutionFailedException</node>
+    <node x="1289.0" y="1866.0">proguard.LibraryKeepChecker</node>
+    <node x="2154.0" y="2088.0">.com</node>
+    <node x="415.0" y="869.0">groovyjarjarantlr.TokenStreamIOException</node>
+    <node x="206.0" y="1570.0">groovyjarjarantlr.DefaultToolErrorHandler</node>
+    <node x="1296.8214285714287" y="248.0">soot.AnySubType</node>
+    <node x="265.5" y="1338.0">groovyjarjarantlr.CharFormatter</node>
+    <node x="835.0" y="1338.0">groovyjarjarantlr.Grammar</node>
+    <node x="167.0" y="1417.0">groovyjarjarantlr.PythonCharFormatter</node>
+    <node x="1557.0" y="2236.0">groovyjarjarantlr.ANTLRError</node>
+    <node x="2190.0" y="1866.0">.javazoom</node>
+    <node x="2305.0" y="2088.0">javax</node>
+    <node x="631.0" y="1491.0">soot.SootFieldRef</node>
+    <node x="1913.75" y="1338.0">soot.Transformer</node>
+    <node x="1670.0" y="1718.0">drawable-hdpi</node>
+    <node x="1021.0" y="1022.0">proguard.ArgumentWordReader</node>
+    <node x="719.0" y="1101.0">groovyjarjarantlr.TokenWithIndex</node>
+    <node x="176.0" y="1940.0">groovyjarjarantlr.FileCopyException</node>
+    <node x="1534.5" y="499.0">groovyjarjarantlr.TokenStreamRewriteEngine</node>
+    <node x="2270.0" y="1718.0">proguard.DataEntryWriterFactory</node>
+    <node x="466.0" y="2088.0">.avian</node>
+    <node x="658.75" y="943.0">groovyjarjarantlr.Token</node>
+    <node x="0.0" y="2014.0">.images</node>
+    <node x="1644.0" y="2310.0">groovyjarjarantlr.Version</node>
+    <node x="1232.5" y="1022.0">groovyjarjarantlr.TokenSymbol</node>
+    <node x="2193.001050420168" y="499.0">groovyjarjarantlr.ANTLRTokdefParserTokenTypes</node>
+    <node x="2252.0" y="2014.0">oracle</node>
+    <node x="970.5" y="943.0">proguard.WordReader</node>
+    <node x="853.0" y="479.0">soot.Transform</node>
+    <node x="2130.8214285714284" y="248.0">soot.ByteType</node>
+    <node x="512.0" y="1264.0">groovyjarjarantlr.HTMLCodeGenerator</node>
+    <node x="1384.0" y="1940.0">modules</node>
+    <node x="1618.0" y="1254.0">groovyjarjarcommonscli.MissingOptionException</node>
+    <node x="882.0" y="1022.0">proguard.LineWordReader</node>
+    <node x="1860.0" y="1491.0">soot.UnitBox</node>
+    <node x="1188.0" y="2162.0">groovyjarjarcommonscli.OptionGroup</node>
+    <node x="2165.5" y="1570.0">soot.TypeSwitch</node>
+    <node x="715.0" y="2236.0">proguard.InputReader</node>
+    <node x="2354.0" y="2162.0">.net</node>
+    <node x="1419.0" y="1254.0">groovyjarjarcommonscli.MissingArgumentException</node>
+    <node x="589.0000000000001" y="79.0">groovyjarjarantlr.AlternativeElement</node>
+    <node x="508.0" y="1644.0">proguard.ClassSpecificationVisitorFactory</node>
+    <node x="1058.0" y="1718.0">drawable-mdpi</node>
+    <node x="2304.0" y="1491.0">soot.Singletons</node>
+    <node x="821.0" y="1417.0">groovyjarjarantlr.LexerGrammar</node>
+    <node x="659.0" y="2310.0">proguard.ClassPath</node>
+    <node x="1158.0" y="1570.0">soot.CoffiClassProvider</node>
+    <node x="1502.0" y="1570.0">groovyjarjarantlr.TreeBlockContext</node>
+    <node x="269.0" y="2310.0">groovyjarjarantlr.StringUtils</node>
+    <node x="639.0" y="1718.0">.groovyjarjarasm</node>
+    <node x="373.0" y="1866.0">box2dLight</node>
+    <node x="2334.821428571429" y="248.0">soot.FloatType</node>
+    <node x="1920.0" y="2162.0">soot.SootResolver</node>
+    <node x="1554.0" y="1940.0">.javassist</node>
+    <node x="150.0" y="2162.0">.soot</node>
+    <node x="2039.8214285714287" y="248.0">soot.IntType</node>
+    <node x="154.0" y="1264.0">groovyjarjarantlr.CSharpCodeGenerator</node>
+    <node x="324.0" y="1264.0">groovyjarjarantlr.DiagnosticCodeGenerator</node>
+    <node x="0.0" y="1644.0">.groovyjarjarcommonscli</node>
+    <node x="1257.375" y="1417.0">soot.SootMethod</node>
+    <node x="557.0" y="1866.0">.about_files</node>
+    <node x="424.0" y="1491.0">proguard.ClassSpecification</node>
+    <node x="1566.5" y="943.0">soot.Context</node>
+    <node x="621.0" y="2088.0">proguard.ClassPathEntry</node>
+    <node x="2206.0" y="2310.0">soot.Timer</node>
+    <node x="924.0" y="1866.0">proguard.ConfigurationWriter</node>
+    <node x="1817.8214285714287" y="248.0">soot.CharType</node>
+    <node x="2240.5" y="1101.0">groovyjarjarantlr.LLkAnalyzer</node>
+    <node x="2202.9464285714284" y="89.0">soot.StmtAddressType</node>
+    <node x="923.0000000000001" y="247.0">groovyjarjarantlr.TreeElement</node>
+    <node x="1335.0" y="2162.0">.edu</node>
+    <node x="999.0" y="1491.0">groovyjarjarantlr.NameSpace</node>
+    <node x="1482.0" y="2162.0">soot.LocalVariable</node>
+    <node x="267.125" y="637.0">soot.Local</node>
+    <node x="431.0" y="2236.0">.src</node>
+    <node x="0.0" y="1940.0">.proguard</node>
+    <node x="1665.0" y="1644.0">proguard.KeepClassMemberChecker</node>
+    <node x="573.0" y="2236.0">org</node>
+    <node x="0.0" y="1792.0">proguard.GetAnnotationChecker</node>
+    <node x="1527.0" y="2310.0">groovyjarjarantlr.ASTPair</node>
+    <node x="2247.75" y="1417.0">groovyjarjarantlr.CharBuffer</node>
+    <node x="787.0" y="2310.0">soot.SootClass</node>
+    <node x="1364.0" y="869.0">groovyjarjarantlr.NoViableAltForCharException</node>
+    <node x="1990.5" y="1101.0">groovyjarjarantlr.ImportVocabTokenManager</node>
+    <node x="1748.0" y="1792.0">proguard.DuplicateClassPrinter</node>
+    <node x="181.25" y="943.0">groovyjarjarantlr.BaseAST</node>
+    <node x="951.0" y="1417.0">groovyjarjarantlr.ParserGrammar</node>
+    <node x="485.0" y="1417.0">groovyjarjarantlr.CppCharFormatter</node>
+    <node x="2100.9464285714284" y="89.0">soot.PrimType</node>
+    <node x="1730.7589285714287" y="89.0">soot.VoidType</node>
+    <node x="2456.0" y="2088.0">groovyjarjarcommonscli.OptionBuilder</node>
+    <node x="2377.0" y="2236.0">groovyjarjarantlr.Lookahead</node>
+    <node x="905.5" y="558.0">soot.ScenePack</node>
+    <node x="259.0" y="1101.0">groovyjarjarantlr.CommonASTWithHiddenTokens</node>
+    <node x="699.0" y="1940.0">proguard.UpToDateChecker</node>
+    <node x="734.0000000000001" y="247.0">groovyjarjarantlr.BlockWithImpliedExitPath</node>
+    <node x="661.0" y="1417.0">groovyjarjarantlr.TreeWalkerGrammar</node>
+    <node x="1175.0" y="1792.0">proguard.ClassMemberChecker</node>
+    <node x="1938.0" y="2014.0">proguard.ParseException</node>
+    <node x="981.0" y="1792.0">soot.AbstractUnitAllMapTo</node>
+    <node x="1123.5" y="558.0">soot.LabeledUnitPrinter</node>
+    <node x="1042.0" y="1940.0">groovyjarjarantlr.ANTLRHashString</node>
+    <node x="1042.0" y="2310.0">proguard.Initializer</node>
+    <node x="593.0000000000001" y="168.0">groovyjarjarantlr.BlockEndElement</node>
+    <node x="980.0" y="1570.0">groovyjarjarantlr.CSharpNameSpace</node>
+    <node x="300.0" y="2162.0">soot.PackManager</node>
+    <node x="25.5" y="1491.0">soot.MethodSource</node>
+    <node x="0.0" y="1101.0">groovyjarjarantlr.ParseTreeToken</node>
+    <node x="1685.0" y="1491.0">soot.ClassSource</node>
+    <node x="309.5" y="1022.0">groovyjarjarantlr.CommonAST</node>
+    <node x="600.0" y="869.0">groovyjarjarantlr.TokenStreamRetryException</node>
+    <node x="2408.0" y="2014.0">soot.EscapeAnalysis</node>
+    <node x="828.0000000000001" y="326.0">groovyjarjarantlr.ZeroOrMoreBlock</node>
+    <node x="1695.0" y="2236.0">proguard.SeedPrinter</node>
+    <node x="776.0" y="479.0">soot.Pack</node>
+    <node x="1111.8214285714287" y="168.0">groovyjarjarantlr.TokenRangeElement</node>
+    <node x="931.0" y="2088.0">groovyjarjarcommonscli.HelpFormatter</node>
+    <node x="1496.5" y="1101.0">soot.AbstractUnit</node>
+    <node x="1288.0" y="2310.0">proguard.Targeter</node>
+    <node x="1085.0" y="2088.0">.build</node>
+    <node x="1408.0" y="2310.0">groovyjarjarcommonscli.Options</node>
+    <node x="2368.86974789916" y="588.0">groovyjarjarantlr.ANTLRTokdefParser</node>
+    <node x="1462.0" y="2014.0">soot.SideEffectTester</node>
+    <node x="2025.0" y="943.0">groovyjarjarantlr.TokenManager</node>
+    <node x="1919.8214285714287" y="248.0">soot.BooleanType</node>
+    <node x="676.0" y="1264.0">groovyjarjarantlr.DocBookCodeGenerator</node>
+    <node x="1464.9138655462184" y="588.0">groovyjarjarantlr.TokenStreamHiddenTokenFilter</node>
+    <node x="198.0" y="1792.0">groovyjarjarantlr.JavaBlockFinishingInfo</node>
+    <node x="213.0" y="1718.0">groovyjarjarantlr.CSharpBlockFinishingInfo</node>
+    <node x="1857.0" y="869.0">groovyjarjarcommonscli.GroovyInternalPosixParser</node>
+    <node x="1040.0" y="247.0">groovyjarjarantlr.RuleBlock</node>
+    <node x="2518.0" y="2310.0">groovyjarjarantlr.Utils</node>
+    <node x="1122.0" y="479.0">soot.AbstractUnitPrinter</node>
+    <node x="528.0" y="1175.0">groovyjarjarantlr.CodeGenerator</node>
+    <node x="1278.0" y="2236.0">.de</node>
+    <node x="400.0" y="2310.0">groovyjarjarantlr.TreeParser</node>
+    <node x="1283.25" y="943.0">groovyjarjarantlr.GrammarSymbol</node>
+    <node x="1367.0" y="1792.0">groovyjarjarantlr.PrintWriterWithSMAP</node>
+    <node x="1800.0" y="1254.0">groovyjarjarcommonscli.AlreadySelectedException</node>
+    <node x="1832.0" y="2236.0">groovyjarjarantlr.CharQueue</node>
+    <node x="684.0000000000001" y="326.0">groovyjarjarantlr.OneOrMoreBlock</node>
+    <node x="0.0" y="2236.0">groovyjarjarantlr.TokenQueue</node>
+    <node x="2400.75" y="1338.0">groovyjarjarantlr.FileLineFormatter</node>
+    <node x="1573.0" y="869.0">groovyjarjarantlr.SemanticException</node>
+    <node x="890.5" y="637.0">soot.RadioScenePack</node>
+    <node x="1378.75" y="1417.0">soot.SootField</node>
+    <node x="2410.5" y="1101.0">soot.AbstractTrap</node>
+    <node x="329.0" y="2014.0">shaders</node>
+    <node x="2140.75" y="1417.0">groovyjarjarantlr.ByteBuffer</node>
+    <node x="1629.0" y="2162.0">.sun</node>
+    <node x="1760.0" y="2310.0">groovyjarjarcommonscli.Option</node>
+    <node x="1547.75" y="1175.0">groovyjarjarcommonscli.ParseException</node>
+    <node x="449.0" y="2162.0">soot.FastHierarchy</node>
+    <node x="0.0" y="247.0">groovyjarjarantlr.CharLiteralElement</node>
+    <node x="283.0" y="400.0">soot.EquivTo</node>
+    <node x="310.0000000000001" y="247.0">groovyjarjarantlr.WildcardElement</node>
+    <node x="579.5" y="637.0">soot.JimpleBodyPack</node>
+    <node x="1871.0" y="1718.0">proguard.DescriptorKeepChecker</node>
+    <node x="0.0" y="2384.0">groovyjarjarantlr.Tool</node>
+    <node x="1197.0" y="869.0">groovyjarjarantlr.NoViableAltException</node>
+    <node x="800.0" y="869.0">groovyjarjarantlr.MismatchedTokenException</node>
+    <node x="358.20357142857154" y="168.0">groovyjarjarantlr.ActionElement</node>
+    <node x="109.0" y="558.0">soot.SootMethodType</node>
+    <node x="980.0" y="2014.0">groovyjarjarantlr.ActionTransInfo</node>
+    <node x="0.0" y="2088.0">groovyjarjarcommonscli.CommandLine</node>
+    <node x="1141.0" y="2014.0">groovyjarjarcommonscli.OptionValidator</node>
+    <node x="2159.0" y="869.0">groovyjarjarcommonscli.BasicParser</node>
+    <node x="289.5" y="479.0">soot.Value</node>
+    <node x="256.0" y="1644.0">proguard.FullyQualifiedClassNameChecker</node>
+    <node x="856.0" y="1264.0">groovyjarjarantlr.JavaCodeGenerator</node>
+    <node x="1513.0" y="1491.0">groovyjarjarantlr.BlockContext</node>
+    <node x="0.0" y="1417.0">groovyjarjarantlr.CSharpCharFormatter</node>
+    <node x="1356.5" y="1022.0">groovyjarjarantlr.RuleSymbol</node>
+    <node x="1360.5" y="499.0">groovyjarjarantlr.TokenStreamBasicFilter</node>
+    <node x="851.0" y="1718.0">drawable-xhdpi</node>
+    <node x="2099.0" y="1644.0">proguard.GetEnclosingClassChecker</node>
+    <node x="0.0" y="2310.0">.fr</node>
+    <node x="1523.75" y="1338.0">groovyjarjarantlr.JavaCodeGeneratorPrintWriterManager</node>
+    <node x="1202.5" y="637.0">soot.BriefUnitPrinter</node>
+    <node x="598.0" y="2162.0">com</node>
+    <node x="1213.0" y="1940.0">groovyjarjarantlr.ExceptionHandler</node>
+    <node x="2313.0" y="2310.0">soot.Body</node>
+    <node x="776.0" y="2088.0">soot.PatchingChain</node>
+    <node x="1144.0" y="400.0">soot.UnitPrinter</node>
+    <node x="1519.8214285714287" y="248.0">soot.RefType</node>
+    <node x="796.0" y="1570.0">soot.SootMethodRefImpl</node>
+    <node x="2224.5" y="943.0">groovyjarjarantlr.GrammarAnalyzer</node>
+    <node x="1133.75" y="1338.0">soot.MethodOrMethodContext</node>
+    <node x="2017.5" y="1491.0">groovyjarjarantlr.ASTVisitor</node>
+    <node x="2164.0" y="1491.0">soot.ITypeSwitch</node>
+    <node x="808.0" y="1491.0">soot.SootMethodRef</node>
+    <node x="856.0" y="2236.0">groovyjarjarantlr.TokenBuffer</node>
+    <node x="1700.0" y="2088.0">avian</node>
+    <node x="351.0" y="1940.0">javazoom</node>
+    <node x="609.0" y="1570.0">soot.AbstractSootFieldRef</node>
+    <node x="2417.0" y="2310.0">soot.Kind</node>
+    <node x="1672.0" y="1570.0">soot.CoffiClassSource</node>
+    <node x="1833.0" y="1866.0">soot.MethodToContexts</node>
+    <node x="426.0" y="1718.0">groovyjarjarantlr.PythonBlockFinishingInfo</node>
+    <node x="1969.0" y="2236.0">soot.EntryPoints</node>
+    <node x="1712.8214285714287" y="248.0">soot.ShortType</node>
+    <node x="1879.001050420168" y="499.0">groovyjarjarantlr.TokenStreamSelector</node>
+    <node x="508.0" y="1101.0">groovyjarjarantlr.CommonHiddenStreamToken</node>
+    <node x="838.8214285714287" y="168.0">groovyjarjarantlr.RuleRefElement</node>
+    <node x="100.0" y="2384.0">proguard.GPL</node>
+    <node x="997.0" y="2236.0">net</node>
+    <node x="1892.0" y="1940.0">javassist</node>
+    <node x="2059.0" y="1940.0">.shaders</node>
+    <node x="2314.0" y="1792.0">proguard.GetSignatureChecker</node>
+    <node x="2098.0" y="2310.0">soot.Scene</node>
+    <node x="787.75" y="400.0">soot.HasPhaseOptions</node>
+    <node x="134.0" y="1101.0">groovyjarjarantlr.ParseTreeRule</node>
+    <node x="717.5" y="637.0">soot.JavaToJimpleBodyPack</node>
+    <node x="452.0000000000001" y="247.0">groovyjarjarantlr.TokenRefElement</node>
+    <node x="1239.0" y="2088.0">.javax</node>
+    <node x="2405.5" y="943.0">soot.UnitBoxOwner</node>
+    <node x="1354.0" y="1491.0">soot.ValueBox</node>
+    <node x="135.0" y="2310.0">groovyjarjarantlr.Alternative</node>
+    <node x="0.0" y="1264.0">groovyjarjarantlr.CppCodeGenerator</node>
+    <node x="6.0" y="790.0">groovyjarjarantlr.CharStreamException</node>
+    <node x="2001.0" y="1570.0">groovyjarjarantlr.DumpASTVisitor</node>
+    <node x="1794.0" y="1101.0">groovyjarjarantlr.MakeGrammar</node>
+    <node x="144.0" y="2236.0">edu</node>
+    <node x="1751.0" y="869.0">groovyjarjarcommonscli.GnuParser</node>
+    <node x="1110.0" y="1417.0">soot.MethodContext</node>
+    <node x="1825.75" y="1417.0">soot.SceneTransformer</node>
+    <node x="1196.5" y="790.0">groovyjarjarantlr.RecognitionException</node>
+    <node x="437.5" y="711.0">groovyjarjarantlr.ANTLRException</node>
+    <node x="987.0" y="1644.0">proguard.GetEnclosingMethodChecker</node>
+    <node x="592.0" y="1792.0">groovyjarjarantlr.LexerSharedInputState</node>
+    <node x="1874.0" y="2310.0">soot.Timers</node>
+    <node x="1053.5" y="637.0">soot.NormalUnitPrinter</node>
+    <node x="2420.001050420168" y="400.0">groovyjarjarantlr.Parser</node>
+    <node x="1218.0" y="1644.0">soot.CompilationDeathException</node>
+    <node x="973.8214285714287" y="168.0">groovyjarjarantlr.AlternativeBlock</node>
+    <node x="2095.0" y="2014.0">values</node>
+    <node x="2437.8214285714284" y="248.0">soot.DoubleType</node>
+    <node x="1393.0" y="2088.0">groovyjarjarantlr.ExceptionSpec</node>
+    <node x="526.0" y="1940.0">groovyjarjarantlr.TreeSpecifierNode</node>
+    <node x="1166.0" y="2310.0">soot.Modifier</node>
+    <node x="1547.0" y="2088.0">soot.SourceLocator</node>
+    <node x="2392.0" y="1940.0">soot.PointsToAnalysis</node>
+    <node x="73.20357142857154" y="168.0">groovyjarjarantlr.CharRangeElement</node>
+    <node x="1753.5" y="943.0">groovyjarjarantlr.ANTLRGrammarParseBehavior</node>
+    <node x="1418.0" y="2236.0">soot.PointsToSet</node>
+    <node x="408.0" y="558.0">soot.EquivalentValue</node>
+    <node x="2028.8697478991596" y="588.0">groovyjarjarantlr.ANTLRTokdefLexer</node>
+    <node x="2230.8214285714284" y="248.0">soot.LongType</node>
+    <node x="1205.0" y="1254.0">groovyjarjarcommonscli.UnrecognizedOptionException</node>
+    <node x="1263.0" y="1718.0">proguard.ConfigurationConstants</node>
+    <node x="592.5000000000001" y="0.0">groovyjarjarantlr.GrammarElement</node>
+    <node x="1504.75" y="1417.0">groovyjarjarantlr.DefaultJavaCodeGeneratorPrintWriterManager</node>
+    <node x="1652.0" y="1866.0">about_files</node>
+    <node x="2065.0" y="2162.0">.org</node>
+    <node x="656.0" y="2014.0">.libcore</node>
+    <node x="1937.0" y="1792.0">groovyjarjarcommonscli.PatternOptionBuilder</node>
+    <node x="1448.5883035714287" y="89.0">soot.RefLikeType</node>
+    <node x="0.0" y="558.0">soot.Immediate</node>
+    <node x="1576.5" y="1022.0">soot.Unit</node>
+    <node x="2315.0" y="1644.0">.groovyjarjarantlr</node>
+    <node x="746.0" y="2162.0">.java</node>
+    <node x="2381.75" y="1417.0">groovyjarjarantlr.DefaultFileLineFormatter</node>
+    <node x="2411.001050420168" y="499.0">groovyjarjarantlr.LLkParser</node>
+    <node x="1986.0" y="2310.0">soot.Printer</node>
+    <node x="1985.5" y="790.0">groovyjarjarcommonscli.Parser</node>
+    <node x="2042.001050420168" y="499.0">groovyjarjarantlr.ANTLRTokenTypes</node>
+    <node x="198.0" y="2384.0">groovyjarjarcommonscli.Util</node>
+    <node x="1739.0441176470588" y="588.0">groovyjarjarantlr.ANTLRLexer</node>
+    <node x="674.25" y="558.0">soot.BodyPack</node>
+    <node x="421.0" y="790.0">groovyjarjarantlr.TokenStreamException</node>
+    <node x="395.0" y="1792.0">groovyjarjarantlr.CppBlockFinishingInfo</node>
+    <node x="187.0" y="1866.0">soot.AttributesUnitPrinter</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="soot.JavaToJimpleBodyPack" target="soot.BodyPack">
+      <point x="0.0" y="-14.5" />
+      <point x="794.0" y="612.0" />
+      <point x="737.25" y="612.0" />
+      <point x="21.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CSharpCharFormatter" target="groovyjarjarantlr.CharFormatter">
+      <point x="0.0" y="-14.5" />
+      <point x="73.5" y="1387.0" />
+      <point x="279.125" y="1387.0" />
+      <point x="-40.875" y="14.5" />
+    </edge>
+    <edge source="soot.SootMethodType" target="soot.Value">
+      <point x="0.0" y="-14.5" />
+      <point x="170.5" y="538.0" />
+      <point x="307.8" y="538.0" />
+      <point x="-12.199999999999989" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.StringLiteralSymbol" target="groovyjarjarantlr.TokenSymbol">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamHiddenTokenFilter" target="groovyjarjarantlr.TokenStream">
+      <point x="49.5" y="-14.5" />
+      <point x="1613.4138655462184" y="568.0" />
+      <point x="1721.0" y="568.0" />
+      <point x="-14.428571428571331" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamException" target="groovyjarjarantlr.ANTLRException">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CommonAST" target="groovyjarjarantlr.BaseAST">
+      <point x="0.0" y="-14.5" />
+      <point x="361.0" y="997.0" />
+      <point x="238.25" y="997.0" />
+      <point x="19.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.AlternativeElement" target="groovyjarjarantlr.GrammarElement">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.UnknownMethodSource" target="soot.MethodSource">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharStreamIOException" target="groovyjarjarantlr.CharStreamException">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CppCharFormatter" target="groovyjarjarantlr.CharFormatter">
+      <point x="0.0" y="-14.5" />
+      <point x="550.5" y="1387.0" />
+      <point x="360.875" y="1387.0" />
+      <point x="40.875" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.GrammarAtom" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="282.20357142857154" y="138.0" />
+      <point x="617.2857142857144" y="138.0" />
+      <point x="-37.714285714285666" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamRecognitionException" target="groovyjarjarantlr.TokenStreamException">
+      <point x="0.0" y="-14.5" />
+      <point x="286.5" y="849.0" />
+      <point x="446.5" y="849.0" />
+      <point x="-51.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.GroovyInternalPosixParser" target="groovyjarjarcommonscli.Parser">
+      <point x="0.0" y="-14.5" />
+      <point x="1942.0" y="849.0" />
+      <point x="2009.5" y="849.0" />
+      <point x="-8.0" y="14.5" />
+    </edge>
+    <edge source="soot.Trap" target="soot.UnitBoxOwner">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TreeElement" target="groovyjarjarantlr.AlternativeBlock">
+      <point x="0.0" y="-14.5" />
+      <point x="971.5000000000001" y="227.0" />
+      <point x="1018.0714285714287" y="227.0" />
+      <point x="-14.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.UnrecognizedOptionException" target="groovyjarjarcommonscli.ParseException">
+      <point x="0.0" y="-14.5" />
+      <point x="1302.0" y="1224.0" />
+      <point x="1561.75" y="1224.0" />
+      <point x="-42.0" y="14.5" />
+    </edge>
+    <edge source="soot.SootMethod" target="soot.MethodOrMethodContext">
+      <point x="-24.5" y="-14.5" />
+      <point x="1281.875" y="1392.0" />
+      <point x="1262.0" y="1392.0" />
+      <point x="42.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.RuleRefElement" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="896.3214285714287" y="148.0" />
+      <point x="673.857142857143" y="148.0" />
+      <point x="18.85714285714289" y="14.5" />
+    </edge>
+    <edge source="soot.Value" target="soot.EquivTo">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ZeroOrMoreBlock" target="groovyjarjarantlr.BlockWithImpliedExitPath">
+      <point x="0.0" y="-14.5" />
+      <point x="891.0000000000001" y="301.0" />
+      <point x="860.7500000000001" y="301.0" />
+      <point x="42.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharStreamException" target="groovyjarjarantlr.ANTLRException">
+      <point x="0.0" y="-14.5" />
+      <point x="79.0" y="765.0" />
+      <point x="457.5" y="765.0" />
+      <point x="-40.0" y="14.5" />
+    </edge>
+    <edge source="soot.IdentityUnit" target="soot.Unit">
+      <point x="0.0" y="-14.5" />
+      <point x="1661.5" y="1076.0" />
+      <point x="1617.0" y="1076.0" />
+      <point x="13.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.MakeGrammar" target="groovyjarjarantlr.DefineGrammarSymbols">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRTokdefParser" target="groovyjarjarantlr.LLkParser">
+      <point x="34.0" y="-14.5" />
+      <point x="2470.86974789916" y="568.0" />
+      <point x="2472.501050420168" y="568.0" />
+      <point x="20.5" y="14.5" />
+    </edge>
+    <edge source="soot.SootField" target="soot.ClassMember">
+      <point x="0.0" y="-14.5" />
+      <point x="1419.25" y="1392.0" />
+      <point x="1402.75" y="1392.0" />
+      <point x="26.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRParser" target="groovyjarjarantlr.ANTLRTokenTypes">
+      <point x="-25.0" y="-14.5" />
+      <point x="2228.41281512605" y="548.0" />
+      <point x="2139.5010504201678" y="548.0" />
+      <point x="32.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ImportVocabTokenManager" target="groovyjarjarantlr.SimpleTokenManager">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamRewriteEngine" target="groovyjarjarantlr.TokenStream">
+      <point x="0.0" y="-14.5" />
+      <point x="1622.5" y="479.0" />
+      <point x="1705.9306722689075" y="479.0" />
+      <point x="-28.85714285714289" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.StringLiteralElement" target="groovyjarjarantlr.GrammarAtom">
+      <point x="0.0" y="-14.5" />
+      <point x="221.0000000000001" y="227.0" />
+      <point x="268.20357142857154" y="227.0" />
+      <point x="-14.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.SimpleTokenManager" target="groovyjarjarantlr.TokenManager">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.LongType" target="soot.PrimType">
+      <point x="0.0" y="-14.5" />
+      <point x="2272.8214285714284" y="158.0" />
+      <point x="2157.3214285714284" y="158.0" />
+      <point x="15.375" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRLexer" target="groovyjarjarantlr.CharScanner">
+      <point x="0.0" y="-14.5" />
+      <point x="1787.0441176470588" y="568.0" />
+      <point x="1784.751050420168" y="568.0" />
+      <point x="-24.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.SynPredBlock" target="groovyjarjarantlr.AlternativeBlock">
+      <point x="0.0" y="-14.5" />
+      <point x="1196.0" y="217.0" />
+      <point x="1077.0714285714287" y="217.0" />
+      <point x="44.25" y="14.5" />
+    </edge>
+    <edge source="proguard.LineWordReader" target="proguard.WordReader">
+      <point x="0.0" y="-14.5" />
+      <point x="941.5" y="997.0" />
+      <point x="994.75" y="997.0" />
+      <point x="-24.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.GnuParser" target="groovyjarjarcommonscli.Parser">
+      <point x="0.0" y="-14.5" />
+      <point x="1794.0" y="839.0" />
+      <point x="1993.5" y="839.0" />
+      <point x="-24.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.PosixParser" target="groovyjarjarcommonscli.Parser">
+      <point x="0.0" y="-14.5" />
+      <point x="2093.0" y="849.0" />
+      <point x="2025.5" y="849.0" />
+      <point x="8.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.MissingOptionException" target="groovyjarjarcommonscli.ParseException">
+      <point x="0.0" y="-14.5" />
+      <point x="1699.0" y="1234.0" />
+      <point x="1617.75" y="1234.0" />
+      <point x="14.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.BasicParser" target="groovyjarjarcommonscli.Parser">
+      <point x="0.0" y="-14.5" />
+      <point x="2204.5" y="839.0" />
+      <point x="2041.5" y="839.0" />
+      <point x="24.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.MismatchedCharException" target="groovyjarjarantlr.RecognitionException">
+      <point x="0.0" y="-14.5" />
+      <point x="1089.5" y="849.0" />
+      <point x="1240.9" y="849.0" />
+      <point x="-29.59999999999991" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CommonHiddenStreamToken" target="groovyjarjarantlr.CommonToken">
+      <point x="0.0" y="-14.5" />
+      <point x="603.5" y="1076.0" />
+      <point x="662.0" y="1076.0" />
+      <point x="-28.75" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractValueBox" target="soot.ValueBox">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRLexer" target="groovyjarjarantlr.TokenStream">
+      <point x="-32.0" y="-14.5" />
+      <point x="1755.0441176470588" y="568.0" />
+      <point x="1749.501050420168" y="568.0" />
+      <point x="1749.501050420168" y="479.0" />
+      <point x="1734.7878151260504" y="479.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.PrimType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="2141.9464285714284" y="59.0" />
+      <point x="1728.2589285714287" y="59.0" />
+      <point x="14.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.PythonCharFormatter" target="groovyjarjarantlr.CharFormatter">
+      <point x="0.0" y="-14.5" />
+      <point x="240.5" y="1397.0" />
+      <point x="306.375" y="1397.0" />
+      <point x="-13.625" y="14.5" />
+    </edge>
+    <edge source="soot.Immediate" target="soot.Value">
+      <point x="0.0" y="-14.5" />
+      <point x="44.5" y="528.0" />
+      <point x="295.6" y="528.0" />
+      <point x="-24.399999999999977" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.WildcardElement" target="groovyjarjarantlr.GrammarAtom">
+      <point x="0.0" y="-14.5" />
+      <point x="371.0000000000001" y="227.0" />
+      <point x="296.20357142857154" y="227.0" />
+      <point x="14.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharRangeElement" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="139.70357142857154" y="128.0" />
+      <point x="598.4285714285716" y="128.0" />
+      <point x="-56.571428571428555" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractTrap" target="soot.Trap">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.JavaCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="923.0" y="1234.0" />
+      <point x="616.0" y="1234.0" />
+      <point x="32.0" y="14.5" />
+    </edge>
+    <edge source="proguard.ArgumentWordReader" target="proguard.WordReader">
+      <point x="0.0" y="-14.5" />
+      <point x="1096.5" y="997.0" />
+      <point x="1043.25" y="997.0" />
+      <point x="24.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ParseTreeRule" target="groovyjarjarantlr.ParseTree">
+      <point x="0.0" y="-14.5" />
+      <point x="186.5" y="1076.0" />
+      <point x="142.25" y="1076.0" />
+      <point x="20.5" y="14.5" />
+    </edge>
+    <edge source="soot.UnknownType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="1656.7589285714287" y="69.0" />
+      <point x="1709.2589285714287" y="69.0" />
+      <point x="-4.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DocBookCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="756.0" y="1244.0" />
+      <point x="600.0" y="1244.0" />
+      <point x="16.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TreeBlockContext" target="groovyjarjarantlr.BlockContext">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.CoffiClassProvider" target="soot.ClassProvider">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRTokdefLexer" target="groovyjarjarantlr.CharScanner">
+      <point x="-44.0" y="-14.5" />
+      <point x="2050.86974789916" y="558.0" />
+      <point x="1834.251050420168" y="558.0" />
+      <point x="24.75" y="14.5" />
+    </edge>
+    <edge source="soot.ErroneousType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="1373.5883035714287" y="49.0" />
+      <point x="1690.2589285714287" y="49.0" />
+      <point x="-23.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRTokdefLexer" target="groovyjarjarantlr.ANTLRTokdefParserTokenTypes">
+      <point x="44.0" y="-14.5" />
+      <point x="2138.86974789916" y="568.0" />
+      <point x="2242.501050420168" y="568.0" />
+      <point x="-49.5" y="14.5" />
+    </edge>
+    <edge source="soot.BriefUnitPrinter" target="soot.LabeledUnitPrinter">
+      <point x="0.0" y="-14.5" />
+      <point x="1259.0" y="612.0" />
+      <point x="1221.0" y="612.0" />
+      <point x="32.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.MismatchedTokenException" target="groovyjarjarantlr.RecognitionException">
+      <point x="0.0" y="-14.5" />
+      <point x="891.0" y="839.0" />
+      <point x="1211.3" y="839.0" />
+      <point x="-59.200000000000045" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamSelector" target="groovyjarjarantlr.TokenStream">
+      <point x="0.0" y="-14.5" />
+      <point x="1950.501050420168" y="459.0" />
+      <point x="1763.6449579831933" y="459.0" />
+      <point x="28.85714285714289" y="14.5" />
+    </edge>
+    <edge source="soot.ScenePack" target="soot.Pack">
+      <point x="0.0" y="-14.5" />
+      <point x="949.5" y="533.0" />
+      <point x="818.75" y="533.0" />
+      <point x="14.25" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractUnit" target="soot.Unit">
+      <point x="0.0" y="-14.5" />
+      <point x="1545.5" y="1076.0" />
+      <point x="1590.0" y="1076.0" />
+      <point x="-13.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharLiteralElement" target="groovyjarjarantlr.GrammarAtom">
+      <point x="0.0" y="-14.5" />
+      <point x="66.0" y="217.0" />
+      <point x="240.20357142857154" y="217.0" />
+      <point x="-42.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRTokdefParser" target="groovyjarjarantlr.ANTLRTokdefParserTokenTypes">
+      <point x="-34.0" y="-14.5" />
+      <point x="2402.86974789916" y="558.0" />
+      <point x="2341.501050420168" y="558.0" />
+      <point x="49.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.SemanticException" target="groovyjarjarantlr.RecognitionException">
+      <point x="0.0" y="-14.5" />
+      <point x="1639.5" y="839.0" />
+      <point x="1329.7" y="839.0" />
+      <point x="59.200000000000045" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharScanner" target="groovyjarjarantlr.TokenStream">
+      <point x="0.0" y="-14.5" />
+      <point x="1809.501050420168" y="469.0" />
+      <point x="1749.2163865546217" y="469.0" />
+      <point x="14.428571428571331" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.PythonCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="1085.0" y="1224.0" />
+      <point x="632.0" y="1224.0" />
+      <point x="48.0" y="14.5" />
+    </edge>
+    <edge source="soot.Local" target="soot.Value">
+      <point x="15.0" y="-14.5" />
+      <point x="312.125" y="612.0" />
+      <point x="534.5" y="612.0" />
+      <point x="534.5" y="528.0" />
+      <point x="344.4" y="528.0" />
+      <point x="24.399999999999977" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.RuleEndElement" target="groovyjarjarantlr.BlockEndElement">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamIOException" target="groovyjarjarantlr.TokenStreamException">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CSharpNameSpace" target="groovyjarjarantlr.NameSpace">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.Pack" target="soot.HasPhaseOptions">
+      <point x="0.0" y="-14.5" />
+      <point x="804.5" y="454.0" />
+      <point x="819.0" y="454.0" />
+      <point x="-31.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.OneOrMoreBlock" target="groovyjarjarantlr.BlockWithImpliedExitPath">
+      <point x="0.0" y="-14.5" />
+      <point x="746.0000000000001" y="301.0" />
+      <point x="776.2500000000001" y="301.0" />
+      <point x="-42.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.JavaCharFormatter" target="groovyjarjarantlr.CharFormatter">
+      <point x="0.0" y="-14.5" />
+      <point x="399.5" y="1397.0" />
+      <point x="333.625" y="1397.0" />
+      <point x="13.625" y="14.5" />
+    </edge>
+    <edge source="soot.SceneTransformer" target="soot.Transformer">
+      <point x="0.0" y="-14.5" />
+      <point x="1889.25" y="1392.0" />
+      <point x="1937.75" y="1392.0" />
+      <point x="-24.0" y="14.5" />
+    </edge>
+    <edge source="soot.BooleanType" target="soot.PrimType">
+      <point x="25.0" y="-14.5" />
+      <point x="1994.8214285714287" y="218.0" />
+      <point x="2126.5714285714284" y="218.0" />
+      <point x="-15.375" y="14.5" />
+    </edge>
+    <edge source="soot.IntType" target="soot.IntegerType">
+      <point x="-17.75" y="-14.5" />
+      <point x="2057.571428571429" y="188.0" />
+      <point x="1963.6214285714286" y="188.0" />
+      <point x="18.799999999999955" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TreeWalkerGrammar" target="groovyjarjarantlr.Grammar">
+      <point x="0.0" y="-14.5" />
+      <point x="731.0" y="1392.0" />
+      <point x="848.6666666666666" y="1392.0" />
+      <point x="-27.33333333333337" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.BlockWithImpliedExitPath" target="groovyjarjarantlr.AlternativeBlock">
+      <point x="0.0" y="-14.5" />
+      <point x="818.5000000000001" y="217.0" />
+      <point x="988.5714285714287" y="217.0" />
+      <point x="-44.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ParseTree" target="groovyjarjarantlr.BaseAST">
+      <point x="0.0" y="-14.5" />
+      <point x="121.75" y="997.0" />
+      <point x="200.25" y="997.0" />
+      <point x="-19.0" y="14.5" />
+    </edge>
+    <edge source="soot.CharType" target="soot.IntegerType">
+      <point x="-20.5" y="-14.5" />
+      <point x="1838.3214285714287" y="188.0" />
+      <point x="1926.0214285714287" y="188.0" />
+      <point x="-18.799999999999955" y="14.5" />
+    </edge>
+    <edge source="soot.JimpleBodyPack" target="soot.BodyPack">
+      <point x="0.0" y="-14.5" />
+      <point x="638.5" y="612.0" />
+      <point x="695.25" y="612.0" />
+      <point x="-21.0" y="14.5" />
+    </edge>
+    <edge source="soot.VoidType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="1771.2589285714287" y="69.0" />
+      <point x="1718.7589285714287" y="69.0" />
+      <point x="4.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenRangeElement" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="1181.8214285714287" y="128.0" />
+      <point x="711.5714285714287" y="128.0" />
+      <point x="56.571428571428555" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.LLkGrammarAnalyzer" target="groovyjarjarantlr.GrammarAnalyzer">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.G" target="soot.Singletons">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.BooleanType" target="soot.IntegerType">
+      <point x="-25.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.HTMLCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="proguard.FileWordReader" target="proguard.LineWordReader">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractUnitPrinter" target="soot.UnitPrinter">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DefaultToolErrorHandler" target="groovyjarjarantlr.ToolErrorHandler">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRLexer" target="groovyjarjarantlr.ANTLRTokenTypes">
+      <point x="32.0" y="-14.5" />
+      <point x="1819.0441176470588" y="568.0" />
+      <point x="2074.5010504201678" y="568.0" />
+      <point x="-32.5" y="14.5" />
+    </edge>
+    <edge source="soot.ShortType" target="soot.PrimType">
+      <point x="21.25" y="-14.5" />
+      <point x="1776.5714285714287" y="198.0" />
+      <point x="2106.0714285714284" y="198.0" />
+      <point x="-35.875" y="14.5" />
+    </edge>
+    <edge source="soot.NullType" target="soot.RefLikeType">
+      <point x="0.0" y="-14.5" />
+      <point x="1653.3214285714287" y="218.0" />
+      <point x="1531.7133035714287" y="218.0" />
+      <point x="35.625" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamRetryException" target="groovyjarjarantlr.TokenStreamException">
+      <point x="0.0" y="-14.5" />
+      <point x="690.0" y="849.0" />
+      <point x="548.5" y="849.0" />
+      <point x="51.0" y="14.5" />
+    </edge>
+    <edge source="soot.ByteType" target="soot.IntegerType">
+      <point x="-20.0" y="-14.5" />
+      <point x="2150.8214285714284" y="178.0" />
+      <point x="1982.4214285714286" y="178.0" />
+      <point x="37.59999999999991" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CSharpCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="229.0" y="1234.0" />
+      <point x="552.0" y="1234.0" />
+      <point x="-32.0" y="14.5" />
+    </edge>
+    <edge source="soot.RefType" target="soot.RefLikeType">
+      <point x="0.0" y="-14.5" />
+      <point x="1556.8214285714287" y="228.0" />
+      <point x="1507.9633035714287" y="228.0" />
+      <point x="11.875" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CommonToken" target="groovyjarjarantlr.Token">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.LLkParser" target="groovyjarjarantlr.Parser">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamHiddenTokenFilter" target="groovyjarjarantlr.TokenStreamBasicFilter">
+      <point x="-49.5" y="-14.5" />
+      <point x="1514.4138655462184" y="568.0" />
+      <point x="1437.5" y="568.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.AnySubType" target="soot.RefLikeType">
+      <point x="0.0" y="-14.5" />
+      <point x="1345.8214285714287" y="218.0" />
+      <point x="1460.4633035714287" y="218.0" />
+      <point x="-35.625" y="14.5" />
+    </edge>
+    <edge source="soot.Transform" target="soot.HasPhaseOptions">
+      <point x="0.0" y="-14.5" />
+      <point x="896.0" y="454.0" />
+      <point x="881.5" y="454.0" />
+      <point x="31.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ByteBuffer" target="groovyjarjarantlr.InputBuffer">
+      <point x="0.0" y="-14.5" />
+      <point x="2184.25" y="1392.0" />
+      <point x="2215.25" y="1392.0" />
+      <point x="-23.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenRefElement" target="groovyjarjarantlr.GrammarAtom">
+      <point x="0.0" y="-14.5" />
+      <point x="514.0000000000001" y="217.0" />
+      <point x="324.20357142857154" y="217.0" />
+      <point x="42.0" y="14.5" />
+    </edge>
+    <edge source="soot.SootMethodRefImpl" target="soot.SootMethodRef">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.RuleSymbol" target="groovyjarjarantlr.GrammarSymbol">
+      <point x="0.0" y="-14.5" />
+      <point x="1404.0" y="997.0" />
+      <point x="1374.75" y="997.0" />
+      <point x="30.5" y="14.5" />
+    </edge>
+    <edge source="soot.FloatType" target="soot.PrimType">
+      <point x="0.0" y="-14.5" />
+      <point x="2376.321428571429" y="148.0" />
+      <point x="2167.5714285714284" y="148.0" />
+      <point x="25.625" y="14.5" />
+    </edge>
+    <edge source="soot.TypeSwitch" target="soot.ITypeSwitch">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.BlockEndElement" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.ArrayType" target="soot.RefLikeType">
+      <point x="0.0" y="-14.5" />
+      <point x="1457.3214285714287" y="228.0" />
+      <point x="1484.2133035714287" y="228.0" />
+      <point x="-11.875" y="14.5" />
+    </edge>
+    <edge source="soot.ByteType" target="soot.PrimType">
+      <point x="20.0" y="-14.5" />
+      <point x="2190.8214285714284" y="168.0" />
+      <point x="2147.0714285714284" y="168.0" />
+      <point x="5.125" y="14.5" />
+    </edge>
+    <edge source="soot.MethodContext" target="soot.MethodOrMethodContext">
+      <point x="0.0" y="-14.5" />
+      <point x="1168.0" y="1392.0" />
+      <point x="1176.5" y="1392.0" />
+      <point x="-42.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.AlreadySelectedException" target="groovyjarjarcommonscli.ParseException">
+      <point x="0.0" y="-14.5" />
+      <point x="1884.0" y="1224.0" />
+      <point x="1645.75" y="1224.0" />
+      <point x="42.0" y="14.5" />
+    </edge>
+    <edge source="soot.SootMethod" target="soot.ClassMember">
+      <point x="24.5" y="-14.5" />
+      <point x="1330.875" y="1392.0" />
+      <point x="1350.75" y="1392.0" />
+      <point x="-26.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRParser" target="groovyjarjarantlr.LLkParser">
+      <point x="25.0" y="-14.5" />
+      <point x="2278.41281512605" y="568.0" />
+      <point x="2431.501050420168" y="568.0" />
+      <point x="-20.5" y="14.5" />
+    </edge>
+    <edge source="soot.DoubleType" target="soot.PrimType">
+      <point x="0.0" y="-14.5" />
+      <point x="2485.3214285714284" y="138.0" />
+      <point x="2177.8214285714284" y="138.0" />
+      <point x="35.875" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractSootFieldRef" target="soot.SootFieldRef">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="proguard.KeepClassSpecification" target="proguard.ClassSpecification">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.Parser" target="groovyjarjarcommonscli.CommandLineParser">
+      <point x="2.2737367544323206E-13" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.NoViableAltException" target="groovyjarjarantlr.RecognitionException">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.NormalUnitPrinter" target="soot.LabeledUnitPrinter">
+      <point x="0.0" y="-14.5" />
+      <point x="1118.0" y="612.0" />
+      <point x="1156.0" y="612.0" />
+      <point x="-32.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.NoViableAltForCharException" target="groovyjarjarantlr.RecognitionException">
+      <point x="0.0" y="-14.5" />
+      <point x="1458.5" y="849.0" />
+      <point x="1300.1" y="849.0" />
+      <point x="29.59999999999991" y="14.5" />
+    </edge>
+    <edge source="soot.IntType" target="soot.PrimType">
+      <point x="17.75" y="-14.5" />
+      <point x="2093.071428571429" y="228.0" />
+      <point x="2136.8214285714284" y="228.0" />
+      <point x="-5.125" y="14.5" />
+    </edge>
+    <edge source="soot.CharType" target="soot.PrimType">
+      <point x="20.5" y="-14.5" />
+      <point x="1879.3214285714287" y="208.0" />
+      <point x="2116.3214285714284" y="208.0" />
+      <point x="-25.625" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.LexerGrammar" target="groovyjarjarantlr.Grammar">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ActionElement" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="413.20357142857154" y="148.0" />
+      <point x="636.1428571428572" y="148.0" />
+      <point x="-18.85714285714289" y="14.5" />
+    </edge>
+    <edge source="soot.SootMethodHandle" target="soot.Value">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenStreamBasicFilter" target="groovyjarjarantlr.TokenStream">
+      <point x="0.0" y="-14.5" />
+      <point x="1437.5" y="469.0" />
+      <point x="1691.5021008403362" y="469.0" />
+      <point x="-43.28571428571422" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarcommonscli.MissingArgumentException" target="groovyjarjarcommonscli.ParseException">
+      <point x="0.0" y="-14.5" />
+      <point x="1508.5" y="1234.0" />
+      <point x="1589.75" y="1234.0" />
+      <point x="-14.0" y="14.5" />
+    </edge>
+    <edge source="soot.BodyPack" target="soot.Pack">
+      <point x="0.0" y="-14.5" />
+      <point x="716.25" y="533.0" />
+      <point x="790.25" y="533.0" />
+      <point x="-14.25" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ANTLRTokdefLexer" target="groovyjarjarantlr.TokenStream">
+      <point x="0.0" y="-14.5" />
+      <point x="2094.86974789916" y="558.0" />
+      <point x="2182.5010504201678" y="558.0" />
+      <point x="2182.5010504201678" y="449.0" />
+      <point x="1778.0735294117646" y="449.0" />
+      <point x="43.28571428571422" y="14.5" />
+    </edge>
+    <edge source="soot.EquivalentValue" target="soot.Value">
+      <point x="0.0" y="-14.5" />
+      <point x="466.0" y="538.0" />
+      <point x="332.2" y="538.0" />
+      <point x="12.199999999999989" y="14.5" />
+    </edge>
+    <edge source="soot.LabeledUnitPrinter" target="soot.AbstractUnitPrinter">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenSymbol" target="groovyjarjarantlr.GrammarSymbol">
+      <point x="0.0" y="-14.5" />
+      <point x="1284.5" y="997.0" />
+      <point x="1313.75" y="997.0" />
+      <point x="-30.5" y="14.5" />
+    </edge>
+    <edge source="soot.StmtAddressType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="2264.9464285714284" y="49.0" />
+      <point x="1737.7589285714287" y="49.0" />
+      <point x="23.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.LLkAnalyzer" target="groovyjarjarantlr.LLkGrammarAnalyzer">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DefaultFileLineFormatter" target="groovyjarjarantlr.FileLineFormatter">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.TokenWithIndex" target="groovyjarjarantlr.CommonToken">
+      <point x="0.0" y="-14.5" />
+      <point x="778.0" y="1076.0" />
+      <point x="719.5" y="1076.0" />
+      <point x="28.75" y="14.5" />
+    </edge>
+    <edge source="soot.AbstractUnitBox" target="soot.UnitBox">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.Local" target="soot.Immediate">
+      <point x="-15.0" y="-14.5" />
+      <point x="282.125" y="612.0" />
+      <point x="44.5" y="612.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ParseTreeToken" target="groovyjarjarantlr.ParseTree">
+      <point x="0.0" y="-14.5" />
+      <point x="57.0" y="1076.0" />
+      <point x="101.25" y="1076.0" />
+      <point x="-20.5" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DiagnosticCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="408.0" y="1244.0" />
+      <point x="568.0" y="1244.0" />
+      <point x="-16.0" y="14.5" />
+    </edge>
+    <edge source="soot.Unit" target="soot.Context">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DefineGrammarSymbols" target="groovyjarjarantlr.ANTLRGrammarParseBehavior">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.BodyTransformer" target="soot.Transformer">
+      <point x="0.0" y="-14.5" />
+      <point x="2034.25" y="1392.0" />
+      <point x="1985.75" y="1392.0" />
+      <point x="24.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CppCodeGenerator" target="groovyjarjarantlr.CodeGenerator">
+      <point x="0.0" y="-14.5" />
+      <point x="67.0" y="1224.0" />
+      <point x="536.0" y="1224.0" />
+      <point x="-48.0" y="14.5" />
+    </edge>
+    <edge source="soot.CoffiClassSource" target="soot.ClassSource">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="soot.RadioScenePack" target="soot.ScenePack">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.RuleBlock" target="groovyjarjarantlr.AlternativeBlock">
+      <point x="0.0" y="-14.5" />
+      <point x="1082.0" y="227.0" />
+      <point x="1047.5714285714287" y="227.0" />
+      <point x="14.75" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.RecognitionException" target="groovyjarjarantlr.ANTLRException">
+      <point x="0.0" y="-14.5" />
+      <point x="1270.5" y="765.0" />
+      <point x="537.5" y="765.0" />
+      <point x="40.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DumpASTVisitor" target="groovyjarjarantlr.ASTVisitor">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CharBuffer" target="groovyjarjarantlr.InputBuffer">
+      <point x="0.0" y="-14.5" />
+      <point x="2292.25" y="1392.0" />
+      <point x="2261.25" y="1392.0" />
+      <point x="23.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.DefaultJavaCodeGeneratorPrintWriterManager" target="groovyjarjarantlr.JavaCodeGeneratorPrintWriterManager">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.CommonASTWithHiddenTokens" target="groovyjarjarantlr.CommonAST">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.ParserGrammar" target="groovyjarjarantlr.Grammar">
+      <point x="0.0" y="-14.5" />
+      <point x="1008.0" y="1392.0" />
+      <point x="903.3333333333334" y="1392.0" />
+      <point x="27.33333333333337" y="14.5" />
+    </edge>
+    <edge source="soot.ShortType" target="soot.IntegerType">
+      <point x="-21.25" y="-14.5" />
+      <point x="1734.0714285714287" y="178.0" />
+      <point x="1907.2214285714288" y="178.0" />
+      <point x="-37.59999999999991" y="14.5" />
+    </edge>
+    <edge source="groovyjarjarantlr.AlternativeBlock" target="groovyjarjarantlr.AlternativeElement">
+      <point x="0.0" y="-14.5" />
+      <point x="1032.8214285714287" y="138.0" />
+      <point x="692.7142857142858" y="138.0" />
+      <point x="37.714285714285666" y="14.5" />
+    </edge>
+    <edge source="soot.RefLikeType" target="soot.Type">
+      <point x="0.0" y="-14.5" />
+      <point x="1496.0883035714287" y="59.0" />
+      <point x="1699.7589285714287" y="59.0" />
+      <point x="-14.25" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.41594739005343195" x="1286.9881422924902" y="1246.5" />
+  <SelectedNodes>
+    <node>proguard.SubclassedClassFilter</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

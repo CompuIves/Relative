@@ -5,7 +5,7 @@ import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
 
@@ -17,15 +17,15 @@ import com.ives.relative.universe.planets.TileManager;
 public class SquarePlanet extends ChunkBuilder {
     Vector2 originalGravity;
 
-    public SquarePlanet(UniverseBody universeBody, TileManager tileManager, UuidEntityManager uuidEntityManager, Vector2 originalGravity) {
-        super(universeBody, tileManager, uuidEntityManager);
+    public SquarePlanet(Space space, TileManager tileManager, UuidEntityManager uuidEntityManager, Vector2 originalGravity) {
+        super(space, tileManager, uuidEntityManager);
 
         this.originalGravity = originalGravity;
     }
 
     @Override
-    public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        Chunk chunk = new Chunk(universeBody, x, y, width, height, 0, isEdge);
+    public Chunk buildChunk(int x, int y, int width, int height) {
+        Chunk chunk = new Chunk(space, x, y, width, height, 0);
         Pixmap bg = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
         bg.setColor(new Color(0.5f, 0.9f, 1f, 1f));
         bg.fill();
@@ -42,12 +42,12 @@ public class SquarePlanet extends ChunkBuilder {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                if (Math.abs(x) <= universeBody.width / 3 && Math.abs(y) <= universeBody.height / 3) {
+                if (Math.abs(x) <= space.width / 3 && Math.abs(y) <= space.height / 3) {
                     Entity tile;
-                    if (y + 1 > universeBody.height / 3) {
-                        tile = tileManager.createTile(chunk.universeBody, x, y, 0, "grass", false);
+                    if (y + 1 > space.height / 3) {
+                        tile = tileManager.createTile(chunk.space, x, y, 0, "grass", false);
                     } else {
-                        tile = tileManager.createTile(chunk.universeBody, x, y, 0, "dirt", false);
+                        tile = tileManager.createTile(chunk.space, x, y, 0, "dirt", false);
                     }
                     chunk.addTile(x, y, uuidEntityManager.getUuid(tile));
                 }

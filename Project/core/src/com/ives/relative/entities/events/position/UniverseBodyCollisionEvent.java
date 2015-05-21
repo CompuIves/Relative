@@ -1,18 +1,18 @@
 package com.ives.relative.entities.events.position;
 
 import com.ives.relative.entities.events.EntityEvent;
-import com.ives.relative.universe.UniverseBody;
+import com.ives.relative.universe.Space;
 
 /**
  * Created by Ives on 5/2/2015.
  *
- * When an Entity hits the border of a UniverseBody
+ * When an Entity hits the border of a Space
  */
 public class UniverseBodyCollisionEvent extends EntityEvent {
-    public UniverseBody universeBody;
+    public Space space;
 
     @Override
     public void reset() {
-        universeBody = null;
+        space = null;
     }
 }
