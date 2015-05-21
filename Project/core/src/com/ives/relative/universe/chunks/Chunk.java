@@ -26,6 +26,7 @@ public class Chunk implements Comparable<Chunk> {
     public final Array<UUID> entities;
     public final Map<Vector2, UUID> tiles;
     public final Map<Vector2, Integer> changedTiles;
+    public final boolean edge;
     public boolean loaded = false;
     public Pixmap bgColor;
     public Texture texture;
@@ -38,11 +39,12 @@ public class Chunk implements Comparable<Chunk> {
      * @param space
      * @param rotation     rotation in degrees
      */
-    public Chunk(Space space, int x, int y, int width, int height, int rotation) {
+    public Chunk(Space space, int x, int y, int width, int height, int rotation, boolean edge) {
         this.x = x;
         this.y = y;
         this.space = space;
         this.rotation = rotation;
+        this.edge = edge;
 
         entities = new Array<UUID>();
         changedTiles = new HashMap<Vector2, Integer>();

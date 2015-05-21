@@ -21,7 +21,7 @@ public abstract class ChunkBuilder {
         this.uuidEntityManager = uuidEntityManager;
     }
 
-    public abstract Chunk buildChunk(int x, int y, int width, int height);
+    public abstract Chunk buildChunk(int x, int y, int width, int height, boolean isEdge);
 
     public abstract void generateTerrain(Chunk chunk);
 }

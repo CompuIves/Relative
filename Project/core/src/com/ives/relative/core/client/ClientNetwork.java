@@ -32,7 +32,7 @@ public class ClientNetwork extends Network {
 
     private void startClient() throws IOException {
         client.start();
-        client.connect(5000, "82.74.62.72", 54555, 54777);
+        client.connect(5000, "127.0.0.1", 54555, 54777);
     }
 
     @Override

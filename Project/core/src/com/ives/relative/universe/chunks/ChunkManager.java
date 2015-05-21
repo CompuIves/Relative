@@ -62,7 +62,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void convertToChunkCoord(Space space, Vector2 pos) {
         pos.x = RelativeMath.fastfloor(pos.x / space.chunkSize) * space.chunkSize;
         pos.y = RelativeMath.fastfloor(pos.y / space.chunkSize) * space.chunkSize;
-        if(space.infinite) {
+        if(!space.infinite) {
             pos.x = MathUtils.clamp(pos.x, -space.width / 2, space.width / 2);
             pos.y = MathUtils.clamp(pos.y, -space.height / 2, space.height / 2);
         }
@@ -78,19 +78,20 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Chunk chunk = null;
         int width = space.chunkSize, height = space.chunkSize;
         boolean isEdge = false;
+        if(!space.infinite) {
+            if (isEdge(x, space.width, space.chunkSize)) {
+                Vector2 horizontalPos = sliceEdge(x, space.width, space.chunkSize);
+                x = (int) horizontalPos.x;
+                width = (int) horizontalPos.y;
+                isEdge = true;
+            }
 
-        if (isEdge(x, space.width, space.chunkSize)) {
-            Vector2 horizontalPos = sliceEdge(x, space.width, space.chunkSize);
-            x = (int) horizontalPos.x;
-            width = (int) horizontalPos.y;
-            isEdge = true;
-        }
-
-        if (isEdge(y, space.height, space.chunkSize)) {
-            Vector2 verticalPos = sliceEdge(y, space.height, space.chunkSize);
-            y = (int) verticalPos.x;
-            height = (int) verticalPos.y;
-            isEdge = true;
+            if (isEdge(y, space.height, space.chunkSize)) {
+                Vector2 verticalPos = sliceEdge(y, space.height, space.chunkSize);
+                y = (int) verticalPos.x;
+                height = (int) verticalPos.y;
+                isEdge = true;
+            }
         }
 
         if (width > 0 && height > 0) {
@@ -117,54 +118,11 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
-     * Gets the chunk of the lowest (childest) child of the universebody at that position. The pos given will also
-     * be converted to the child coordinate system.
-     * @param space universebody to start searching
-     * @param pos POSITION!
-     * @return null if there was no child there, the chunk if there was indeed a child.
-     */
-    public Chunk getTopChunk(Space space, Vector2 pos) {
-        Space ub = space.getTopUniverseBody(tempVec3.set(pos.x, pos.y, 0), false);
-        return getChunk(ub, pos.set(tempVec3.x, tempVec3.y));
-    }
-
-    /**
-     * Gets the chunk of the parent at that given position
-     *
-     * @param space child universebody
-     * @param pos position
-     * @return chunk of the parent
-     */
-    public Chunk getParentChunk(Space space, Vector2 pos) {
-        Space parent = space.getParent();
-        space.transformVector(pos);
-        return getChunk(parent, pos);
-    }
-
-    /**
-     * Gets the chunk of the lowest child of the universebody, if there is no child, return null
-     *
-     * @param space parent
-     * @param pos position relative to parent
-     * @return chunk
-     */
-    public Chunk getChildChunk(Space space, Vector2 pos) {
-        if (space.hasChildren()) {
-            if (space.getChild(pos) != null) {
-                Space child = space.getBottomChild(tempVec3.set(pos.x, pos.y, 0), false);
-                return getChunk(child, pos);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Add an entity to chunk
      */
     public void addEntityToChunk(Entity e) {
         Position p = mPosition.get(e);
-        Chunk chunk = getTopChunk(p.space, new Vector2(p.x, p.y));
+        Chunk chunk = getChunk(p.space, new Vector2(p.x, p.y));
         addEntityToChunk(e, chunk);
     }
 
@@ -215,17 +173,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
         Vector2 v = new Vector2();
         for (int x = startX; x < endX; x += 1) {
             for (int y = startY; y < endY; y += 1) {
-                Chunk c = getTopChunk(centerChunk.space, v.set(x, y));
+                Chunk c = getChunk(centerChunk.space, v.set(x, y));
                 if (c != null) {
-                    if (c.edge && c.space != centerChunk.space) {
-                        //Load parent too, this is an edge case
-                        Chunk pChunk = getChunk(centerChunk.space, v.set(x, y));
-                        if (pChunk != null) {
-                            if (!chunks.contains(pChunk, false))
-                                chunks.add(pChunk);
-                        }
-                    }
-
                     if (!chunks.contains(c, false)) {
                         chunks.add(c);
                     }
@@ -292,6 +241,43 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     }
 
     /**
+     * Checks if the given position (x or y) is out of bounds the Space when the chunkSize is added.
+     *
+     * @param pos       x or y, depends if you want to know the horizontal edge or vertical edge.
+     * @param uBodSize  size of universebody
+     * @param chunkSize size of chunks
+     * @return if the chunk at that position is an edge
+     */
+    private boolean isEdge(int pos, int uBodSize, int chunkSize) {
+        if (pos < 0) {
+            return pos < -uBodSize / 2;
+        } else {
+            return Math.abs(pos) + chunkSize > Math.abs(uBodSize) / 2;
+        }
+    }
+
+    /**
+     * Slices a chunk to fit the chunk in the uBody
+     *
+     * @param pos       position in x or y
+     * @param uBodSize  size of the universe
+     * @param chunkSize initial chunk size
+     * @return A Vector with values (newPos, newSize)
+     */
+    private Vector2 sliceEdge(int pos, int uBodSize, int chunkSize) {
+        int newPos;
+        int newSize;
+        if (pos > 0) {
+            newPos = pos;
+            newSize = uBodSize / 2 - pos;
+        } else {
+            newPos = -uBodSize / 2;
+            newSize = uBodSize / 2 + pos + chunkSize;
+        }
+        return new Vector2(newPos, newSize);
+    }
+
+    /**
      * @return all loaded chunks
      */
     public Array<Chunk> getLoadedChunks() {
@@ -311,14 +297,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
             tempVec1.set(p.px, p.py);
             tempVec2.set(p.x, p.y);
 
-            Chunk nChunk = getTopChunk(p.space, tempVec1);
-            if (nChunk == null) {
-                removeEntityFromChunk(e);
-                addEntityToChunk(e, getTopChunk(p.space, tempVec1));
-
-                if (authorityManager.isEntityTemporaryAuthorized(e))
-                    loadChunksAroundEntity(p.chunk, e);
-            } else if (!nChunk.equals(p.chunk)) {
+            Chunk nChunk = getChunk(p.space, tempVec1);
+            if (!nChunk.equals(p.chunk)) {
                 removeEntityFromChunk(e);
                 addEntityToChunk(e, nChunk);
 

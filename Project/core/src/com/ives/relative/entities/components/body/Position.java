@@ -48,6 +48,6 @@ public class Position extends CustomNetworkComponent {
 
     @Override
     public void convertForReceiving(Entity e, World world, NetworkManager.Type type) {
-        space = world.getManager(UniverseManager.class).getSpace(universeBodyID);
+        space = world.getSystem(UniverseManager.class).getSpace(universeBodyID);
     }
 }

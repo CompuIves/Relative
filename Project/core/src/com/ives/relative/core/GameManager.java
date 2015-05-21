@@ -46,13 +46,13 @@ public class GameManager extends Manager {
         world.setSystem(new GravitySystem(), true);
         world.setSystem(new MovementSystem());
         world.setSystem(new CommandSystem());
+        world.setSystem(new UniverseManager("ivesiscool"));
     }
 
     /**
      * Register command managers between client and server.
      */
     public void registerManagers() {
-        world.setManager(new UniverseManager("ivesiscool"));
         world.setManager(new EventManager());
         world.setManager(new CollisionManager());
 

@@ -32,7 +32,7 @@ public class RemoveTilePacket extends ResponsePacket {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Space u = game.world.getManager(UniverseManager.class).getSpace(universeBody);
+                Space u = game.world.getSystem(UniverseManager.class).getSpace(universeBody);
                 Chunk chunk = game.world.getManager(ChunkManager.class).getChunk(u, new Vector2(x, y));
                 game.world.getManager(TileManager.class).removeTile(chunk, new Vector2(x, y));
             }

@@ -20,9 +20,8 @@ public class PlaceTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
-
         Space ub = e.getWorld().getMapper(Position.class).get(e).space;
-        Chunk chunk = e.getWorld().getManager(ChunkManager.class).getTopChunk(ub, worldPosClicked);
+        Chunk chunk = e.getWorld().getManager(ChunkManager.class).getChunk(ub, worldPosClicked);
         if (worldPosClicked != null) {
             if (!chunk.isTile(RelativeMath.fastfloor(worldPosClicked.x), RelativeMath.fastfloor(worldPosClicked.y))) {
                 System.out.println("exec");

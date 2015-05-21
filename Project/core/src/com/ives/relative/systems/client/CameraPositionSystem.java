@@ -41,6 +41,7 @@ public class CameraPositionSystem extends VoidEntitySystem implements EntityEven
         Position playerPosition = mPosition.get(player);
         camera.position.x = playerPosition.x;
         camera.position.y = playerPosition.y + 4;
+        camera.update();
     }
 
     @Override
