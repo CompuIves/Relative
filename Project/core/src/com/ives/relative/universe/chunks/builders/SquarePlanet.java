@@ -25,12 +25,7 @@ public class SquarePlanet extends ChunkBuilder {
 
     @Override
     public Chunk buildChunk(int x, int y, int width, int height, boolean isEdge) {
-        Chunk chunk = new Chunk(space, x, y, width, height, 0, isEdge);
-        Pixmap bg = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
-        bg.setColor(new Color(0.5f, 0.9f, 1f, 1f));
-        bg.fill();
-        chunk.bgColor = bg;
-        return chunk;
+        return new Chunk(space, x, y, width, height, 0, isEdge);
     }
 
     @Override
@@ -42,9 +37,9 @@ public class SquarePlanet extends ChunkBuilder {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                if (Math.abs(x) <= space.width / 3 && Math.abs(y) <= space.height / 3) {
+                if (y <= 0) {
                     Entity tile;
-                    if (y + 1 > space.height / 3) {
+                    if (y == 0) {
                         tile = tileManager.createTile(chunk.space, x, y, 0, "grass", false);
                     } else {
                         tile = tileManager.createTile(chunk.space, x, y, 0, "dirt", false);

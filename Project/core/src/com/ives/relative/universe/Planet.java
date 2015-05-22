@@ -35,7 +35,7 @@ public class Planet {
 
     public Space getSpace() {
         if(space == null)
-            space = new Space("planet_" + name, null, width, height, 16);
+            space = new Space(name, null, width, height, 16, gravity);
 
         return space;
     }
@@ -54,7 +54,7 @@ public class Planet {
         private Vector2 gravity;
         private float mass;
 
-        public Builder(String name, String seed, SolarSystem solarSystem, int x, int y, int width, int height, Vector2 gravity, CollisionManager collisionManager) {
+        public Builder(String name, String seed, SolarSystem solarSystem, int x, int y, int width, int height, Vector2 gravity) {
             this.name = name;
             this.seed = seed;
             this.solarSystem = solarSystem;

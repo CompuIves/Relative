@@ -39,15 +39,15 @@ public class Space {
 
     public final boolean infinite;
 
-    public Space(String id, Space parent, int width, int height, int chunkSize) {
+    public Space(String id, Space parent, int width, int height, int chunkSize, Vector2 gravity) {
         this.id = id;
         this.parent = parent;
 
         this.width = width;
         this.height = height;
 
-        world = new World(new Vector2(0, 0), true);
-        world.setContactListener(UniverseManager.getCollisionManager());
+        world = new World(gravity, true);
+        world.setContactListener(CollisionManager.getInstance());
         chunks = new HashMap<Vector2, Chunk>();
         this.chunkSize = chunkSize;
 
@@ -68,7 +68,7 @@ public class Space {
     }
 
     /**
-     * Gets called every {@link UniverseManager#ITERATIONS}
+     * Gets called every {@link UniverseSystem#ITERATIONS}
      */
     protected void update() {
         for (Body body : bodiesToRemove) {
@@ -76,7 +76,7 @@ public class Space {
         }
         bodiesToRemove.clear();
 
-        world.step(UniverseManager.ITERATIONS, 6, 6);
+        world.step(UniverseSystem.ITERATIONS, 6, 6);
     }
 
     /**

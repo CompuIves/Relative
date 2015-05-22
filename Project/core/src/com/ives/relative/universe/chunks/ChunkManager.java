@@ -17,7 +17,6 @@ import com.ives.relative.entities.events.creation.EntityDeletionEvent;
 import com.ives.relative.entities.events.position.JoinChunkEvent;
 import com.ives.relative.entities.events.position.LeaveChunkEvent;
 import com.ives.relative.entities.events.position.MovementEvent;
-import com.ives.relative.entities.events.position.NearUniverseBorderEvent;
 import com.ives.relative.managers.AuthorityManager;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.universe.Space;
@@ -227,6 +226,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * preloaded first ({@link #preLoadChunk(Chunk)})
      */
     public void loadChunk(Chunk chunk) {
+        System.out.println("Loading chunk " + chunk.toString());
         if (chunkLoader.requestedChunks.contains(chunk, false)) {
             chunkLoader.loadChunk(chunk);
         }
@@ -236,6 +236,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * Unloads the chunk
      */
     public void unloadChunk(Chunk chunk) {
+        System.out.println("Unloading chunk " + chunk.toString());
         if (chunkLoader.loadedChunks.contains(chunk, false))
             chunkLoader.unloadChunk(chunk, uuidEntityManager);
     }
@@ -308,9 +309,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
 
         } else if (event instanceof EntityDeletionEvent) {
             removeEntityFromChunk(event.entity);
-        } else if (event instanceof NearUniverseBorderEvent) {
-            Position p = mPosition.get(event.entity);
-            loadChunksAroundEntity(p.chunk, event.entity);
         }
     }
 }

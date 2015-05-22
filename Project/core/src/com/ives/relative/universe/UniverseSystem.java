@@ -18,7 +18,7 @@ import java.util.Map;
  * System which iterates all the UniverseBodies. Also keeps track of every Space.
  */
 @Wire
-public class UniverseManager extends VoidEntitySystem {
+public class UniverseSystem extends VoidEntitySystem {
     public static final float ITERATIONS = 1 / 60f;
     private final String seed;
 
@@ -30,14 +30,9 @@ public class UniverseManager extends VoidEntitySystem {
 
     private float accumulator;
 
-
-    /**Singleton pattern since there is only need for one collisionmanager (There should be one)**/
-    private static CollisionManager collisionManager;
-
-    public UniverseManager(String seed) {
+    public UniverseSystem(String seed) {
         this.seed = seed;
         this.spaces = new HashMap<String, Planet>();
-        //collisionManager = world.getManager(CollisionManager.class);
     }
 
     @Override
@@ -63,14 +58,9 @@ public class UniverseManager extends VoidEntitySystem {
 
 
     public void createTemporaryGalaxy() {
-        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", new SolarSystem(), 300, 300, 1000, 1000, new Vector2(-10, 0), collisionManager);
+        Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", new SolarSystem(), 300, 300, 1000, 1000, new Vector2(0, -10));
         Planet earth = planetBuilder.build();
         earth.getSpace().setChunkBuilder(new SquarePlanet(earth.getSpace(), tileManager, uuidEntityManager, earth.gravity));
-        spaces.put("planet_ives", earth);
         spaces.put("ives", earth);
-    }
-
-    public static CollisionManager getCollisionManager() {
-        return collisionManager;
     }
 }

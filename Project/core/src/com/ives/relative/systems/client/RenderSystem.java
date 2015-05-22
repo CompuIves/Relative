@@ -61,11 +61,10 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
         //Gets the player info
         getPlayer();
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.52f, 0.81f, 0.86f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        renderBackground();
     }
 
     @Override
@@ -89,22 +88,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     private void getPlayer() {
         player = tagManager.getEntity("player");
         p = mPosition.get(player);
-    }
-
-    private void renderBackground() {
-        Vector3 pos = new Vector3();
-        for (Chunk chunk : chunkManager.getLoadedChunks()) {
-            if (chunk.bgColor != null && chunk.texture == null) {
-                chunk.texture = new Texture(chunk.bgColor);
-            }
-
-            if (chunk.texture != null) {
-                pos.x = chunk.x;
-                pos.y = chunk.y;
-
-                batch.draw(chunk.texture, pos.x, pos.y, chunk.width, chunk.height);
-            }
-        }
     }
 
     @Override

@@ -14,8 +14,7 @@ import com.ives.relative.managers.event.StateManager;
 import com.ives.relative.network.Network;
 import com.ives.relative.systems.CommandSystem;
 import com.ives.relative.systems.MovementSystem;
-import com.ives.relative.systems.planet.GravitySystem;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.planets.TileManager;
 
 /**
@@ -43,10 +42,9 @@ public class GameManager extends Manager {
      * Register common systems between client and server.
      */
     public void registerSystems() {
-        world.setSystem(new GravitySystem(), true);
         world.setSystem(new MovementSystem());
         world.setSystem(new CommandSystem());
-        world.setSystem(new UniverseManager("ivesiscool"));
+        world.setSystem(new UniverseSystem("ivesiscool"));
     }
 
     /**

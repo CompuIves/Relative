@@ -5,7 +5,7 @@ import com.artemis.World;
 import com.ives.relative.entities.components.network.CustomNetworkComponent;
 import com.ives.relative.managers.NetworkManager;
 import com.ives.relative.universe.Space;
-import com.ives.relative.universe.UniverseManager;
+import com.ives.relative.universe.UniverseSystem;
 import com.ives.relative.universe.chunks.Chunk;
 
 /**
@@ -48,6 +48,6 @@ public class Position extends CustomNetworkComponent {
 
     @Override
     public void convertForReceiving(Entity e, World world, NetworkManager.Type type) {
-        space = world.getSystem(UniverseManager.class).getSpace(universeBodyID);
+        space = world.getSystem(UniverseSystem.class).getSpace(universeBodyID);
     }
 }

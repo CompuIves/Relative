@@ -11,14 +11,13 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ives.relative.entities.components.body.FootC;
 import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.events.position.CollisionEvent;
-import com.ives.relative.entities.events.position.UniverseBodyCollisionEvent;
 import com.ives.relative.managers.event.EventManager;
 import com.ives.relative.managers.event.StateManager;
 import com.ives.relative.universe.Space;
 
 /**
  * Created by Ives on 31/12/2014.
- * Checks collision of every entity and changes the PhysicsComponent accordingly
+ * Checks collision of every entity and fires events accordingly.
  */
 @Wire
 public class CollisionManager extends Manager implements ContactListener {
@@ -28,18 +27,16 @@ public class CollisionManager extends Manager implements ContactListener {
     protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<FootC> mFootC;
 
+    private static CollisionManager collisionManager;
+
+    public CollisionManager() {
+        collisionManager = this;
+    }
+
     @Override
     public void beginContact(Contact contact) {
         if(contact.getFixtureA().getBody().getUserData() instanceof Entity && contact.getFixtureB().getBody().getUserData() instanceof Entity) {
             handleEntityStart(contact);
-        } else if (contact.getFixtureA().getBody().getUserData() instanceof Space) {
-            if (contact.getFixtureB().getBody().getUserData() instanceof Entity) {
-                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureB().getBody().getUserData(), (Space) contact.getFixtureA().getBody().getUserData());
-            }
-        } else if (contact.getFixtureB().getBody().getUserData() instanceof Space) {
-            if (contact.getFixtureA().getBody().getUserData() instanceof Entity) {
-                sendUniverseBodyCollisionEvent((Entity) contact.getFixtureA().getBody().getUserData(), (Space) contact.getFixtureB().getBody().getUserData());
-            }
         }
     }
 
@@ -126,12 +123,6 @@ public class CollisionManager extends Manager implements ContactListener {
         }
     }
 
-    private void sendUniverseBodyCollisionEvent(Entity e, Space u) {
-        UniverseBodyCollisionEvent event = (UniverseBodyCollisionEvent) eventManager.getEvent(UniverseBodyCollisionEvent.class, e);
-        event.space = u;
-        eventManager.notifyEvent(event);
-    }
-
     private void addFootC(Contact contact, Entity e, Entity eStanding) {
         FootC footC = mFootC.get(e);
         footC.footContacts.add(contact);
@@ -150,5 +141,13 @@ public class CollisionManager extends Manager implements ContactListener {
         if (footC.contactAmount == 0) {
             stateManager.assertState(e, StateManager.EntityState.AIRBORNE);
         }
+    }
+
+    /**
+     * Singleton pattern, since there can only be one CollisionManager, this can even be shared between server and client.
+     * @return CollisionManager
+     */
+    public static CollisionManager getInstance() {
+        return collisionManager;
     }
 }

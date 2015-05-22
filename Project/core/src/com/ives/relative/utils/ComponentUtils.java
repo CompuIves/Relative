@@ -88,7 +88,7 @@ public class ComponentUtils {
             EventManager eventManager = e.getWorld().getManager(EventManager.class);
             eventManager.notifyEvent(eventManager.getEvent(EntityDeletionEvent.class, e));
             removeAllSpecialComponents(e);
-            System.out.println("Removed entity: " + e.getId());
+            //System.out.println("Removed entity: " + e.getId());
             e.deleteFromWorld();
         }
     }
