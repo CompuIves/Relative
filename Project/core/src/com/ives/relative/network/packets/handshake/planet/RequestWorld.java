@@ -29,7 +29,7 @@ public class RequestWorld extends ResponsePacket {
                 ServerPlayerManager serverPlayerManager = game.world.getManager(ServerPlayerManager.class);
                 String playerID = serverPlayerManager.finishPlayerLoggingIn(connection);
                 Entity player = serverPlayerManager.createPlayer(connection, playerID, "Player",
-                        game.world.getSystem(UniverseSystem.class).getSpace("ives"), new Vector2(0, 4), 0);
+                        game.world.getSystem(UniverseSystem.class).getSpace("ives"), new Vector2(0, 17), 0);
 
                 //Finally adds the player to the list of connections.
                 serverPlayerManager.addConnection(connection, player);

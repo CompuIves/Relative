@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -46,8 +47,6 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
     public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
     private final ServerNetwork network;
     protected ComponentMapper<Location> mPosition;
-    protected ComponentMapper<NetworkC> mNetworkC;
-    protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
 
     protected CommandSystem commandSystem;
@@ -68,7 +67,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
     }
 
     @Override
-    protected void processEntities(ImmutableBag<Entity> entities) {
+    protected void processEntities(IntBag entities) {
         for (int i = 0; i < packetQueue.size(); i++) {
             try {
                 UpdatePacket updatePacket = packetQueue.take();

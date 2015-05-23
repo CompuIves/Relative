@@ -166,7 +166,7 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
         }
 
         try {
-            LinkedBlockingQueue<CustomNetworkComponent> queue = new LinkedBlockingQueue();
+            LinkedBlockingQueue<CustomNetworkComponent> queue = new LinkedBlockingQueue<CustomNetworkComponent>();
             queue.addAll(customNetworkComponents);
 
             CustomNetworkComponent ce;

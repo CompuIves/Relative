@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
+import com.ives.relative.utils.SimplexNoise;
 
 /**
  * Created by Ives on 18/1/2015.
@@ -37,9 +38,9 @@ public class SquarePlanet extends ChunkBuilder {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                if (y <= 0) {
+                if (y <= Math.round(SimplexNoise.noise(x / 3, 0) * 1.5)) {
                     Entity tile;
-                    if (y == 0) {
+                    if (y == Math.round(SimplexNoise.noise(x / 3, 0) * 1.5)) {
                         tile = tileManager.createTile(chunk.space, x, y, 0, "grass", false);
                     } else {
                         tile = tileManager.createTile(chunk.space, x, y, 0, "dirt", false);

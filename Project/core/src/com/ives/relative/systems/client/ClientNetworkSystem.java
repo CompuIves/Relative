@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -126,7 +127,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
      * @param entities Entities to process
      */
     @Override
-    protected void processEntities(ImmutableBag<Entity> entities) {
+    protected void processEntities(IntBag entities) {
         frame++;
 
         Iterator<Integer> it = entitiesToSend.iterator();

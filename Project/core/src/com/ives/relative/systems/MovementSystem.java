@@ -26,7 +26,6 @@ import java.util.UUID;
 @Wire
 public class MovementSystem extends EntityProcessingSystem {
     protected ComponentMapper<Physics> mBodyComponent;
-    protected ComponentMapper<Location> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
 
     protected EventManager eventManager;

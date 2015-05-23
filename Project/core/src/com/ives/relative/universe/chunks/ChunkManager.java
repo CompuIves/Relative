@@ -33,12 +33,6 @@ import com.ives.relative.utils.RelativeMath;
 @Wire
 public class ChunkManager extends Manager implements EntityEventObserver {
     public static final int CHUNK_RADIUS = 40;
-    /**
-     * use only synchronous!
-     */
-    private static Vector2 tempVec1 = new Vector2();
-    private static Vector2 tempVec2 = new Vector2();
-    private static Vector3 tempVec3 = new Vector3();
     private final ChunkLoader chunkLoader;
     protected ComponentMapper<Location> mLocation;
     protected ComponentMapper<Physics> mPhysics;
@@ -229,7 +223,6 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * preloaded first ({@link #preLoadChunk(Chunk)})
      */
     public void loadChunk(Chunk chunk) {
-        System.out.println("Loading chunk " + chunk.toString());
         if (chunkLoader.requestedChunks.contains(chunk, false)) {
             chunkLoader.loadChunk(chunk);
         }
