@@ -2,6 +2,7 @@ package com.ives.relative.entities.components.body;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -11,7 +12,6 @@ import com.ives.relative.entities.components.tile.TileC;
 import com.ives.relative.factories.PlayerFactory;
 import com.ives.relative.factories.TileFactory;
 import com.ives.relative.managers.NetworkManager;
-import com.ives.relative.universe.Space;
 
 import java.util.UUID;
 
@@ -24,11 +24,12 @@ import java.util.UUID;
  */
 public class Physics extends CustomNetworkComponent {
     public transient Body body = null;
-    public transient Body secondBody = null;
-    public transient Space secondSpace = null;
     public transient Array<Contact> contacts;
     public transient Array<UUID> entitiesInContact;
     public BodyDef.BodyType bodyType;
+
+    public float x, y;
+    public float vx, vy;
 
     public Physics() {
         contacts = new Array<Contact>();
@@ -41,7 +42,7 @@ public class Physics extends CustomNetworkComponent {
         contacts = new Array<Contact>();
         entitiesInContact = new Array<UUID>();
 
-        dependants.add(Position.class.getSimpleName());
+        dependants.add(Location.class.getSimpleName());
     }
 
     @Override
@@ -49,19 +50,25 @@ public class Physics extends CustomNetworkComponent {
         if(type == NetworkManager.Type.TILE) {
             dependants.add(TileC.class.getSimpleName());
         }
+
+        Vector2 p = body.getPosition();
+        Vector2 v = body.getLinearVelocity();
+        x = p.x;
+        y = p.y;
+        vx = v.x;
+        vy = v.y;
     }
 
     @Override
     public void convertForReceiving(Entity e, World world, NetworkManager.Type type) {
-        Position position = world.getMapper(Position.class).get(e);
+        Location location = world.getMapper(Location.class).get(e);
         switch (type) {
             case TILE:
                 TileC tileC = world.getMapper(TileC.class).get(e);
-                body = TileFactory.createBody(position.space, e, tileC.tile, 15, position.x, position.y, true);
+                body = TileFactory.createBody(location.space, e, tileC.tile, 15, x, y, true);
                 break;
             case PLAYER:
-                Velocity velocity = world.getMapper(Velocity.class).get(e);
-                body = PlayerFactory.createBody(position.space, e, position.x, position.y, velocity.vx, velocity.vy);
+                body = PlayerFactory.createBody(location.space, e, x, y, vx, vy);
                 break;
         }
     }

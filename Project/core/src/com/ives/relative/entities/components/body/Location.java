@@ -10,35 +10,19 @@ import com.ives.relative.universe.chunks.Chunk;
 
 /**
  * Created by Ives on 12/12/2014.
- * Position component, this component gets synced with the body component
+ * Location component, the x, y and z components are stored in the body of the entity.
  */
-public class Position extends CustomNetworkComponent {
-    public float x, y;
-    public float px, py;
-
-    public int z;
-    public int pz;
-
-    /**
-     * rotation in radians
-     */
-    public float rotation;
-    public float protation;
-
+public class Location extends CustomNetworkComponent {
     public transient Space space;
 
     public String universeBodyID;
     public transient Chunk chunk;
 
-    public Position() {
+    public Location() {
     }
 
-    public Position(float x, float y, int z, float rotation, Space space) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Location(Space space) {
         this.space = space;
-        this.rotation = rotation;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.ives.relative.entities.events.position;
 
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.events.EntityEvent;
 
@@ -10,15 +10,10 @@ import com.ives.relative.entities.events.EntityEvent;
  * A simple event which will be executed when an entity moves
  */
 public class MovementEvent extends EntityEvent {
-    public Position position;
-    public Velocity velocity;
-
     public MovementEvent() {
     }
 
     @Override
     public void reset() {
-        position = null;
-        velocity = null;
     }
 }

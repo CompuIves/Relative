@@ -2,7 +2,9 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
-import com.ives.relative.entities.components.body.Position;
+import com.badlogic.gdx.math.Vector2;
+import com.ives.relative.entities.components.body.Location;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.systems.server.NetworkSendSystem;
 import com.ives.relative.universe.planets.TileManager;
 import com.ives.relative.utils.ComponentUtils;
@@ -21,8 +23,9 @@ public class CreateBodyCommand extends Command {
 
     @Override
     public void executeDown(final Entity entity) {
-        Position position = entity.getWorld().getMapper(Position.class).get(entity);
-        body = entity.getWorld().getManager(TileManager.class).createTile(position.space, position.x, position.y + 4, 0, "dirt", true);
+        Vector2 position = entity.getWorld().getMapper(Physics.class).get(entity).body.getPosition();
+        Location location = entity.getWorld().getMapper(Location.class).get(entity);
+        body = entity.getWorld().getManager(TileManager.class).createTile(location.space, position.x, position.y + 4, 0, "dirt", true);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

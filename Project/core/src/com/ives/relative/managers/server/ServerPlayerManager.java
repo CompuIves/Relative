@@ -12,8 +12,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.entities.components.Name;
 import com.ives.relative.entities.components.State;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Transform;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
@@ -70,8 +70,8 @@ public class ServerPlayerManager extends PlayerManager {
                 new Name(internalName, realName),
                 new Visual(new TextureRegion(new Texture("player.png")), 0.9f, 1.8f),
                 new Transform(0.9f, 2f, null),
-                new Position(position.x, position.y, z, 0, space),
-                new Velocity(0, 0, 0),
+                new Location(space),
+                new Velocity(),
                 new State()).
                 group("players").
                 build();

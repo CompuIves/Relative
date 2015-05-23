@@ -2,7 +2,8 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.math.Vector2;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.planets.TileManager;
 
@@ -21,7 +22,7 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
-        Chunk chunk = e.getWorld().getMapper(Position.class).get(e).chunk;
+        Chunk chunk = e.getWorld().getMapper(Location.class).get(e).chunk;
         if (worldPosClicked != null)
             e.getWorld().getManager(TileManager.class).removeTile(chunk, worldPosClicked);
     }
@@ -43,8 +44,8 @@ public class BreakTileCommand extends ClickCommand {
 
     @Override
     public boolean canExecute(Entity e) {
-        Position position = e.getWorld().getMapper(Position.class).get(e);
-        Vector2 pos = new Vector2(position.x, position.y);
+        Physics physics = e.getWorld().getMapper(Physics.class).get(e);
+        Vector2 pos = physics.body.getPosition();
         float dx = Math.abs(pos.x - getWorldPosClicked().x);
         float dy = Math.abs(pos.y - getWorldPosClicked().y);
         return dx + dy < 4;

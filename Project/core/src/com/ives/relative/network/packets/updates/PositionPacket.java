@@ -1,8 +1,10 @@
 package com.ives.relative.network.packets.updates;
 
 import com.artemis.Entity;
-import com.ives.relative.entities.components.body.Position;
-import com.ives.relative.entities.components.body.Velocity;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.ives.relative.entities.components.body.Location;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.network.packets.UpdatePacket;
 
 /**
@@ -23,16 +25,20 @@ public class PositionPacket extends UpdatePacket {
 
     public PositionPacket(Entity entity, int sequence, int entityID) {
         super(sequence, entityID);
-        Position position = entity.getWorld().getMapper(Position.class).get(entity);
-        Velocity velocity = entity.getWorld().getMapper(Velocity.class).get(entity);
-        this.universeBody = position.space.id;
+        Location location = entity.getWorld().getMapper(Location.class).get(entity);
+        Body body = entity.getWorld().getMapper(Physics.class).get(entity).body;
+        Vector2 position = body.getPosition();
+        float rotation = body.getAngle();
+        Vector2 velocity = body.getLinearVelocity();
+        float vr = body.getAngularVelocity();
+        this.universeBody = location.space.id;
         this.x = position.x;
         this.y = position.y;
-        this.rotation = position.rotation;
+        this.rotation = rotation;
 
-        this.vx = velocity.vx;
-        this.vy = velocity.vy;
-        this.vr = velocity.vr;
+        this.vx = velocity.x;
+        this.vy = velocity.y;
+        this.vr = vr;
 
         this.entityID = entityID;
     }

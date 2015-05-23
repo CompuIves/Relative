@@ -15,7 +15,7 @@ import com.ives.relative.core.server.ServerNetwork;
 import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.EntityEvent;
@@ -45,7 +45,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ServerNetworkSystem extends IntervalEntitySystem implements EntityEventObserver {
     public final static float SERVER_NETWORK_INTERVAL = 1 / 20f;
     private final ServerNetwork network;
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Location> mPosition;
     protected ComponentMapper<NetworkC> mNetworkC;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
@@ -61,7 +61,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
      * Creates a new IntervalEntitySystem.
      */
     public ServerNetworkSystem(ServerNetwork network) {
-        super(Aspect.getAspectForAll(NetworkC.class, Position.class), SERVER_NETWORK_INTERVAL);
+        super(Aspect.getAspectForAll(NetworkC.class, Location.class), SERVER_NETWORK_INTERVAL);
         packetQueue = new LinkedBlockingQueue<UpdatePacket>();
         this.network = network;
         processRequests();
@@ -128,7 +128,7 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
         Command c;
         if (packet.pressed) {
             if (packet instanceof CommandClickPacket) {
-                Position p = mPosition.get(e);
+                Location p = mPosition.get(e);
                 CommandClickPacket clickPacket = (CommandClickPacket) packet;
                 c = commandManager.getCommand(packet.command);
                 ((ClickCommand) c).setWorldPosClicked(new Vector2(clickPacket.x, clickPacket.y));
@@ -162,18 +162,11 @@ public class ServerNetworkSystem extends IntervalEntitySystem implements EntityE
             float rotation = packet.rotation;
             float rVelocity = packet.vr;
 
-            Position localPosition = mPosition.get(entity);
-            Velocity localVelocity = mVelocity.get(entity);
             Physics physics = mPhysics.get(entity);
 
             Body body = physics.body;
             body.setTransform(x, y, rotation);
             body.setLinearVelocity(vx, vy);
-            localPosition.x = x;
-            localPosition.y = y;
-            localVelocity.vx = vx;
-            localVelocity.vy = vy;
-            localVelocity.vr = rVelocity;
             body.setAngularVelocity(rVelocity);
         }
     }

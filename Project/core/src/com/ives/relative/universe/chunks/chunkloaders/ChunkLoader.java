@@ -2,6 +2,7 @@ package com.ives.relative.universe.chunks.chunkloaders;
 
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ives.relative.universe.chunks.Chunk;
@@ -41,7 +42,7 @@ public abstract class ChunkLoader {
     protected abstract void loadTileLegend();
 
     public void loadChunk(Chunk chunk) {
-        //Gdx.app.debug("ChunkLoader", "Loading chunk: " + chunk.toString());
+        Gdx.app.debug("ChunkLoader", "Loading chunk: " + chunk.toString());
         requestedChunks.removeValue(chunk, false);
         chunk.space.chunkBuilder.generateTerrain(chunk);
         chunk.loaded = true;

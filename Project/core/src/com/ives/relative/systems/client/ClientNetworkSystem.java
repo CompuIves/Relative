@@ -18,8 +18,8 @@ import com.ives.relative.core.client.Player;
 import com.ives.relative.entities.commands.ClickCommand;
 import com.ives.relative.entities.commands.Command;
 import com.ives.relative.entities.commands.DoNothingCommand;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.network.NetworkC;
 import com.ives.relative.entities.events.EntityEvent;
@@ -61,7 +61,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     protected NetworkReceiveSystem networkReceiveSystem;
     protected UniverseSystem universeSystem;
 
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Location> mPosition;
     protected ComponentMapper<Velocity> mVelocity;
     protected ComponentMapper<Physics> mPhysics;
 
@@ -72,7 +72,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
     private Array<Integer> entitiesToSend;
 
     public ClientNetworkSystem(ClientNetwork network) {
-        super(Aspect.getAspectForAll(NetworkC.class, Position.class), CLIENT_NETWORK_INTERVAL);
+        super(Aspect.getAspectForAll(NetworkC.class, Location.class), CLIENT_NETWORK_INTERVAL);
         requestedEntities = new Array<Integer>();
         grantedEntities = new Array<Integer>();
         entitiesToSend = new Array<Integer>();
@@ -205,24 +205,19 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
             float rotation = packet.rotation;
             float rVelocity = packet.vr;
 
-            Position localPosition = mPosition.get(entity);
-            Velocity localVelocity = mVelocity.get(entity);
+            Location localPosition = mPosition.get(entity);
             Physics physics = mPhysics.get(entity);
 
             Body body = physics.body;
             Vector2 bodyPos = body.getTransform().getPosition();
             if (bodyPos.x != x || bodyPos.y != y) {
                 body.setTransform(x, y, rotation);
-                localPosition.x = x;
-                localPosition.y = y;
                 localPosition.space = universeSystem.getSpace(packet.universeBody);
             }
 
             Vector2 bodyVel = body.getLinearVelocity();
             if (bodyVel.x != vx || bodyVel.y != vy) {
                 body.setLinearVelocity(vx, vy);
-                localVelocity.vx = vx;
-                localVelocity.vy = vy;
             }
 
             body.setAngularVelocity(rVelocity);
@@ -238,7 +233,7 @@ public class ClientNetworkSystem extends IntervalEntitySystem implements EntityE
             float dx = packet.dx;
             float dy = packet.dy;
 
-            Position p = mPosition.get(e);
+            Location p = mPosition.get(e);
             Physics physics = mPhysics.get(e);
 
             Body body = physics.body;

@@ -1,6 +1,6 @@
 package com.ives.relative.entities.events.position;
 
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.events.EntityEvent;
 
 /**
@@ -8,7 +8,7 @@ import com.ives.relative.entities.events.EntityEvent;
  * Gets called once after an entity has stopped moving.
  */
 public class StoppedMovementEvent extends EntityEvent {
-    public Position position;
+    public Location position;
 
     public StoppedMovementEvent() {
     }

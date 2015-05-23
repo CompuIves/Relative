@@ -9,17 +9,18 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.ives.relative.entities.components.body.Position;
+import com.badlogic.gdx.math.Vector2;
+import com.ives.relative.entities.components.body.Location;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.client.PlayerConnectedEvent;
 import com.ives.relative.managers.event.EventManager;
-import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
+
+import java.util.Vector;
 
 /**
  * Created by Ives on 3/12/2014.
@@ -27,22 +28,18 @@ import com.ives.relative.universe.chunks.ChunkManager;
  */
 @Wire
 public class RenderSystem extends EntityProcessingSystem implements EntityEventObserver {
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Physics> mPhysics;
     protected ComponentMapper<Visual> visualMapper;
 
-    protected ChunkManager chunkManager;
     protected EventManager eventManager;
-    protected TagManager tagManager;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
 
-    private Entity player;
-    private Position p;
 
     public RenderSystem(SpriteBatch batch, OrthographicCamera camera) {
         //noinspection unchecked
-        super(Aspect.getAspectForAll(Visual.class, Position.class));
+        super(Aspect.getAspectForAll(Visual.class, Physics.class));
         this.batch = batch;
         this.camera = camera;
 
@@ -58,8 +55,6 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
     @Override
     protected void begin() {
         super.begin();
-        //Gets the player info
-        getPlayer();
 
         Gdx.gl.glClearColor(0.52f, 0.81f, 0.86f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -69,25 +64,21 @@ public class RenderSystem extends EntityProcessingSystem implements EntityEventO
 
     @Override
     protected void process(Entity entity) {
-        Position position = mPosition.get(entity);
+        Physics p = mPhysics.get(entity);
+        Vector2 pos = p.body.getPosition();
         Visual visual = visualMapper.get(entity);
         batch.draw(visual.texture,
-                position.x - visual.width / 2, position.y - visual.height / 2,
+                pos.x - visual.width / 2, pos.y - visual.height / 2,
                 visual.width / 2, visual.height / 2,
                 visual.width, visual.height,
                 1.02f, 1.02f,
-                position.rotation);
+                p.body.getAngle());
     }
 
     @Override
     protected void end() {
         super.end();
         batch.end();
-    }
-
-    private void getPlayer() {
-        player = tagManager.getEntity("player");
-        p = mPosition.get(player);
     }
 
     @Override

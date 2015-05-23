@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ives.relative.core.client.Player;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.managers.NetworkManager;
 
 /**
@@ -17,7 +17,7 @@ import com.ives.relative.managers.NetworkManager;
 @Wire
 public class ClientDebugSystem extends VoidEntitySystem {
     protected NetworkManager networkManager;
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Location> mPosition;
     Camera camera;
     Box2DDebugRenderer box2DDebugRenderer;
 
@@ -30,7 +30,7 @@ public class ClientDebugSystem extends VoidEntitySystem {
     protected void processSystem() {
         if (networkManager.getEntity(Player.NETWORK_ID) != null) {
             Entity player = networkManager.getEntity(Player.NETWORK_ID);
-            Position pos = mPosition.get(player);
+            Location pos = mPosition.get(player);
 
             box2DDebugRenderer.render(pos.space.world, camera.combined);
         }

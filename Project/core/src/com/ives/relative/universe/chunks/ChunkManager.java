@@ -10,7 +10,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
+import com.ives.relative.entities.components.body.Physics;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.creation.EntityDeletionEvent;
@@ -39,7 +40,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     private static Vector2 tempVec2 = new Vector2();
     private static Vector3 tempVec3 = new Vector3();
     private final ChunkLoader chunkLoader;
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Location> mLocation;
+    protected ComponentMapper<Physics> mPhysics;
     protected UuidEntityManager uuidEntityManager;
     protected EventManager eventManager;
     protected AuthorityManager authorityManager;
@@ -120,8 +122,9 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * Add an entity to chunk
      */
     public void addEntityToChunk(Entity e) {
-        Position p = mPosition.get(e);
-        Chunk chunk = getChunk(p.space, new Vector2(p.x, p.y));
+        Vector2 p = mPhysics.get(e).body.getPosition();
+        Location location = mLocation.get(e);
+        Chunk chunk = getChunk(location.space, new Vector2(p.x, p.y));
         addEntityToChunk(e, chunk);
     }
 
@@ -129,7 +132,7 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * Add an entity to a chunk (use this method is used when you already know which chunk)
      */
     public void addEntityToChunk(Entity e, Chunk chunk) {
-        Position p = mPosition.get(e);
+        Location p = mLocation.get(e);
         chunk.addEntity(uuidEntityManager.getUuid(e));
         p.chunk = chunk;
 
@@ -143,8 +146,8 @@ public class ChunkManager extends Manager implements EntityEventObserver {
      * Removes an entity from a chunk
      */
     public void removeEntityFromChunk(Entity e) {
-        if (mPosition.has(e)) {
-            Position position = mPosition.get(e);
+        if (mLocation.has(e)) {
+            Location position = mLocation.get(e);
             if (position.chunk != null) {
                 position.chunk.removeEntity(uuidEntityManager.getUuid(e));
 
@@ -293,12 +296,10 @@ public class ChunkManager extends Manager implements EntityEventObserver {
     public void onNotify(EntityEvent event) {
         if (event instanceof MovementEvent) {
             Entity e = event.entity;
-            Position p = ((MovementEvent) event).position;
+            Location p = mLocation.get(e);
+            Vector2 pos = mPhysics.get(e).body.getPosition();
 
-            tempVec1.set(p.px, p.py);
-            tempVec2.set(p.x, p.y);
-
-            Chunk nChunk = getChunk(p.space, tempVec1);
+            Chunk nChunk = getChunk(p.space, pos);
             if (!nChunk.equals(p.chunk)) {
                 removeEntityFromChunk(e);
                 addEntityToChunk(e, nChunk);

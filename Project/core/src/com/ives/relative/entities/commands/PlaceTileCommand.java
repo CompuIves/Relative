@@ -2,7 +2,7 @@ package com.ives.relative.entities.commands;
 
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
 import com.ives.relative.universe.chunks.ChunkManager;
@@ -20,7 +20,7 @@ public class PlaceTileCommand extends ClickCommand {
 
     @Override
     void executeDown(Entity e) {
-        Space ub = e.getWorld().getMapper(Position.class).get(e).space;
+        Space ub = e.getWorld().getMapper(Location.class).get(e).space;
         Chunk chunk = e.getWorld().getManager(ChunkManager.class).getChunk(ub, worldPosClicked);
         if (worldPosClicked != null) {
             if (!chunk.isTile(RelativeMath.fastfloor(worldPosClicked.x), RelativeMath.fastfloor(worldPosClicked.y))) {

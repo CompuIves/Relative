@@ -7,8 +7,8 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.ives.relative.entities.components.Authority;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
 import com.ives.relative.entities.events.EntityEvent;
 import com.ives.relative.entities.events.EntityEventObserver;
 import com.ives.relative.entities.events.position.CollisionEvent;
@@ -31,7 +31,7 @@ public class AuthorityManager extends Manager implements EntityEventObserver {
 
     protected ComponentMapper<Authority> mAuthority;
     protected ComponentMapper<Physics> mPhysics;
-    protected ComponentMapper<Position> mPosition;
+    protected ComponentMapper<Location> mPosition;
 
     public AuthorityManager() {
     }

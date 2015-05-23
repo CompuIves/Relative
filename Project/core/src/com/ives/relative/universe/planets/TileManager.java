@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.ives.relative.entities.components.body.Physics;
-import com.ives.relative.entities.components.body.Position;
+import com.ives.relative.entities.components.body.Location;
 import com.ives.relative.entities.components.body.Velocity;
 import com.ives.relative.entities.components.client.Visual;
 import com.ives.relative.entities.components.network.NetworkC;
@@ -64,7 +64,7 @@ public class TileManager extends Manager {
             //TODO Look at factories
             Entity e = new EntityBuilder(world).with(new TileC(solidTile),
                     new Visual(solidTile.textureRegion, solidTile.width, solidTile.height),
-                    new Position(x, y, z, 0, ub)).group("tile").build();
+                    new Location(ub)).group("tile").build();
 
             if (gravity) {
                 Body body = TileFactory.createBody(ub, e, solidTile, 15, x, y, true);
