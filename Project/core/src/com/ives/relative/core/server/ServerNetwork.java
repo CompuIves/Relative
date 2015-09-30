@@ -27,6 +27,7 @@ public class ServerNetwork extends Network {
         ServerNetwork.server = server;
         startServer();
         server.addListener(this);
+        System.out.println(Thread.currentThread());
     }
 
     public static Connection getConnection(int id) {

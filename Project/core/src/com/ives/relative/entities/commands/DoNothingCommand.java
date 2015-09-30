@@ -4,6 +4,8 @@ import com.artemis.Entity;
 
 /**
  * Created by Ives on 14/12/2014.
+ *
+ * This command is a placeholder command for keys which aren't defined yet. Prevents NPE's
  */
 public class DoNothingCommand extends Command {
 

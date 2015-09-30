@@ -2,8 +2,6 @@ package com.ives.relative.universe.chunks.builders;
 
 import com.artemis.Entity;
 import com.artemis.managers.UuidEntityManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.ives.relative.universe.Space;
 import com.ives.relative.universe.chunks.Chunk;
@@ -18,7 +16,15 @@ import com.ives.relative.utils.SimplexNoise;
 public class SquarePlanet extends ChunkBuilder {
     Vector2 originalGravity;
 
-    public SquarePlanet(Space space, TileManager tileManager, UuidEntityManager uuidEntityManager, Vector2 originalGravity) {
+    /**
+     * Creates a square planet with correct gravity and sizes.
+     * @param space
+     * @param tileManager
+     * @param uuidEntityManager
+     * @param size
+     * @param originalGravity
+     */
+    public SquarePlanet(Space space, TileManager tileManager, UuidEntityManager uuidEntityManager, int size, Vector2 originalGravity) {
         super(space, tileManager, uuidEntityManager);
 
         this.originalGravity = originalGravity;

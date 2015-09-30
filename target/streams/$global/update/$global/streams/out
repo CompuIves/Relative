@@ -7,7 +7,7 @@
 [debug] == resolving dependencies for default#relative_2.10;0.1-SNAPSHOT [compile]
 [debug] == resolving dependencies default#relative_2.10;0.1-SNAPSHOT->org.scala-lang#scala-library;2.10.4 [compile->default(compile)]
 [info] Resolving org.scala-lang#scala-library;2.10.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@6a0c21c9
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@5892e47a
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.4
 [debug] 	local: revision in cache: org.scala-lang#scala-library;2.10.4
 [debug] 	found org.scala-lang#scala-library;2.10.4 in sbt-chain
@@ -136,7 +136,7 @@
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-reflect;2.10.4!scala-reflect.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#jline;2.10.4!jline.jar
 [debug] 	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar
-[debug] :: resolution report :: resolve 245ms :: artifacts dl 8ms
+[debug] :: resolution report :: resolve 56ms :: artifacts dl 4ms
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT compile produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-compile.xml
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT runtime produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-runtime.xml
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT test produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-test.xml
@@ -150,5 +150,5 @@
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT docs produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-docs.xml
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT pom produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-pom.xml
 [debug] 	report for default#relative_2.10;0.1-SNAPSHOT scala-tool produced in C:\Dev\Relative\target\resolution-cache\reports\default-relative_2.10-scala-tool.xml
-[debug] 	resolve done (245ms resolve - 8ms download)
+[debug] 	resolve done (56ms resolve - 4ms download)
 [info] Done updating.

@@ -28,8 +28,6 @@ public class Chunk implements Comparable<Chunk> {
     public final Map<Vector2, Integer> changedTiles;
     public final boolean edge;
     public boolean loaded = false;
-    public Pixmap bgColor;
-    public Texture texture;
 
     private Array<UUID> loadedByPlayers;
 

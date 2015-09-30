@@ -58,9 +58,11 @@ public class UniverseSystem extends VoidEntitySystem {
 
 
     public void createTemporaryGalaxy() {
+        SolarSystem solarSystem = new SolarSystem();
         Planet.Builder planetBuilder = new Planet.Builder("ives", "ivesiscool", new SolarSystem(), 300, 300, 1000, 1000, new Vector2(0, -10));
         Planet earth = planetBuilder.build();
-        earth.getSpace().setChunkBuilder(new SquarePlanet(earth.getSpace(), tileManager, uuidEntityManager, earth.gravity));
+        earth.getSpace().setChunkBuilder(new SquarePlanet(earth.getSpace(), tileManager, uuidEntityManager, 20, earth.gravity));
+        solarSystem.addPlanet(earth);
         spaces.put("ives", earth);
     }
 }

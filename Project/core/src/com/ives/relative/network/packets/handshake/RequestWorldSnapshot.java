@@ -25,7 +25,6 @@ public class RequestWorldSnapshot extends ResponsePacket {
             @Override
             public void run() {
                 ImmutableBag<Entity> networkEntities = game.world.getSystem(ServerNetworkSystem.class).getActives();
-                NetworkManager networkManager = game.world.getManager(NetworkManager.class);
                 for (Entity entity : networkEntities) {
                     game.world.getSystem(NetworkSendSystem.class).sendEntity(connection, entity);
                 }

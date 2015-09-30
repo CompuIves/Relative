@@ -180,6 +180,11 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                     if (!loadedComponents.contains(k, false)) {
                         //Dependents are not yet loaded, add this at the end of the queue for processing.
                         queue.add(ce);
+
+                        tries++;
+                        if (tries > 20)
+                            throw new StackOverflowError();
+
                         continue queueLoop;
                     }
                 }
@@ -187,9 +192,8 @@ public class NetworkReceiveSystem extends VoidEntitySystem {
                 ce.convertForReceiving(e, world, networkC.type);
                 loadedComponents.add(ce.getClass().getSimpleName());
 
-                tries++;
-                if (tries > 20)
-                    throw new StackOverflowError();
+                //Reset tries since component is loaded
+                tries = 0;
             }
         } catch (StackOverflowError ex) {
             Gdx.app.error("EntityReceive", "Couldn't add entity: " + e.toString() + " because its components have wrong dependants");
